@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FCF6EC;
+  --color-cream-light: #FFF8EF;
+  --color-offwhite: #FFF9F0;
+  --color-peach: #FCE0D4;
+  --color-peach-light: #FFE4D0;
+  --color-salmon: #F6B79B;
+  --color-terracotta: #DA7A5B;
+  --color-terracotta-dark: #C46749;
+  --color-mustard: #F6C95E;
+  --color-mustard-light: #FDF3D6;
+  --color-sage: #DCE6C6;
+  --color-sage-light: #EBF2E0;
+  --color-leaf: #A7C48A;
+  --color-leaf-dark: #709154;
+  --color-warmbrown: #6B3F2A;
+  --color-warmbrown-dark: #502E1E;
+  --color-lightbrown: #CBA989;
+  --color-dustypink: #EFB6B0;
+  --color-border-warm: #EEDBC9;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #20BA59;
+
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius-card: 20px;
+  --radius-card-lg: 24px;
+  --radius-pill: 9999px;
+}
+
+:root {
+  --background: #FFF8EF;
+  --foreground: #6B3F2A;
+}
+
+/* Lenis Recommended Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+body {
+  background-color: #FFF8EF;
+  color: #6B3F2A;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Custom Soft Storybook Shadows */
+.shadow-subtle {
+  box-shadow: 0 4px 16px rgba(107, 63, 42, 0.06);
+}
+
+.shadow-card {
+  box-shadow: 0 6px 24px rgba(107, 63, 42, 0.08);
+}
+
+.shadow-hover {
+  box-shadow: 0 12px 32px rgba(107, 63, 42, 0.12);
+}
+
+.shadow-drawer {
+  box-shadow: -4px 0 28px rgba(107, 63, 42, 0.15);
+}
+
+/* Storybook Delicate Paper Texture */
+.paper-texture {
+  background-image: 
+    radial-gradient(#6B3F2A 0.35px, transparent 0.35px),
+    radial-gradient(#DA7A5B 0.3px, #FFF8EF 0.3px);
+  background-size: 32px 32px, 64px 64px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Subtle Leaf Speckle Pattern */
+.leaf-pattern {
+  background-image: radial-gradient(#A7C48A 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+  opacity: 0.25;
+}
+
+/* Text reveal line mask helper */
+.line-mask {
+  overflow: hidden;
+  display: block;
+}
+
+/* GPU-Accelerated Featherlight Storybook Floating Animations */
+@keyframes storybook-float-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0) rotate(3deg);
+  }
+}
+
+@keyframes storybook-float-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0) rotate(-2.5deg);
+  }
+}
+
+@keyframes storybook-float-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes storybook-twinkle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.animate-float-1 {
+  animation: storybook-float-1 4.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-2 {
+  animation: storybook-float-2 3.6s ease-in-out infinite 0.3s;
+  will-change: transform;
+}
+
+.animate-float-3 {
+  animation: storybook-float-3 4.8s ease-in-out infinite 0.7s;
+  will-change: transform;
+}
+
+.animate-twinkle-1 {
+  animation: storybook-twinkle 2.8s ease-in-out infinite 0.1s;
+}
+
+.animate-twinkle-2 {
+  animation: storybook-twinkle 3.4s ease-in-out infinite 0.5s;
+}
+
+/* Prefers Reduced Motion Guardrail */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

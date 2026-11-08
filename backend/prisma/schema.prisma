@@ -1,0 +1,258 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AgeGroup {
+  NEWBORN_PLUS
+  AGES_1_3
+  AGES_3_PLUS
+  AGES_6_PLUS
+  ALL_AGES
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String              @id @default(uuid())
+  email        String              @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role                @default(USER)
+  addresses    Address[]
+  orders       Order[]
+  reviews      Review[]
+  eventRegs    EventRegistration[]
+  bookRequests BookRequest[]
+  cartItems    CartItem[]
+  wishlists    Wishlist[]
+  createdAt    DateTime            @default(now())
+}
+
+model Address {
+  id            String  @id @default(uuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label         String  @default("Rumah")
+  receiverName  String
+  receiverPhone String
+  streetAddress String
+  city          String
+  subdistrict   String
+  subdistrictId Int? // KiriminAja subdistrict ID
+  postalCode    String
+  isDefault     Boolean @default(false)
+}
+
+model Category {
+  id            String        @id @default(uuid())
+  name          String
+  slug          String        @unique
+  description   String?
+  badge         String?
+  sortOrder     Int           @default(0)
+  subCategories SubCategory[]
+  products      Product[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model SubCategory {
+  id          String    @id @default(uuid())
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  description String?
+  badge       String?
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([categoryId, slug])
+}
+
+model Product {
+  id            String         @id @default(uuid())
+  name          String
+  slug          String         @unique
+  description   String         @db.Text
+  price         Decimal        @db.Decimal(12, 2)
+  originalPrice Decimal?       @db.Decimal(12, 2) // Diskon / harga coret
+  authorOrBrand String? // e.g. "Board Book Kurasi", "Melissa & Doug"
+  stock         Int            @default(0)
+  weight        Int            @default(300) // Berat gram untuk kalkulasi ongkir KiriminAja
+  ageGroup      AgeGroup       @default(ALL_AGES)
+  category      String // e.g. "Books", "Wooden Toys", "Gift Hampers"
+  subCategory   String? // e.g. "Board Books", "Sensory Book", "Balok Kayu"
+  images        Json // Fallback JSON array URL foto produk
+  galleryImages ProductImage[] // Relasi galeri multi-image detail produk
+  rating        Decimal        @default(5.0) @db.Decimal(3, 1)
+  reviewsCount  Int            @default(0)
+  isFeatured    Boolean        @default(false)
+  isNewArrival  Boolean        @default(false)
+  isBestSeller  Boolean        @default(false)
+  features      Json? // Array keunggulan & spesifikasi produk
+
+  // Relasi opsional ke Category & SubCategory untuk CMS dinamis
+  categoryId     String?
+  categoryRel    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategoryId  String?
+  subCategoryRel SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+
+  reviews    Review[]
+  cartItems  CartItem[]
+  wishlists  Wishlist[]
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  caption   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName     String
+  location     String? // e.g. "Malang, Jawa Timur"
+  rating       Int      @default(5)
+  comment      String   @db.Text
+  variantInfo  String? // e.g. "Variasi: Board Book (Edisi Spesial)"
+  helpfulCount Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Wishlist {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  orderNumber  String      @unique
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  totalAmount  Decimal     @db.Decimal(12, 2)
+  shippingCost Decimal     @db.Decimal(12, 2)
+  grandTotal   Decimal     @db.Decimal(12, 2)
+  status       OrderStatus @default(PENDING_PAYMENT)
+
+  // Midtrans
+  snapToken     String?
+  paymentMethod String?
+  paidAt        DateTime?
+
+  // KiriminAja
+  courierCode     String? // jne, jnt, sicepat, anteraja
+  courierService  String? // REG, EZ
+  waybillNumber   String? // Nomor Resi
+  shippingAddress Json // Snapshot alamat pengiriman
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  price     Decimal @db.Decimal(12, 2)
+  quantity  Int     @default(1)
+}
+
+model Event {
+  id            String              @id @default(uuid())
+  title         String
+  slug          String              @unique
+  description   String              @db.Text
+  bannerImage   String
+  eventDate     DateTime
+  timeString    String // "10:00 - 12:00 WIB"
+  location      String // "Toko BabyShalls Malang"
+  price         Decimal             @default(0) @db.Decimal(12, 2)
+  quota         Int                 @default(20)
+  registrations EventRegistration[]
+  createdAt     DateTime            @default(now())
+}
+
+model EventRegistration {
+  id              String   @id @default(uuid())
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  participantName String
+  childName       String
+  childAge        String
+  whatsappNumber  String
+  status          String   @default("REGISTERED") // REGISTERED, CONFIRMED
+  createdAt       DateTime @default(now())
+}
+
+model BookRequest {
+  id              String   @id @default(uuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  title           String
+  authorPublisher String?
+  notes           String?  @db.Text
+  whatsappNumber  String
+  status          String   @default("PENDING") // PENDING, QUOTED, ORDERED, COMPLETED
+  adminNotes      String?  @db.Text
+  createdAt       DateTime @default(now())
+}
+
+model SiteContent {
+  key       String   @id // e.g. "announcement_bar", "hero_headline"
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
