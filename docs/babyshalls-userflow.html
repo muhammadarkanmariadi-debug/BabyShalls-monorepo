@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>BabyShalls - User Flow Diagram</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffffff;
+      font-family: 'Plus Jakarta Sans', 'Nunito', -apple-system, sans-serif;
+      color: #1e293b;
+      padding: 40px 30px;
+      width: 1560px;
+      margin: 0 auto;
+    }
+
+    /* Top Brand Header */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e2d5a;
+      color: #ffffff;
+      padding: 8px 24px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .brand-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+    .brand-header p {
+      font-size: 14px;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Flows Stack */
+    .flows-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Section Block */
+    .flow-section {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 28px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .flow-section-toko {
+      border: 2px solid #bfdbfe;
+    }
+    .flow-section-event {
+      border: 2px solid #bbf7d0;
+    }
+    .flow-section-admin {
+      border: 2px solid #fed7aa;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px dashed;
+    }
+    .flow-section-toko .section-header {
+      border-color: #bfdbfe;
+    }
+    .flow-section-event .section-header {
+      border-color: #bbf7d0;
+    }
+    .flow-section-admin .section-header {
+      border-color: #fed7aa;
+    }
+
+    .header-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .header-pill svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .pill-toko {
+      background: #cce3fe;
+      border: 1.5px solid #99c6fe;
+      color: #1e3a8a;
+    }
+    .pill-toko svg { fill: #1e3a8a; }
+
+    .pill-event {
+      background: #d1f4d9;
+      border: 1.5px solid #9de6b2;
+      color: #166534;
+    }
+    .pill-event svg { fill: #166534; }
+
+    .pill-admin {
+      background: #fedbbd;
+      border: 1.5px solid #fdbe90;
+      color: #9a3412;
+    }
+    .pill-admin svg { fill: #9a3412; }
+
+    .header-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 5px 12px;
+      border-radius: 8px;
+    }
+
+    /* Horizontal Flow Chain */
+    .steps-chain {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      position: relative;
+    }
+
+    .step-card {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      min-width: 0;
+    }
+
+    .step-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .step-number {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .step-title {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #0f172a;
+    }
+    .step-desc {
+      font-size: 10.5px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Arrow Connector */
+    .flow-arrow {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .flow-arrow svg {
+      width: 14px;
+      height: 14px;
+      fill: #94a3b8;
+    }
+
+    /* Theme 1: Toko Steps */
+    .flow-section-toko .step-card {
+      background: #edf5fe;
+      border: 1.5px solid #cce3fe;
+    }
+    .flow-section-toko .step-icon {
+      background: #cce3fe;
+    }
+    .flow-section-toko .step-icon svg { fill: #1e3a8a; }
+    .flow-section-toko .step-number { color: #2563eb; }
+
+    /* Theme 2: Event Swimlanes */
+    .event-swimlanes {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .lane-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .lane-label {
+      width: 140px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .lane-user {
+      background: #dcfce7;
+      border: 1.5px solid #86efac;
+      color: #166534;
+    }
+    .lane-admin {
+      background: #fed7aa;
+      border: 1.5px solid #fdba74;
+      color: #9a3412;
+    }
+
+    .flow-section-event .step-card-user {
+      background: #edf9f0;
+      border: 1.5px solid #d1f4d9;
+    }
+    .flow-section-event .step-card-user .step-icon {
+      background: #d1f4d9;
+    }
+    .flow-section-event .step-card-user .step-icon svg { fill: #166534; }
+    .flow-section-event .step-card-user .step-number { color: #16a34a; }
+
+    .flow-section-event .step-card-admin {
+      background: #fff4ea;
+      border: 1.5px solid #fedbbd;
+    }
+    .flow-section-event .step-card-admin .step-icon {
+      background: #fedbbd;
+    }
+    .flow-section-event .step-card-admin .step-icon svg { fill: #9a3412; }
+    .flow-section-event .step-card-admin .step-number { color: #ea580c; }
+
+    /* Theme 3: Admin Grid */
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .admin-column {
+      background: #fff8f1;
+      border: 1.5px solid #fedbbd;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .admin-col-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #9a3412;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid #fedbbd;
+    }
+    .admin-col-title svg {
+      width: 18px;
+      height: 18px;
+      fill: #9a3412;
+    }
+    .admin-mini-step {
+      background: #ffffff;
+      border: 1.2px solid #fedbbd;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-mini-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #fedbbd;
+      color: #9a3412;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .admin-mini-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .admin-mini-desc {
+      font-size: 10px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    /* Footer */
+    .footer-bar {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Brand Header -->
+  <div class="brand-header">
+    <div class="brand-badge">
+      <span>BABYSHALLS STORYBOOK & TOYS</span>
+    </div>
+    <h1>Diagram Alur Pengguna (User Flow) Terintegrasi</h1>
+    <p>Spesifikasi Alur Transaksi, Workshop Event QR, dan Manajemen Operasional Butik Malang</p>
+  </div>
+
+  <div class="flows-stack">
+
+    <!-- ============================================================== -->
+    <!-- ALUR 1: PEMBELIAN PRODUK (CUSTOMER)                             -->
+    <!-- ============================================================== -->
+    <div class="flow-section flow-section-toko">
+      <div class="section-header">
+        <div class="header-pill pill-toko">
+          <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span>1. Alur Pembelian Produk (Customer Storefront)</span>
+        </div>
+        <div class="header-tag">End-to-End Shopping Experience</div>
+      </div>
+
+      <div class="steps-chain">
+        
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            </div>
+            <span class="step-number">Langkah 01</span>
+          </div>
+          <span class="step-title">Jelajah & Filter</span>
+          <span class="step-desc">Pilih buku/mainan kurasi, filter usia (1-3 / 3+).</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M17.21 9l-4.38-6.56c-.19-.28-.51-.44-.83-.44-.32 0-.64.16-.83.44L6.79 9H2c-.55 0-1 .45-1 1 0 .09.01.18.04.27l2.54 9.27c.23.84 1 1.46 1.92 1.46h13c.92 0 1.69-.62 1.93-1.46l2.54-9.27c.03-.09.04-.18.04-.27 0-.55-.45-1-1-1h-4.8z"/></svg>
+            </div>
+            <span class="step-number">Langkah 02</span>
+          </div>
+          <span class="step-title">Keranjang (Cart)</span>
+          <span class="step-desc">Slide Cart Drawer, opsi Free Gift Wrapping kado.</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+            </div>
+            <span class="step-number">Langkah 03</span>
+          </div>
+          <span class="step-title">Pilih Alamat</span>
+          <span class="step-desc">Pilih multi-alamat tersimpan atau input alamat baru.</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 4 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H7v4H4c-1.1 0-2 .9-2 2v10h20V10c0-1.1-.9-2-2-2zm-9-2h4v2h-4V6z"/></svg>
+            </div>
+            <span class="step-number">Langkah 04</span>
+          </div>
+          <span class="step-title">Hitung Ongkir</span>
+          <span class="step-desc">API KiriminAja hitung ongkir otomatis dari Malang.</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 5 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </div>
+            <span class="step-number">Langkah 05</span>
+          </div>
+          <span class="step-title">Pilih Kurir</span>
+          <span class="step-desc">JNE, J&T, SiCepat, Anteraja (Reguler / Express).</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 6 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+            </div>
+            <span class="step-number">Langkah 06</span>
+          </div>
+          <span class="step-title">Bayar Midtrans</span>
+          <span class="step-desc">QRIS Instan, Transfer BCA, Mandiri, atau Kartu.</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 7 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <span class="step-number">Langkah 07</span>
+          </div>
+          <span class="step-title">Status Lunas</span>
+          <span class="step-desc">Webhook real-time otomatis mengubah status pesanan.</span>
+        </div>
+
+        <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+        <!-- Step 8 -->
+        <div class="step-card">
+          <div class="step-top">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            </div>
+            <span class="step-number">Langkah 08</span>
+          </div>
+          <span class="step-title">Pelacakan Resi</span>
+          <span class="step-desc">Lacak status paket real-time di halaman Akun Saya.</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- ALUR 2: WORKSHOP EVENT & SCAN QR                                -->
+    <!-- ============================================================== -->
+    <div class="flow-section flow-section-event">
+      <div class="section-header">
+        <div class="header-pill pill-event">
+          <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-6-8h4v4h-4z"/></svg>
+          <span>2. Alur Event & Scan QR (User & Admin Check-In)</span>
+        </div>
+        <div class="header-tag">Workshop On-Site di Butik BabyShalls Klojen, Malang</div>
+      </div>
+
+      <div class="event-swimlanes">
+
+        <!-- Lane User -->
+        <div class="lane-wrapper">
+          <div class="lane-label lane-user">
+            👤 Sisi Pelanggan<br/>(Ayah / Bunda)
+          </div>
+
+          <div class="steps-chain" style="flex:1;">
+            <div class="step-card step-card-user">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-7-7h5v5h-5z"/></svg></div>
+                <span class="step-number">User 01</span>
+              </div>
+              <span class="step-title">Pilih Jadwal Event</span>
+              <span class="step-desc">Melihat kuota & tema workshop kreatif anak.</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-user">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+                <span class="step-number">User 02</span>
+              </div>
+              <span class="step-title">Isi Form Peserta</span>
+              <span class="step-desc">Input nama anak, usia, pendamping, dan alergi.</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-user">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v3h-3zm-5 5h3v3h-3zm5 0h3v3h-3zm-5-5h3v3h-3z"/></svg></div>
+                <span class="step-number">User 03</span>
+              </div>
+              <span class="step-title">E-Tiket QR Terbit</span>
+              <span class="step-desc">Sistem buat tiket digital dengan QR pass instan.</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-user" style="background:#dcfce7; border-color:#86efac;">
+              <div class="step-top">
+                <div class="step-icon" style="background:#86efac;"><svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg></div>
+                <span class="step-number">Hari-H Butik</span>
+              </div>
+              <span class="step-title">Tunjukkan Layar HP</span>
+              <span class="step-desc">Tampilkan QR Code tiket di kasir / resepsionis toko.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lane Admin -->
+        <div class="lane-wrapper">
+          <div class="lane-label lane-admin">
+            🛡️ Sisi Admin<br/>(Staff Kasir Butik)
+          </div>
+
+          <div class="steps-chain" style="flex:1;">
+            <div class="step-card step-card-admin">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg></div>
+                <span class="step-number">Admin 01</span>
+              </div>
+              <span class="step-title">Login Admin via HP</span>
+              <span class="step-desc">Akses dashboard praktis langsung dari browser smartphone.</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-admin">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm6.5-6.5v3h-3v-3h3M19 5h-6v6h6V5zm-6 8h1.5v1.5H13V13zm1.5 1.5H16V16h-1.5v-1.5zM16 13h1.5v1.5H16V13zm-3 3h1.5v1.5H13V16zm1.5 1.5H16V19h-1.5v-1.5zM16 16h1.5v1.5H16V16zm1.5-1.5H19V16h-1.5v-1.5zm0 3H19V19h-1.5v-1.5zM22 7h-2V4h-3V2h5v5zm0 15h-5v-2h3v-3h2v5zM2 22h5v-2H4v-3H2v5zM2 2h5v2H4v3H2V2z"/></svg></div>
+                <span class="step-number">Admin 02</span>
+              </div>
+              <span class="step-title">Buka Menu Scan QR</span>
+              <span class="step-desc">Aktifkan kamera web scanner tanpa install aplikasi APK.</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-admin">
+              <div class="step-top">
+                <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+                <span class="step-number">Admin 03</span>
+              </div>
+              <span class="step-title">Scan Layar HP Peserta</span>
+              <span class="step-desc">Kamera membaca QR unik tiket (anti-tiket ganda).</span>
+            </div>
+
+            <div class="flow-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+
+            <div class="step-card step-card-admin" style="background:#fed7aa; border-color:#fdba74;">
+              <div class="step-top">
+                <div class="step-icon" style="background:#fdba74;"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div>
+                <span class="step-number">Validasi</span>
+              </div>
+              <span class="step-title">Status: Check-In Sukses</span>
+              <span class="step-desc">Sistem mencatat kehadiran, si kecil siap workshop!</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- ALUR 3: MANAJEMEN ADMIN (PESANAN & KONTEN)                      -->
+    <!-- ============================================================== -->
+    <div class="flow-section flow-section-admin">
+      <div class="section-header">
+        <div class="header-pill pill-admin">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+          <span>3. Alur Manajemen Admin (Operasional Pesanan, CMS & Promosi)</span>
+        </div>
+        <div class="header-tag">Semi-CMS Control Hub BabyShalls</div>
+      </div>
+
+      <div class="admin-grid">
+
+        <!-- Column A: Pesanan -->
+        <div class="admin-column">
+          <div class="admin-col-title">
+            <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H7v4H4c-1.1 0-2 .9-2 2v10h20V10c0-1.1-.9-2-2-2zm-9-2h4v2h-4V6z"/></svg>
+            <span>Alur Pemrosesan Pesanan</span>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">1</div>
+            <div>
+              <div class="admin-mini-text">Pesanan Masuk (Lunas)</div>
+              <div class="admin-mini-desc">Cek data pengiriman, item kado, dan ucapan.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">2</div>
+            <div>
+              <div class="admin-mini-text">Kemas Buku & Kado Cantik</div>
+              <div class="admin-mini-desc">Bungkus kertas kado pastel, pita, & bubble wrap.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">3</div>
+            <div>
+              <div class="admin-mini-text">Input Nomor Resi Kurir</div>
+              <div class="admin-mini-desc">Admin memasukkan nomor resi ekspedisi Malang.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">4</div>
+            <div>
+              <div class="admin-mini-text">Status Berubah 'Dikirim'</div>
+              <div class="admin-mini-desc">Pelanggan menerima notifikasi resi otomatis.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column B: Konten / CMS -->
+        <div class="admin-column">
+          <div class="admin-col-title">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <span>Manajemen Konten (Semi-CMS)</span>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">1</div>
+            <div>
+              <div class="admin-mini-text">Ubah Banner Promo Beranda</div>
+              <div class="admin-mini-desc">Ganti headline, sub-headline, dan promo banner.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">2</div>
+            <div>
+              <div class="admin-mini-text">Kelola Teks About & FAQ</div>
+              <div class="admin-mini-desc">Perbarui cerita toko, jam buka, & pertanyaan umum.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">3</div>
+            <div>
+              <div class="admin-mini-text">Update Katalog & Stok Buku</div>
+              <div class="admin-mini-desc">Tambah judul buku baru, harga, & stok real-time.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">4</div>
+            <div>
+              <div class="admin-mini-text">Kurasi Layanan Jastip Buku</div>
+              <div class="admin-mini-desc">Review form titip buku impor yang masuk dari user.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column C: Laporan & Promosi -->
+        <div class="admin-column">
+          <div class="admin-col-title">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+            <span>Laporan CSV & Promosi</span>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">1</div>
+            <div>
+              <div class="admin-mini-text">Export Penjualan ke CSV</div>
+              <div class="admin-mini-desc">Unduh rekap transaksi untuk pembukuan Excel.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">2</div>
+            <div>
+              <div class="admin-mini-text">Generate Shortlink Promo</div>
+              <div class="admin-mini-desc">Bikin link pendek khusus event & campaign Instagram.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">3</div>
+            <div>
+              <div class="admin-mini-text">Generate QR Code WhatsApp</div>
+              <div class="admin-mini-desc">Cetak QR flyer kasir untuk konsultasi kado via WA.</div>
+            </div>
+          </div>
+
+          <div class="admin-mini-step">
+            <div class="admin-mini-num">4</div>
+            <div>
+              <div class="admin-mini-text">Broadcast Pengingat Workshop</div>
+              <div class="admin-mini-desc">Kirim template pesan pengingat ke peserta H-1.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bar">
+    BabyShalls Storybook &bull; Kota Malang, Jawa Timur &bull; Single-Store D2C Architecture &bull; 2026
+  </div>
+
+</body>
+</html>
