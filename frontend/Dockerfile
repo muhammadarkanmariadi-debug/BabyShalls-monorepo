@@ -51,3 +51,4 @@ EXPOSE 3000
 
 # Standalone runner launcher (supports both root and nested folder resolution)
 CMD ["sh", "-c", "if [ -f server.js ]; then node server.js; elif [ -f frontend/server.js ]; then node frontend/server.js; else node .next/standalone/server.js; fi"]
+
