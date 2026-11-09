@@ -164,11 +164,11 @@ function EventRegisterContent() {
                   </div>
                 </div>
 
-                {/* Body: Details (Left) + QR Code (Right) */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                {/* Body: Details + Center/Right QR Code */}
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
                   
                   {/* Left Column: Info */}
-                  <div className="sm:col-span-7 space-y-2.5 text-[11px]">
+                  <div className="sm:col-span-7 space-y-2.5 text-[11px] order-2 sm:order-1">
                     <div>
                       <span className="text-[#8A6A55] block">Peserta (Anak):</span>
                       <strong className="text-[#3E2415] text-xs font-bold">
@@ -200,14 +200,21 @@ function EventRegisterContent() {
                     </div>
                   </div>
 
-                  {/* Right Column: Prominent QR Code */}
-                  <div className="sm:col-span-5 flex flex-col items-center justify-center p-3 rounded-xl bg-white border border-[#EEDBC9] shadow-2xs text-center">
-                    <div className="w-32 h-32 flex items-center justify-center bg-white p-1">
-                      <TicketQRCode code={registrationCode || 'BS-EVT'} size={120} />
+                  {/* Right Column: Prominent QR Code Pass */}
+                  <div className="sm:col-span-5 flex flex-col items-center justify-center p-4 rounded-2xl bg-white border-2 border-[#EEDBC9] shadow-xs text-center order-1 sm:order-2">
+                    <span className="text-[10px] font-bold text-[#709154] uppercase tracking-wider mb-1 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-[#709154]" />
+                      <span>Tiket Siap Scan</span>
+                    </span>
+                    <div className="w-34 h-34 flex items-center justify-center bg-white p-1 rounded-xl border border-[#F0E4D7]">
+                      <TicketQRCode code={registrationCode || 'BS-EVT'} size={135} />
                     </div>
-                    <span className="text-[10px] font-bold text-[#8A6A55] mt-1.5 flex items-center gap-1">
-                      <QrCode className="w-3 h-3 text-[#DA7A5B]" />
-                      <span>Scan di Kasir Toko</span>
+                    <span className="text-[11px] font-bold text-[#3E2415] mt-2 flex items-center gap-1">
+                      <QrCode className="w-3.5 h-3.5 text-[#DA7A5B]" />
+                      <span>Scan di Meja Kasir</span>
+                    </span>
+                    <span className="text-[9px] text-[#8A6A55] mt-0.5">
+                      Bisa di-screenshot di HP
                     </span>
                   </div>
 

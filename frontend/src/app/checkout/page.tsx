@@ -2,7 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, CreditCard, Gift, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  CreditCard,
+  Gift,
+  ArrowLeft,
+  CheckCircle2,
+  Tag,
+  Check,
+  X,
+  Sparkles,
+  Ticket,
+} from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { formatIDR, formatWeight } from '../../lib/utils';
 
@@ -21,6 +32,40 @@ const SAMPLE_COURIERS: CourierOption[] = [
   { id: 'kiriminaja-pos', courierName: 'Pos Indonesia', service: 'Kilat Khusus', etd: '2-3 Hari', cost: 16000 },
 ];
 
+interface CouponData {
+  code: string;
+  title: string;
+  description: string;
+  type: 'percent' | 'nominal';
+  value: number; // percent value (e.g. 15) or nominal (e.g. 20000)
+  maxDiscount?: number;
+}
+
+const AVAILABLE_VOUCHERS: CouponData[] = [
+  {
+    code: 'BABYNEW',
+    title: 'Diskon 15% Bunda Baru',
+    description: 'Potongan 15% (Maks. Rp 50.000) tanpa minimal belanja',
+    type: 'percent',
+    value: 15,
+    maxDiscount: 50000,
+  },
+  {
+    code: 'MALANGCOZY',
+    title: 'Potongan Rp 20.000',
+    description: 'Voucher spesial Butik Malang potongan Rp 20.000',
+    type: 'nominal',
+    value: 20000,
+  },
+  {
+    code: 'ONGKIRHEMAT',
+    title: 'Hemat Ongkir Rp 10.000',
+    description: 'Potongan subsidi kurir KiriminAja Rp 10.000',
+    type: 'nominal',
+    value: 10000,
+  },
+];
+
 export default function CheckoutPage() {
   const { items, totalItems, subtotal, totalWeightInGrams, clearCart } = useCart();
 
@@ -36,12 +81,58 @@ export default function CheckoutPage() {
   const [isGiftWrapping, setIsGiftWrapping] = useState(true);
   const [giftNote, setGiftNote] = useState('');
 
+  // Discount Voucher State
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<CouponData | null>(null);
+  const [couponError, setCouponError] = useState('');
+  const [couponSuccess, setCouponSuccess] = useState('');
+
   // Payment State
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const shippingCost = items.length > 0 ? selectedCourier.cost : 0;
-  const grandTotal = subtotal + shippingCost;
+
+  // Calculate discount amount
+  const calculateDiscount = () => {
+    if (!appliedVoucher) return 0;
+    if (appliedVoucher.type === 'percent') {
+      const discount = Math.round((subtotal * appliedVoucher.value) / 100);
+      return appliedVoucher.maxDiscount ? Math.min(discount, appliedVoucher.maxDiscount) : discount;
+    }
+    return Math.min(appliedVoucher.value, subtotal);
+  };
+
+  const discountAmount = calculateDiscount();
+  const grandTotal = Math.max(0, subtotal - discountAmount + shippingCost);
+
+  const handleApplyCoupon = (codeToApply?: string) => {
+    const rawCode = (codeToApply || couponInput).trim().toUpperCase();
+    setCouponError('');
+    setCouponSuccess('');
+
+    if (!rawCode) {
+      setCouponError('Silakan masukkan kode voucher diskon.');
+      return;
+    }
+
+    const matched = AVAILABLE_VOUCHERS.find((v) => v.code === rawCode);
+    if (!matched) {
+      setCouponError(`Kode "${rawCode}" tidak ditemukan atau sudah kadaluarsa.`);
+      return;
+    }
+
+    setAppliedVoucher(matched);
+    setCouponInput(matched.code);
+    setCouponSuccess(`Voucher ${matched.code} berhasil dipasang!`);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedVoucher(null);
+    setCouponInput('');
+    setCouponError('');
+    setCouponSuccess('');
+  };
 
   const handlePayMidtrans = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,11 +166,24 @@ export default function CheckoutPage() {
           <div className="p-4 bg-[#FCF6EC] rounded-2xl border border-[#EEDBC9] text-xs text-left space-y-1.5 text-[#6B3F2A]">
             <div>Pengiriman: <strong>{selectedCourier.courierName} ({selectedCourier.service})</strong></div>
             <div>Origin: <strong>Toko BabyShalls Malang, Jawa Timur</strong></div>
-            <div>Total Dibayar: <strong className="text-[#DA7A5B]">{formatIDR(grandTotal)}</strong></div>
+            {discountAmount > 0 && (
+              <div className="text-[#709154] font-bold">
+                Hemat Voucher ({appliedVoucher?.code}): -{formatIDR(discountAmount)}
+              </div>
+            )}
+            <div className="pt-1 border-t border-[#EEDBC9]">
+              Total Dibayar: <strong className="text-[#DA7A5B] font-bold text-sm">{formatIDR(grandTotal)}</strong>
+            </div>
           </div>
           <Link
-            href="/"
+            href="/account"
             className="block w-full py-3 rounded-full bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-sm shadow-subtle transition-all"
+          >
+            Lacak di Halaman Pesanan Saya
+          </Link>
+          <Link
+            href="/"
+            className="block w-full text-xs font-bold text-[#8FA87E] hover:text-[#502E1E] transition-colors"
           >
             Kembali ke Beranda
           </Link>
@@ -121,67 +225,76 @@ export default function CheckoutPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Form Info (7 cols) */}
+          {/* Left Column: Forms (7 cols) */}
           <form onSubmit={handlePayMidtrans} className="lg:col-span-7 space-y-6">
             
-            {/* Section 1: Alamat Penerima */}
+            {/* 1. Recipient Details */}
             <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[24px] p-6 shadow-xs space-y-4">
-              <h2 className="font-serif text-lg font-bold text-[#502E1E] flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#FFE4D0] text-[#DA7A5B] text-xs font-black flex items-center justify-center">1</span>
-                <span>Alamat Pengiriman Penerima</span>
+              <h2 className="font-serif text-lg font-bold text-[#502E1E] border-b border-[#EEDBC9] pb-2">
+                1. Alamat Pengiriman
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#502E1E] mb-1">Nama Penerima *</label>
+                  <label className="block text-xs font-bold text-[#502E1E] mb-1">
+                    Nama Penerima *
+                  </label>
                   <input
                     type="text"
                     required
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
-                    placeholder="Contoh: Amanda Rahma"
+                    placeholder="Contoh: Bunda Amanda Rahma"
                     className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-[#502E1E] mb-1">Nomor WhatsApp Aktif *</label>
+                  <label className="block text-xs font-bold text-[#502E1E] mb-1">
+                    Nomor WhatsApp Penerima *
+                  </label>
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Contoh: 081234567890"
+                    placeholder="081234567890"
                     className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[#502E1E] mb-1">Alamat Lengkap (Jalan, No Rumah, RT/RW, Kecamatan) *</label>
-                <textarea
-                  required
-                  rows={2}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Jl. Merbabu No. 15, Oro-oro Dowo, Klojen..."
-                  className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
-                />
-              </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-[#502E1E] mb-1">
+                    Alamat Lengkap (Jalan, RT/RW, No Rumah, Kelurahan, Kecamatan) *
+                  </label>
+                  <textarea
+                    rows={3}
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Jl. Merbabu No. 15, RT 02 / RW 05, Klojen, Kota Malang"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
+                  />
+                </div>
 
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#502E1E] mb-1">Kota / Kabupaten *</label>
+                  <label className="block text-xs font-bold text-[#502E1E] mb-1">
+                    Kota / Kabupaten *
+                  </label>
                   <input
                     type="text"
                     required
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="Kota Malang"
+                    placeholder="Kota Malang / Surabaya / Jakarta"
                     className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-[#502E1E] mb-1">Kode Pos</label>
+                  <label className="block text-xs font-bold text-[#502E1E] mb-1">
+                    Kode Pos
+                  </label>
                   <input
                     type="text"
                     value={postalCode}
@@ -193,49 +306,62 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Section 2: Pilihan Kurir KiriminAja */}
+            {/* 2. Courier Selection (Origin Malang) */}
             <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[24px] p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="font-serif text-lg font-bold text-[#502E1E] flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-[#FFE4D0] text-[#DA7A5B] text-xs font-black flex items-center justify-center">2</span>
-                  <span>Opsi Kurir KiriminAja (Origin: Kota Malang)</span>
+              <div className="flex items-center justify-between border-b border-[#EEDBC9] pb-2">
+                <h2 className="font-serif text-lg font-bold text-[#502E1E]">
+                  2. Pilihan Kurir (KiriminAja Malang)
                 </h2>
-                <span className="text-xs font-bold text-[#8FA87E]">
-                  Total: {formatWeight(totalWeightInGrams)}
+                <span className="text-[11px] font-bold text-[#DA7A5B] bg-[#FFE4D0] px-2.5 py-0.5 rounded-full">
+                  Total Berat: {formatWeight(totalWeightInGrams)}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {SAMPLE_COURIERS.map((c) => (
-                  <div
-                    key={c.id}
-                    onClick={() => setSelectedCourier(c)}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedCourier.id === c.id
-                        ? 'border-[#DA7A5B] bg-[#FFE4D0]/40 shadow-xs'
-                        : 'border-[#EEDBC9] bg-white hover:bg-[#FCF6EC]'
+                {SAMPLE_COURIERS.map((courier) => (
+                  <label
+                    key={courier.id}
+                    className={`flex items-start justify-between p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                      selectedCourier.id === courier.id
+                        ? 'border-[#DA7A5B] bg-[#FFF2EA] shadow-xs'
+                        : 'border-[#EEDBC9] bg-white hover:border-[#F6B79B]'
                     }`}
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex items-start gap-2.5">
+                      <input
+                        type="radio"
+                        name="courier"
+                        checked={selectedCourier.id === courier.id}
+                        onChange={() => setSelectedCourier(courier)}
+                        className="mt-1 text-[#DA7A5B] focus:ring-[#DA7A5B]"
+                      />
                       <div>
-                        <div className="font-bold text-xs text-[#502E1E]">{c.courierName}</div>
-                        <div className="text-[11px] text-[#8FA87E]">{c.service} • {c.etd}</div>
+                        <span className="font-bold text-xs text-[#502E1E] block">
+                          {courier.courierName}
+                        </span>
+                        <span className="text-[11px] text-[#8FA87E]">
+                          {courier.service} • Est: {courier.etd}
+                        </span>
                       </div>
-                      <div className="font-bold text-xs text-[#DA7A5B]">{formatIDR(c.cost)}</div>
                     </div>
-                  </div>
+                    <span className="font-bold text-xs text-[#DA7A5B]">
+                      {formatIDR(courier.cost)}
+                    </span>
+                  </label>
                 ))}
               </div>
+              <p className="text-[11px] text-[#8FA87E]">
+                📍 Dikirim langsung dari Butik BabyShalls (Jl. Cempaka No. 12, Klojen, Kota Malang).
+              </p>
             </div>
 
-            {/* Section 3: Gift Wrapping & Kartu Ucapan */}
+            {/* 3. Free Gift Wrapping Feature */}
             <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[24px] p-6 shadow-xs space-y-3">
-              <h2 className="font-serif text-lg font-bold text-[#502E1E] flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#FFE4D0] text-[#DA7A5B] text-xs font-black flex items-center justify-center">3</span>
-                <span>Kemasan Kado & Kartu Ucapan (Gratis)</span>
+              <h2 className="font-serif text-lg font-bold text-[#502E1E] border-b border-[#EEDBC9] pb-2">
+                3. Layanan Hadiah & Bungkus Kado
               </h2>
 
-              <label className="flex items-center gap-2 text-xs font-bold text-[#502E1E] cursor-pointer">
+              <label className="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-[#502E1E]">
                 <input
                   type="checkbox"
                   checked={isGiftWrapping}
@@ -243,7 +369,7 @@ export default function CheckoutPage() {
                   className="rounded text-[#DA7A5B] focus:ring-[#DA7A5B]"
                 />
                 <Gift className="w-4 h-4 text-[#DA7A5B]" />
-                <span>Bungkus sebagai kado dengan kertas & pita cantik BabyShalls</span>
+                <span>Bungkus sebagai kado dengan kertas & pita cantik BabyShalls (Gratis)</span>
               </label>
 
               {isGiftWrapping && (
@@ -294,6 +420,87 @@ export default function CheckoutPage() {
               ))}
             </div>
 
+            {/* Voucher / Kode Diskon Section */}
+            <div className="pt-3 border-t border-[#EEDBC9] space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#502E1E] flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#DA7A5B]" />
+                  <span>Voucher & Kode Diskon</span>
+                </span>
+                {appliedVoucher && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-[11px] text-[#C46749] hover:underline flex items-center gap-1 font-semibold"
+                  >
+                    <X className="w-3 h-3" />
+                    <span>Hapus</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Input & Apply Button */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => {
+                      setCouponInput(e.target.value.toUpperCase());
+                      setCouponError('');
+                    }}
+                    placeholder="Masukkan kode voucher..."
+                    className="w-full px-3 py-2 text-xs uppercase bg-white border border-[#EEDBC9] rounded-xl text-[#3E2415] focus:outline-none focus:border-[#DA7A5B] font-mono font-bold tracking-wider"
+                  />
+                  {appliedVoucher && (
+                    <span className="absolute right-2.5 top-2.5 text-[#709154]">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleApplyCoupon()}
+                  className="px-4 py-2 rounded-xl bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-xs transition-colors shadow-2xs"
+                >
+                  Terapkan
+                </button>
+              </div>
+
+              {/* Feedback messages */}
+              {couponError && (
+                <p className="text-[11px] text-red-600 font-semibold">{couponError}</p>
+              )}
+              {couponSuccess && (
+                <p className="text-[11px] text-[#709154] font-semibold flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  <span>{couponSuccess}</span>
+                </p>
+              )}
+
+              {/* Clickable Quick Voucher Recommendations */}
+              {!appliedVoucher && (
+                <div className="pt-1 space-y-1">
+                  <span className="text-[10px] text-[#8FA87E] block font-bold uppercase tracking-wider">
+                    Voucher Rekomendasi Hari Ini:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {AVAILABLE_VOUCHERS.map((v) => (
+                      <button
+                        key={v.code}
+                        type="button"
+                        onClick={() => handleApplyCoupon(v.code)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FCF6EC] hover:bg-[#FFE4D0] border border-[#EEDBC9] text-[10px] font-bold text-[#DA7A5B] transition-colors"
+                      >
+                        <Ticket className="w-3 h-3" />
+                        <span>{v.code} ({v.title})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Breakdown costs */}
             <div className="pt-3 border-t border-[#EEDBC9] space-y-2 text-xs text-[#6B3F2A]">
               <div className="flex justify-between">
@@ -304,6 +511,12 @@ export default function CheckoutPage() {
                 <span>Ongkir KiriminAja ({selectedCourier.courierName}):</span>
                 <span className="font-bold">{formatIDR(shippingCost)}</span>
               </div>
+              {appliedVoucher && discountAmount > 0 && (
+                <div className="flex justify-between text-[#709154] font-bold">
+                  <span>Diskon Voucher ({appliedVoucher.code}):</span>
+                  <span>-{formatIDR(discountAmount)}</span>
+                </div>
+              )}
               {isGiftWrapping && (
                 <div className="flex justify-between text-[#709154]">
                   <span>Gift Wrapping & Kartu Ucapan:</span>
@@ -323,7 +536,7 @@ export default function CheckoutPage() {
               className="hidden lg:flex w-full py-4 px-6 rounded-full bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-sm shadow-subtle hover:shadow-card items-center justify-center gap-2 transition-all disabled:opacity-50"
             >
               <CreditCard className="w-4 h-4" />
-              <span>{isProcessing ? 'Menghubungkan Midtrans...' : 'Bayar via Midtrans Snap'}</span>
+              <span>{isProcessing ? 'Menghubungkan Midtrans...' : `Bayar via Midtrans Snap (${formatIDR(grandTotal)})`}</span>
             </button>
 
             {/* Security Notice */}
@@ -339,4 +552,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
