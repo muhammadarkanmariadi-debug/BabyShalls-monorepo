@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffdf9;
+  --foreground: #2c2725;
+  --color-terracotta: #e07a5f;
+  --color-terracotta-dark: #cc654b;
+  --color-terracotta-light: #fde8e1;
+  --color-pastel-peach: #fbe7e3;
+  --color-pastel-sage: #e2ece0;
+  --color-pastel-sage-border: #c7dac3;
+  --color-pastel-butter: #fdf6e2;
+  --color-cream: #fffdf9;
+  --color-linen: #ede8e1;
+  --color-charcoal: #2c2725;
+  --color-slate: #68625d;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #fffdf9;
+    color: #2c2725;
+  }
+
+  body {
+    background-color: #fffdf9;
+    color: #2c2725;
+    font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), 'Poppins', sans-serif;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Ensure all font utilities point to Poppins */
+.font-sans,
+.font-serif {
+  font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Minimalist scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fffdf9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ede8e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e07a5f;
+}

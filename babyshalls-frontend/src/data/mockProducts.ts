@@ -1,0 +1,428 @@
+import { Product, WorkshopEvent } from '../types';
+
+export const mockProducts: Product[] = [
+  {
+    id: 'the-very-hungry-caterpillar',
+    title: 'The Very Hungry Caterpillar',
+    author: 'Eric Carle',
+    category: 'Board Books',
+    ageGroup: '0–2 Years',
+    price: 145000,
+    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'The world-famous classic featuring interactive die-cut holes that follow a little caterpillar on its transformation into a butterfly. Printed on heavy board with water-resistant rounded pages ideal for babies.',
+    inStock: true,
+    featured: true,
+    badge: 'Bestseller',
+    pages: '26 pages',
+    publisher: 'World of Eric Carle / Puffin',
+    language: 'English',
+    moralTheme: 'Nature & Healthy Eating',
+    format: 'Board Book',
+    isbn: '978-0-399-22690-8',
+    dimensions: '18 x 13 x 1.5 cm',
+    weight: '280g',
+    publicationYear: '1969'
+  },
+  {
+    id: 'guess-how-much-i-love-you',
+    title: 'Guess How Much I Love You',
+    author: 'Sam McBratney',
+    category: 'Board Books',
+    ageGroup: '0–2 Years',
+    price: 165000,
+    coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'A timeless bedtime story illustrating the unconditional bond between Little Nutbrown Hare and Big Nutbrown Hare. Warm watercolor illustrations by Anita Jeram that calm and soothe.',
+    inStock: true,
+    featured: true,
+    badge: 'Classic',
+    pages: '24 pages',
+    publisher: 'Walker Books UK',
+    language: 'English',
+    moralTheme: 'Family & Unconditional Love',
+    format: 'Padded Board Book',
+    isbn: '978-1-406-30040-6',
+    dimensions: '19 x 15 x 1.8 cm',
+    weight: '310g',
+    publicationYear: '1994'
+  },
+  {
+    id: 'dear-zoo',
+    title: 'Dear Zoo (A Lift-the-Flap Book)',
+    author: 'Rod Campbell',
+    category: 'Board Books',
+    ageGroup: '0–2 Years',
+    price: 155000,
+    coverImage: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'A boy writes to the zoo asking for a pet, but each animal sent is too big, too fierce, or too grumpy! Sturdy flaps on every spread encourage sensory discovery and animal recognition.',
+    inStock: true,
+    featured: false,
+    badge: 'Popular',
+    pages: '18 pages',
+    publisher: 'Macmillan Children’s Books',
+    language: 'English',
+    moralTheme: 'Curiosity & Animals',
+    format: 'Lift-the-Flap Board Book',
+    isbn: '978-0-230-74772-2',
+    dimensions: '17 x 17 x 1.4 cm',
+    weight: '260g',
+    publicationYear: '1982'
+  },
+  {
+    id: 'the-boy-the-mole-the-fox-and-the-horse',
+    title: 'The Boy, The Mole, The Fox and The Horse',
+    author: 'Charlie Mackesy',
+    category: 'Picture Books',
+    ageGroup: '6+ Years',
+    price: 220000,
+    coverImage: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'A modern classic celebrating courage, vulnerability, friendship, and unconditional kindness. Beautiful hand-drawn illustrations and calligraphy that resonate with children and adults alike.',
+    inStock: true,
+    featured: true,
+    badge: 'Staff Pick',
+    pages: '128 pages',
+    publisher: 'Ebury Press / Penguin Random House',
+    language: 'English',
+    moralTheme: 'Courage, Empathy & Kindness',
+    format: 'Hardcover',
+    isbn: '978-1-529-10510-0',
+    dimensions: '21 x 16 x 2.2 cm',
+    weight: '520g',
+    publicationYear: '2019'
+  },
+  {
+    id: 'where-the-wild-things-are',
+    title: 'Where the Wild Things Are',
+    author: 'Maurice Sendak',
+    category: 'Picture Books',
+    ageGroup: '3–5 Years',
+    price: 175000,
+    coverImage: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Max sails away to a land of roaring wild things and becomes king, before realizing the best place to be is where someone loves you best of all. Caldecott Medal Winner.',
+    inStock: true,
+    featured: false,
+    badge: 'Award Winner',
+    pages: '48 pages',
+    publisher: 'HarperCollins',
+    language: 'English',
+    moralTheme: 'Imagination & Emotional Regulation',
+    format: 'Hardcover',
+    isbn: '978-0-06-025492-6',
+    dimensions: '23 x 20 x 1.2 cm',
+    weight: '410g',
+    publicationYear: '1963'
+  },
+  {
+    id: 'were-going-on-a-bear-hunt',
+    title: 'We’re Going on a Bear Hunt',
+    author: 'Michael Rosen',
+    category: 'Board Books',
+    ageGroup: '0–2 Years',
+    price: 155000,
+    coverImage: 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'An iconic rhyming read-aloud journey through swishy grass, thick oozy mud, and a swirling whirling snowstorm. Illustrated by Helen Oxenbury with gentle watercolor art.',
+    inStock: true,
+    featured: false,
+    badge: 'Read-Aloud',
+    pages: '36 pages',
+    publisher: 'Walker Books',
+    language: 'English',
+    moralTheme: 'Adventure & Resilience',
+    format: 'Board Book',
+    isbn: '978-0-744-52323-2',
+    dimensions: '18 x 16 x 1.6 cm',
+    weight: '320g',
+    publicationYear: '1989'
+  },
+  {
+    id: 'press-here',
+    title: 'Press Here',
+    author: 'Hervé Tullet',
+    category: 'Picture Books',
+    ageGroup: '3–5 Years',
+    price: 185000,
+    coverImage: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Press the single yellow dot on the cover and turn the page to embark on an imaginative interactive voyage. An extraordinary celebration of screen-free tactile magic.',
+    inStock: true,
+    featured: true,
+    badge: 'Interactive',
+    pages: '56 pages',
+    publisher: 'Chronicle Books',
+    language: 'English',
+    moralTheme: 'Interactive Thinking & Discovery',
+    format: 'Hardcover',
+    isbn: '978-0-811-87954-5',
+    dimensions: '22 x 22 x 1.2 cm',
+    weight: '380g',
+    publicationYear: '2011'
+  },
+  {
+    id: 'brown-bear-brown-bear',
+    title: 'Brown Bear, Brown Bear, What Do You See?',
+    author: 'Bill Martin Jr. & Eric Carle',
+    category: 'Board Books',
+    ageGroup: '0–2 Years',
+    price: 145000,
+    coverImage: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'A rhythmic, chant-like text pairing simple color and animal recognition with vibrant collage illustrations. Essential for toddler speech development and phonological awareness.',
+    inStock: true,
+    featured: false,
+    badge: 'New',
+    pages: '28 pages',
+    publisher: 'Henry Holt and Co.',
+    language: 'English',
+    moralTheme: 'Colors, Rhythm & Patterns',
+    format: 'Board Book',
+    isbn: '978-0-805-04790-5',
+    dimensions: '18 x 13 x 1.5 cm',
+    weight: '270g',
+    publicationYear: '1967'
+  },
+  {
+    id: 'montessori-wooden-rainbow-stacker',
+    title: '12-Piece Wooden Rainbow Stacker',
+    author: 'Little Forest Studio',
+    category: 'Educational Toys',
+    ageGroup: '0–2 Years',
+    price: 249000,
+    coverImage: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Crafted from solid beechwood harvested sustainably. Finished with non-toxic, certified waterborne stains preserving the natural wood grain. Encourages open-ended spatial creativity.',
+    inStock: true,
+    featured: true,
+    badge: 'Montessori',
+    pages: '12 Wooden Arches',
+    publisher: 'Little Forest Workshop',
+    language: 'Non-verbal / Open-ended',
+    moralTheme: 'Motor Skills & Architectural Play',
+    format: 'Natural Beechwood',
+    dimensions: '36 x 18 x 7 cm',
+    weight: '1.2kg'
+  },
+  {
+    id: 'montessori-sensory-geometric-maze',
+    title: 'Montessori Sensory Geometric Maze',
+    author: 'Kiko Playthings',
+    category: 'Educational Toys',
+    ageGroup: '3–5 Years',
+    price: 210000,
+    coverImage: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Solid mahogany base with smooth powder-coated tracks and hardwood beads. Promotes finger grip strength, patience, and visual-spatial problem solving.',
+    inStock: true,
+    featured: false,
+    badge: 'Sensory',
+    pages: '1 Maze Board + 12 Shapes',
+    publisher: 'Kiko Artisan Play',
+    language: 'Spatial Learning',
+    moralTheme: 'Fine Motor Control & Patience',
+    format: 'Solid Mahogany & Wire',
+    dimensions: '22 x 22 x 18 cm',
+    weight: '620g'
+  },
+  {
+    id: 'junior-naturalist-explorer-kit',
+    title: 'Junior Naturalist Field Explorer Kit',
+    author: 'Tidar Woodcraft',
+    category: 'Educational Toys',
+    ageGroup: '6+ Years',
+    price: 175000,
+    coverImage: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Field set includes turned-wood binoculars, wooden rotating compass, magnifying glass with child-safe glass lens, and a linen-bound pocket notebook.',
+    inStock: true,
+    featured: false,
+    badge: 'Outdoor',
+    pages: '4 Tools + 40-page journal',
+    publisher: 'Tidar Woodcraft Malang',
+    language: 'Bilingual Field Journal',
+    moralTheme: 'Environmental Discovery',
+    format: 'Pine Wood & Canvas Pouch',
+    dimensions: '24 x 18 x 8 cm',
+    weight: '480g'
+  },
+  {
+    id: 'solid-wood-phonics-alphabet-blocks',
+    title: 'Solid Wood Phonics Alphabet Blocks',
+    author: 'BabyShalls Early Play',
+    category: 'Educational Toys',
+    ageGroup: '3–5 Years',
+    price: 195000,
+    coverImage: 'https://images.unsplash.com/photo-1560421683-680695856098?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1560421683-680695856098?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: '30 smooth cube blocks with deeply embossed uppercase letters, lowercase phonics, numbers, and minimal animal glyphs. Packed in a slide-lid wooden storage tray.',
+    inStock: true,
+    featured: false,
+    badge: 'Essential',
+    pages: '30 Solid Blocks + Tray',
+    publisher: 'BabyShalls Workshop',
+    language: 'Phonics & Numeracy',
+    moralTheme: 'Early Literacy',
+    format: 'Natural Rubberwood',
+    dimensions: '25 x 20 x 5 cm',
+    weight: '900g'
+  },
+  {
+    id: 'welcome-baby-curated-gift-hamper',
+    title: 'The Welcome Baby Gift Hamper',
+    author: 'BabyShalls Curated Gifts',
+    category: 'Hampers',
+    ageGroup: '0–2 Years',
+    price: 450000,
+    coverImage: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'A curated gift package including an organic bamboo swaddle, a high-contrast sensory soft book, a food-grade beechwood rattle, and a letterpress welcome card.',
+    inStock: true,
+    featured: true,
+    badge: 'Gift Suite',
+    pages: '1 Swaddle + 1 Book + 1 Rattle + Card',
+    publisher: 'BabyShalls Studio',
+    language: 'Sensory / Newborn',
+    moralTheme: 'Warmth & Welcome',
+    format: 'Handwoven Natural Basket',
+    dimensions: '28 x 28 x 14 cm',
+    weight: '1.1kg'
+  },
+  {
+    id: 'little-reader-keepsake-wooden-hamper',
+    title: 'Little Reader Keepsake Wooden Hamper',
+    author: 'BabyShalls Curated Gifts',
+    category: 'Hampers',
+    ageGroup: '3–5 Years',
+    price: 385000,
+    coverImage: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Natural pine keepsake box with an acrylic slide lid. Houses 2 celebrated picture books, 1 wooden mini tangram puzzle, and an artisan letterpress bookmark.',
+    inStock: true,
+    featured: false,
+    badge: 'Popular',
+    pages: '2 Books + 1 Wooden Toy + Card',
+    publisher: 'BabyShalls Studio',
+    language: 'English / Bilingual',
+    moralTheme: 'Lifelong Reading',
+    format: 'Solid Pine Keepsake Box',
+    dimensions: '32 x 24 x 12 cm',
+    weight: '1.4kg'
+  },
+  {
+    id: 'stories-under-the-stars-deluxe-hamper',
+    title: 'Stories Under The Stars Deluxe Hamper',
+    author: 'BabyShalls Curated Gifts',
+    category: 'Hampers',
+    ageGroup: 'All Ages',
+    price: 520000,
+    coverImage: 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Our most comprehensive bedtime gift: 3 hardcover bedtime storybooks, a wooden LED ambient light, and personalized wax-sealed greeting note.',
+    inStock: true,
+    featured: false,
+    badge: 'Deluxe',
+    pages: '3 Books + Ambient Light + Card',
+    publisher: 'BabyShalls Studio',
+    language: 'Curated Stories',
+    moralTheme: 'Bedtime Routine',
+    format: 'Large Keepsake Box',
+    dimensions: '35 x 28 x 15 cm',
+    weight: '1.8kg'
+  },
+  {
+    id: 'little-blue-truck',
+    title: 'Little Blue Truck',
+    author: 'Alice Schertle',
+    category: 'Picture Books',
+    ageGroup: '3–5 Years',
+    price: 165000,
+    coverImage: 'https://images.unsplash.com/photo-1544716278-e513176f20b5?auto=format&fit=crop&w=1000&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1544716278-e513176f20b5?auto=format&fit=crop&w=1000&q=80'
+    ],
+    description: 'Beep! Beep! Meet Blue, a friendly little truck that greets farm friends on country roads. A warm reminder that kindness and helping hands are always repaid.',
+    inStock: true,
+    featured: false,
+    badge: 'New',
+    pages: '32 pages',
+    publisher: 'Clarion Books',
+    language: 'English',
+    moralTheme: 'Friendship & Helping Others',
+    format: 'Hardcover',
+    isbn: '978-0-152-05661-2',
+    dimensions: '21 x 18 x 1.1 cm',
+    weight: '340g',
+    publicationYear: '2008'
+  }
+];
+
+export const mockWorkshops: WorkshopEvent[] = [
+  {
+    id: 'storytelling-nature-craft',
+    title: 'Little Explorers: Nature Craft Workshop',
+    subtitle: 'Pressed-leaf bookmark making and watercolor illustration for young readers.',
+    date: 'Sat, May 24, 2025',
+    time: '10:00 - 11:30 WIB',
+    location: 'BabyShalls, Citraland Puncak Tidar HH-26, Malang',
+    price: 0,
+    capacity: 12,
+    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'montessori-wooden-play',
+    title: 'Play & Learn: Wooden Toys Session',
+    subtitle: 'Hands-on sensory stacking and spatial problem solving for toddlers.',
+    date: 'Sat, Jun 7, 2025',
+    time: '10:00 - 11:30 WIB',
+    location: 'BabyShalls, Citraland Puncak Tidar HH-26, Malang',
+    price: 0,
+    capacity: 10,
+    image: 'https://images.unsplash.com/photo-1596464716127-f2a829822321?auto=format&fit=crop&w=800&q=80'
+  }
+];
+
+export function formatIDR(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  })
+    .format(amount)
+    .replace('Rp', 'Rp ');
+}

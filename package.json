@@ -1,26 +1,21 @@
 {
-  "name": "babyshalls-frontend",
-  "version": "0.1.0",
+  "name": "babyshalls",
+  "version": "1.0.0",
   "private": true,
+  "description": "Babyshalls - Boutique Children's Bookstore, Educational Toys, Hampers & Workshops",
+  "workspaces": [
+    "babyshalls-frontend",
+    "babyshalls-backend"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.4.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "dev": "concurrently -n \"frontend,backend\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run dev --workspace=babyshalls-frontend\" \"npm run dev --workspace=babyshalls-backend\"",
+    "dev:frontend": "npm run dev --workspace=babyshalls-frontend",
+    "dev:backend": "npm run dev --workspace=babyshalls-backend",
+    "build": "npm run build --workspace=babyshalls-frontend && npm run build --workspace=babyshalls-backend",
+    "build:frontend": "npm run build --workspace=babyshalls-frontend",
+    "build:backend": "npm run build --workspace=babyshalls-backend"
   },
   "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.5",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "concurrently": "^9.2.5"
   }
 }
