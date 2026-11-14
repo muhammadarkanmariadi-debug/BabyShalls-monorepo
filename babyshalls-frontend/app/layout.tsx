@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${poppins.variable} scroll-smooth`}>
-      <body className="min-h-screen bg-[#FFFDF9] text-[#2C2725] font-sans antialiased selection:bg-[#E07A5F]/20 selection:text-[#E07A5F]">
+      <body className="min-h-screen bg-[#FFFFFF] text-[#2B2B2B] font-sans antialiased selection:bg-[#D9744A]/15 selection:text-[#D9744A]">
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

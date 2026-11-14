@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Header } from '../src/components/Header';
-import { Hero } from '../src/components/Hero';
-import { NewArrivals } from '../src/components/NewArrivals';
-import { ExploreBanner } from '../src/components/ExploreBanner';
-import { HampersSection } from '../src/components/HampersSection';
-import { EventsSection } from '../src/components/EventsSection';
-import { Footer } from '../src/components/Footer';
-import { OrderDrawer } from '../src/components/OrderDrawer';
+import { Header } from '@/components/layout/Header';
+import { HeroSection } from '@/components/home/HeroSection';
+import { NewArrivalsSection } from '@/components/home/NewArrivalsSection';
+import { CampaignBanner } from '@/components/home/CampaignBanner';
+import { HampersSection } from '@/components/home/HampersSection';
+import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
+import { Footer } from '@/components/layout/Footer';
+import { OrderDrawer } from '@/components/OrderDrawer';
+import { FloatingWhatsApp } from '@/components/common/FloatingWhatsApp';
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -22,33 +23,34 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full overflow-x-hidden">
+    <div className="min-h-screen bg-white text-[#2B2B2B] flex flex-col justify-between selection:bg-[#D9744A]/15 selection:text-[#D9744A] w-full overflow-x-hidden font-sans">
       
-      {/* NAVBAR (With uploaded BabyShallsLogo 1.PNG, exact required links order) */}
+      {/* 01 · HEADER (Strip Info + Navbar + Mega Menu) */}
       <Header onCategorySelect={handleCategorySelect} />
 
       <main className="w-full flex-grow">
-        {/* 1. HERO (Full 1 section, auto-slide, uploadable/manageable via admin) */}
-        <Hero />
+        {/* 02 · HERO (1440x560 auto-sliding carousel) */}
+        <HeroSection />
 
-        {/* 2. NEW ARRIVALS (Grid 4 across x 2 rows down = 8 products + "Lihat Selengkapnya" button) */}
-        <NewArrivals initialCategory={selectedCategory} />
+        {/* 03 · PRODUK TERBARU (New Arrivals 4x2 grid with WireProductCard) */}
+        <NewArrivalsSection initialCategory={selectedCategory} />
 
-        {/* 3. BANNER CTA (Full 1 page / section inviting to explore all BabyShalls products) */}
-        <ExploreBanner onShopAllClick={() => handleCategorySelect('All')} />
+        {/* 04 · BANNER KAMPANYE (Terracotta CMS Banner 320px) */}
+        <CampaignBanner onShopAllClick={() => handleCategorySelect('All')} />
 
-        {/* 4. HAMPERS (Dedicated section inviting parents & families to create bespoke hampers) */}
+        {/* 05 · HAMPERS (Curated 4-column Hamper grid + Custom WA link) */}
         <HampersSection />
 
-        {/* 5. EVENT AND WORKSHOP (Story sessions, nature craft, sensory play) */}
-        <EventsSection />
+        {/* 06 · EVENT MENDATANG (3 Event Cards with WireEventCard + Registration modal) */}
+        <UpcomingEventsSection />
       </main>
 
-      {/* FOOTER (Clean 4-column layout with uploaded logo) */}
+      {/* 07 · FOOTER (5-column desktop + mobile accordions + WA community) */}
       <Footer />
 
-      {/* Slide-over Shopping Bag & Checkout */}
+      {/* Side-drawers & Floating Contacts */}
       <OrderDrawer />
+      <FloatingWhatsApp />
     </div>
   );
 }

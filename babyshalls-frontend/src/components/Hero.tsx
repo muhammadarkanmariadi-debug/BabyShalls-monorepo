@@ -12,23 +12,18 @@ export interface HeroSlide {
 const defaultSlides: HeroSlide[] = [
   {
     id: 'slide-1',
-    url: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=2400&q=90',
-    alt: 'Child happily reading a picture book in warm natural light'
+    url: '/images/hero/slide-1.jpg',
+    alt: 'Buku cerita anak dan ruang baca hangat BabyShalls Malang'
   },
   {
     id: 'slide-2',
-    url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=2400&q=90',
-    alt: 'Curated stack of hardcover children picture books on wooden shelf'
+    url: '/images/hero/slide-2.jpg',
+    alt: 'Buku bergambar dan board books edukasi pilihan'
   },
   {
     id: 'slide-3',
-    url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=2400&q=90',
-    alt: 'Open illustrated board book for early learning'
-  },
-  {
-    id: 'slide-4',
-    url: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=2400&q=90',
-    alt: 'Toddler playing with natural wooden Montessori toys beside books'
+    url: '/images/hero/slide-3.jpg',
+    alt: 'Mainan kayu edukasi Montessori untuk balita'
   }
 ];
 
@@ -80,7 +75,7 @@ export const Hero: React.FC = () => {
 
   return (
     <section
-      className="relative w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[85vh] min-h-[460px] max-h-[900px] overflow-hidden bg-[#FAF6EE]"
+      className="relative w-full h-[55vh] sm:h-[65vh] md:h-[75vh] lg:h-[80vh] min-h-[420px] max-h-[800px] overflow-hidden bg-[#F0F0F0] group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       aria-label="BabyShalls Main Campaign Hero Slider"
@@ -106,22 +101,22 @@ export const Hero: React.FC = () => {
       <button
         type="button"
         onClick={prevSlide}
-        className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-[#2C2725] flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 focus:opacity-100 border border-[#EDE8E1] cursor-pointer shadow-xs"
+        className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-[#2B2B2B] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 border border-[#E5E5E5] cursor-pointer shadow-sm"
         aria-label="Previous slide"
       >
-        <ChevronLeft size={22} strokeWidth={1.5} />
+        <ChevronLeft size={20} strokeWidth={1.5} />
       </button>
       <button
         type="button"
         onClick={nextSlide}
-        className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/80 hover:bg-white text-[#2C2725] flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 focus:opacity-100 border border-[#EDE8E1] cursor-pointer shadow-xs"
+        className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-[#2B2B2B] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 border border-[#E5E5E5] cursor-pointer shadow-sm"
         aria-label="Next slide"
       >
-        <ChevronRight size={22} strokeWidth={1.5} />
+        <ChevronRight size={20} strokeWidth={1.5} />
       </button>
 
       {/* Minimal Pagination Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2.5 bg-black/20 backdrop-blur-xs px-3 py-1.5 rounded-full">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-2 bg-black/25 backdrop-blur-xs px-2.5 py-1.5 rounded-full">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -129,7 +124,7 @@ export const Hero: React.FC = () => {
             onClick={() => setCurrentIndex(i)}
             className={`h-2 transition-all duration-300 rounded-full cursor-pointer ${
               i === currentIndex
-                ? 'w-7 bg-white'
+                ? 'w-6 bg-white'
                 : 'w-2 bg-white/60 hover:bg-white'
             }`}
             aria-label={`Go to slide ${i + 1}`}

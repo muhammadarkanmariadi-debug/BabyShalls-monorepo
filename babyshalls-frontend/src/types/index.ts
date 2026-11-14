@@ -15,6 +15,8 @@ export interface Product {
   category: Exclude<ProductCategory, 'All Products'>;
   ageGroup: AgeGroup;
   price: number;
+  originalPrice?: number;
+  discountPercent?: number;
   coverImage: string;
   images?: string[];
   description: string;

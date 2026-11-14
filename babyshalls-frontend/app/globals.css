@@ -1,31 +1,62 @@
 @import "tailwindcss";
 
+@theme {
+  --font-poppins: var(--font-poppins), 'Poppins', sans-serif;
+  --font-sans: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* BabyShalls Figma Wireframe Palette */
+  --color-brand-terracotta: #D9744A;
+  --color-brand-terracotta-dark: #C25F37;
+  --color-brand-terracotta-tint: #FBE8DF;
+  --color-brand-dark: #2B2B2B;
+  --color-brand-charcoal: #121212;
+  --color-brand-muted: #6B6B6B;
+  --color-brand-subtle: #737373;
+  --color-brand-placeholder: #8C8C8C;
+  --color-brand-disabled: #B5B5B5;
+  --color-brand-tile: #F0F0F0;
+  --color-brand-bg-light: #F5F5F5;
+  --color-brand-border: #EBEBEB;
+  --color-brand-border-dark: #E2E2E2;
+
+  /* Semantic status colors from Figma */
+  --color-status-green: #2A6E37;
+  --color-status-green-tint: #DDF1E5;
+  --color-status-blue: #3F5FA0;
+  --color-status-blue-tint: #E4ECFB;
+  --color-status-red: #C0392B;
+  --color-status-red-tint: #FDE3E8;
+  --color-status-amber: #8A5A00;
+  --color-status-amber-tint: #FFF1C7;
+
+  /* Shadows from Figma */
+  --shadow-figma-card: 0px 2px 8px 0px rgba(74, 42, 28, 0.06), 0px 8px 24px 0px rgba(74, 42, 28, 0.06);
+  --shadow-figma-hover: 0px 4px 12px 0px rgba(74, 42, 28, 0.08), 0px 16px 32px 0px rgba(74, 42, 28, 0.10);
+  --shadow-figma-modal: 0px 8px 24px 0px rgba(74, 42, 28, 0.10), 0px 24px 64px 0px rgba(74, 42, 28, 0.16);
+}
+
 :root {
-  --background: #fffdf9;
-  --foreground: #2c2725;
-  --color-terracotta: #e07a5f;
-  --color-terracotta-dark: #cc654b;
-  --color-terracotta-light: #fde8e1;
-  --color-pastel-peach: #fbe7e3;
-  --color-pastel-sage: #e2ece0;
-  --color-pastel-sage-border: #c7dac3;
-  --color-pastel-butter: #fdf6e2;
-  --color-cream: #fffdf9;
-  --color-linen: #ede8e1;
-  --color-charcoal: #2c2725;
-  --color-slate: #68625d;
+  --background: #ffffff;
+  --foreground: #2b2b2b;
+  --color-terracotta: #d9744a;
+  --color-terracotta-dark: #c25f37;
+  --color-terracotta-light: #fbe8df;
+  --color-tile-gray: #f0f0f0;
+  --color-charcoal: #2b2b2b;
+  --color-secondary-gray: #6b6b6b;
+  --color-border-subtle: #ebebeb;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #fffdf9;
-    color: #2c2725;
+    background-color: #ffffff;
+    color: #2b2b2b;
   }
 
   body {
-    background-color: #fffdf9;
-    color: #2c2725;
+    background-color: #ffffff;
+    color: #2b2b2b;
     font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -33,7 +64,6 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-poppins), 'Poppins', sans-serif;
-    letter-spacing: -0.015em;
   }
 }
 
@@ -50,14 +80,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #fffdf9;
+  background: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ede8e1;
+  background: #ebebeb;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #e07a5f;
+  background: #d9744a;
 }

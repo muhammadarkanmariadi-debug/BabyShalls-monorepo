@@ -2,52 +2,34 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 
 interface ExploreBannerProps {
   onShopAllClick?: () => void;
 }
 
-export const ExploreBanner: React.FC<ExploreBannerProps> = ({ onShopAllClick }) => {
-  const handleClick = () => {
-    if (onShopAllClick) {
-      onShopAllClick();
-    } else {
-      const el = document.getElementById('catalog');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
+export const ExploreBanner: React.FC<ExploreBannerProps> = () => {
   return (
-    <section className="relative w-full bg-[#E2ECE0] border-y border-[#C7DAC3] py-20 sm:py-28 md:py-32 overflow-hidden text-center">
-      {/* Full-bleed content container */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#2C2725] leading-[1.18] max-w-3xl mx-auto">
-          Jelajahi Koleksi Lengkap Buku &amp; Mainan BabyShalls
+    <section className="w-full bg-[#D9744A] min-h-[360px] flex items-center justify-center py-12 md:py-16 text-center">
+      <div className="max-w-[1200px] mx-auto px-6 space-y-4">
+        {/* One white headline: 36px / 700 */}
+        <h2 className="text-[26px] md:text-[36px] font-bold text-white tracking-normal leading-tight">
+          PILIHAN TEPAT UNTUK SETIAP FASE USIA
         </h2>
 
-        <p className="text-sm sm:text-base md:text-lg text-[#554F49] max-w-2xl mx-auto leading-relaxed font-normal">
-          Buku bantal bertekstur untuk bayi baru lahir, buku dongeng sebelum tidur, dan mainan kayu Montessori alami yang aman untuk si kecil.
+        {/* One short sentence */}
+        <p className="text-white/95 text-[15px] md:text-[16px] max-w-[620px] mx-auto font-normal leading-relaxed">
+          Temukan buku cerita dan mainan edukasi yang dirancang khusus untuk menemani setiap tahap tumbuh kembang si kecil.
         </p>
 
-        <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+        {/* One white button: BELANJA PER USIA */}
+        <div className="pt-2">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center gap-2 bg-[#E07A5F] hover:bg-[#cc654b] text-white text-xs sm:text-sm font-semibold uppercase tracking-wider px-9 py-4 rounded-md transition-all shadow-xs"
+            className="inline-block bg-white text-[#D9744A] hover:bg-neutral-100 text-[14px] font-semibold uppercase tracking-wider px-8 py-3.5 rounded-[4px] transition-colors"
           >
-            <span>Lihat Semua Produk</span>
-            <ArrowRight size={16} strokeWidth={1.5} />
-          </Link>
-
-          <Link
-            href="/request-a-book"
-            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#FFFDF9] border border-[#C7DAC3] text-[#2C2725] hover:text-[#E07A5F] text-xs sm:text-sm font-semibold uppercase tracking-wider px-8 py-4 rounded-md transition-all shadow-xs"
-          >
-            <span>Request Buku</span>
+            BELANJA PER USIA
           </Link>
         </div>
-
       </div>
     </section>
   );

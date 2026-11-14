@@ -62,125 +62,136 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({ initialCategory = 'All
     return list;
   }, [catalogItems, initialCategory, searchQuery, isExpanded]);
 
+  const formatAge = (age: string) => {
+    if (age.includes('0–2') || age.includes('0-2')) return '0-2 th';
+    if (age.includes('3–5') || age.includes('3-5')) return '3-5 th';
+    if (age.includes('6+')) return '6+ th';
+    return age.toLowerCase();
+  };
+
   const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!product.inStock) return;
     addToCart(product, 1);
     setAddedId(product.id);
     setTimeout(() => setAddedId(null), 1500);
   };
 
   return (
-    <section id="catalog" className="py-14 sm:py-20 md:py-24 bg-[#FFFDF9] border-b border-[#EDE8E1] w-full">
-      {/* Full-width container with comfortable edge padding */}
-      <div className="w-full px-4 sm:px-6 lg:px-10">
+    <section id="catalog" className="py-10 md:py-16 bg-[#FFFFFF] w-full">
+      {/* 1200px Max width with 24px side padding */}
+      <div className="max-w-[1200px] mx-auto px-6">
         
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-[#EDE8E1] gap-4 text-left">
-          <div>
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-[#E07A5F] block mb-1">
-              Curated Selection
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#2C2725]">
-              New Arrivals
-            </h2>
-          </div>
-          <p className="text-xs sm:text-sm text-[#68625D] max-w-md">
-            Original imported board books, illustrated picture stories, and sensory wooden toys fresh on our shelves.
-          </p>
+        {/* Centered Uppercase Heading Only */}
+        <div className="mb-8 md:mb-10 text-center">
+          <h2 className="text-[22px] md:text-[28px] font-semibold uppercase text-[#2B2B2B] tracking-normal">
+            NEW ARRIVALS
+          </h2>
         </div>
 
-        {/* Product Grid: 4 columns across, 2 rows down */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-10 sm:gap-y-12">
+        {/* Product Grid: 4 columns across on desktop, 2 on mobile */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
           {productsList.map((product) => {
             const isJustAdded = addedId === product.id;
+            const hasDiscount = product.discountPercent && product.discountPercent > 0;
 
             return (
               <div
                 key={product.id}
-                className="group relative flex flex-col text-left"
+                className="group flex flex-col text-left"
               >
-                {/* 3:4 Aspect Ratio Cover Card */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden bg-white rounded-md border border-[#EDE8E1] shadow-xs">
-                  <Link href={`/product/${product.id}`} className="block w-full h-full">
+                {/* Flat Gray Square Tile */}
+                <div className="relative aspect-square w-full bg-[#F0F0F0] rounded-[6px] overflow-hidden p-4 flex items-center justify-center">
+                  <Link href={`/product/${product.id}`} className="block w-full h-full flex items-center justify-center">
                     <img
                       src={product.coverImage}
                       alt={product.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500"
+                      className="max-h-[85%] max-w-[85%] object-contain transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   </Link>
 
-                  {/* Subtle Badge */}
-                  {product.badge && (
-                    <div className="absolute top-2.5 left-2.5 pointer-events-none">
-                      <span className="bg-[#FFFDF9]/95 text-[#2C2725] border border-[#EDE8E1] text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm shadow-xs">
-                        {product.badge}
+                  {/* ONLY ONE BADGE TYPE: Small terracotta discount label */}
+                  {hasDiscount && (
+                    <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
+                      <span className="bg-[#D9744A] text-white text-[11px] font-semibold px-2 py-0.5 rounded-[4px]">
+                        -{product.discountPercent}%
                       </span>
                     </div>
                   )}
 
-                  {/* Quick Add to Cart Button (Terracotta / Pastel hover) */}
-                  <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  {/* + Keranjang button on hover only (always visible on mobile) */}
+                  <div className="absolute inset-x-3 bottom-3 z-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
                     <button
                       type="button"
                       onClick={(e) => handleQuickAdd(e, product)}
-                      className={`w-9 h-9 rounded-md flex items-center justify-center shadow-xs cursor-pointer transition-colors ${
-                        isJustAdded
-                          ? 'bg-emerald-700 text-white'
-                          : 'bg-[#E07A5F] hover:bg-[#cc654b] text-white'
-                      }`}
-                      aria-label={`Add ${product.title} to bag`}
-                      title="Add to Bag"
+                      disabled={!product.inStock}
+                      className="w-full py-2.5 bg-[#2B2B2B] hover:bg-[#D9744A] disabled:bg-neutral-300 text-white text-[12px] font-semibold uppercase tracking-wider rounded-[4px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                      aria-label={`Tambah ${product.title} ke keranjang`}
                     >
                       {isJustAdded ? (
-                        <Check size={16} strokeWidth={2} />
+                        <>
+                          <Check size={14} strokeWidth={2} />
+                          <span>BERHASIL</span>
+                        </>
                       ) : (
-                        <ShoppingBag size={15} strokeWidth={1.5} />
+                        <span>+ KERANJANG</span>
                       )}
                     </button>
                   </div>
                 </div>
 
                 {/* Metadata Below Image */}
-                <div className="mt-3.5 space-y-1">
-                  <div className="text-[11px] uppercase tracking-wider text-[#68625D] font-medium flex items-center justify-between">
-                    <span>{product.category}</span>
-                    <span>{product.ageGroup}</span>
-                  </div>
+                <div className="mt-3 space-y-0.5">
+                  {/* Small age label as plain gray text */}
+                  <span className="text-[12px] text-[#6B6B6B] block">
+                    {formatAge(product.ageGroup)}
+                  </span>
 
+                  {/* Product Title: 15px / weight 500 */}
                   <Link href={`/product/${product.id}`} className="block">
-                    <h3 className="text-sm font-semibold text-[#2C2725] line-clamp-1 group-hover:text-[#E07A5F] transition-colors">
+                    <h3 className="text-[15px] font-medium text-[#2B2B2B] line-clamp-1 hover:text-[#D9744A] transition-colors">
                       {product.title}
                     </h3>
                   </Link>
 
-                  <p className="text-xs text-[#68625D] line-clamp-1 font-normal">
+                  {/* Author: small, gray */}
+                  <p className="text-[13px] text-[#6B6B6B] line-clamp-1 font-normal">
                     {product.author}
                   </p>
 
-                  <div className="pt-0.5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#2C2725]">
+                  {/* Price: 15px / weight 600, old price struck through */}
+                  <div className="pt-0.5 flex items-baseline gap-2">
+                    <span className="text-[15px] font-semibold text-[#2B2B2B]">
                       {formatIDR(product.price)}
                     </span>
-                    <span className="text-[10px] text-emerald-800 font-medium">
-                      {product.inStock ? 'In Stock' : 'Out of Stock'}
-                    </span>
+                    {product.originalPrice && product.originalPrice > product.price && (
+                      <span className="text-[13px] text-[#6B6B6B] line-through font-normal">
+                        {formatIDR(product.originalPrice)}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Show 'Stok habis' only when sold out */}
+                  {!product.inStock && (
+                    <span className="text-[12px] text-[#6B6B6B] italic block pt-0.5">
+                      Stok habis
+                    </span>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Button: "Lihat Selengkapnya" */}
-        <div className="mt-12 sm:mt-16 text-center">
+        {/* Outline Button: "LIHAT SEMUA" */}
+        <div className="mt-10 md:mt-12 text-center">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white border border-[#EDE8E1] hover:border-[#E07A5F] text-[#2C2725] hover:text-[#E07A5F] text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-md transition-all shadow-xs"
+            className="inline-block px-8 py-3.5 border border-[#2B2B2B] hover:border-[#D9744A] text-[#2B2B2B] hover:text-[#D9744A] text-[14px] font-semibold uppercase tracking-wider rounded-[4px] transition-colors"
           >
-            <span>Lihat Selengkapnya di Toko</span>
-            <ArrowRight size={15} strokeWidth={1.5} />
+            LIHAT SEMUA
           </Link>
         </div>
 

@@ -8,6 +8,8 @@ export const mockProducts: Product[] = [
     category: 'Board Books',
     ageGroup: '0–2 Years',
     price: 145000,
+    originalPrice: 170000,
+    discountPercent: 15,
     coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80',
     images: [
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=1000&q=80',
@@ -34,6 +36,8 @@ export const mockProducts: Product[] = [
     category: 'Board Books',
     ageGroup: '0–2 Years',
     price: 165000,
+    originalPrice: 185000,
+    discountPercent: 10,
     coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80',
     images: [
       'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1000&q=80',
@@ -110,9 +114,9 @@ export const mockProducts: Product[] = [
     category: 'Picture Books',
     ageGroup: '3–5 Years',
     price: 175000,
-    coverImage: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=1000&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1000&q=80',
     images: [
-      'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=1000&q=80'
+      'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1000&q=80'
     ],
     description: 'Max sails away to a land of roaring wild things and becomes king, before realizing the best place to be is where someone loves you best of all. Caldecott Medal Winner.',
     inStock: true,
@@ -279,9 +283,9 @@ export const mockProducts: Product[] = [
     category: 'Educational Toys',
     ageGroup: '3–5 Years',
     price: 195000,
-    coverImage: 'https://images.unsplash.com/photo-1560421683-680695856098?auto=format&fit=crop&w=1000&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1000&q=80',
     images: [
-      'https://images.unsplash.com/photo-1560421683-680695856098?auto=format&fit=crop&w=1000&q=80'
+      'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1000&q=80'
     ],
     description: '30 smooth cube blocks with deeply embossed uppercase letters, lowercase phonics, numbers, and minimal animal glyphs. Packed in a slide-lid wooden storage tray.',
     inStock: true,
@@ -393,26 +397,37 @@ export const mockProducts: Product[] = [
 
 export const mockWorkshops: WorkshopEvent[] = [
   {
-    id: 'storytelling-nature-craft',
-    title: 'Little Explorers: Nature Craft Workshop',
-    subtitle: 'Pressed-leaf bookmark making and watercolor illustration for young readers.',
-    date: 'Sat, May 24, 2025',
-    time: '10:00 - 11:30 WIB',
-    location: 'BabyShalls, Citraland Puncak Tidar HH-26, Malang',
+    id: 'sensory-storytelling',
+    title: 'Sensory Storytelling: The Very Hungry Caterpillar',
+    subtitle: 'Sesi mendongeng interaktif dengan media buah asli dan sensory play.',
+    date: 'Sabtu, 21 November 2026',
+    time: '10.00 – 11.30 WIB',
+    location: 'BabyShalls, Citraland Puncak Tidar Blok HH-26, Malang',
     price: 0,
     capacity: 12,
     image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'montessori-wooden-play',
-    title: 'Play & Learn: Wooden Toys Session',
-    subtitle: 'Hands-on sensory stacking and spatial problem solving for toddlers.',
-    date: 'Sat, Jun 7, 2025',
-    time: '10:00 - 11:30 WIB',
-    location: 'BabyShalls, Citraland Puncak Tidar HH-26, Malang',
+    title: 'Play & Learn: Wooden Toys Exploration',
+    subtitle: 'Aktivitas eksplorasi susun balok kayu alami dan pengenalan bentuk geometri.',
+    date: 'Sabtu, 5 Desember 2026',
+    time: '10.00 – 11.30 WIB',
+    location: 'BabyShalls, Citraland Puncak Tidar Blok HH-26, Malang',
     price: 0,
     capacity: 10,
-    image: 'https://images.unsplash.com/photo-1596464716127-f2a829822321?auto=format&fit=crop&w=800&q=80'
+    image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'family-read-aloud',
+    title: 'Family Read-Aloud: Dongeng Klasik Dunia',
+    subtitle: 'Membaca bersama buku cerita bergambar klasik dalam suasana butik yang hangat.',
+    date: 'Minggu, 17 Januari 2027',
+    time: '15.30 – 17.00 WIB',
+    location: 'BabyShalls, Citraland Puncak Tidar Blok HH-26, Malang',
+    price: 0,
+    capacity: 15,
+    image: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
