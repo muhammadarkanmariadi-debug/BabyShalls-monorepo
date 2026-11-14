@@ -1,39 +1,40 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cream: #FCF6EC;
-  --color-cream-light: #FFF8EF;
-  --color-offwhite: #FFF9F0;
-  --color-peach: #FCE0D4;
-  --color-peach-light: #FFE4D0;
-  --color-salmon: #F6B79B;
-  --color-terracotta: #DA7A5B;
-  --color-terracotta-dark: #C46749;
-  --color-mustard: #F6C95E;
-  --color-mustard-light: #FDF3D6;
-  --color-sage: #DCE6C6;
-  --color-sage-light: #EBF2E0;
-  --color-leaf: #A7C48A;
-  --color-leaf-dark: #709154;
-  --color-warmbrown: #6B3F2A;
-  --color-warmbrown-dark: #502E1E;
-  --color-lightbrown: #CBA989;
-  --color-dustypink: #EFB6B0;
-  --color-border-warm: #EEDBC9;
+  /* Pure White Minimalist + Pastel Accents (DESIGN.md v4.0) */
+  --color-canvas: #FFFFFF;
+  --color-surface-subtle: #F8FAFC;
+  --color-surface-photo: #F7F7F5;
+  --color-ink: #1A1A1A;
+  --color-ink-secondary: #334155;
+  --color-ink-muted: #555555;
+  --color-border-clean: #E2E8F0;
+
+  /* Soft Pastel Accents */
+  --color-pastel-butter: #FDF0B8;
+  --color-pastel-yellow: #FCE694;
+  --color-pastel-peach: #F5B7A1;
+  --color-pastel-oat: #FAF4E8;
+  --color-pastel-blush: #FDECE6;
+  --color-pastel-sage: #E9F3E4;
+  --color-pastel-sky: #EBF1FA;
+  --color-forest: #1E543B;
+
+  /* Brand & Partner Colors */
   --color-whatsapp: #25D366;
   --color-whatsapp-hover: #20BA59;
 
-  --font-serif: var(--font-playfair), Georgia, serif;
-  --font-sans: var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --radius-card: 20px;
-  --radius-card-lg: 24px;
-  --radius-pill: 9999px;
+  --radius-card: 8px;
+  --radius-card-lg: 12px;
+  --radius-btn: 4px;
 }
 
 :root {
-  --background: #FFF8EF;
-  --foreground: #6B3F2A;
+  --background: #FFFFFF;
+  --foreground: #1A1A1A;
 }
 
 /* Lenis Recommended Styles */
@@ -58,124 +59,80 @@ html.lenis, html.lenis body {
 }
 
 body {
-  background-color: #FFF8EF;
-  color: #6B3F2A;
+  background-color: #FFFFFF;
+  color: #1A1A1A;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
 h1, h2, h3, .font-serif {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
 }
 
-/* Custom Soft Storybook Shadows */
+/* Clean Minimalist Elevation */
 .shadow-subtle {
-  box-shadow: 0 4px 16px rgba(107, 63, 42, 0.06);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
 .shadow-card {
-  box-shadow: 0 6px 24px rgba(107, 63, 42, 0.08);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .shadow-hover {
-  box-shadow: 0 12px 32px rgba(107, 63, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10);
 }
 
 .shadow-drawer {
-  box-shadow: -4px 0 28px rgba(107, 63, 42, 0.15);
+  box-shadow: -4px 0 24px rgba(15, 23, 42, 0.12);
 }
 
-/* Storybook Delicate Paper Texture */
-.paper-texture {
-  background-image: 
-    radial-gradient(#6B3F2A 0.35px, transparent 0.35px),
-    radial-gradient(#DA7A5B 0.3px, #FFF8EF 0.3px);
-  background-size: 32px 32px, 64px 64px;
-  background-position: 0 0, 16px 16px;
-}
-
-/* Subtle Leaf Speckle Pattern */
+/* Neutralize legacy texture classes for pure white minimalist UI */
+.paper-texture,
 .leaf-pattern {
-  background-image: radial-gradient(#A7C48A 0.75px, transparent 0.75px);
-  background-size: 16px 16px;
-  opacity: 0.25;
+  background-image: none;
 }
 
-/* Text reveal line mask helper */
-.line-mask {
-  overflow: hidden;
-  display: block;
-}
-
-/* GPU-Accelerated Featherlight Storybook Floating Animations */
-@keyframes storybook-float-1 {
+@keyframes gentle-float {
   0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
+    transform: translateY(0px);
   }
   50% {
-    transform: translate3d(0, -9px, 0) rotate(3deg);
+    transform: translateY(-4px);
   }
 }
 
-@keyframes storybook-float-2 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(0, -7px, 0) rotate(-2.5deg);
-  }
+.animate-float {
+  animation: gentle-float 4s ease-in-out infinite;
 }
 
-@keyframes storybook-float-3 {
+@keyframes soft-pulse {
   0%, 100% {
-    transform: translate3d(0, 0, 0);
+    opacity: 0.9;
   }
   50% {
-    transform: translate3d(0, -8px, 0);
-  }
-}
-
-@keyframes storybook-twinkle {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.85;
-  }
-  50% {
-    transform: scale(1.18);
     opacity: 1;
   }
 }
 
-.animate-float-1 {
-  animation: storybook-float-1 4.2s ease-in-out infinite;
-  will-change: transform;
+.animate-soft-pulse {
+  animation: soft-pulse 3s ease-in-out infinite;
 }
 
-.animate-float-2 {
-  animation: storybook-float-2 3.6s ease-in-out infinite 0.3s;
-  will-change: transform;
+/* Custom Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.animate-float-3 {
-  animation: storybook-float-3 4.8s ease-in-out infinite 0.7s;
-  will-change: transform;
+::-webkit-scrollbar-track {
+  background: #F8FAFC;
 }
 
-.animate-twinkle-1 {
-  animation: storybook-twinkle 2.8s ease-in-out infinite 0.1s;
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
 }
 
-.animate-twinkle-2 {
-  animation: storybook-twinkle 3.4s ease-in-out infinite 0.5s;
-}
-
-/* Prefers Reduced Motion Guardrail */
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }

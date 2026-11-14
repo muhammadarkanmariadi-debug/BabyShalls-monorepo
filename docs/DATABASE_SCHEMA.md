@@ -30,6 +30,8 @@ erDiagram
     Product ||--o{ OrderItem : "dipesan"
 
     Order ||--|{ OrderItem : "berisi"
+    OrderItem ||--o| Review : "ulasan terverifikasi"
+    Coupon ||--o{ Order : "diterapkan pada"
     Event ||--o{ EventRegistration : "memiliki pendaftar"
 
     SiteContent {
@@ -110,30 +112,36 @@ erDiagram
 | `sortOrder` | Int | Urutan tampilan di galeri foto |
 | `createdAt` | DateTime | Timestamp upload |
 
-### 2.6 Tabel `Review` (Ulasan Pelanggan)
+### 2.6 Tabel `Review` (Ulasan Terverifikasi per Item Pesanan)
+> **Aturan Bisnis:** Ulasan/komentar produk **hanya dapat dikirim melalui halaman Detail Pesanan** (`/account`) untuk item yang sudah dibeli (*verified purchase*, ala Shopee), bukan dari formulir publik di halaman detail produk.
+
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
 | `id` | UUID (PK) | Identifier ulasan |
 | `productId` | UUID (FK -> Product) | Produk yang diulas |
+| `orderItemId` | UUID (Nullable, Unique, FK -> OrderItem) | Relasi 1:1 ke item pesanan yang diulas |
 | `userId` | UUID (Nullable, FK -> User)| User pembeli jika login |
 | `userName` | String | Nama reviewer / Ibu & Ayah |
 | `location` | String (Nullable) | Lokasi pembeli (e.g. "Malang, Jawa Timur") |
 | `rating` | Int | Nilai bintang (1 - 5) |
 | `comment` | Text | Isi review kepuasan produk |
 | `variantInfo` | String (Nullable) | Catatan varian yang dibeli |
+| `isVerifiedPurchase` | Boolean | Penanda ulasan dari pesanan terverifikasi (default `true`) |
 | `helpfulCount`| Int | Jumlah pembeli lain yang merasa ulasan terbantu |
 | `createdAt` | DateTime | Tanggal ulasan |
 
-### 2.7 Tabel `Order` & `OrderItem`
-- **`Order`**: Menyimpan nomor order `BS-YYYYMMDD-XXX`, total belanja, biaya ongkir KiriminAja, status pembayaran (`PENDING_PAYMENT`, `PAID`, `PROCESSING`, `SHIPPED`, `COMPLETED`, `CANCELLED`), token Midtrans Snap, nomor resi pengiriman (*waybill number*), dan snapshot JSON alamat pengiriman.
-- **`OrderItem`**: Baris rincian item, kuantitas, dan harga satuan saat transaksi terjadi.
+### 2.7 Tabel `Coupon`, `Order` & `OrderItem`
+- **`Coupon`**: Menyimpan kode kupon/voucher promo (`code`, `description`, `discountType`: `PERCENTAGE` | `FIXED_AMOUNT` | `SHIPPING_SUBSIDY`, `discountValue`, `maxDiscount`, `minOrder`, `maxUsage`, `usedCount`, `expiresAt`, `isActive`).
+- **`Order`**: Menyimpan nomor order `BS-YYYYMMDD-XXX`, total belanja, `discountAmount`, `couponCode`, biaya ongkir KiriminAja, status pembayaran (`PENDING_PAYMENT`, `PAID`, `PROCESSING`, `SHIPPED`, `COMPLETED`, `CANCELLED`), token Midtrans Snap, nomor resi pengiriman (*waybill number*), `trackingHistory` (JSON log pelacakan kurir), dan snapshot JSON alamat pengiriman (dipakai juga untuk cetak resi PDF resmi).
+- **`OrderItem`**: Baris rincian item, kuantitas, dan harga satuan saat transaksi terjadi, serta relasi opsional `review` untuk ulasan terverifikasi.
 
 ### 2.8 Tabel `Event` & `EventRegistration`
 - **`Event`**: Jadwal workshop anak di toko Malang (judul, waktu, lokasi, harga, kuota).
-- **`EventRegistration`**: Data anak pendaftar (nama anak, usia anak, nama orang tua, nomor WA, status).
+- **`EventRegistration`**: Data anak pendaftar (nama anak, usia anak, nama orang tua, nomor WA, `ticketQuantity`, `ticketCode` unik untuk QR Check-in, `paymentStatus`, `midtransOrderId`, status).
 
 ### 2.9 Tabel `BookRequest`
-- Menyimpan formulir titip/jastip buku impor dari pelanggan (judul, penulis, kontak WA, catatan, status, dan catatan internal admin).
+- Menyimpan formulir titip/jastip buku impor dari pelanggan (`customerName`, `email`, `title`, `authorPublisher`, `whatsappNumber`, `notes`, `referenceImageUrl`, `status`, dan `adminNotes`).
 
-### 2.10 Tabel `SiteContent`
-- Menyimpan konfigurasi teks Semi-CMS beranda secara dinamis dengan format Key-Value.
+### 2.10 Tabel `SiteContent` & `Wishlist`
+- **`SiteContent`**: Menyimpan konfigurasi teks Semi-CMS beranda secara dinamis dengan format Key-Value.
+- **`Wishlist`**: Menyimpan daftar produk favorit per user (`@@unique([userId, productId])`).

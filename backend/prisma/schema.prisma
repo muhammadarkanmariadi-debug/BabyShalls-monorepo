@@ -34,7 +34,12 @@ model User {
   email        String              @unique
   passwordHash String
   name         String
+  avatarUrl    String?
   phone        String?
+  parentName   String?
+  childName    String?
+  childAge     String?
+  emailOptIn   Boolean             @default(true)
   role         Role                @default(USER)
   addresses    Address[]
   orders       Order[]
@@ -43,7 +48,33 @@ model User {
   bookRequests BookRequest[]
   cartItems    CartItem[]
   wishlists    Wishlist[]
+  otpCodes     OtpCode[]
   createdAt    DateTime            @default(now())
+}
+
+model OtpCode {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int       @default(0)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email, createdAt])
+}
+
+model BroadcastLog {
+  id             String   @id @default(uuid())
+  type           String   // PROMO, EVENT, CUSTOM
+  referenceId    String?
+  subject        String
+  recipientCount Int      @default(0)
+  sentCount      Int      @default(0)
+  status         String   @default("SENT") // SENT, PARTIAL, FAILED, SKIPPED
+  createdAt      DateTime @default(now())
 }
 
 model Address {
@@ -137,18 +168,21 @@ model ProductImage {
 }
 
 model Review {
-  id           String   @id @default(uuid())
-  productId    String
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userId       String?
-  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userName     String
-  location     String? // e.g. "Malang, Jawa Timur"
-  rating       Int      @default(5)
-  comment      String   @db.Text
-  variantInfo  String? // e.g. "Variasi: Board Book (Edisi Spesial)"
-  helpfulCount Int      @default(0)
-  createdAt    DateTime @default(now())
+  id                 String     @id @default(uuid())
+  productId          String
+  product            Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItemId        String?    @unique
+  orderItem          OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  userId             String?
+  user               User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName           String
+  location           String?    // e.g. "Malang, Jawa Timur"
+  rating             Int        @default(5)
+  comment            String     @db.Text
+  variantInfo        String?    // e.g. "Variasi: Board Book (Edisi Spesial)"
+  isVerifiedPurchase Boolean    @default(true) // Komentar hanya dari detail pesanan
+  helpfulCount       Int        @default(0)
+  createdAt          DateTime   @default(now())
 }
 
 model CartItem {
@@ -173,15 +207,39 @@ model Wishlist {
   @@unique([userId, productId])
 }
 
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  SHIPPING_SUBSIDY
+}
+
+model Coupon {
+  id            String       @id @default(uuid())
+  code          String       @unique
+  description   String?
+  discountType  DiscountType @default(FIXED_AMOUNT)
+  discountValue Decimal      @db.Decimal(12, 2)
+  maxDiscount   Decimal?     @db.Decimal(12, 2)
+  minOrder      Decimal      @default(0) @db.Decimal(12, 2)
+  maxUsage      Int?
+  usedCount     Int          @default(0)
+  expiresAt     DateTime?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
 model Order {
-  id           String      @id @default(uuid())
-  orderNumber  String      @unique
-  userId       String
-  user         User        @relation(fields: [userId], references: [id])
-  totalAmount  Decimal     @db.Decimal(12, 2)
-  shippingCost Decimal     @db.Decimal(12, 2)
-  grandTotal   Decimal     @db.Decimal(12, 2)
-  status       OrderStatus @default(PENDING_PAYMENT)
+  id             String      @id @default(uuid())
+  orderNumber    String      @unique
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  totalAmount    Decimal     @db.Decimal(12, 2)
+  discountAmount Decimal     @default(0) @db.Decimal(12, 2)
+  couponCode     String?
+  shippingCost   Decimal     @db.Decimal(12, 2)
+  grandTotal     Decimal     @db.Decimal(12, 2)
+  status         OrderStatus @default(PENDING_PAYMENT)
 
   // Midtrans
   snapToken     String?
@@ -192,7 +250,8 @@ model Order {
   courierCode     String? // jne, jnt, sicepat, anteraja
   courierService  String? // REG, EZ
   waybillNumber   String? // Nomor Resi
-  shippingAddress Json // Snapshot alamat pengiriman
+  trackingHistory Json?   // Log pelacakan pengiriman KiriminAja
+  shippingAddress Json    // Snapshot alamat pengiriman
 
   items     OrderItem[]
   createdAt DateTime    @default(now())
@@ -207,21 +266,27 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   price     Decimal @db.Decimal(12, 2)
   quantity  Int     @default(1)
+  review    Review?
 }
 
 model Event {
-  id            String              @id @default(uuid())
-  title         String
-  slug          String              @unique
-  description   String              @db.Text
-  bannerImage   String
-  eventDate     DateTime
-  timeString    String // "10:00 - 12:00 WIB"
-  location      String // "Toko BabyShalls Malang"
-  price         Decimal             @default(0) @db.Decimal(12, 2)
-  quota         Int                 @default(20)
-  registrations EventRegistration[]
-  createdAt     DateTime            @default(now())
+  id                String              @id @default(uuid())
+  title             String
+  slug              String              @unique
+  shortCode         String?             @unique
+  category          String              @default("Storytelling & Art")
+  speaker           String?
+  ageRecommendation String?
+  description       String              @db.Text
+  bannerImage       String
+  eventDate         DateTime
+  timeString        String // "10:00 - 12:00 WIB"
+  location          String // "Toko BabyShalls Malang"
+  price             Decimal             @default(0) @db.Decimal(12, 2)
+  quota             Int                 @default(20)
+  isActive          Boolean             @default(true)
+  registrations     EventRegistration[]
+  createdAt         DateTime            @default(now())
 }
 
 model EventRegistration {
@@ -234,25 +299,106 @@ model EventRegistration {
   childName       String
   childAge        String
   whatsappNumber  String
-  status          String   @default("REGISTERED") // REGISTERED, CONFIRMED
+  ticketQuantity  Int      @default(1)
+  ticketCode      String?  @unique // e.g. BS-EVT-20261114-001 untuk QR Check-in
+  paymentStatus   String   @default("FREE") // FREE, PENDING, PAID
+  midtransOrderId String?
+  status          String   @default("REGISTERED") // REGISTERED, CONFIRMED, CHECKED_IN
   createdAt       DateTime @default(now())
 }
 
 model BookRequest {
-  id              String   @id @default(uuid())
-  userId          String?
-  user            User?    @relation(fields: [userId], references: [id])
-  title           String
-  authorPublisher String?
-  notes           String?  @db.Text
-  whatsappNumber  String
-  status          String   @default("PENDING") // PENDING, QUOTED, ORDERED, COMPLETED
-  adminNotes      String?  @db.Text
-  createdAt       DateTime @default(now())
+  id                String   @id @default(uuid())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+  customerName      String?
+  email             String?
+  title             String
+  authorPublisher   String?
+  notes             String?  @db.Text
+  referenceImageUrl String?
+  whatsappNumber    String
+  status            String   @default("PENDING") // PENDING, QUOTED, ORDERED, COMPLETED
+  adminNotes        String?  @db.Text
+  createdAt         DateTime @default(now())
 }
 
 model SiteContent {
   key       String   @id // e.g. "announcement_bar", "hero_headline"
   value     String   @db.Text
   updatedAt DateTime @updatedAt
+}
+
+enum LogisticsProvider {
+  RAJAONGKIR_V2
+  BINDERBYTE
+}
+
+enum WaybillDeliveryStatus {
+  UNKNOWN
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  RETURNED
+}
+
+model ShippingRegion {
+  id             String  @id @default(uuid())
+  provinceName   String
+  cityName       String
+  districtName   String
+  postalCode     String?
+  rajaongkirId   String  @unique
+  binderbyteCode String?
+  searchLabel    String
+  isOrigin       Boolean @default(false)
+
+  @@index([searchLabel])
+  @@index([cityName, districtName])
+}
+
+model ShippingRateCache {
+  id            String            @id @default(uuid())
+  originId      String
+  destinationId String
+  weightGram    Int
+  courier       String
+  provider      LogisticsProvider
+  ratesJson     Json
+  expiresAt     DateTime
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([originId, destinationId, weightGram, courier], name: "rate_cache_key")
+  @@index([expiresAt])
+}
+
+model WaybillTrackingCache {
+  id             String                @id @default(uuid())
+  waybillNumber  String
+  courier        String
+  status         WaybillDeliveryStatus @default(UNKNOWN)
+  isDelivered    Boolean               @default(false)
+  summaryJson    Json?
+  historyJson    Json
+  lastCheckedAt  DateTime              @default(now())
+  nextCheckAfter DateTime
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@unique([courier, waybillNumber], name: "waybill_courier_key")
+  @@index([isDelivered, nextCheckAfter])
+}
+
+model LogisticsApiUsageLog {
+  id          String            @id @default(uuid())
+  dateKey     String
+  provider    LogisticsProvider
+  keyAlias    String            @default("DEFAULT")
+  hitCount    Int               @default(0)
+  isExhausted Boolean           @default(false)
+  lastError   String?
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([dateKey, provider, keyAlias], name: "usage_date_provider_key")
 }

@@ -37,6 +37,13 @@ redis.on('connect', () => {
 });
 
 /**
+ * Returns true if the Redis client is currently connected and ready.
+ */
+export function isRedisReady(): boolean {
+  return isRedisAvailable;
+}
+
+/**
  * Safe Get Cache: Returns cached data if available, null if cache miss or Redis is down.
  */
 export async function getCache<T>(key: string): Promise<T | null> {

@@ -9,7 +9,6 @@ import {
   ShoppingBag,
   Share2,
   Heart,
-  MessageCircle,
 } from 'lucide-react';
 import { AgeBadge } from './AgeBadge';
 import { AgeGroup } from '../../types';
@@ -32,7 +31,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
   const images =
     initialImages && initialImages.length > 0
       ? initialImages
-      : ['/images/products/nature-book.svg'];
+      : ['/images/prod-boardbook.jpg'];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
@@ -61,197 +60,135 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
 
   return (
     <div className="w-full space-y-3">
-      {/* 1. Main Square Image Viewport (Shopee Style Clean Layout) */}
+      {/* Main Viewport */}
       <div
         onClick={() => setIsZoomOpen(true)}
-        className="group relative w-full aspect-square bg-[#FDFBF7] border border-[#EEDBC9]/80 rounded-xl overflow-hidden shadow-2xs hover:shadow-subtle transition-all cursor-zoom-in flex items-center justify-center p-3"
+        className="group relative w-full aspect-square bg-[#F8FAFC] border border-[#E5E7EB] rounded-2xl overflow-hidden cursor-zoom-in flex items-center justify-center"
       >
-        {/* Render Image or SVG */}
         {currentImage.endsWith('.svg') ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-center bg-[#FFF8EF] rounded-lg">
-            <div className="w-20 h-20 rounded-full bg-[#FFE4D0] flex items-center justify-center mb-2 shadow-2xs">
-              <ShoppingBag className="w-10 h-10 text-[#DA7A5B]" />
-            </div>
-            <span className="font-serif text-base font-bold text-[#502E1E] px-4 line-clamp-1">
+          <div className="w-full h-full flex flex-col items-center justify-center text-center bg-[#FAF4E8]">
+            <ShoppingBag className="w-12 h-12 text-[#1E543B] mb-2" />
+            <span className="text-base font-bold text-[#1A1A1A] px-4 line-clamp-1">
               {title}
             </span>
-            <span className="text-[11px] text-[#8FA87E] font-bold uppercase tracking-wider mt-0.5">
-              {category}
-            </span>
+            <span className="text-xs text-[#6B7280] mt-0.5">{category}</span>
           </div>
         ) : (
           <img
             src={currentImage}
             alt={`${title} - Foto ${activeIndex + 1}`}
-            className="w-full h-full object-cover rounded-lg group-hover:scale-102 transition-transform duration-300 ease-out"
+            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
           />
         )}
 
-        {/* Overlaid Badges */}
+        {/* Badges */}
         <div className="absolute top-3 left-3 z-10 pointer-events-none">
           <AgeBadge ageGroup={ageGroup} size="sm" />
         </div>
 
         {discountPercent && discountPercent > 0 && (
           <div className="absolute top-3 right-3 z-10">
-            <span className="px-2 py-0.5 rounded bg-[#DA7A5B] text-white text-[11px] font-black shadow-2xs">
+            <span className="px-2.5 py-1 rounded-full bg-[#F5B7A1] text-[#1A1A1A] text-xs font-extrabold">
               -{discountPercent}%
             </span>
           </div>
         )}
 
-        {/* Hover Zoom Icon */}
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             setIsZoomOpen(true);
           }}
-          className="absolute bottom-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
-          title="Perbesar Gambar"
-          aria-label="Perbesar Gambar"
+          className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-white/90 text-[#1A1A1A] flex items-center justify-center border border-[#E5E7EB] hover:bg-white transition-colors"
+          aria-label="Perbesar gambar"
         >
           <Maximize2 className="w-4 h-4" />
         </button>
 
-        {/* Prev / Next Buttons */}
         {images.length > 1 && (
           <>
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/35 hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-10"
-              aria-label="Foto Sebelumnya"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-[#1A1A1A] flex items-center justify-center border border-[#E5E7EB] opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Foto sebelumnya"
             >
-              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/35 hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-10"
-              aria-label="Foto Berikutnya"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-[#1A1A1A] flex items-center justify-center border border-[#E5E7EB] opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label="Foto berikutnya"
             >
-              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </>
         )}
       </div>
 
-      {/* 2. Shopee-Style Thumbnail Carousel (Thumbnails only, customer browsing) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5">
-        {images.map((img, index) => {
-          const isActive = index === activeIndex;
-          return (
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
+          {images.map((img, idx) => (
             <button
-              key={index}
+              key={idx}
               type="button"
-              onMouseEnter={() => setActiveIndex(index)}
-              onClick={() => setActiveIndex(index)}
-              className={`relative aspect-square w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
-                isActive
-                  ? 'border-[#DA7A5B] ring-1 ring-[#DA7A5B] scale-102 bg-white'
-                  : 'border-[#EEDBC9] bg-[#FFF8EF] opacity-75 hover:opacity-100 hover:border-[#DA7A5B]/70'
+              onClick={() => setActiveIndex(idx)}
+              className={`w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${
+                activeIndex === idx
+                  ? 'border-[#1A1A1A]'
+                  : 'border-[#E5E7EB] opacity-70 hover:opacity-100'
               }`}
-              aria-label={`Lihat foto ${index + 1}`}
             >
-              {img.endsWith('.svg') ? (
-                <div className="w-full h-full bg-[#FFE4D0] flex flex-col items-center justify-center p-1 text-center">
-                  <ShoppingBag className="w-5 h-5 text-[#DA7A5B]" />
-                  <span className="text-[8px] font-bold text-[#502E1E] mt-0.5">Cover</span>
-                </div>
-              ) : (
-                <img
-                  src={img}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              )}
+              <img src={img} alt={`${title} thumb ${idx + 1}`} className="w-full h-full object-cover" />
             </button>
-          );
-        })}
-      </div>
-
-      {/* 3. Shopee-Style Footer Actions (Bagikan & Favoritkan) */}
-      <div className="flex items-center justify-between text-xs text-[#6B3F2A] pt-2 px-1">
-        {/* Share buttons */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#A68A78] font-medium">Bagikan:</span>
-          <a
-            href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-              typeof window !== 'undefined' ? window.location.href : ''
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-            title="Bagikan ke WhatsApp"
-            aria-label="Bagikan ke WhatsApp"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-          </a>
-          <button
-            type="button"
-            onClick={handleShare}
-            className="px-2.5 py-1 rounded bg-[#FCF6EC] border border-[#EEDBC9] hover:bg-[#FFE4D0] text-[11px] font-bold text-[#6B3F2A] transition-colors flex items-center gap-1"
-            title="Salin Tautan"
-          >
-            <Share2 className="w-3 h-3 text-[#DA7A5B]" />
-            <span>{copiedLink ? 'Tersalin!' : 'Salin Link'}</span>
-          </button>
+          ))}
         </div>
+      )}
 
-        {/* Favorite wishlist */}
+      {/* Share & Favorite */}
+      <div className="flex items-center justify-between pt-2 border-t border-[#F3F4F6] text-xs">
         <button
           type="button"
-          onClick={() => setIsFavorited(!isFavorited)}
-          className="flex items-center gap-1.5 text-xs font-semibold hover:text-[#DA7A5B] transition-colors"
+          onClick={() => setIsFavorited((v) => !v)}
+          className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-full hover:bg-[#F8FAFC] text-[#4A4A4A] font-semibold transition-colors"
         >
-          <Heart
-            className={`w-4 h-4 transition-colors ${
-              isFavorited ? 'fill-[#DA7A5B] text-[#DA7A5B]' : 'text-[#A68A78]'
-            }`}
-          />
-          <span>Favorit ({isFavorited ? 129 : 128})</span>
+          <Heart className={`w-4 h-4 ${isFavorited ? 'fill-[#F5B7A1] text-[#1A1A1A]' : ''}`} />
+          <span>{isFavorited ? 'Tersimpan di Favorit' : 'Simpan Favorit'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleShare}
+          className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-full hover:bg-[#F8FAFC] text-[#4A4A4A] font-semibold transition-colors"
+        >
+          <Share2 className="w-4 h-4" />
+          <span>{copiedLink ? 'Tautan Disalin!' : 'Bagikan'}</span>
         </button>
       </div>
 
-      {/* 4. Fullscreen Zoom Modal */}
+      {/* Zoom Modal */}
       {isZoomOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
+        <div
+          onClick={() => setIsZoomOpen(false)}
+          className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4"
+        >
+          <button
+            type="button"
             onClick={() => setIsZoomOpen(false)}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md animate-in fade-in-0 duration-200"
+            className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white text-[#1A1A1A] flex items-center justify-center"
+            aria-label="Tutup zoom"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <img
+            src={currentImage}
+            alt={title}
+            className="max-w-full max-h-[85vh] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
           />
-
-          <div className="relative max-w-3xl max-h-[90vh] z-10 flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setIsZoomOpen(false)}
-              className="absolute -top-10 right-0 p-1.5 rounded-full bg-white/20 hover:bg-white/40 text-white transition-colors"
-              aria-label="Tutup Zoom"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="rounded-xl overflow-hidden bg-white shadow-2xl p-1.5">
-              {currentImage.endsWith('.svg') ? (
-                <div className="w-[300px] sm:w-[420px] aspect-square flex flex-col items-center justify-center bg-[#FFE4D0] p-6 text-center">
-                  <ShoppingBag className="w-16 h-16 text-[#DA7A5B] mb-2" />
-                  <span className="font-serif text-xl font-bold text-[#502E1E]">{title}</span>
-                  <span className="text-xs text-[#8FA87E] font-bold mt-1">{category}</span>
-                </div>
-              ) : (
-                <img
-                  src={currentImage}
-                  alt={title}
-                  className="max-h-[78vh] w-auto object-contain rounded-lg"
-                />
-              )}
-            </div>
-
-            <div className="mt-3 px-3 py-1 rounded-full bg-black/60 text-white text-xs font-medium">
-              {activeIndex + 1} dari {images.length} Foto
-            </div>
-          </div>
         </div>
       )}
     </div>

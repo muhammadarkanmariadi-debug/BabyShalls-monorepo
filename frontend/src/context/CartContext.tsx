@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Product, CartItem } from '../types';
+import { apiClient, ADMIN_TOKEN_STORAGE_KEY, USER_TOKEN_STORAGE_KEY } from '../lib/axios';
 
 interface CartContextType {
   items: CartItem[];
@@ -27,27 +28,96 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const hasSyncedDbRef = useRef(false);
 
-  // Load from localStorage on mount
+  const hasAuthToken = () =>
+    typeof window !== 'undefined' &&
+    Boolean(
+      window.localStorage.getItem(USER_TOKEN_STORAGE_KEY) ||
+        window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
+    );
+
+  // Load from localStorage on mount, then merge/sync with DB if logged in
   useEffect(() => {
+    let localItems: CartItem[] = [];
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          localItems = parsed;
+          setItems(parsed);
+        }
       }
     } catch {
       // LocalStorage unavailable
+    } finally {
+      setIsHydrated(true);
     }
+
+    if (!hasAuthToken()) {
+      hasSyncedDbRef.current = true;
+      return;
+    }
+
+    let cancelled = false;
+    apiClient
+      .get<{ success: boolean; data: CartItem[] }>('/account/cart')
+      .then((res) => {
+        if (cancelled) return;
+        const dbItems = Array.isArray(res.data?.data) ? res.data.data : [];
+        if (dbItems.length === 0 && localItems.length > 0) {
+          hasSyncedDbRef.current = true;
+          void apiClient.put('/account/cart', {
+            items: localItems.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+          });
+          return;
+        }
+        if (dbItems.length > 0) {
+          const merged = [...localItems];
+          for (const dbItem of dbItems) {
+            const exists = merged.some(
+              (m) => m.product.id === dbItem.product.id || m.product.slug === dbItem.product.slug
+            );
+            if (!exists) merged.push(dbItem);
+          }
+          setItems(merged);
+          if (localItems.length > 0 && merged.length !== dbItems.length) {
+            void apiClient.put('/account/cart', {
+              items: merged.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+            });
+          }
+        }
+        hasSyncedDbRef.current = true;
+      })
+      .catch(() => {
+        hasSyncedDbRef.current = true;
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Save to localStorage on change
+  // Save to localStorage & sync to DB on change (only after initial hydration + DB sync)
   useEffect(() => {
+    if (!isHydrated) return;
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch {
       // ignore
     }
-  }, [items]);
+    if (!hasSyncedDbRef.current || !hasAuthToken()) return;
+    const timer = setTimeout(() => {
+      void apiClient
+        .put('/account/cart', {
+          items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+        })
+        .catch(() => undefined);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [items, isHydrated]);
 
   const showNotification = (msg: string) => {
     setToastMessage(msg);

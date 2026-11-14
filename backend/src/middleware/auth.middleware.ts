@@ -31,6 +31,22 @@ export function authenticateJWT(req: AuthRequest, res: Response, next: NextFunct
   }
 }
 
+export function optionalAuthenticateJWT(req: AuthRequest, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthenticatedUser;
+    req.user = decoded;
+  } catch {
+    // Abaikan token tidak valid pada endpoint publik opsional
+  }
+  return next();
+}
+
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.user || req.user.role !== 'ADMIN') {
     return res.status(403).json({ error: 'Akses khusus Admin BabyShalls.' });

@@ -150,6 +150,69 @@
   }
   ```
 
+### 2.6 Validasi Kupon & Voucher Promo
+- **Method & Path:** `POST /coupons/validate`
+- **Request:**
+  ```json
+  {
+    "code": "BABYNEW",
+    "subtotal": 265000
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "valid": true,
+    "code": "BABYNEW",
+    "discountType": "PERCENTAGE",
+    "discountAmount": 39750
+  }
+  ```
+
+### 2.7 Wishlist Pelanggan
+- **Method & Path:** `GET /wishlist`, `POST /wishlist` (`{ "productId": "..." }`), `DELETE /wishlist/:productId`
+- **Header Wajib:** `Authorization: Bearer <JWT_USER_TOKEN>`
+
+### 2.8 Ulasan Produk Terverifikasi (Hanya dari Detail Pesanan)
+- **Method & Path:** `POST /orders/:orderId/reviews`
+- **Header Wajib:** `Authorization: Bearer <JWT_USER_TOKEN>`
+- **Aturan:** Hanya dapat dipanggil untuk `orderItemId` milik user dengan status pesanan `COMPLETED` / `SHIPPED`. Tidak ada endpoint publik untuk submit komentar di halaman detail produk.
+- **Request:**
+  ```json
+  {
+    "orderItemId": "item-uuid",
+    "rating": 5,
+    "comment": "Kertas board book tebal, anak suka sekali!"
+  }
+  ```
+
+### 2.6 Daftar & Validasi Kupon Voucher
+- **Method & Path:** `GET /coupons/active`
+- **Method & Path:** `POST /coupons/validate`
+- **Request:**
+  ```json
+  {
+    "code": "BABYNEW",
+    "subtotal": 200000,
+    "shippingCost": 17000
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "valid": true,
+      "coupon": { "code": "BABYNEW", "discountType": "PERCENTAGE", "discountValue": 15, "maxDiscount": 50000 },
+      "discountAmount": 30000
+    }
+  }
+  ```
+
+### 2.7 Login Autentikasi JWT
+- **Method & Path:** `POST /auth/login`
+- **Request:** `{ "email": "admin@babyshalls.com", "password": "..." }`
+
 ---
 
 ## 3. Rincian Endpoint Admin (Membutuhkan Header Authorization)
@@ -167,7 +230,10 @@
   }
   ```
 
-### 3.2 Update Konten Semi-CMS Beranda
+### 3.2 Kelola Kupon & Voucher
+- **Method & Path:** `GET /admin/coupons`, `POST /admin/coupons`, `PATCH /admin/coupons/:id`, `DELETE /admin/coupons/:id`
+
+### 3.3 Update Konten Semi-CMS Beranda
 - **Method & Path:** `PUT /admin/cms`
 - **Request:**
   ```json

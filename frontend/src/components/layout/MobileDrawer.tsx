@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { ADMIN_TOKEN_STORAGE_KEY, USER_TOKEN_STORAGE_KEY } from '../../lib/axios';
 import {
   X,
-  Sparkles,
   BookOpen,
   Shapes,
   Gift,
@@ -16,6 +16,8 @@ import {
   ChevronDown,
   Info,
   HelpCircle,
+  Heart,
+  LogIn,
 } from 'lucide-react';
 import {
   AGE_GROUPS_DROPDOWN,
@@ -27,10 +29,19 @@ import {
 interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenRequestBook?: () => void;
 }
 
-export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
+export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, onOpenRequestBook }) => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token =
+      window.localStorage.getItem(USER_TOKEN_STORAGE_KEY) ||
+      window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
+    setIsAuthenticated(Boolean(token));
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -43,25 +54,27 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-[#502E1E]/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
       />
 
       {/* Drawer Content */}
-      <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-[#FFF8EF] shadow-drawer p-6 flex flex-col justify-between overflow-y-auto z-10 border-r border-[#EEDBC9]">
+      <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-drawer p-6 flex flex-col justify-between overflow-y-auto z-10 border-r border-[#E5E7EB]">
         <div>
           {/* Top Brand & Close */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#EEDBC9]">
+          <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB]">
             <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
               <img
                 src="/logo.png"
                 alt="BabyShalls Logo"
-                className="w-8 h-8 object-contain rounded-full bg-white p-0.5 border border-[#EEDBC9] shadow-2xs"
+                className="w-8 h-8 object-contain"
               />
-              <span className="font-serif text-xl font-bold text-[#502E1E]">BabyShalls</span>
+              <span className="text-base font-extrabold tracking-tight text-[#1A1A1A]">
+                BABYSHALLS
+              </span>
             </Link>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-[#FFE4D0] text-[#6B3F2A]"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#F8FAFC] text-[#1A1A1A]"
               aria-label="Tutup menu"
             >
               <X className="w-5 h-5" />
@@ -75,24 +88,23 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => toggleSection('age')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <Sparkles className="w-4 h-4 text-[#DA7A5B]" />
                   <span>Shop by Age</span>
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'age' ? 'rotate-180 text-[#D9744A]' : 'opacity-60'
+                    expandedSection === 'age' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
                   }`}
                 />
               </button>
               {expandedSection === 'age' && (
-                <div className="pl-9 pr-2 py-1 space-y-1 animate-in fade-in-0 duration-150">
+                <div className="pl-9 pr-2 py-1 space-y-1">
                   <Link
                     href={AGE_GROUPS_DROPDOWN.href}
                     onClick={onClose}
-                    className="block py-1.5 px-2 text-xs font-bold text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors border-b border-[#EEDBC9]/40 mb-1"
+                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
                   >
                     → {AGE_GROUPS_DROPDOWN.viewAllText}
                   </Link>
@@ -101,7 +113,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                       key={item.id}
                       href={item.href}
                       onClick={onClose}
-                      className="block py-1.5 px-2 text-xs font-semibold text-[#5B3A29] hover:text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors"
+                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -115,24 +127,24 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => toggleSection('books')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <BookOpen className="w-4 h-4 text-[#8FA87E]" />
+                  <BookOpen className="w-4 h-4 text-[#1E543B]" />
                   <span>Books</span>
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'books' ? 'rotate-180 text-[#D9744A]' : 'opacity-60'
+                    expandedSection === 'books' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
                   }`}
                 />
               </button>
               {expandedSection === 'books' && (
-                <div className="pl-9 pr-2 py-1 space-y-1 animate-in fade-in-0 duration-150">
+                <div className="pl-9 pr-2 py-1 space-y-1">
                   <Link
                     href={BOOKS_CATEGORIES_DROPDOWN.href}
                     onClick={onClose}
-                    className="block py-1.5 px-2 text-xs font-bold text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors border-b border-[#EEDBC9]/40 mb-1"
+                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
                   >
                     → {BOOKS_CATEGORIES_DROPDOWN.viewAllText}
                   </Link>
@@ -141,7 +153,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                       key={item.id}
                       href={item.href}
                       onClick={onClose}
-                      className="block py-1.5 px-2 text-xs font-semibold text-[#5B3A29] hover:text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors"
+                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -155,24 +167,24 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => toggleSection('toys')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <Shapes className="w-4 h-4 text-[#DA7A5B]" />
+                  <Shapes className="w-4 h-4 text-[#1E543B]" />
                   <span>Toys</span>
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'toys' ? 'rotate-180 text-[#D9744A]' : 'opacity-60'
+                    expandedSection === 'toys' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
                   }`}
                 />
               </button>
               {expandedSection === 'toys' && (
-                <div className="pl-9 pr-2 py-1 space-y-1 animate-in fade-in-0 duration-150">
+                <div className="pl-9 pr-2 py-1 space-y-1">
                   <Link
                     href={TOYS_CATEGORIES_DROPDOWN.href}
                     onClick={onClose}
-                    className="block py-1.5 px-2 text-xs font-bold text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors border-b border-[#EEDBC9]/40 mb-1"
+                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
                   >
                     → {TOYS_CATEGORIES_DROPDOWN.viewAllText}
                   </Link>
@@ -181,7 +193,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                       key={item.id}
                       href={item.href}
                       onClick={onClose}
-                      className="block py-1.5 px-2 text-xs font-semibold text-[#5B3A29] hover:text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors"
+                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -195,24 +207,24 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => toggleSection('hampers')}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <Gift className="w-4 h-4 text-[#F6C95E]" />
-                  <span>Hampers & Gifts</span>
+                  <Gift className="w-4 h-4 text-[#1E543B]" />
+                  <span>Hampers &amp; Gifts</span>
                 </div>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'hampers' ? 'rotate-180 text-[#D9744A]' : 'opacity-60'
+                    expandedSection === 'hampers' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
                   }`}
                 />
               </button>
               {expandedSection === 'hampers' && (
-                <div className="pl-9 pr-2 py-1 space-y-1 animate-in fade-in-0 duration-150">
+                <div className="pl-9 pr-2 py-1 space-y-1">
                   <Link
                     href={HAMPERS_CATEGORIES_DROPDOWN.href}
                     onClick={onClose}
-                    className="block py-1.5 px-2 text-xs font-bold text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors border-b border-[#EEDBC9]/40 mb-1"
+                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
                   >
                     → {HAMPERS_CATEGORIES_DROPDOWN.viewAllText}
                   </Link>
@@ -221,7 +233,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
                       key={item.id}
                       href={item.href}
                       onClick={onClose}
-                      className="block py-1.5 px-2 text-xs font-semibold text-[#5B3A29] hover:text-[#D9744A] hover:bg-[#FFF3E8] rounded-lg transition-colors"
+                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -234,14 +246,13 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
             <Link
               href="/catalog?category=Preloved"
               onClick={onClose}
-              className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors bg-[#FFF4E8]/80 border border-[#F6DECE]"
+              className="flex items-center justify-between min-h-[44px] px-3 py-2 rounded-xl bg-[#E9F3E4] hover:bg-[#DCECD4] font-bold text-sm text-[#1A1A1A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Sparkles className="w-4 h-4 text-[#8FA87E]" />
-                <span>Barang Preloved Kurasi</span>
+                <span>Preloved Kurasi</span>
               </div>
-              <span className="text-[10px] font-bold bg-[#EBF2E5] text-[#709154] px-2 py-0.5 rounded-full border border-[#D5E4CA]">
-                Disanitasi UV
+              <span className="text-[10px] font-bold bg-white text-[#1E543B] px-2 py-0.5 rounded-full">
+                Steril UV
               </span>
             </Link>
 
@@ -249,61 +260,85 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) =
             <Link
               href="/events"
               onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-bold text-sm text-[#1A1A1A] transition-colors"
             >
-              <Calendar className="w-4 h-4 text-[#709154]" />
-              <span>Workshops & Events</span>
+              <Calendar className="w-4 h-4 text-[#1E543B]" />
+              <span>Workshops &amp; Events</span>
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onOpenRequestBook?.();
+              }}
+              className="w-full text-left flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl bg-[#EBF1FA] hover:bg-[#DCE7F7] font-bold text-sm text-[#1E543B] transition-colors cursor-pointer"
+            >
+              <BookmarkCheck className="w-4 h-4 text-[#1E543B]" />
+              <span>Request a Book (Jastip)</span>
+            </button>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/wishlist"
+                  onClick={onClose}
+                  className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#FDECE6] font-bold text-sm text-[#1A1A1A] transition-colors"
+                >
+                  <Heart className="w-4 h-4 text-[#1E543B]" />
+                  <span>Wishlist Saya</span>
+                </Link>
+                <Link
+                  href="/account"
+                  onClick={onClose}
+                  className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-bold text-sm text-[#1A1A1A] transition-colors"
+                >
+                  <User className="w-4 h-4 text-[#1E543B]" />
+                  <span>Akun &amp; Pesanan Saya</span>
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/account"
+                onClick={onClose}
+                className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] font-bold text-sm text-white transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Masuk ke Akun</span>
+              </Link>
+            )}
             <Link
               href="/about"
               onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-semibold text-sm text-[#4A4A4A] transition-colors"
             >
-              <Info className="w-4 h-4 text-[#DA7A5B]" />
+              <Info className="w-4 h-4" />
               <span>Tentang BabyShalls</span>
             </Link>
             <Link
               href="/faq"
               onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
+              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-semibold text-sm text-[#4A4A4A] transition-colors"
             >
-              <HelpCircle className="w-4 h-4 text-[#8FA87E]" />
+              <HelpCircle className="w-4 h-4" />
               <span>Tanya Jawab (FAQ)</span>
-            </Link>
-            <Link
-              href="/request-book"
-              onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
-            >
-              <BookmarkCheck className="w-4 h-4 text-[#DA7A5B]" />
-              <span>Request a Book (Jastip)</span>
-            </Link>
-            <Link
-              href="/account"
-              onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FFE4D0] font-bold text-[#6B3F2A] transition-colors"
-            >
-              <User className="w-4 h-4 text-[#DA7A5B]" />
-              <span>Akun & Riwayat Pesanan</span>
             </Link>
           </div>
         </div>
 
         {/* Bottom Store Info */}
-        <div className="pt-6 border-t border-[#EEDBC9] space-y-3 text-xs text-[#6B3F2A]">
+        <div className="pt-6 border-t border-[#E5E7EB] space-y-3 text-xs text-[#4A4A4A]">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#DA7A5B]" />
-            <span>Jl. Cempaka No. 12, Klojen, Malang</span>
+            <MapPin className="w-4 h-4 text-[#1E543B]" />
+            <span>Jl. Cempaka No. 12, Lowokwaru, Malang</span>
           </div>
           <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-[#8FA87E]" />
+            <Phone className="w-4 h-4 text-[#1E543B]" />
             <span>WA: +62 812-3456-7890</span>
           </div>
           <a
             href="https://wa.me/6281234567890"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-center py-2.5 px-4 bg-[#25D366] text-white font-bold rounded-xl shadow-subtle hover:bg-[#20ba59]"
+            className="flex items-center justify-center min-h-[44px] px-4 bg-[#25D366] text-white font-bold rounded-full hover:bg-[#20ba59] transition-colors"
           >
             Chat WhatsApp CS
           </a>

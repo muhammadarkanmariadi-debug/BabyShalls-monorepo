@@ -1,254 +1,202 @@
 # BabyShalls — Design System & Brand Style Guide
-**Version:** 2.0  
-**Status:** Living Design Standard  
-**Store Concept:** Independent Children's Bookstore & Educational Wooden Toys Boutique  
-**Location:** Jl. Cempaka No. 12, Malang, East Java  
+**Version:** 4.0 (Total Overhaul — Fresh Minimalist Boutique)  
+**Status:** Master Design Standard  
+**Store Concept:** Curated Children's Bookstore & Educational Wooden Toys Boutique  
+**Location:** Kota Malang, Jawa Timur  
+**Visual Benchmarks:**
+- **[https://paulettekids.com/](https://paulettekids.com/)** — *Clean white canvas, bold editorial color-blocking, 50/50 story & store splits, airy uppercase navigation.*
+- **[https://papermoonbooks.nl/](https://papermoonbooks.nl/)** — *Centered emblem header, pure-white product-first bookshop grids, bright yellow subpage bands & CTAs, ultra-clean minimal forms.*
 
 ---
 
 ## 1. Brand Philosophy & Aesthetic Vision
 
-BabyShalls is an independent children's bookstore and wooden toy boutique that celebrates the wonder of early childhood, sensory curiosity, and screen-free discovery.
+BabyShalls mengadopsi pendekatan **Fresh Minimalist Editorial Boutique**: antarmuka yang bersih, lapang, modern, dan sangat mudah dipahami oleh **semua kalangan pengguna**—mulai dari orang tua muda, pencari kado (*gift hunters*), hingga pendidik PAUD/TK—di perangkat mobile maupun desktop.
 
-### Core Visual Metaphor: "The Cozy Living Storybook"
-The BabyShalls visual experience is designed to feel like an **open, beautifully crafted children's book cover** or a warm lifestyle editorial layout—never a cold, boxy, or generic e-commerce portal.
-
-### Brand Pillars & Personality
-| Brand Pillar | Visual Expression | Emotional Impression |
-| :--- | :--- | :--- |
-| **Warmth & Care** | Cream-to-peach backgrounds, warm terracotta, soft sunlight tones | Gentle, welcoming, comforting |
-| **Tactile Wonder** | Natural wooden toys, cloth textures, smooth rounded curves | Physical, sensory, high craftsmanship |
-| **Playful Elegance** | Fluid asymmetrical waves, organic leaf sprigs, hand-drawn doodles | Whimsical yet refined; never childishly noisy |
-| **Literary Pedigree** | Editorial serif headlines, generous whitespace, poetic pacing | Thoughtful curation, premium bookstore |
+### Prinsip Inti (Menggantikan Konsep Lama)
+1. **Pure White Canvas (`#FFFFFF`):** Seluruh halaman dibangun di atas latar putih bersih dengan *whitespace* yang lega. Tidak ada lagi latar krem/peach berlapis atau *gradient* berat yang membuat halaman terasa penuh.
+2. **Product-First Visibility:** Sampul buku anak dan tekstur mainan kayu adalah bintang utama. Kartu produk dibuat tanpa kotak/bayangan berat agar foto produk langsung menonjol (*stand out*).
+3. **Zero Ornamental Clutter:** Seluruh dekorasi berlebih (gelombang SVG berlapis, *floating hearts*, *twinkle stars*, *confetti dots*, *sunburst doodles*, dan dedaunan pinggir layar) **dihapus sepenuhnya**.
+4. **Bold, Purposeful Color Accents:** Warna cerah hanya digunakan secara terarah pada *subpage header band*, tombol CTA utama, dan *editorial campaign banner*—persis seperti keseimbangan visual pada **Paper Moon Books** dan **Paulette Kids**.
 
 ---
 
-## 2. Color Palette & Design Tokens
+## 2. Fresh Color Palette & Design Tokens
 
-The color palette is built on warm earthy neutrals, soft bakery creams, terracotta accents, and gentle botanical greens.
+Seluruh design token lama (`cream`, `peach`, `salmon`, `terracotta`, `warmbrown`, dll.) **dibuang** dan digantikan dengan sistem token baru yang tajam, kontras tinggi, dan minimalis.
 
-### 2.1 Color Tokens Specification
+### 2.1 CSS Variables Specification
 
 ```css
 :root {
-  /* Surface & Base Backgrounds */
-  --color-cream-light:     #FFF8EF; /* Primary page background (soft milky cream) */
-  --color-offwhite:        #FFF9F0; /* Top header background & wave blending tone */
-  --color-cream:           #FCF6EC; /* Card surface & alternate section background */
-  
-  /* Warm Transitions & Gradients */
-  --color-peach-light:     #FFE4D0; /* Hero middle gradient stop */
-  --color-peach:           #FCE0D4; /* Soft peach cards & hamper banner */
-  --color-salmon:          #F6B79B; /* Hero deep gradient accent & floral petals */
-  
-  /* Primary Action & Brand Accent */
-  --color-terracotta:      #DA7A5B; /* Main CTA buttons, active state highlights */
-  --color-terracotta-dark: #C46749; /* CTA hover/focus state */
-  
-  /* Joyful & Botanical Accents */
-  --color-mustard:         #F6C95E; /* Announcement bar, sun icon, sunburst doodles */
-  --color-mustard-light:   #FDF3D6; /* Star badges & subtle highlights */
-  --color-sage:            #DCE6C6; /* Sage green background for preschool cards */
-  --color-sage-light:      #EBF2E0; /* Soft botanical fill */
-  --color-leaf:            #A7C48A; /* Hand-drawn leaves & foliage doodles */
-  --color-leaf-dark:       #709154; /* Botanical stems & leaf strokes */
-  
-  /* Typography & High-Contrast Elements */
-  --color-warmbrown-dark:  #502E1E; /* Primary headlines (high legibility) */
-  --color-warmbrown:       #6B3F2A; /* Body copy, titles, icons */
-  --color-lightbrown:      #CBA989; /* Subtitles, placeholders, icon tints */
-  --color-gray-border:     #EEDBC9; /* Subtle warm borders and dividers */
-  
-  /* Functional & Social */
-  --color-whatsapp:        #25D366; /* WhatsApp floating action button */
-  --color-whatsapp-hover:  #20BA59; /* WhatsApp hover state */
-  --color-white:           #FFFFFF; /* Search box fill, card clean surfaces */
+  /* 1. Canvas & Neutral Surfaces */
+  --color-bg-page:           #FFFFFF; /* Kanvas utama halaman (Pure White) */
+  --color-bg-subtle:         #F7F7F5; /* Latar netral sangat lembut untuk foto/section alternatif */
+  --color-bg-muted:          #EFEFED; /* Placeholder gambar & hover surface ringan */
+
+  /* 2. Typography & Ink (High Contrast) */
+  --color-ink-primary:       #1A1A1A; /* Judul utama, teks body, ikon header */
+  --color-ink-secondary:     #555555; /* Deskripsi, subjudul, metadata produk */
+  --color-ink-muted:         #8C8C8C; /* Placeholder input, teks sekunder */
+  --color-ink-inverse:       #FFFFFF; /* Teks di atas latar gelap/berwarna */
+
+  /* 3. Primary & Editorial Brand Accents */
+  --color-accent-sun:        #FFD200; /* CTA utama, header band subhalaman (ala Paper Moon Books) */
+  --color-accent-sun-hover:  #EBC000; /* Hover state tombol utama */
+  --color-brand-forest:      #1E543B; /* Banner koleksi spesial, judul editorial, status tersedia (ala Paulette) */
+  --color-brand-forest-dark: #153D2A; /* Hover state tombol/aksen forest */
+  --color-brand-coral:       #E04F5F; /* Badge Sale / New / highlight playful */
+  --color-brand-amber:       #E58A3C; /* Eyebrow label kategori/cerita (mis. "OUR STORY") */
+
+  /* 4. Borders & Dividers */
+  --color-border-hairline:   #E5E5E5; /* Garis pemisah tipis header, footer, tabel */
+  --color-border-input:      #CCCCCC; /* Border input form minimalis */
+  --color-border-focus:      #1A1A1A; /* Border fokus aktif (aksesibilitas keyboard) */
+
+  /* 5. Functional & Status */
+  --color-whatsapp:          #25D366; /* Floating WhatsApp CS Malang */
+  --color-whatsapp-hover:    #20BA59;
+  --color-error:             #D9383A;
+  --color-success:           #1E543B;
+
+  /* 6. Radius & Elevation (Crisp & Minimal) */
+  --radius-none:             0px;     /* Banner full-bleed & subpage band */
+  --radius-sm:               4px;     /* Input form & tombol kotak bersih */
+  --radius-md:               8px;     /* Thumbnail editorial & kartu info */
+  --radius-pill:             9999px;  /* Badge kecil & floating action */
+  --shadow-subtle:           0 2px 10px rgba(0, 0, 0, 0.06);
 }
 ```
 
 ### 2.2 Color Swatch Quick Reference
 
-| Token | Hex Code | Visual Swatch | Semantic Role |
-| :--- | :--- | :--- | :--- |
-| `cream-light` | `#FFF8EF` | `■` Cream | Base canvas for all editorial body sections |
-| `offwhite` | `#FFF9F0` | `■` Off-White | Header and top wave blending layer |
-| `peach-light` | `#FFE4D0` | `■` Peach | Hero organic gradient transition |
-| `salmon` | `#F6B79B` | `■` Salmon | Hero warmth gradient & organic illustrations |
-| `terracotta` | `#DA7A5B` | `■` Terracotta | Primary CTA buttons, badges, key conversion targets |
-| `mustard` | `#F6C95E` | `■` Mustard | Top announcement bar, radiating sun doodles |
-| `leaf` | `#A7C48A` | `■` Leaf | Botanical sage foliage and organic leaves |
-| `warmbrown-dark` | `#502E1E` | `■` Espresso | Deep literary headings (Playfair Display) |
-| `warmbrown` | `#6B3F2A` | `■` Warm Brown | Body typography (Nunito) & icons |
+| Token | Hex Code | Peran Semantik |
+| :--- | :--- | :--- |
+| `--color-bg-page` | `#FFFFFF` | Kanvas utama putih bersih di seluruh halaman |
+| `--color-bg-subtle` | `#F7F7F5` | Latar foto produk & blok info netral |
+| `--color-ink-primary` | `#1A1A1A` | Teks utama, harga, ikon navigasi (kontras maksimal) |
+| `--color-ink-secondary` | `#555555` | Deskripsi produk, jam buka, sub-copy |
+| `--color-accent-sun` | `#FFD200` | Tombol CTA utama (`Explore`, `Send`) & pita judul subhalaman |
+| `--color-brand-forest` | `#1E543B` | *Special Collection* full-width banner & judul *Our Story* |
+| `--color-brand-coral` | `#E04F5F` | Badge *New* / *Sale* & aksen promo terbatas |
+| `--color-border-hairline` | `#E5E5E5` | Garis pemisah halus antar-elemen |
 
 ---
 
 ## 3. Typography Architecture
 
-BabyShalls utilizes a pair of Google Fonts that balance literary elegance with accessible warmth:
+Mengikuti gaya tipografi bersih pada **Paulette Kids** dan **Paper Moon Books**, BabyShalls beralih ke **single-family modern geometric sans-serif** yang sangat rapi, ramah dibaca anak maupun orang dewasa, dan bebas kesan kaku.
 
+```text
+Headings & Display  : Plus Jakarta Sans (SemiBold / Bold, tight tracking)
+Body, Nav & Forms   : Plus Jakarta Sans (Regular / Medium)
 ```
-Headings & Display    : Playfair Display (Serif)
-Body, Buttons, & UI   : Nunito (Rounded Sans-Serif)
-```
 
-### 3.1 Typeface Details
-- **Playfair Display:** Used exclusively for editorial titles, section headers, brand logo, and hero headline. Brings an artisanal bookstore atmosphere reminiscent of classic picture book typography.
-- **Nunito:** Used for descriptions, prices, navigation items, buttons, badges, and form controls. Its gently rounded terminals soften the interface, making it approachable and kid-friendly without feeling childish.
+### 3.1 Typographic Hierarchy & Scale
 
-### 3.2 Typographic Hierarchy & Scale
-
-| Level | Font Family | Size (Desktop) | Size (2K Display) | Size (Mobile) | Line Height | Weight |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Hero Headline (H1)** | Playfair Display | `48px` | `64px` | `32px` | `1.15 - 1.18` | 700 (Bold) |
-| **Section Title (H2)** | Playfair Display | `34px - 38px` | `44px` | `26px - 28px` | `1.2` | 700 (Bold) |
-| **Card Title (H3)** | Playfair Display | `20px - 22px` | `26px` | `18px` | `1.25` | 700 (Bold) |
-| **Lead / Subtitle** | Nunito | `17px - 18px` | `23px` | `15px` | `1.55 - 1.6` | 400 - 500 |
-| **Body Regular** | Nunito | `15px` | `18px` | `14px` | `1.6` | 400 (Regular) |
-| **Navigation Links** | Nunito | `14.5px` | `16px` | `15px` | `1.2` | 600 (SemiBold) |
-| **CTA Button Text** | Nunito | `16px` | `22px` | `15px` | `1.0` | 700 (Bold) |
-| **Badges & Microcopy**| Nunito | `12px - 13px` | `14px` | `11.5px` | `1.2` | 700 (Bold) |
+| Level | Font Family | Size (Desktop) | Size (Mobile) | Line Height | Weight & Style |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Page / Hero Title (H1)** | Plus Jakarta Sans | `36px - 44px` | `26px - 30px` | `1.15 - 1.2` | `700` (Bold) |
+| **Section Title (H2)** | Plus Jakarta Sans | `26px - 32px` | `22px - 24px` | `1.25` | `600 - 700` |
+| **Editorial Eyebrow** | Plus Jakarta Sans | `12px` | `11px` | `1.2` | `700`, `uppercase`, `letter-spacing: 0.08em` |
+| **Nav Links (Header)** | Plus Jakarta Sans | `13px - 14px` | `15px` | `1.2` | `500`, `letter-spacing: 0.03em` |
+| **Body & Story Copy** | Plus Jakarta Sans | `15px` | `14px` | `1.65` | `400` (Regular) |
+| **Product Title** | Plus Jakarta Sans | `14px - 15px` | `13.5px` | `1.35` | `500` (Medium) |
+| **Product Price (IDR)** | Plus Jakarta Sans | `14px - 15px` | `14px` | `1.2` | `600 - 700` |
+| **CTA Button** | Plus Jakarta Sans | `14px` | `14px` | `1.0` | `700` (Bold) |
 
 ---
 
-## 4. Organic Waves & Fluid Edge Philosophy
+## 4. Layout & Structural Patterns (Referensi Langsung)
 
-### 4.1 Goodbye Boxy Banners, Hello Continuous Landscape
-Traditional e-commerce designs place hero sections inside sharp rectangles or cards with rounded corners. **BabyShalls forbids rigid card boxes for the hero section.**
+### 4.1 Header & Navigasi (Menggabungkan Paper Moon & Paulette)
+- **Tampilan Desktop (2-Baris Rapi atau 1-Baris Terpusat):**
+  - **Baris Atas:** Ikon *Search* di kiri, **Logo BabyShalls** tepat di tengah, ikon *Account* dan *Shopping Bag* (dengan counter item) di kanan.
+  - **Baris Bawah:** Menu navigasi satu baris terpusat dengan spasi lega (`Shop`, `Age 0–1`, `Age 1–3`, `Age 3–6`, `Toys`, `Events`, `Request a Book`, `About`).
+  - Latar putih solid (`#FFFFFF`) dengan garis bawah halus `1px solid #E5E5E5`.
 
-The hero must flow directly out of the header and dissolve naturally into the product catalog:
-1. **Top Wave (`.hero-top-wave`):**
-   - An asymmetrical SVG curve blending with the header background (`#FFF9F0`).
-   - The lifestyle photograph extends underneath the wave, giving a layered, cinematic depth.
-2. **Bottom Wave (`.hero-bottom-wave`):**
-   - A multi-layered flowing wave transitioning from the hero's warm salmon/peach into the cream background (`#FFF8EF`) of the Shop by Age section.
-   - Distinct layered heights creating rolling hill aesthetics.
-3. **No Ellipse Clip-Paths:**
-   - Elliptical clip-paths aggressively crop important image content and create harsh unnatural points. Always use layered SVG bezier curves or organic CSS pseudo-elements.
+### 4.2 Beranda Minimalis & Editorial Blocks
+1. **Intro Singkat + CTA Tunggal (Ala Paper Moon Books):**
+   - Blok teks terpusat maksimal 3 baris di atas kanvas putih memperkenalkan kurasi buku & mainan kayu BabyShalls, diikuti 1 tombol CTA kuning (`#FFD200`, teks `#1A1A1A`).
+2. **Hero Full-Bleed Split / Banner (Ala Paulette Kids & Paper Moon):**
+   - Dapat menggunakan split 50/50 bersih (foto tajam di kiri, panel warna/kolase editorial di kanan) atau satu banner ilustrasi/fotografi horizontal penuh. Tanpa gelombang SVG atau stiker melayang yang menutupi konten.
+3. **Katalog Produk Minimalis (`New In!` & `Best Sellers`):**
+   - Grid 4–5 kolom di desktop, 2 kolom di mobile dengan *gap* yang lega (`24px - 32px`).
+4. **Blok *Special Collection* (Ala Paulette `Born to Love`):**
+   - Seksi *full-width* berlatar `--color-brand-forest` (`#1E543B`), judul kuning cerah (`#FFD200`), deskripsi singkat terpusat, dan tombol *outline* tipis (`border: 1px solid #FFD200`).
+5. **Blok *Our Story* & *Our Store (Malang)* (50/50 Split):**
+   - Sisi kiri: foto toko / peta lokasi interaktif yang jelas.
+   - Sisi kanan: kanvas putih luas dengan eyebrow oranye (`OUR STORY` / `MALANG STORE`), judul hijau/hitam, dan jam operasional yang mudah dibaca.
 
----
-
-## 5. Decorative Language & Hand-Drawn Doodles
-
-To accentuate the children's storybook feel, small organic doodles and botanical elements are placed along the edges and near key conversion elements.
-
-### 5.1 Decorative Element Catalog
-1. **Mustard Sunburst Doodle (`.hero-sunburst-doodle`):**
-   - Three radiating rounded strokes placed above the primary headline.
-   - Rotations: Left (`-32deg`), Center (`0deg`), Right (`+32deg`).
-2. **Stacked Organic Flowers (`.hero-cta-flowers-stack` & `.hero-left-flowers-stack`):**
-   - Clusters of warm mustard and soft salmon circular petals layered with terracotta centers.
-   - Accompanied by mini sage leaves to form a blooming bouquet.
-   - Placed beside the CTA button to draw visual weight without obstructing click targets.
-3. **Botanical Sage Leaf Branches (`.hero-left-leaves`, `.hero-right-leaves`):**
-   - Subtle sage green stems (`#91B077`, `#7A9A60`) that frame the hero composition from outer screen edges.
-4. **Playful Micro-Accents (`.hero-cta-decorations`):**
-   - Floating outline hearts (`.cta-deco-heart`) with gentle bobbing animations (`heartFloat`).
-   - 4-point twinkle stars (`.cta-deco-twinkle`) with subtle scale pulsation (`twinklePulse`).
-   - Soft pastel confetti dots (`.cta-deco-dot`) in mustard and salmon.
-
-### 5.2 Safe-Zone & Overlap Rules
-- **Rule 1 — Zero Text Collision:** Decorative elements must **never** overlap headline text, body copy, or price tags.
-- **Rule 2 — Tablet Breakpoint Guard (`<= 860px`):** On screens narrower than 860px, edge leaves (`.hero-left-leaves`) must be hidden (`display: none !important;`) to ensure maximum legibility for the typography.
-- **Rule 3 — CTA No-Wrap Rule:** The CTA button and its companion flower stack must have `flex-wrap: nowrap;` across all screen sizes so they remain cleanly paired side-by-side.
+### 4.3 Subpage Header Band (Ala Paper Moon `Events` / `About`)
+- Setiap halaman sekunder (`/about`, `/events`, `/request-book`, `/catalog`) diawali dengan **pita judul horizontal penuh** berlatar `--color-accent-sun` (`#FFD200`) dengan teks judul terpusat berwarna `#1A1A1A`. Simpel, ikonik, dan langsung memberi orientasi halaman kepada user.
 
 ---
 
-## 6. Photography & Imagery Art Direction
+## 5. Component Specifications
 
-### 6.1 Hero Photography Requirements
-- **Subject:** A young child engaged in reading a colorful picture book, surrounded by natural wooden toys (cars, stacking rings, building blocks) and soft plush companions.
-- **Lighting:** Soft, warm, natural morning sunlight streaming from the window. Golden hour warmth.
-- **Color Temperature:** 3500K - 4500K (warm neutral, honeyed wood, linen beige, gentle cream).
-- **Styling:** Natural linen clothing (floral print or soft earth tones), natural unpainted or pastel wooden educational toys.
-- **Composition:** Asymmetrical editorial layout occupying 52% - 55% of the hero stage.
-- **Edge Blending:** Left edge treated with an organic alpha gradient (`linear-gradient(to right, #FFEBDC 0%, ... transparent 100%)`) allowing the photo to blend smoothly into the editorial text block.
+### 5.1 Product Card (Stand-Out Tanpa Noise)
+- **Container:** Latar `#FFFFFF`, **tanpa border luar** dan **tanpa shadow permanen**.
+- **Image Area:** Latar `#F7F7F5` (atau foto latar putih bersih), rasio `3:4` untuk buku dan `1:1` untuk mainan kayu. Hover: *subtle image zoom* (`scale(1.03)`).
+- **Badge Minimal:** Maksimal 1 badge kecil di pojok kiri atas hanya jika relevan (`New`, `Sale`, atau `Age 1–3`).
+- **Info Area:** Rata kiri atau tengah bersih—Judul Produk (maks. 2 baris) + Harga IDR. Tombol *Quick Add to Cart* muncul rapi saat hover (desktop) atau sebagai tombol ringkas di bawah harga (mobile).
 
-### 6.2 Product Photography
-- **Books:** Shown at a 3:4 aspect ratio with clean subtle shadows (`0 6px 18px rgba(107, 63, 42, 0.08)`), featuring cover art clearly without distortion.
-- **Toys & Hampers:** Photographed on neutral cream surfaces, showcasing natural wood grain, soft fabric ribbons, and tactile packaging.
+### 5.2 Primary & Secondary Buttons
+- **Primary CTA (Paper Moon Style):**
+  - Background: `#FFD200` | Text: `#1A1A1A` | Padding: `12px 28px` | Radius: `4px` | Font: `700`.
+  - Hover: `#EBC000`.
+- **Secondary / Dark CTA:**
+  - Background: `#1A1A1A` (atau `#1E543B`) | Text: `#FFFFFF` | Radius: `4px`.
+- **Outline CTA (Di atas banner gelap):**
+  - Background: `transparent` | Border: `1px solid #FFD200` | Text: `#FFD200` | Hover: isi `#FFD200`, teks `#1A1A1A`.
 
----
+### 5.3 Minimalist Form Controls (Book Request & Event Registration)
+- Mengikuti form halaman *Educators* & *Events* **Paper Moon Books**:
+  - Input field berlatar `#FFFFFF`, border `1px solid #CCCCCC`, radius `2px - 4px`, tinggi minimum `44px` (ramah sentuh).
+  - Placeholder singkat & jelas, fokus border berubah tegas menjadi `1px solid #1A1A1A`.
+  - Tombol submit rata kiri beraksen `#FFD200` atau `#1A1A1A`.
 
-## 7. Component Specifications
-
-### 7.1 Primary CTA Button (`.hero-cta-btn`)
-- **Background:** `--color-terracotta` (`#DA7A5B`)
-- **Hover Background:** `--color-terracotta-dark` (`#C46749`)
-- **Shape:** Full Pill (`border-radius: 9999px`)
-- **Typography:** Nunito 700 (Bold)
-- **Shadow:** `0 6px 20px rgba(218, 122, 91, 0.35)`
-- **Hover Micro-interaction:** `translateY(-2px)` with shadow bloom (`0 10px 26px rgba(218, 122, 91, 0.46)`) and `translateX(+4px)` arrow slide.
-
-### 7.2 Shop by Age Cards (`.age-card`)
-- **Border Radius:** `20px` (`--radius-xl`)
-- **Border:** `1px solid rgba(238, 219, 201, 0.6)`
-- **Hover Effect:** `translateY(-6px)` with shadow lift
-- **Color Themes by Stage:**
-  - **Newborn+ :** Soft warm cream (`#FCF4EB`)
-  - **Ages 1–3 :** Warm peach (`#FCECE0`)
-  - **Ages 3+  :** Gentle sage green (`#EBF2E5`)
-  - **Ages 6+  :** Sweet peach apricot (`#FDEFE5`)
-
-### 7.3 Product Cards (`.product-card`)
-- **Surface:** Pure White (`#FFFFFF`) with `16px` border radius
-- **Header Badges:** Pill badges in top corners (`Bestseller`, `Imported Book`, `Age Tag`)
-- **Wishlist Heart:** Top-right floating circle button with smooth pink heart fill toggle
-- **Cart CTA:** Direct action button adding item to live cart drawer with counter update.
-
-### 7.4 Floating WhatsApp Button (`.floating-whatsapp-btn`)
-- **Color:** Brand WhatsApp Green (`#25D366`)
-- **Position:** Fixed bottom-right corner (`bottom: 24px; right: 24px; z-index: 90;`)
-- **Shape:** Pill button with live pulsation ring (`waPulse`)
-- **Pre-filled Message:** Configured to launch direct chat with BabyShalls Malang store assistant.
-
-### 7.5 Payment & Shipping Partner Badges (`.payment-badges`)
-- **Surface:** Pure White Pill (`background: #FFFFFF; border-radius: 9999px; padding: 6px 14px;`)
-- **Shadow:** `0 2px 8px rgba(0, 0, 0, 0.08)`
-- **Logos Included:**
-  - **Midtrans:** Official isometric 3D cube in sky blue (`#00AEEF`), cyan-blue (`#0067A3`), and navy (`#002B49`) + `midtrans` wordmark.
-  - **Divider:** Subtle light slate vertical line (`#CBD5E1`).
-  - **RajaOngkir:** 3-point crown in crimson red (`#D32F2F`) + `rajaongkir` dual-color wordmark (`raja` in red, `ongkir` in slate `#1E293B`).
-- **Hover Micro-interaction:** `translateY(-1px)` with elevated soft shadow.
+### 5.4 Floating WhatsApp CTA (Paulette Kids Style)
+- Posisi tetap di pojok kanan bawah (`bottom: 24px; right: 24px; z-index: 90;`).
+- Ikon lingkaran hijau `#25D366` berdiameter `52px` dengan bayangan halus—tanpa animasi *pulse* berulang yang mengganggu mata.
 
 ---
 
-## 8. Responsive Breakpoint Matrix
+## 6. Photography & Art Direction
 
-| Viewport Category | Screen Width Range | Layout Behavior & Scale |
+1. **Foto Produk (Prioritas Tertinggi):**
+   - Latar belakang putih bersih atau abu-abu hangat netral (`#F7F7F5`) dengan pencahayaan merata dan bayangan natural.
+   - Tidak ada teks promosi atau stiker grafis yang ditempel di atas foto produk.
+2. **Foto Lifestyle & Toko:**
+   - Foto anak membaca atau bermain mainan kayu dengan ekspresi natural dan pencahayaan terang/cerah (*bright & airy*).
+   - Bingkai foto tajam (`0px`) untuk split 50/50 full-bleed, atau sudut lembut (`8px`) untuk foto di dalam konten artikel.
+
+---
+
+## 7. Responsive Breakpoint Matrix
+
+| Viewport | Lebar Layar | Perilaku Layout |
 | :--- | :--- | :--- |
-| **2K & Ultrawide** | `min-width: 2000px` | Full bleed to right edge (`width: 100%; max-width: 100%; margin: 0; grid-template-columns: 44% 56%`). Photo is strictly stuck/attached to the right side of the page with no gap. Headline: `64px`. CTA font: `22px` with `22px 56px` padding. Waves scale to `110px` top and `140px` bottom. |
-| **Large Desktop** | `1600px - 1999px` | Full bleed to right edge (`width: 100%; max-width: 100%; margin: 0; grid-template-columns: 45% 55%`). Headline: `54px`. CTA font: `19px` with `18px 46px` padding. |
-| **Standard Desktop** | `1025px - 1599px` | Two-column editorial grid (`46% / 54%`). Left text block, right photo stuck to right screen border with organic left gradient blend. Double waves active. |
-| **Tablet Landscape/Portrait** | `769px - 1024px` | Two-column grid (`48% / 52%`). Headline: `34px`. Padding left clamped to `clamp(55px, 6vw, 75px)`. Left leaves downsized to `38px`. |
-| **Small Tablet Guard** | `<= 860px` | Left foliage hidden (`display: none !important;`) to ensure zero collision with text. Corner flowers shifted down. |
-| **Mobile Portrait** | `<= 768px` | Single-column stacked layout (`grid-template-columns: 1fr`). Centered copy, photography underneath with top gradient blend. Mobile navigation drawer active. |
-| **Mobile Compact** | `<= 480px` | Headline: `27px`. Full-width touch-friendly CTA (`max-width: 280px`). Photo height clamped to `260px`. |
+| **Desktop Wide** | `>= 1280px` | Container konten `max-width: 1280px` (kecuali banner full-bleed & pita kuning penuh). Grid produk 4–5 kolom. |
+| **Desktop / Laptop** | `1025px - 1279px` | Grid produk 4 kolom, header 2-baris tetap satu baris menu tanpa wrap. |
+| **Tablet** | `769px - 1024px` | Grid produk 3 kolom, split section 50/50 tetap bersebelahan dengan padding proporsional. |
+| **Mobile** | `<= 768px` | Grid produk **2 kolom** (standar e-commerce modern), split section menumpuk vertikal (gambar di atas, teks di bawah), menu pindah ke *slide-out drawer* bersih, target sentuh minimal `44x44px`. |
 
 ---
 
-## 9. Animation & Motion Design Tokens
+## 8. Motion & Accessibility Standards
 
-```css
-:root {
-  --transition-fast:   0.18s ease;
-  --transition-smooth: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-```
-
-### Keyframe Animation Guidelines
-1. **`gentle-spin` (20s linear infinite):** Subtle continuous rotation on the smiling sun brand logo icon.
-2. **`flowerGentleBob` (4.5s ease-in-out infinite):** Soft vertical float (`translateY(-4px)` with `rotate(2deg)`) on the CTA stacked flower cluster.
-3. **`heartFloat` (3.8s ease-in-out infinite):** Whimsical floating motion (`translateY(-5px)` with `rotate(4deg)`) on decorative hearts.
-4. **`twinklePulse` (3.0s ease-in-out infinite):** Gentle scale breathing (`scale(1.25)`) on mustard sparkle stars.
-5. **Accessibility Standard (`prefers-reduced-motion`):** All infinite keyframe loops automatically deactivate when user system preference requests reduced motion.
+1. **Restrained Motion:**
+   - Hanya gunakan transisi UI fungsional (`0.18s ease` untuk hover warna/zoom gambar produk dan `0.25s ease` untuk slide drawer keranjang/menu).
+   - **Dilarang** menggunakan animasi *infinite loop* dekoratif.
+   - Hormati `prefers-reduced-motion: reduce`.
+2. **Universal Usability (WCAG AA):**
+   - Teks `#1A1A1A` di atas `#FFFFFF` (kontras `17.4:1`) dan di atas `#FFD200` (kontras `12.6:1`)—sangat mudah dibaca oleh pengguna dari segala usia.
+   - Target klik minimal `44x44px` di seluruh tombol dan tautan mobile.
 
 ---
 
-## 10. Code & Implementation Governance
+## 9. Implementation Governance
 
-When adding new components, landing pages, or promotional banners to BabyShalls:
-1. **Never introduce harsh boxy cards** for full-bleed promotional sections; always use flowing organic transitions.
-2. **Always reference CSS variables** (`var(--color-...)`, `var(--radius-...)`) rather than hardcoding static hex values.
-3. **Preserve the editorial contrast:** Always ensure dark brown (`#502E1E` or `#6B3F2A`) is used on cream/peach backgrounds for WCAG AA accessible contrast.
-4. **Maintain the dual-typeface discipline:** Reserve `Playfair Display` for moments of storytelling and literary emphasis; use `Nunito` for functional interactions and body reading comfort.
-
+1. **Clean Token Discipline:** Gunakan hanya token `--color-*` pada Dokumen v4.0 ini. Hapus referensi token lama (`--color-cream`, `--color-terracotta`, `--color-warmbrown`, `--color-peach`, `--color-salmon`) saat refactor stylesheet/Tailwind config.
+2. **Let Products Breathe:** Jaga jarak antar elemen dan pertahankan kanvas `#FFFFFF`. Jika sebuah elemen tidak membantu user menemukan, memahami, atau membeli produk—jangan tampilkan.

@@ -2,150 +2,159 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Check, BookOpen, Shapes, Sparkles, Eye, ShoppingBag } from 'lucide-react';
+import { Check, Heart, BookOpen, Shapes, Star } from 'lucide-react';
 import { Product } from '../../types';
-import { formatIDR, formatWeight } from '../../lib/utils';
-import { AgeBadge } from './AgeBadge';
+import { formatIDR } from '../../lib/utils';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
+const AGE_TAG_STYLES: Record<string, string> = {
+  'Newborn+': 'bg-[#FAF4E8] text-[#1A1A1A] border-[#E2E8F0]',
+  'Ages 1-3': 'bg-[#FDECE6] text-[#1A1A1A] border-[#E2E8F0]',
+  'Ages 3+': 'bg-[#E9F3E4] text-[#1A1A1A] border-[#E2E8F0]',
+  'Ages 6+': 'bg-[#EBF1FA] text-[#1A1A1A] border-[#E2E8F0]',
+};
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addItem } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [isAdded, setIsAdded] = useState(false);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem(product, 1);
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1500);
-  };
-
+  const wishlisted = isWishlisted(product.id);
   const isBook = product.category.includes('Book');
   const hasRealImage =
     product.images &&
     product.images.length > 0 &&
     !product.images[0].endsWith('.svg');
 
+  const discountPercent =
+    product.originalPrice && product.originalPrice > product.price
+      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+      : 0;
+
+  const tagStyle =
+    AGE_TAG_STYLES[product.ageGroup] || 'bg-[#FAF4E8] text-[#1A1A1A] border-[#E2E8F0]';
+
+  const handleAddToCart = () => {
+    addItem(product, 1);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1400);
+  };
+
   return (
-    <div className="group bg-[#FFF9F0] border border-[#EEDBC9] rounded-[22px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-subtle hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-      
-      {/* 1. Media / Thumbnail */}
-      <Link
-        href={`/product/${product.slug}`}
-        className="relative w-full aspect-square rounded-[18px] bg-[#FFE4D0]/60 border border-[#F6B79B]/40 flex items-center justify-center overflow-hidden mb-3.5 group-hover:bg-[#FFE4D0] transition-colors block"
-      >
-        {hasRealImage ? (
-          <img
-            src={product.images[0]}
-            alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
-          />
-        ) : (
-          /* Decorative Graphic based on category */
-          <div className="text-[#DA7A5B] flex flex-col items-center justify-center p-6 text-center transform group-hover:scale-105 transition-transform duration-300">
-            {isBook ? (
-              <BookOpen className="w-14 h-14 stroke-[1.5] text-[#DA7A5B] mb-2" />
-            ) : (
-              <Shapes className="w-14 h-14 stroke-[1.5] text-[#DA7A5B] mb-2" />
-            )}
-            <span className="text-xs font-semibold text-[#8FA87E] tracking-wider uppercase">
-              {product.category}
-            </span>
-          </div>
-        )}
+    <article className="flex flex-col">
+      {/* Clean Borderless Image Container */}
+      <div className="relative aspect-[4/3.6] w-full rounded bg-[#F7F7F5] overflow-hidden mb-2.5 group">
+        <Link href={`/product/${product.slug}`} className="block w-full h-full">
+          {hasRealImage ? (
+            <img
+              src={product.images[0]}
+              alt={product.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center text-[#1E543B]">
+              {isBook ? (
+                <BookOpen className="w-10 h-10 stroke-[1.5] mb-1.5" />
+              ) : (
+                <Shapes className="w-10 h-10 stroke-[1.5] mb-1.5" />
+              )}
+              <span className="text-[11px] font-semibold text-[#555555] uppercase">
+                {product.category}
+              </span>
+            </div>
+          )}
+        </Link>
 
-        {/* Floating Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
-          <AgeBadge ageGroup={product.ageGroup} />
-          {product.isPreloved ? (
-            <span className="inline-flex items-center gap-1 bg-[#8FA87E] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
-              <Sparkles className="w-2.5 h-2.5" /> Preloved Kurasi
-            </span>
-          ) : product.isNewArrival ? (
-            <span className="inline-flex items-center gap-1 bg-[#DA7A5B] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
-              <Sparkles className="w-2.5 h-2.5" /> New
-            </span>
-          ) : null}
-        </div>
-
-        {/* Weight indicator in corner */}
-        <span className="absolute bottom-2.5 right-2.5 bg-white/85 backdrop-blur-xs text-[#6B3F2A] text-[10px] font-bold px-2 py-0.5 rounded-md border border-[#EEDBC9]">
-          {formatWeight(product.weightInGrams)}
-        </span>
-      </Link>
-
-      {/* 2. Content Info */}
-      <div className="flex-1 flex flex-col justify-between space-y-3">
-        <div>
-          <Link href={`/product/${product.slug}`} className="block">
-            <h3 className="font-serif text-sm sm:text-base font-bold text-[#502E1E] group-hover:text-[#DA7A5B] transition-colors line-clamp-1 leading-snug">
-              {product.title}
-            </h3>
-          </Link>
-          <p className="text-xs text-[#8FA87E] font-medium mt-0.5 line-clamp-1">
-            {product.authorOrBrand || product.category}
-          </p>
-          {product.condition && (
-            <span className="inline-block mt-1 text-[10px] font-semibold text-[#5B7844] bg-[#EBF2E5] px-1.5 py-0.5 rounded border border-[#D5E4CA]">
-              {product.condition}
+        {/* Age Tag + Discount Badge */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 pointer-events-none">
+          <span
+            className={`px-2 py-0.5 rounded text-[10px] font-bold border ${tagStyle}`}
+          >
+            {product.ageGroup}
+          </span>
+          {discountPercent > 0 && (
+            <span className="px-2 py-0.5 rounded bg-[#F5B7A1] text-[#1A1A1A] text-[10px] font-extrabold">
+              -{discountPercent}%
             </span>
           )}
         </div>
 
-        {/* 3. Price Display */}
-        <div className="flex items-baseline gap-2 pt-1 border-t border-[#EEDBC9]/60">
-          <span className="font-extrabold text-base text-[#DA7A5B] leading-tight">
+        {/* Wishlist Heart Toggle */}
+        <button
+          type="button"
+          onClick={() => toggleWishlist(product.id)}
+          aria-label={wishlisted ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+          className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center border transition-colors cursor-pointer ${
+            wishlisted
+              ? 'bg-[#FDECE6] border-[#F5B7A1] text-[#D9483B]'
+              : 'bg-white/90 border-[#E2E8F0] text-[#1A1A1A] hover:bg-[#FDECE6]'
+          }`}
+        >
+          <Heart className={`w-3.5 h-3.5 ${wishlisted ? 'fill-[#D9483B]' : ''}`} />
+        </button>
+      </div>
+
+      {/* Product Title */}
+      <Link
+        href={`/product/${product.slug}`}
+        className="text-sm sm:text-[15px] font-bold text-[#1A1A1A] hover:text-[#1E543B] transition-colors line-clamp-1"
+      >
+        {product.title}
+      </Link>
+
+      {/* Rating & Terjual */}
+      <div className="flex items-center gap-1.5 text-[11px] text-[#555555] mt-1">
+        <Star className="w-3 h-3 fill-[#FBBF24] text-[#FBBF24] shrink-0" />
+        <span className="font-bold text-[#1A1A1A]">{product.rating.toFixed(1)}</span>
+        <span>•</span>
+        <span>{product.reviewsCount}+ terjual</span>
+      </div>
+
+      {/* Weight & Stock Metadata */}
+      <p className="text-[11px] text-[#6B7280] mt-0.5 mb-2.5">
+        {product.weightInGrams}g • Stok: {product.stock}
+        {product.isPreloved ? ' • Preloved' : ''}
+      </p>
+
+      {/* Bottom Row: Price + 44px CTA */}
+      <div className="mt-auto flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <span className="text-sm sm:text-[15px] font-extrabold text-[#1A1A1A] block leading-tight">
             {formatIDR(product.price)}
           </span>
-          {product.originalPrice && (
-            <span className="text-[11px] text-[#CBA989] line-through">
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="text-[11px] text-[#9CA3AF] line-through block">
               {formatIDR(product.originalPrice)}
             </span>
           )}
         </div>
-
-        {/* 4. REDESIGNED DISTINCT ACTION BUTTONS (Lihat Detail vs + Keranjang) */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          {/* Button 1: Lihat Detail */}
-          <Link
-            href={`/product/${product.slug}`}
-            className="py-2 px-2.5 rounded-xl border border-[#EEDBC9] hover:border-[#DA7A5B] bg-white hover:bg-[#FFE4D0]/50 text-[#502E1E] text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center shadow-2xs group/btn"
-            title="Lihat Rincian & Foto Produk"
-          >
-            <Eye className="w-3.5 h-3.5 text-[#DA7A5B] group-hover/btn:scale-110 transition-transform flex-shrink-0" />
-            <span className="truncate">Detail</span>
-          </Link>
-
-          {/* Button 2: Tambah ke Keranjang */}
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs ${
-              isAdded
-                ? 'bg-[#709154] text-white scale-102'
-                : 'bg-[#DA7A5B] hover:bg-[#C46749] text-white active:scale-95'
-            }`}
-            title="Tambah Produk ke Keranjang Belanja"
-          >
-            {isAdded ? (
-              <>
-                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span className="truncate">Masuk!</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="truncate">+ Keranjang</span>
-              </>
-            )}
-          </button>
-        </div>
-
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={product.stock === 0}
+          className={`h-[44px] px-3.5 rounded text-xs font-bold transition-colors cursor-pointer shrink-0 inline-flex items-center gap-1 ${
+            isAdded
+              ? 'bg-[#E9F3E4] text-[#1E543B]'
+              : product.stock === 0
+              ? 'bg-[#F3F4F6] text-[#9CA3AF] cursor-not-allowed'
+              : 'bg-[#F5B7A1] hover:bg-[#F0A48A] text-[#1A1A1A]'
+          }`}
+        >
+          {isAdded ? (
+            <>
+              <Check className="w-3.5 h-3.5" />
+              <span>Ditambah</span>
+            </>
+          ) : (
+            <span>+ Keranjang</span>
+          )}
+        </button>
       </div>
-    </div>
+    </article>
   );
 };

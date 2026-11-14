@@ -1,28 +1,30 @@
 'use client';
 
 import React from 'react';
-import { Gift, MessageCircle } from 'lucide-react';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '../../hooks/useCms';
 
 export const AnnouncementBar: React.FC = () => {
+  const { data: cms } = usePublicCms();
+  const text1 = cms?.announcement_text_1 || DEFAULT_CMS_VALUES.announcement_text_1;
+  const text2 = cms?.announcement_text_2 || DEFAULT_CMS_VALUES.announcement_text_2;
+  const waUrl = cms?.announcement_wa_url || DEFAULT_CMS_VALUES.announcement_wa_url;
+  const waLabel = cms?.announcement_wa_label || DEFAULT_CMS_VALUES.announcement_wa_label;
+
   return (
-    <div className="bg-[#F6C95E] text-[#5B3A29] text-[13px] font-semibold py-2 px-4 relative z-30 shadow-xs">
-      <div className="max-w-6xl mx-auto flex items-center justify-center gap-6 text-center flex-wrap">
-        <div className="inline-flex items-center gap-2">
-          <Gift className="w-4 h-4 text-[#5B3A29]" />
-          <span>Free gift wrapping for hampers</span>
-        </div>
-        <span className="opacity-40 hidden sm:inline">•</span>
-        <div className="inline-flex items-center gap-2">
-          <a
-            href="https://wa.me/6281234567890?text=Halo%20BabyShalls,%20saya%20ingin%20tanya%20tentang%20produk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 hover:text-[#D9744A] transition-colors"
-          >
-            <MessageCircle className="w-3.5 h-3.5 text-[#5B3A29]" />
-            <span>Chat us on WhatsApp</span>
-          </a>
-        </div>
+    <div className="w-full bg-[#FDF0B8] border-b border-[#F3DF90] text-[#1A1A1A] py-2 px-4 text-center text-xs font-medium tracking-wide">
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+        <span>{text1}</span>
+        <span aria-hidden="true" className="text-[#1A1A1A]/40">•</span>
+        <span>{text2}</span>
+        <span aria-hidden="true" className="hidden sm:inline text-[#1A1A1A]/40">•</span>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden sm:inline font-semibold underline underline-offset-2 hover:text-[#1E543B]"
+        >
+          {waLabel}
+        </a>
       </div>
     </div>
   );

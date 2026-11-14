@@ -1,14 +1,14 @@
 # PRODUCT REQUIREMENTS DOCUMENT (PRD)
 # E-COMMERCE PLATFORM BABYSHALLS
 
-**Versi Dokumen:** 1.0.0  
-**Tanggal Rilis:** 8 November 2026  
-**Status:** Approved / Master Reference  
+**Versi Dokumen:** 2.0.0  
+**Tanggal Diperbarui:** 14 November 2026  
+**Status:** Updated to Current Architecture & Scope  
 **Disusun Berdasarkan:** 
 - Proposal Penawaran Pembangunan Website E-Commerce BabyShalls v3 (8 November 2026)
 - Laporan Audit & Roadmap Refokus Arsitektur BabyShalls
-- BabyShalls Warm Style Guide & Design Tokens (`DESIGN.md`)
-- Master Prototipe Antarmuka (`html-mockup/index.html`)
+- BabyShalls Fresh Minimalist Boutique Design System (`DESIGN.md` v4.0)
+- Implementasi Frontend Next.js 16 (`frontend/src`) & Skema Prisma (`backend/prisma/schema.prisma`)
 
 ---
 
@@ -47,29 +47,28 @@ Website E-Commerce BabyShalls dibangun sebagai platform terpadu satu pintu (*sin
 
 ### 3.1 In-Scope (Fase 1)
 - **Modul M1: Toko & Pembayaran**
-  - Katalog buku dan mainan kayu dengan filter usia (*Newborn+*, *1-3*, *3+*, *6+*), kategori, pencarian teks, dan pengurutan harga/terbaru.
-  - Halaman detail produk (galeri multi-foto, badge usia, berat gram, deskripsi, stok real-time, produk terkait).
-  - Keranjang belanja (slide-out cart drawer + dedicated cart page) dengan state persistensi lokal/server.
-  - Multi-address per user (pilih alamat pengiriman saat checkout).
-  - Integrasi Midtrans Snap (QRIS, Kartu Kredit, Debit Online) dengan webhook otomatis.
+  - Katalog buku dan mainan kayu bergaya Shopee/Tokopedia dengan filter usia (*Newborn+*, *1-3*, *3+*, *6+*), kategori, subkategori dinamis, rentang harga, pencarian teks, dan pengurutan harga/terbaru.
+  - Halaman detail produk (galeri multi-foto, badge usia, berat gram, deskripsi, stok real-time, ulasan terverifikasi *read-only*, produk terkait).
+  - Halaman **Wishlist** (`/wishlist`) terintegrasi pada header dan kartu produk.
+  - Keranjang belanja (slide-out cart drawer) dengan state persistensi lokal/server.
+  - Multi-address per user, input **Kupon / Voucher Promo**, dan integrasi Midtrans Snap (QRIS, Kartu Kredit, Debit Online) dengan webhook otomatis.
 - **Modul M2: Pengiriman Terintegrasi (KiriminAja)**
   - Cek ongkir multi-kurir real-time dari origin tetap: **Kota Malang, Jawa Timur**.
   - Pilihan layanan kurir (Reguler / Express) dengan biaya transparan.
-  - Pembuatan pickup request dari Admin, cetak/simpan resi, dan pelacakan resi bagi pelanggan.
+  - Pembuatan pickup request dari Admin, **cetak resi pengiriman format PDF resmi**, dan pelacakan lokasi/status resi di detail pesanan pelanggan.
 - **Modul M3: Manajemen Akun & Pengguna**
-  - Sistem peran 2 level: `USER` (Pelanggan) dan `ADMIN` (BabyShalls).
-  - Autentikasi aman (Register, Login, Update Profil, Buku Alamat, Riwayat Pesanan).
-- **Modul M4: Event & Workshop (Versi Ringkas)**
+  - Sistem peran 2 level: `USER` (Pelanggan) dan `ADMIN` (BabyShalls) — tanpa sistem grosir/reseller (fokus B2C retail & gift).
+  - Layout pengelolaan akun bergaya Shopee (`/account`): Profil Saya, Buku Alamat, Riwayat & Detail Pesanan (lacak lokasi paket, cetak resi PDF, dan **kirim komentar/ulasan produk hanya dari detail pesanan**), Tiket Event & QR Check-in, serta Voucher Saya.
+- **Modul M4: Event & Workshop**
   - Daftar workshop, detail acara (tanggal, lokasi, kuota, instruktur).
-  - Formulir pendaftaran peserta langsung masuk ke database admin.
+  - Formulir pendaftaran peserta, dukungan tiket berbayar Midtrans, dan E-Ticket QR Check-in.
 - **Modul M5: Layanan Book Request (Jastip Buku Impor)**
-  - Formulir permintaan buku (judul, penulis, kontak WA/email, catatan).
+  - Formulir permintaan buku minimalis dan bersih (judul, penulis, kontak WA/email, catatan, opsional referensi foto).
   - Manajemen status permintaan & catatan penawaran di dashboard admin.
 - **Modul M6: Admin Dashboard & Semi-CMS**
-  - CRUD produk & kelola stok.
-  - Manajemen pesanan & status logistik.
+  - CRUD produk & kelola stok, manajemen pesanan & status logistik, manajemen kupon/voucher promo.
   - Semi-CMS: ganti teks banner announcement, banner hero, dan promo hampers tanpa sentuh kode.
-  - Rekap statistik penjualan ringkas (omzet, total order, leads pendaftar event, leads request buku).
+  - Rekap statistik ringkas (omzet, pesanan perlu dikirim, permintaan Book Request, voucher terpakai).
 - **Floating Contact CTA**: Tombol WhatsApp mengambang dinamis ke nomor CS Malang.
 
 ### 3.2 Out-of-Scope (Dialokasikan ke Fase 2)
@@ -140,33 +139,12 @@ flowchart TD
 
 ## 6. Spesifikasi Desain & Design Tokens
 
-### 6.1 Palet Warna Resmi
-```css
-:root {
-  --color-cream: #FCF6EC;         /* Latar utama lembut */
-  --color-cream-light: #FFF8EF;   /* Background halaman */
-  --color-offwhite: #FFF9F0;      /* Kartu netral */
-  --color-peach: #FCE0D4;         /* Latar kartu Shop by Age */
-  --color-peach-light: #FFE4D0;   /* Aksen kartu */
-  --color-salmon: #F6B79B;        /* Badge New & hover */
-  --color-terracotta: #DA7A5B;    /* Tombol utama & Brand CTA */
-  --color-terracotta-dark: #C46749; /* Hover tombol utama */
-  --color-mustard: #F6C95E;       /* Top banner & rating bintang */
-  --color-mustard-light: #FDF3D6; /* Aksen promo */
-  --color-sage: #DCE6C6;          /* Badge usia 1-3 & tombol sekunder */
-  --color-sage-light: #EBF2E0;    /* Background badge */
-  --color-leaf: #A7C48A;          /* Daun dekoratif */
-  --color-leaf-dark: #709154;     /* Status tersedia / aktif */
-  --color-warmbrown: #6B3F2A;     /* Teks body utama */
-  --color-warmbrown-dark: #502E1E;/* Judul serif Playfair */
-  --color-border: #EEDBC9;        /* Border lembut */
-  --color-whatsapp: #25D366;      /* Tombol WA mengambang */
-}
-```
-
-### 6.2 Tipografi
-- **Headings (H1, H2, H3)**: `Playfair Display`, serif hangat & anggun (Google Fonts).
-- **Body & Controls**: `Nunito`, sans-serif bulat, ramah untuk orang tua & anak (Google Fonts).
+Mengacu pada [DESIGN.md](./DESIGN.md) v4.0 (**Fresh Minimalist Editorial Boutique**):
+- **Kanvas & Surface**: Pure White `#FFFFFF` (`--color-bg-page`), `#F7F7F5` (`--color-bg-subtle`), `#EFEFED` (`--color-bg-muted`).
+- **Teks & Kontras (WCAG AA)**: `#1A1A1A` (`--color-ink-primary`), `#555555` (`--color-ink-secondary`), `#8C8C8C` (`--color-ink-muted`).
+- **Aksen Utama**: Kuning `#FFD200` (`--color-accent-sun`), Hijau Hutan `#1E543B` (`--color-brand-forest`), Coral `#E04F5F` (`--color-brand-coral`), WhatsApp `#25D366`.
+- **Tipografi**: `Plus Jakarta Sans` (Google Fonts) untuk headings, body, navigasi, dan form.
+- **Zero Ornamental Clutter**: Tanpa dekorasi sparkles, confetti, atau gelombang SVG berlapis.
 
 ---
 
@@ -175,32 +153,33 @@ flowchart TD
 ```text
 frontend/
 ├── public/
-│   ├── images/
+│   ├── images/                       # Foto produk, event, hampers, dan butik Malang
 │   └── favicon.ico
 ├── src/
-│   ├── app/                          # Next.js App Router
-│   │   ├── layout.tsx                # Master Layout (Navbar, TopBar, Footer, CartDrawer)
-│   │   ├── page.tsx                  # Beranda (Cloned dari html-mockup)
-│   │   ├── catalog/                  # Halaman Katalog & Filter Usia
-│   │   ├── product/[slug]/           # Detail Produk
-│   │   ├── cart/                     # Dedicated Cart
-│   │   ├── checkout/                 # Checkout & Shipping
-│   │   ├── events/                   # Workshop & Events
-│   │   ├── request-book/             # Form Book Request
-│   │   ├── account/                  # Profil & Riwayat Pesanan Pelanggan
-│   │   └── admin/                    # Dashboard Admin & Semi-CMS
+│   ├── app/                          # Next.js App Router (16 routes)
+│   │   ├── layout.tsx                # Master Layout (Header, AnnouncementBar, Footer, CartDrawer)
+│   │   ├── page.tsx                  # Beranda
+│   │   ├── catalog/                  # Katalog Shopee/Tokped-style (Usia, Subkategori, Harga)
+│   │   ├── product/[slug]/           # Detail Produk & Ulasan Terverifikasi (Read-Only)
+│   │   ├── wishlist/                 # Halaman Wishlist Pelanggan
+│   │   ├── checkout/                 # Checkout, Multi-Address, Kupon & KiriminAja
+│   │   ├── events/                   # Workshop & Events (+ /events/register)
+│   │   ├── request-book/             # Form Book Request Minimalis
+│   │   ├── about/                    # Tentang BabyShalls (Editorial Clean)
+│   │   ├── faq/                      # FAQ Pelanggan
+│   │   ├── account/                  # Akun Shopee-style, Detail Pesanan, Resi PDF & Ulasan
+│   │   └── admin/                    # Dashboard Admin, Kupon & Semi-CMS
 │   ├── components/                   # Modular Components
-│   │   ├── layout/                   # Header, AnnouncementBar, Footer, MobileNav
+│   │   ├── layout/                   # Header, AnnouncementBar, Footer, MobileDrawer
 │   │   ├── home/                     # Hero, ShopByAge, NewArrivals, Hampers, Events, Reviews
-│   │   ├── ui/                       # Reusable Atomic UI: Button, Badge, Card, Modal, Input
-│   │   ├── product/                  # ProductCard, ProductGrid, AgeFilter
-│   │   └── cart/                     # CartDrawer, CartItem, CartSummary
-│   ├── context/                      # React Context (Cart, UI Drawer state)
-│   ├── hooks/                        # Custom React Hooks
-│   ├── lib/                          # Utility & Helper Functions (formatIDR, KiriminAja, Midtrans)
-│   ├── types/                        # TypeScript Interface & Type Definitions
-│   └── styles/                       # Global Tailwind CSS & Custom Animation
-├── tailwind.config.ts                # BabyShalls Custom Color Tokens & Typography
+│   │   ├── ui/                       # Reusable Atomic UI
+│   │   ├── product/                  # ProductCard (konsisten), ProductGrid
+│   │   └── cart/                     # CartDrawer
+│   ├── context/                      # React Context (CartContext, WishlistContext, SmoothScroll)
+│   ├── data/                         # Katalog & data statis sementara sebelum API live
+│   ├── lib/                          # Utility & Helper Functions (formatIDR, motion, resi PDF)
+│   └── types/                        # TypeScript Interface & Type Definitions
+├── next.config.ts
 ├── tsconfig.json
 └── package.json
 ```

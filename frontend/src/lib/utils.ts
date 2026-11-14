@@ -21,6 +21,42 @@ export function formatWeight(grams: number): string {
   return `${grams} g`;
 }
 
+/**
+ * Format nomor telepon Indonesia saat diketik: 0812-3456-7890 (maks 15 digit).
+ */
+export function formatPhoneInput(raw: string): string {
+  let digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('62')) {
+    digits = `0${digits.slice(2)}`;
+  }
+  digits = digits.slice(0, 15);
+  const parts: string[] = [];
+  if (digits.length > 0) parts.push(digits.slice(0, 4));
+  if (digits.length > 4) parts.push(digits.slice(4, 8));
+  if (digits.length > 8) parts.push(digits.slice(8, 12));
+  if (digits.length > 12) parts.push(digits.slice(12, 15));
+  return parts.join('-');
+}
+
+export function normalizePhoneDigits(raw: string): string {
+  return raw.replace(/\D/g, '');
+}
+
+export function parseChildAge(raw?: string | null): { value: string; unit: 'Tahun' | 'Bulan' } {
+  if (!raw) return { value: '', unit: 'Tahun' };
+  const trimmed = raw.trim();
+  const numMatch = trimmed.match(/(\d+(?:[.,]\d+)?)/);
+  const value = numMatch ? numMatch[1].replace(',', '.') : '';
+  const unit: 'Tahun' | 'Bulan' = /bulan|bln|month/i.test(trimmed) ? 'Bulan' : 'Tahun';
+  return { value, unit };
+}
+
+export function formatChildAge(value: string, unit: 'Tahun' | 'Bulan'): string {
+  const clean = value.trim();
+  if (!clean) return '';
+  return `${clean} ${unit}`;
+}
+
 export function getAgeBadgeStyles(ageGroup: string): { bg: string; text: string; border: string } {
   switch (ageGroup) {
     case 'Newborn+':

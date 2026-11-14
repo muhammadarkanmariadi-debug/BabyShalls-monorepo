@@ -1,281 +1,344 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Package, TrendingUp, Users, BookmarkCheck, Edit3, CheckCircle2 } from 'lucide-react';
-import { PRODUCTS } from '../../data/products';
-import { formatIDR, formatWeight } from '../../lib/utils';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+  LayoutDashboard,
+  Package,
+  Ticket,
+  BookOpen,
+  Calendar,
+  LogOut,
+  BookMarked,
+  Sliders,
+  Mail,
+  ExternalLink,
+  Menu,
+  X,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { formatIDR } from '../../lib/utils';
+import { ADMIN_TOKEN_STORAGE_KEY, USER_TOKEN_STORAGE_KEY } from '../../lib/axios';
+import { useCurrentUser } from '../../hooks/useAuth';
+import { useAdminStats } from '../../hooks/useAdminDashboard';
+import { SalesAnalyticsChart } from '../../components/admin/SalesAnalyticsChart';
+import { AdminOrdersSection } from '../../components/admin/AdminOrdersSection';
+import { AdminCatalogSection } from '../../components/admin/AdminCatalogSection';
+import { AdminWorkshopsSection } from '../../components/admin/AdminWorkshopsSection';
+import { AdminVouchersSection } from '../../components/admin/AdminVouchersSection';
+import { AdminBroadcastSection } from '../../components/admin/AdminBroadcastSection';
+import { AdminBookRequestsSection } from '../../components/admin/AdminBookRequestsSection';
+import { AdminCmsSection } from '../../components/admin/AdminCmsSection';
+
+type AdminSection =
+  | 'overview'
+  | 'orders'
+  | 'catalog'
+  | 'workshops'
+  | 'vouchers'
+  | 'broadcast'
+  | 'book-requests'
+  | 'cms';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'products' | 'cms'>('overview');
-  
-  // Semi-CMS State
-  const [topBannerText, setTopBannerText] = useState('Gratis Gift Wrapping Cantik & Kartu Ucapan untuk setiap pembelian Hampers!');
-  const [heroHeadline, setHeroHeadline] = useState('Menumbuhkan Cinta Membaca Sejak Hari Pertama.');
-  const [cmsSaved, setCmsSaved] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const handleSaveCMS = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCmsSaved(true);
-    setTimeout(() => setCmsSaved(false), 2000);
+  const [section, setSection] = useState<AdminSection>('overview');
+  const [hasToken, setHasToken] = useState(false);
+  const [checkedToken, setCheckedToken] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarHidden, setSidebarHidden] = useState(false);
+
+  useEffect(() => {
+    const token =
+      window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) ||
+      window.localStorage.getItem(USER_TOKEN_STORAGE_KEY);
+    if (!token) {
+      router.replace('/auth?redirect=/admin');
+      return;
+    }
+    setHasToken(true);
+    setCheckedToken(true);
+  }, [router]);
+
+  const { data: currentUser, isLoading: userLoading, isError: userError } = useCurrentUser(hasToken);
+
+  useEffect(() => {
+    if (!checkedToken || userLoading) return;
+    if (userError || !currentUser) {
+      window.localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+      router.replace('/auth?redirect=/admin');
+      return;
+    }
+    if (currentUser.role !== 'ADMIN') {
+      toast.error('Akses khusus Admin BabyShalls.');
+      router.replace('/account');
+    }
+  }, [checkedToken, userLoading, userError, currentUser, router]);
+
+  const isAdminVerified = Boolean(currentUser && currentUser.role === 'ADMIN');
+  const { data: stats } = useAdminStats(isAdminVerified);
+
+  const handleAdminLogout = () => {
+    window.localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+    window.localStorage.removeItem(USER_TOKEN_STORAGE_KEY);
+    window.dispatchEvent(new Event('babyshalls-auth-changed'));
+    queryClient.clear();
+    toast.success('Sesi Admin diakhiri.');
+    router.replace('/auth');
   };
 
+  if (!checkedToken || userLoading || !isAdminVerified) {
+    return (
+      <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center p-6">
+        <div className="text-center space-y-2">
+          <div className="w-10 h-10 rounded-full border-4 border-[#D9744A]/30 border-t-[#D9744A] animate-spin mx-auto" />
+          <p className="text-xs font-bold text-[#502E1E]">Memverifikasi sesi Admin BabyShalls...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const navItems: { id: AdminSection; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: 'overview', label: 'Ringkasan & Grafik', icon: LayoutDashboard },
+    { id: 'orders', label: 'Pesanan & Pengiriman', icon: Package },
+    { id: 'catalog', label: `Katalog SKU (${stats?.totalProducts ?? 0})`, icon: BookOpen },
+    { id: 'workshops', label: 'Workshops & QR Share', icon: Calendar },
+    { id: 'vouchers', label: 'Kupon & Voucher', icon: Ticket },
+    { id: 'broadcast', label: 'Email Broadcast', icon: Mail },
+    { id: 'book-requests', label: 'Book Request Jastip', icon: BookMarked },
+    { id: 'cms', label: 'Semi-CMS Storefront', icon: Sliders },
+  ];
+
+  const activeTitle = navItems.find((n) => n.id === section)?.label || 'Admin Dashboard';
+
   return (
-    <div className="py-10 lg:py-14 bg-[#FFF8EF]">
-      <div className="max-w-6xl mx-auto px-6">
-        
-        {/* Admin Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EEDBC9]">
-          <div>
-            <span className="text-xs font-bold text-[#DA7A5B] uppercase tracking-wider block">
-              Portal Operasional BabyShalls Malang
-            </span>
-            <h1 className="font-serif text-3xl font-bold text-[#502E1E]">
-              Admin Dashboard & Semi-CMS
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-[#EBF2E0] text-[#709154] text-xs font-bold">
-              Role: ADMIN Toko
-            </span>
-          </div>
-        </div>
-
-        {/* Tab Nav */}
-        <div className="flex items-center gap-2 border-b border-[#EEDBC9] pb-4 mb-8 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-              activeTab === 'overview'
-                ? 'bg-[#DA7A5B] text-white shadow-subtle'
-                : 'bg-[#FCF6EC] text-[#6B3F2A] hover:bg-[#FFE4D0]'
-            }`}
-          >
-            Ringkasan (Rekap)
-          </button>
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-              activeTab === 'orders'
-                ? 'bg-[#DA7A5B] text-white shadow-subtle'
-                : 'bg-[#FCF6EC] text-[#6B3F2A] hover:bg-[#FFE4D0]'
-            }`}
-          >
-            Pesanan & KiriminAja
-          </button>
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-              activeTab === 'products'
-                ? 'bg-[#DA7A5B] text-white shadow-subtle'
-                : 'bg-[#FCF6EC] text-[#6B3F2A] hover:bg-[#FFE4D0]'
-            }`}
-          >
-            Katalog Produk ({PRODUCTS.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('cms')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-              activeTab === 'cms'
-                ? 'bg-[#DA7A5B] text-white shadow-subtle'
-                : 'bg-[#FCF6EC] text-[#6B3F2A] hover:bg-[#FFE4D0]'
-            }`}
-          >
-            Semi-CMS (Ubah Teks Beranda)
-          </button>
-        </div>
-
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[22px] p-5 shadow-xs">
-                <div className="flex items-center justify-between text-[#DA7A5B] mb-2">
-                  <span className="text-xs font-bold text-[#8FA87E]">Total Omzet Toko</span>
-                  <TrendingUp className="w-5 h-5" />
-                </div>
-                <div className="font-serif text-2xl font-bold text-[#502E1E]">Rp18.420.000</div>
-                <span className="text-[11px] text-[#709154] font-semibold mt-1 block">
-                  +14% dibanding bulan lalu
-                </span>
-              </div>
-
-              <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[22px] p-5 shadow-xs">
-                <div className="flex items-center justify-between text-[#DA7A5B] mb-2">
-                  <span className="text-xs font-bold text-[#8FA87E]">Pesanan Baru</span>
-                  <Package className="w-5 h-5" />
-                </div>
-                <div className="font-serif text-2xl font-bold text-[#502E1E]">42 Pesanan</div>
-                <span className="text-[11px] text-[#8FA87E] block mt-1">
-                  Semua terbayar otomatis via Midtrans
-                </span>
-              </div>
-
-              <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[22px] p-5 shadow-xs">
-                <div className="flex items-center justify-between text-[#709154] mb-2">
-                  <span className="text-xs font-bold text-[#8FA87E]">Pendaftar Workshop</span>
-                  <Users className="w-5 h-5" />
-                </div>
-                <div className="font-serif text-2xl font-bold text-[#502E1E]">21 Peserta</div>
-                <span className="text-[11px] text-[#709154] font-semibold mt-1 block">
-                  2 Sesi Workshop di Malang
-                </span>
-              </div>
-
-              <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[22px] p-5 shadow-xs">
-                <div className="flex items-center justify-between text-[#F6C95E] mb-2">
-                  <span className="text-xs font-bold text-[#8FA87E]">Book Request (Jastip)</span>
-                  <BookmarkCheck className="w-5 h-5 text-[#DA7A5B]" />
-                </div>
-                <div className="font-serif text-2xl font-bold text-[#502E1E]">8 Judul Buku</div>
-                <span className="text-[11px] text-[#DA7A5B] font-semibold mt-1 block">
-                  3 Judul sudah difollow-up WA
-                </span>
-              </div>
-            </div>
-
-            {/* Quick Action Box */}
-            <div className="p-6 rounded-[24px] bg-[#FCF6EC] border border-[#EEDBC9] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <h3 className="font-serif text-lg font-bold text-[#502E1E]">Request Pickup Kurir KiriminAja Hari Ini</h3>
-                <p className="text-xs text-[#8FA87E]">Ada 3 paket pesanan buku anak yang siap diambil kurir di toko Malang.</p>
-              </div>
-              <button className="px-5 py-2.5 rounded-full bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-xs shadow-subtle whitespace-nowrap">
-                Panggil Pickup KiriminAja
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Orders Tab */}
-        {activeTab === 'orders' && (
-          <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[24px] p-6 shadow-xs overflow-x-auto">
-            <h3 className="font-serif text-lg font-bold text-[#502E1E] mb-4">Manajemen Pesanan Masuk</h3>
-            <table className="w-full text-left text-xs text-[#6B3F2A]">
-              <thead>
-                <tr className="border-b border-[#EEDBC9] text-[#8FA87E]">
-                  <th className="pb-3 font-bold">No Order</th>
-                  <th className="pb-3 font-bold">Pelanggan</th>
-                  <th className="pb-3 font-bold">Item & Berat</th>
-                  <th className="pb-3 font-bold">Total</th>
-                  <th className="pb-3 font-bold">Status Bayar</th>
-                  <th className="pb-3 font-bold">Aksi Kurir</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#EEDBC9]">
-                <tr>
-                  <td className="py-3 font-bold text-[#502E1E]">BS-20261108-001</td>
-                  <td className="py-3">Bunda Amanda (081234567890)<br/><span className="text-[#8FA87E]">Klojen, Malang</span></td>
-                  <td className="py-3">Look and Grow: Nature + Rainbow Stacker<br/><span className="text-[#8FA87E]">1.130 gram</span></td>
-                  <td className="py-3 font-bold text-[#DA7A5B]">{formatIDR(442500)}</td>
-                  <td className="py-3"><span className="px-2 py-0.5 rounded-full bg-[#EBF2E0] text-[#709154] font-bold">MIDTRANS LUNAS</span></td>
-                  <td className="py-3">
-                    <button className="px-3 py-1 bg-[#FFE4D0] hover:bg-[#F6B79B] text-[#502E1E] font-bold rounded-lg text-[11px]">
-                      Cetak Resi J&T
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Products Tab */}
-        {activeTab === 'products' && (
-          <div className="bg-[#FFF9F0] border border-[#EEDBC9] rounded-[24px] p-6 shadow-xs overflow-x-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-serif text-lg font-bold text-[#502E1E]">Daftar Katalog Produk BabyShalls</h3>
-              <button className="px-4 py-2 bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-xs rounded-full shadow-subtle">
-                + Tambah Produk Baru
-              </button>
-            </div>
-            <table className="w-full text-left text-xs text-[#6B3F2A]">
-              <thead>
-                <tr className="border-b border-[#EEDBC9] text-[#8FA87E]">
-                  <th className="pb-3 font-bold">Judul Produk</th>
-                  <th className="pb-3 font-bold">Usia</th>
-                  <th className="pb-3 font-bold">Kategori</th>
-                  <th className="pb-3 font-bold">Berat</th>
-                  <th className="pb-3 font-bold">Harga</th>
-                  <th className="pb-3 font-bold">Stok</th>
-                  <th className="pb-3 font-bold">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#EEDBC9]">
-                {PRODUCTS.map((p) => (
-                  <tr key={p.id}>
-                    <td className="py-3 font-bold text-[#502E1E]">{p.title}</td>
-                    <td className="py-3">{p.ageGroup}</td>
-                    <td className="py-3">{p.category}</td>
-                    <td className="py-3">{formatWeight(p.weightInGrams)}</td>
-                    <td className="py-3 font-bold text-[#DA7A5B]">{formatIDR(p.price)}</td>
-                    <td className="py-3">{p.stock} pcs</td>
-                    <td className="py-3">
-                      <span className="px-2 py-0.5 rounded-full bg-[#EBF2E0] text-[#709154] font-bold">
-                        Aktif
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Semi-CMS Tab */}
-        {activeTab === 'cms' && (
-          <div className="bg-[#FFF9F0] border-2 border-[#EEDBC9] rounded-[28px] p-6 sm:p-8 shadow-card max-w-2xl">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#EEDBC9]">
-              <Edit3 className="w-5 h-5 text-[#DA7A5B]" />
-              <h3 className="font-serif text-xl font-bold text-[#502E1E]">Semi-CMS: Pengaturan Banner & Teks Beranda</h3>
-            </div>
-            <p className="text-xs text-[#8FA87E] mb-6">
-              Ubah teks banner promosi atas atau slogan headline beranda tanpa perlu menyentuh baris kode program.
-            </p>
-
-            <form onSubmit={handleSaveCMS} className="space-y-5">
-              <div>
-                <label className="block text-xs font-bold text-[#502E1E] mb-1">
-                  Teks Announcement Bar Paling Atas (Kuning):
-                </label>
-                <input
-                  type="text"
-                  value={topBannerText}
-                  onChange={(e) => setTopBannerText(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#502E1E] mb-1">
-                  Slogan Utama Hero Beranda:
-                </label>
-                <input
-                  type="text"
-                  value={heroHeadline}
-                  onChange={(e) => setHeroHeadline(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs bg-white border border-[#EEDBC9] rounded-xl text-[#6B3F2A] focus:outline-none focus:border-[#DA7A5B]"
-                />
-              </div>
-
-              {cmsSaved && (
-                <div className="p-3 bg-[#EBF2E0] text-[#709154] text-xs font-bold rounded-xl flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Teks beranda berhasil disimpan dan langsung aktif!</span>
+    <div className="min-h-screen bg-[#FAF8F4] flex flex-col lg:flex-row">
+      {/* Desktop Sidebar */}
+      {!sidebarHidden && (
+        <aside
+          className={`hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-[#EBDCCB] z-30 transition-all duration-200 ${
+            sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'
+          }`}
+        >
+          <div className="px-4 py-4 border-b border-[#EBDCCB] flex items-center justify-between gap-2">
+            <div className={`flex items-center gap-3 min-w-0 ${sidebarCollapsed ? 'justify-center w-full' : ''}`}>
+              <img
+                src="/logo.png"
+                alt="BabyShalls"
+                className="w-9 h-9 rounded-full border border-[#EBDCCB] object-contain p-0.5 shrink-0"
+              />
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#1E543B] block truncate">
+                    BabyShalls Admin
+                  </span>
+                  <h1 className="text-sm font-extrabold text-[#502E1E] leading-tight truncate">
+                    Command Center
+                  </h1>
                 </div>
               )}
-
+            </div>
+            {!sidebarCollapsed && (
               <button
-                type="submit"
-                className="px-6 py-3 rounded-full bg-[#DA7A5B] hover:bg-[#C46749] text-white font-bold text-xs shadow-subtle transition-all"
+                type="button"
+                onClick={() => setSidebarCollapsed(true)}
+                title="Perkecil Sidebar"
+                className="p-1.5 rounded-lg text-[#6B3F2A] hover:bg-[#FCF6EC] cursor-pointer shrink-0"
               >
-                Simpan Perubahan Teks
+                <ChevronsLeft className="w-4 h-4" />
               </button>
-            </form>
+            )}
+          </div>
+
+          {sidebarCollapsed && (
+            <div className="px-2 pt-2 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed(false)}
+                title="Perlebar Sidebar"
+                className="p-2 rounded-xl text-[#6B3F2A] hover:bg-[#FCF6EC] cursor-pointer"
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = section === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  title={item.label}
+                  onClick={() => setSection(item.id)}
+                  className={`w-full min-h-[42px] px-3 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-colors cursor-pointer ${
+                    sidebarCollapsed ? 'justify-center' : ''
+                  } ${
+                    active
+                      ? 'bg-[#D9744A] text-white shadow-sm'
+                      : 'text-[#502E1E] hover:bg-[#FCF6EC]'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="p-3 border-t border-[#EBDCCB] space-y-2">
+            <Link
+              href="/"
+              target="_blank"
+              title="Lihat Storefront"
+              className="w-full h-9 px-3 rounded-xl border border-[#EBDCCB] bg-[#FCF6EC] text-xs font-bold text-[#502E1E] flex items-center justify-center gap-1.5 hover:bg-[#F5E9D9]"
+            >
+              <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+              {!sidebarCollapsed && <span>Lihat Storefront</span>}
+            </Link>
+            <button
+              type="button"
+              onClick={handleAdminLogout}
+              title="Keluar Admin"
+              className="w-full h-9 px-3 rounded-xl border border-red-200 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              {!sidebarCollapsed && <span>Keluar Admin</span>}
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* Main Content */}
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-200 ${
+          sidebarHidden ? 'lg:pl-0' : sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+        }`}
+      >
+        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-[#EBDCCB] px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl border border-[#EBDCCB] text-[#502E1E]"
+              aria-label="Menu Admin"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSidebarHidden((prev) => !prev)}
+              title={sidebarHidden ? 'Tampilkan Sidebar' : 'Sembunyikan Sidebar'}
+              className="hidden lg:inline-flex p-2 rounded-xl border border-[#EBDCCB] bg-[#FCF6EC] text-[#502E1E] hover:bg-[#F5E9D9] cursor-pointer"
+            >
+              {sidebarHidden ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
+            <div>
+              <h2 className="text-base sm:text-lg font-extrabold text-[#502E1E]">{activeTitle}</h2>
+              <p className="hidden sm:block text-[11px] text-[#6B3F2A]">
+                Malang Single-Store Boutique • {currentUser?.name} ({currentUser?.email})
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              type="button"
+              onClick={handleAdminLogout}
+              className="p-2 rounded-xl border border-red-200 text-red-600"
+              title="Keluar"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </header>
+
+        {/* Mobile Drawer Nav */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white border-b border-[#EBDCCB] p-3 grid grid-cols-2 gap-1.5">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    setSection(item.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 ${
+                    section === item.id ? 'bg-[#D9744A] text-white' : 'bg-[#FCF6EC] text-[#502E1E]'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
+        <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+          {section === 'overview' && (
+            <>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-[#FAF4E8] border border-[#EBDCCB]">
+                  <span className="text-xs font-bold text-[#6B3F2A]">Omzet Tercatat</span>
+                  <div className="text-xl font-extrabold text-[#502E1E] mt-1">
+                    {formatIDR(stats?.totalRevenue ?? 0)}
+                  </div>
+                  <span className="text-[11px] font-bold text-[#1E543B]">
+                    {stats?.totalOrders ?? 0} total pesanan
+                  </span>
+                </div>
+                <div className="p-5 rounded-2xl bg-[#FDECE6] border border-[#EBDCCB]">
+                  <span className="text-xs font-bold text-[#6B3F2A]">Total Produk</span>
+                  <div className="text-xl font-extrabold text-[#502E1E] mt-1">
+                    {stats?.totalProducts ?? 0} SKU
+                  </div>
+                  <span className="text-[11px] font-bold text-[#502E1E]">Katalog Aktif</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-[#E9F3E4] border border-[#EBDCCB]">
+                  <span className="text-xs font-bold text-[#6B3F2A]">Request a Book</span>
+                  <div className="text-xl font-extrabold text-[#502E1E] mt-1">
+                    {stats?.totalBookRequests ?? 0}
+                  </div>
+                  <span className="text-[11px] font-bold text-[#1E543B]">Jastip Buku Impor</span>
+                </div>
+                <div className="p-5 rounded-2xl bg-[#EBF1FA] border border-[#EBDCCB]">
+                  <span className="text-xs font-bold text-[#6B3F2A]">Peserta Workshop</span>
+                  <div className="text-xl font-extrabold text-[#502E1E] mt-1">
+                    {stats?.totalEventRegistrations ?? 0}
+                  </div>
+                  <span className="text-[11px] font-bold text-[#1E543B]">Pendaftar Terdata</span>
+                </div>
+              </div>
+
+              <SalesAnalyticsChart enabled={isAdminVerified} />
+              <AdminOrdersSection enabled={isAdminVerified} />
+            </>
+          )}
+
+          {section === 'orders' && <AdminOrdersSection enabled={isAdminVerified} />}
+          {section === 'catalog' && <AdminCatalogSection enabled={isAdminVerified} />}
+          {section === 'workshops' && <AdminWorkshopsSection enabled={isAdminVerified} />}
+          {section === 'vouchers' && <AdminVouchersSection enabled={isAdminVerified} />}
+          {section === 'broadcast' && <AdminBroadcastSection enabled={isAdminVerified} />}
+          {section === 'book-requests' && <AdminBookRequestsSection enabled={isAdminVerified} />}
+          {section === 'cms' && <AdminCmsSection enabled={isAdminVerified} />}
+        </main>
       </div>
     </div>
   );
 }
-

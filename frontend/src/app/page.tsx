@@ -1,6 +1,7 @@
 import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
 import { ShopByAgeSection } from '../components/home/ShopByAgeSection';
+import { VoucherPromoSection } from '../components/home/VoucherPromoSection';
 import { NewArrivalsSection } from '../components/home/NewArrivalsSection';
 import { HampersSection } from '../components/home/HampersSection';
 import { EventsSection } from '../components/home/EventsSection';
@@ -11,6 +12,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <ShopByAgeSection />
+      <VoucherPromoSection />
       <NewArrivalsSection />
       <HampersSection />
       <EventsSection />
