@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { mockWorkshops } from '@/data/mockProducts';
 import { WireEventCard } from '@/components/common/WireEventCard';
 import { WorkshopEvent } from '@/types';
-import { Check, X } from 'lucide-react';
+import { Check, X, ArrowRight } from 'lucide-react';
 
 export const UpcomingEventsSection: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<WorkshopEvent | null>(null);
@@ -27,17 +27,14 @@ export const UpcomingEventsSection: React.FC = () => {
   };
 
   return (
-    <section id="workshops" className="py-12 md:py-16 bg-white w-full">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20">
+    <section id="workshops" className="py-16 sm:py-20 bg-white w-full">
+      <div className="max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-12">
         
-        {/* Section Header */}
-        <div className="mb-8 md:mb-10 text-center">
-          <h2 className="text-[22px] md:text-[28px] font-semibold uppercase text-[#2B2B2B] tracking-normal mb-2">
+        {/* Section Header: Headline only matching Figma #130:264 */}
+        <div className="mb-8 sm:mb-10 text-center">
+          <h2 className="text-[28px] sm:text-[32px] font-semibold uppercase text-[#4A2A1C] tracking-tight">
             Event &amp; Workshop
           </h2>
-          <p className="text-[14px] md:text-[15px] text-[#6B6B6B] max-w-[560px] mx-auto font-normal">
-            Sesi dongeng dan kegiatan sensori anak di butik BabyShalls Citraland Malang. Semua sesi gratis.
-          </p>
         </div>
 
         {/* 3 Events Grid */}
@@ -51,18 +48,14 @@ export const UpcomingEventsSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Button: Lihat Semua Event with Figma Arrow */}
-        <div className="mt-10 md:mt-12 text-center">
+        {/* Tautan: Lihat Semua Event with Arrow */}
+        <div className="mt-10 sm:mt-12 text-center">
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#2B2B2B] hover:border-[#D9744A] text-[#2B2B2B] hover:text-[#D9744A] text-[13px] md:text-[14px] font-semibold uppercase tracking-wider rounded-[8px] transition-colors"
+            className="inline-flex items-center gap-2 text-[#B05A26] hover:text-[#8E431A] text-[16px] font-medium transition-colors group"
           >
             <span>Lihat Semua Event</span>
-            <img
-              src="/images/icons/icon-arrow.svg"
-              alt=""
-              className="w-4 h-4 object-contain"
-            />
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -71,11 +64,11 @@ export const UpcomingEventsSection: React.FC = () => {
       {/* Registration Modal Card */}
       {selectedEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white border border-[#EBEBEB] rounded-[24px] p-6 sm:p-8 max-w-md w-full shadow-figma-modal relative text-left">
+          <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-6 sm:p-8 max-w-md w-full shadow-2xl relative text-left">
             <button
               type="button"
               onClick={() => setSelectedEvent(null)}
-              className="absolute top-4 right-4 text-[#8C8C8C] hover:text-[#2B2B2B] p-1 cursor-pointer"
+              className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer"
               aria-label="Tutup form pendaftaran"
             >
               <X size={20} />
@@ -86,65 +79,65 @@ export const UpcomingEventsSection: React.FC = () => {
                 <div className="w-12 h-12 rounded-full bg-[#DDF1E5] text-[#2A6E37] flex items-center justify-center mx-auto">
                   <Check size={24} strokeWidth={2} />
                 </div>
-                <h4 className="text-[18px] font-semibold text-[#2B2B2B]">Pendaftaran Berhasil!</h4>
-                <p className="text-[13px] text-[#6B6B6B] max-w-xs mx-auto">
+                <h4 className="text-[18px] font-semibold text-[#4A2A1C]">Pendaftaran Berhasil!</h4>
+                <p className="text-[13px] text-[#7A5644] max-w-xs mx-auto">
                   Konfirmasi kehadiran dan e-tiket telah kami kirimkan ke email Anda. Sampai jumpa di BabyShalls!
                 </p>
               </div>
             ) : (
               <form onSubmit={handleRegisterSubmit} className="space-y-4">
                 <div>
-                  <span className="inline-block px-2.5 py-0.5 rounded-[6px] bg-[#FBE8DF] text-[#D9744A] text-[11px] font-semibold uppercase tracking-wider mb-1.5">
-                    Free Registration
+                  <span className="inline-block px-2.5 py-0.5 rounded-[2px] bg-[#E4ECFB] text-[#3F5FA0] text-[11px] font-semibold uppercase tracking-wider mb-1.5">
+                    Workshop Registration
                   </span>
-                  <h4 className="text-[17px] font-semibold text-[#2B2B2B] leading-snug">
+                  <h4 className="text-[17px] font-semibold text-[#4A2A1C] leading-snug">
                     {selectedEvent.title}
                   </h4>
-                  <p className="text-[12px] text-[#6B6B6B] mt-1">
+                  <p className="text-[12px] text-[#7A5644] mt-1">
                     {selectedEvent.date} · {selectedEvent.time}
                   </p>
                 </div>
 
                 <div className="space-y-3 pt-2">
                   <div>
-                    <label className="block text-[12px] font-medium text-[#2B2B2B] mb-1">
-                      Nama Orang Tua / Wali *
+                    <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
+                      Nama Orang Tua
                     </label>
                     <input
                       type="text"
                       required
+                      placeholder="Contoh: Bunda Sarah"
                       value={parentName}
                       onChange={(e) => setParentName(e.target.value)}
-                      placeholder="e.g. Sarah Amelia"
-                      className="w-full text-[13px] px-3.5 py-2.5 bg-white border border-[#EBEBEB] rounded-[8px] focus:outline-none focus:border-[#D9744A]"
+                      className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[12px] font-medium text-[#2B2B2B] mb-1">
-                      Alamat Email *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="sarah@example.com"
-                      className="w-full text-[13px] px-3.5 py-2.5 bg-white border border-[#EBEBEB] rounded-[8px] focus:outline-none focus:border-[#D9744A]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[12px] font-medium text-[#2B2B2B] mb-1">
-                      Usia Anak *
+                    <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
+                      Usia Anak
                     </label>
                     <input
                       type="text"
                       required
+                      placeholder="Contoh: 4 tahun"
                       value={childAge}
                       onChange={(e) => setChildAge(e.target.value)}
-                      placeholder="e.g. 3 tahun"
-                      className="w-full text-[13px] px-3.5 py-2.5 bg-white border border-[#EBEBEB] rounded-[8px] focus:outline-none focus:border-[#D9744A]"
+                      className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
+                      WhatsApp / Email
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="0812... / email@anda.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
                     />
                   </div>
                 </div>
@@ -152,9 +145,9 @@ export const UpcomingEventsSection: React.FC = () => {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#D9744A] hover:bg-[#C25F37] text-white rounded-[10px] text-[13px] font-semibold uppercase tracking-wider transition-colors cursor-pointer"
+                    className="w-full py-3 bg-[#B05A26] hover:bg-[#8E431A] text-white rounded-[2px] text-[14px] font-semibold tracking-wider transition-colors cursor-pointer"
                   >
-                    KONFIRMASI PENDAFTARAN
+                    Konfirmasi Kehadiran
                   </button>
                 </div>
               </form>
@@ -165,4 +158,3 @@ export const UpcomingEventsSection: React.FC = () => {
     </section>
   );
 };
-

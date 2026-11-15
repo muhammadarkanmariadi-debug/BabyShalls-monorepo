@@ -1,26 +1,35 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { Poppins, Quicksand } from 'next/font/google';
 import './globals.css';
-import { CartProvider } from '../src/context/CartContext';
+import { CartProvider } from '@/context/CartContext';
+import { QueryProvider } from '@/context/QueryProvider';
+import { Toaster } from 'react-hot-toast';
 
 const poppins = Poppins({
   subsets: ['latin'],
   variable: '--font-poppins',
   display: 'swap',
-  weight: ['400', '500', '600', '700']
+  weight: ['400', '500', '600', '700'],
+});
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  variable: '--font-quicksand',
+  display: 'swap',
+  weight: ['500', '600', '700'],
 });
 
 export const metadata: Metadata = {
   title: 'BabyShalls — Curated Children’s Books & Educational Toys | Malang',
   description:
-    'A warm, editorial children’s bookstore and educational wooden toys boutique in Malang. Thoughtfully curated board books, picture books, and Montessori toys.',
+    'Boutique toko buku anak dan mainan edukasi kayu di Citraland Malang. Board books, picture books klasik impor, hampers, dan kelas sensori anak.',
   keywords: [
     'BabyShalls',
-    'Children Bookstore Malang',
-    'Montessori Wooden Toys',
+    'Toko Buku Anak Malang',
+    'Mainan Kayu Montessori',
     'Curated Picture Books',
-    'Citraland Malang'
-  ]
+    'Citraland Malang',
+  ],
 };
 
 export default function RootLayout({
@@ -29,9 +38,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} scroll-smooth`}>
-      <body className="min-h-screen bg-[#FFFFFF] text-[#2B2B2B] font-sans antialiased selection:bg-[#D9744A]/15 selection:text-[#D9744A]">
-        <CartProvider>{children}</CartProvider>
+    <html lang="id" className={`${poppins.variable} ${quicksand.variable} scroll-smooth`}>
+      <body className="min-h-screen bg-[#FFF6EA] text-[#4A2A1C] font-sans antialiased selection:bg-[#FBE6D8] selection:text-[#B05A26]">
+        <QueryProvider>
+          <CartProvider>
+            {children}
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3500,
+                style: {
+                  background: '#FFFDF9',
+                  color: '#4A2A1C',
+                  border: '1px solid #E6D2C0',
+                  borderRadius: '2px',
+                  fontSize: '13px',
+                  fontFamily: 'var(--font-poppins)',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#2A6E37',
+                    secondary: '#FFFDF9',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#C0392B',
+                    secondary: '#FFFDF9',
+                  },
+                },
+              }}
+            />
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );

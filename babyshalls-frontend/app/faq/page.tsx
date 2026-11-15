@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, HelpCircle, ArrowRight, MessageCircle } from 'lucide-react';
-import { Header } from '../../src/components/Header';
-import { Footer } from '../../src/components/Footer';
-import { OrderDrawer } from '../../src/components/OrderDrawer';
+import { ChevronDown, ChevronUp, HelpCircle, MessageCircle } from 'lucide-react';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { CampaignBanner } from '@/components/home/CampaignBanner';
 
 export default function FaqPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -14,106 +15,102 @@ export default function FaqPage() {
     {
       category: 'Pemesanan & Pembayaran',
       q: 'Bagaimana cara berbelanja di website BabyShalls?',
-      a: 'Anda cukup memilih judul buku atau mainan di halaman Toko, tentukan jumlahnya, lalu klik "Tambah ke Keranjang" atau "Beli Sekarang". Pada halaman checkout, isi data penerima dan pilih metode pembayaran (QRIS Instan atau Transfer Bank BCA/Mandiri). Pesanan Anda akan langsung tercatat dan dapat dipantau di halaman Riwayat Pesanan.'
+      a: 'Pilih buku atau mainan yang kamu inginkan di menu Shop/Katalog, tentukan jumlahnya, lalu klik "+ Tambah ke Keranjang" atau "Beli Sekarang". Pada halaman checkout, isi alamat tujuan pengiriman dan pilih metode pembayaran (QRIS Instan atau Transfer Bank). Pembayaran terkonfirmasi otomatis dan pesanan langsung diproses tim kurator di Malang.',
     },
     {
       category: 'Pemesanan & Pembayaran',
-      q: 'Metode pembayaran apa saja yang diterima?',
-      a: 'Kami menerima pembayaran melalui QRIS Instan (dapat di-scan dengan mobile banking BCA, Mandiri, BRI, serta e-wallet GoPay, OVO, ShopeePay) dan Transfer Manual ke rekening Bank BCA (816-123-9999 a.n. BabyShalls Official).'
+      q: 'Metode pembayaran apa saja yang didukung?',
+      a: 'Kami mendukung pembayaran instan via QRIS (dapat di-scan dengan GoPay, OVO, ShopeePay, BCA Mobile, Livin Mandiri, BRImo, dll.) serta Virtual Account Bank BCA, Mandiri, dan Kartu Kredit/Debit melalui Midtrans Payment Gateway.',
     },
     {
-      category: 'Pengiriman & Pickup Toko',
-      q: 'Apakah bisa mengambil pesanan langsung di butik Malang?',
-      a: 'Tentu saja! Pada saat checkout, pilih opsi "Ambil Sendiri di Toko Citraland Puncak Tidar, Malang" (GRATIS tanpa ongkir). Begitu pesanan Anda siap, Anda dapat langsung datang ke butik kami di Citraland Puncak Tidar Blok HH-26 Malang dengan menunjukkan nomor Invoice / Order ID.'
+      category: 'Pengiriman & Ambil di Toko',
+      q: 'Apakah pesanan bisa diambil langsung di toko fisik Malang?',
+      a: 'Bisa banget! Pada langkah checkout bagian pengiriman, pilih opsi "Ambil Sendiri di Toko (Self Pick-up)" (GRATIS tanpa ongkir). Pesanan akan disiapkan dalam 1 jam dan bisa langsung diambil di Butik BabyShalls Citraland Puncak Tidar Blok HH-26, Kota Malang.',
     },
     {
-      category: 'Pengiriman & Pickup Toko',
-      q: 'Apakah BabyShalls melayani pengiriman ke luar kota Malang?',
-      a: 'Ya, kami melayani pengiriman ke seluruh kota di Indonesia melalui ekspedisi JNE dan SiCepat. Seluruh paket dibungkus dengan kardus tebal khusus dan bubble wrap pelindung ekstra sehingga buku aman dan tidak terlipat selama perjalanan.'
+      category: 'Pengiriman & Ambil di Toko',
+      q: 'Berapa lama estimasi pengiriman pesanan ke luar kota?',
+      a: 'Pengiriman reguler via JNE, J&T, dan SiCepat membutuhkan waktu 1–3 hari kerja untuk area Jawa Timur, dan 2–4 hari kerja untuk luar pulau Jawa. Seluruh buku dibungkus dengan kardus tebal dan bubble wrap berlapis untuk memastikan tiba dalam kondisi mulus.',
     },
     {
-      category: 'Event & Workshop',
+      category: 'Event & Workshop Gratis',
       q: 'Apakah sesi Event dan Workshop akhir pekan berbayar?',
-      a: 'TIDAK, seluruh sesi dongeng (storytelling) dan workshop anak di BabyShalls Citraland Malang bersifat 100% GRATIS untuk umum. Kami menyelenggarakan ini sebagai wujud komitmen menumbuhkan kecintaan membaca sejak dini. Anda cukup mendaftarkan diri secara online melalui halaman Event & Workshop untuk mendapatkan E-Tiket QR Code.'
+      a: 'TIDAK SAMA SEKALI. Seluruh sesi mendongeng (Story Time) dan workshop kreasi sensorik di butik BabyShalls Citraland Malang bersifat 100% GRATIS untuk umum. Cukup daftarkan diri di halaman Event & Workshop untuk mendapatkan e-tiket QR pendaftaran.',
     },
     {
-      category: 'Kurasi & Preloved',
-      q: 'Bagaimana standar kurasi buku Preloved di BabyShalls?',
-      a: 'Seluruh buku preloved di BabyShalls merupakan buku pilihan berkategori "Like New" (Seperti Baru) atau "Very Good". Sebelum masuk ke etalase, setiap buku melewati proses sterilisasi sinar UV-C dan disinfeksi higienis dengan cairan organik aman anak tanpa merusak halaman kertas.'
+      category: 'Kurasi & Buku Preloved',
+      q: 'Bagaimana standar kelayakan buku Preloved di BabyShalls?',
+      a: 'Seluruh koleksi preloved BabyShalls telah melalui inspeksi ketat: halaman lengkap tanpa coretan merusak, jilid kokoh, serta disterilisasi dengan sinar UV-C dan pembersih organik khusus yang aman bagi balita.',
     },
     {
-      category: 'Layanan Spesial',
-      q: 'Bagaimana jika buku yang saya cari tidak ada di katalog?',
-      a: 'Anda dapat menggunakan layanan "Request a Book". Isi judul buku atau pengarang yang Anda cari, dan tim kurator kami akan mengecek ketersediaan stok impor atau membantu memesankannya langsung dari penerbit internasional.'
+      category: 'Layanan Request Buku',
+      q: 'Bagaimana jika buku impor yang saya cari belum ada di katalog?',
+      a: 'Kamu bisa memanfaatkan fitur "Request Buku". Tulis judul buku atau unggah foto cover, dan tim kurator BabyShalls akan mencarikan dari jaringan penerbit serta distributor luar negeri dengan penawaran harga terbaik.',
     },
     {
-      category: 'Layanan Spesial',
-      q: 'Apakah BabyShalls menyediakan kartu ucapan dan bungkus kado?',
-      a: 'Ya, kami menyediakan layanan Gift Packaging estetik dengan kotak kayu pinus atau hardbox pastel, pita linen katun, dan kartu ucapan yang ditulis tangan oleh tim kaligrafi kami.'
-    }
+      category: 'Kado & Hampers',
+      q: 'Apakah bisa request bungkus kado dan kartu ucapan?',
+      a: 'Tentu saja! Kami menyediakan bungkus kado spesial BabyShalls dan kartu ucapan gratis pada setiap pembelian di halaman checkout. Cukup aktifkan toggle "Bungkus Kado" dan tuliskan pesanmu.',
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
+    <div className="min-h-screen bg-white flex flex-col font-sans">
       <Header />
+      <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
-      <main className="flex-grow w-full py-8 sm:py-12 md:py-16">
-        <div className="w-full px-4 sm:px-6 lg:px-12">
+      {/* Hero Header */}
+      <section className="bg-[#FFF6EA] py-12 sm:py-16 border-b border-[#F2E4D6]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 text-center">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26] block mb-2">
+            PUSAT BANTUAN
+          </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#4A2A1C] tracking-tight mb-4">
+            Pertanyaan yang Sering Diajukan (FAQ)
+          </h1>
+          <p className="text-sm sm:text-base text-[#7A5644] max-w-xl mx-auto leading-relaxed">
+            Temukan jawaban cepat seputar pemesanan buku, pengiriman kurir, workshop gratis anak di Malang, dan layanan kurasi BabyShalls.
+          </p>
+        </div>
+      </section>
+
+      {/* Main FAQ Accordion */}
+      <section className="py-12 sm:py-16 bg-[#FFFDF9]">
+        <div className="max-w-[860px] mx-auto px-4 sm:px-8">
           
-          {/* Breadcrumb Navigation */}
-          <nav className="text-xs text-[#68625D] mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-semibold">Pertanyaan Umum (FAQ)</span>
-          </nav>
-
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-12">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-[#E07A5F] block">
-              Bantuan &amp; Panduan
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#2C2725]">
-              Pertanyaan yang Sering Diajukan
-            </h1>
-            <p className="text-xs sm:text-sm text-[#68625D]">
-              Semua informasi penting seputar pemesanan buku, pengiriman ke rumah, event gratis, dan kunjungan butik di Malang.
-            </p>
-          </div>
-
-          {/* Accordion List */}
-          <div className="max-w-3xl mx-auto space-y-3">
+          <div className="space-y-4">
             {faqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
-
               return (
                 <div
                   key={idx}
-                  className="bg-white border border-[#EDE8E1] rounded-lg overflow-hidden shadow-xs transition-colors"
+                  className="bg-white border border-[#F2E4D6] rounded-[2px] overflow-hidden transition-all shadow-xs"
                 >
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? null : idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-[#FAF8F5] transition-colors"
+                    className="w-full p-5 sm:p-6 text-left flex items-start justify-between gap-4 cursor-pointer hover:bg-[#FFFBF7] transition-colors"
                   >
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#E07A5F] block mb-1">
+                      <span className="text-[11px] font-semibold text-[#B05A26] uppercase tracking-wider block mb-1">
                         {faq.category}
                       </span>
-                      <h3 className="text-sm sm:text-base font-bold text-[#2C2725] leading-snug">
+                      <h3 className="text-sm sm:text-base font-semibold text-[#4A2A1C]">
                         {faq.q}
                       </h3>
                     </div>
-                    <ChevronDown
-                      size={18}
-                      className={`text-[#68625D] transition-transform duration-200 shrink-0 ${
-                        isOpen ? 'rotate-180 text-[#E07A5F]' : ''
-                      }`}
-                    />
+
+                    <div className="p-1 rounded-full text-[#7A5644] shrink-0 mt-1">
+                      {isOpen ? (
+                        <ChevronUp className="w-4 h-4 text-[#B05A26]" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#68625D] leading-relaxed border-t border-[#EDE8E1] animate-in fade-in duration-150">
+                    <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-[#7A5644] leading-relaxed border-t border-[#F9EAE1]">
                       {faq.a}
                     </div>
                   )}
@@ -122,36 +119,31 @@ export default function FaqPage() {
             })}
           </div>
 
-          {/* Still Need Help Box */}
-          <div className="max-w-3xl mx-auto mt-12 p-6 sm:p-8 bg-[#FAF8F5] border border-[#EDE8E1] rounded-lg text-center space-y-3">
-            <h4 className="text-base font-bold text-[#2C2725]">
-              Punya Pertanyaan Spesifik Lainnya?
-            </h4>
-            <p className="text-xs sm:text-sm text-[#68625D] max-w-md mx-auto">
-              Tim kurator butik BabyShalls Citraland Malang siap membantu Anda menemukan buku dan kado yang paling pas untuk si kecil.
+          {/* Need More Help Box */}
+          <div className="mt-12 p-6 sm:p-8 bg-[#FFF6EA] border border-[#F2E4D6] rounded-[2px] text-center flex flex-col items-center">
+            <HelpCircle className="w-8 h-8 text-[#B05A26] mb-2" />
+            <h3 className="text-lg font-medium text-[#4A2A1C] mb-1">
+              Masih Ada Pertanyaan Lain?
+            </h3>
+            <p className="text-xs sm:text-sm text-[#7A5644] max-w-md mb-6 leading-relaxed">
+              Tim kurator dan customer support BabyShalls siap membantumu via WhatsApp setiap hari pukul 09.00 – 19.00 WIB.
             </p>
-            <div className="pt-2 flex justify-center gap-3">
-              <Link
-                href="/request-a-book"
-                className="px-5 py-2.5 bg-[#E07A5F] text-white rounded-md text-xs font-semibold hover:bg-[#cc654b] transition-colors"
-              >
-                Form Request Buku
-              </Link>
-              <Link
-                href="/about"
-                className="px-5 py-2.5 bg-white border border-[#EDE8E1] hover:border-[#E07A5F] text-[#2C2725] rounded-md text-xs font-semibold transition-colors"
-              >
-                Kunjungi Butik Malang
-              </Link>
-            </div>
+            <a
+              href="https://wa.me/6281234567890?text=Halo%20Admin%20BabyShalls,%20saya%20ingin%20bertanya%20seputar%20layanan"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors shadow-xs"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Chat Tim Kami di WhatsApp</span>
+            </a>
           </div>
 
         </div>
-      </main>
+      </section>
 
+      <CampaignBanner />
       <Footer />
-      <OrderDrawer />
     </div>
   );
 }
-

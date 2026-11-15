@@ -9,39 +9,29 @@ interface CampaignBannerProps {
 
 export const CampaignBanner: React.FC<CampaignBannerProps> = ({ onShopAllClick }) => {
   return (
-    <section className="w-full bg-[#D9744A] py-14 sm:py-16 md:py-20 transition-colors">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20">
-        <div className="max-w-[560px] mx-auto text-center text-white space-y-4">
-          
-          {/* Main Headline */}
-          <h2 className="text-[26px] sm:text-[32px] md:text-[36px] font-bold leading-tight tracking-tight text-white">
-            Cari buku sesuai usia si kecil
-          </h2>
+    <section className="w-full bg-[#B05A26] min-h-[360px] sm:h-[390px] flex items-center justify-center text-white text-center relative overflow-hidden px-6">
+      <div className="max-w-[620px] mx-auto flex flex-col items-center space-y-4">
+        {/* Headline */}
+        <h2 className="text-[28px] sm:text-[32px] font-medium leading-[1.25] tracking-tight text-white">
+          Cari buku sesuai usia si kecil
+        </h2>
 
-          {/* Subtitle */}
-          <p className="text-[15px] sm:text-[17px] md:text-[18px] text-white/95 leading-relaxed font-normal">
-            Dari newborn sampai 6+ tahun, pilih buku dan mainan yang pas.
-          </p>
+        {/* Subtext */}
+        <p className="text-[16px] sm:text-[18px] text-white/95 leading-[1.5] max-w-[480px]">
+          Dari newborn sampai 6+ tahun, pilih buku dan mainan yang pas.
+        </p>
 
-          {/* Action Button */}
-          <div className="pt-3">
-            <Link
-              href="/shop"
-              onClick={onShopAllClick}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-white hover:bg-[#FBE8DF] text-[#D9744A] text-[13px] md:text-[14px] font-semibold uppercase tracking-wider rounded-full transition-all shadow-sm cursor-pointer hover:scale-102"
-            >
-              <span>BELANJA PER USIA</span>
-              <img
-                src="/images/icons/icon-arrow.svg"
-                alt=""
-                className="w-4 h-4 object-contain"
-              />
-            </Link>
-          </div>
-
+        {/* CTA Button */}
+        <div className="pt-2">
+          <Link
+            href="/shop?tab=usia"
+            onClick={onShopAllClick}
+            className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-[#B05A26] hover:bg-[#FFFBF5] text-[16px] font-medium tracking-wide uppercase rounded-[2px] transition-all shadow-xs"
+          >
+            BELANJA PER USIA
+          </Link>
         </div>
       </div>
     </section>
   );
 };
-

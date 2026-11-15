@@ -2,10 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
-import { StripInfo } from '@/components/common/StripInfo';
 import { MegaMenu } from '@/components/common/MegaMenu';
-import { X, Search } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   onCategorySelect?: (category: string) => void;
@@ -16,7 +16,12 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
@@ -40,165 +45,160 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white transition-all w-full shadow-none">
-      {/* Strip Info Announcement */}
-      <StripInfo />
-
-      {/* Main Bar */}
-      <div className="w-full border-b border-[#EBEBEB] bg-white">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20">
-          <div className="flex items-center justify-between h-[72px]">
+    <header className="sticky top-0 z-40 bg-white transition-all w-full border-b border-[#F2E4D6]">
+      {/* Main Bar: Figma #131:39041 - Height 96px */}
+      <div className="w-full bg-white">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12">
+          <div className="flex items-center justify-between min-h-[96px] py-1">
             
-            {/* Left: Hamburger (Mobile) + Logo */}
+            {/* Left: Mobile Menu Trigger + Brand Logo (Bigger & Prominent) */}
             <div className="flex items-center gap-4">
               <button
                 type="button"
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden text-[#2B2B2B] p-1.5 rounded-md hover:bg-[#F0F0F0] transition-colors focus:outline-none cursor-pointer"
-                aria-label="Buka menu navigasi"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden text-[#4A2A1C] p-2 hover:bg-[#FFF6EA] rounded transition-colors"
+                aria-label="Toggle menu"
               >
-                <img
-                  src="/images/icons/icon-menu.svg"
-                  alt="Menu"
-                  className="w-6 h-6 object-contain"
-                />
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
 
-              <Link href="/" className="flex items-center gap-2 group py-1" aria-label="BabyShalls Home">
-                <img
-                  src="/BabyShallsLogo 1.PNG"
-                  alt="BabyShalls Logo"
-                  className="hidden sm:block h-[38px] w-auto object-contain transition-transform group-hover:scale-102"
-                />
-                <img
-                  src="/BabyShallsIcon.png"
-                  alt="BabyShalls Icon"
-                  className="block sm:hidden h-[34px] w-auto object-contain"
-                />
+              <Link href="/" className="inline-block relative py-1" aria-label="BabyShalls Home">
+                <div className="relative w-[125px] sm:w-[155px] lg:w-[175px] h-[86px] sm:h-[92px]">
+                  <Image
+                    src="/BabyShallsLogo 1.PNG"
+                    alt="Baby Shall's"
+                    fill
+                    sizes="(max-width: 640px) 125px, (max-width: 1024px) 155px, 175px"
+                    priority
+                    className="object-contain object-left"
+                  />
+                </div>
               </Link>
             </div>
 
-            {/* Center: Navigation Links (Desktop) */}
-            <nav className="hidden lg:flex items-center space-x-7 text-[14px] font-medium text-[#2B2B2B]">
-              {/* Shop with Mega Menu Trigger */}
+            {/* Center: Navigation Links matching Figma (Poppins Medium 16px UPPERCASE, gap: 28px) */}
+            <nav className="hidden lg:flex items-center gap-7">
+              {/* SHOP with Dropdown */}
               <div
-                className="relative py-4"
+                className="relative"
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
+                onMouseLeave={() => setIsMegaMenuOpen(false)}
               >
                 <button
                   type="button"
-                  onClick={() => setIsMegaMenuOpen((prev) => !prev)}
-                  className="flex items-center gap-1.5 hover:text-[#D9744A] transition-colors cursor-pointer text-[14px] font-medium text-[#2B2B2B]"
-                  aria-expanded={isMegaMenuOpen}
+                  onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
+                  className="flex items-center gap-1 text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide cursor-pointer"
                 >
-                  <span>Shop</span>
-                  <span className="text-[10px] transform transition-transform duration-200">▾</span>
+                  <span>SHOP</span>
+                  <ChevronDown
+                    size={18}
+                    className={`transition-transform duration-200 ${
+                      isMegaMenuOpen ? 'rotate-180 text-[#B05A26]' : ''
+                    }`}
+                  />
                 </button>
               </div>
 
               <Link
-                href="/shop?category=Preloved"
-                className="hover:text-[#D9744A] transition-colors"
+                href="/preloved"
+                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
               >
-                Preloved
+                PRELOVED
               </Link>
 
               <Link
                 href="/events"
-                className="hover:text-[#D9744A] transition-colors"
+                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
               >
-                Event &amp; Workshop
+                EVENT &amp; WORKSHOP
               </Link>
 
               <Link
                 href="/about"
-                className="hover:text-[#D9744A] transition-colors"
+                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
               >
-                About
+                ABOUT
               </Link>
 
               <Link
                 href="/request-a-book"
-                className="hover:text-[#D9744A] transition-colors"
+                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
               >
-                Request Buku
+                REQUEST BUKU
               </Link>
             </nav>
 
-            {/* Right: Action Icons (Search, Account, Cart) */}
-            <div className="flex items-center space-x-4 md:space-x-5">
+            {/* Right: Actions matching Figma (Icon 26x26 + Text 12px SemiBold) */}
+            <div className="flex items-center gap-6">
               
-              {/* Search Toggle */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={toggleSearch}
-                  className="p-1.5 text-[#2B2B2B] hover:text-[#D9744A] transition-colors focus:outline-none cursor-pointer flex items-center justify-center"
-                  aria-label="Cari produk"
-                >
-                  <img
+              {/* Cari */}
+              <button
+                type="button"
+                onClick={toggleSearch}
+                className="flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                aria-label="Pencarian"
+              >
+                <div className="w-[26px] h-[26px] flex items-center justify-center">
+                  <Image
                     src="/images/icons/icon-search.svg"
-                    alt="Search"
-                    className="w-5 h-5 object-contain"
+                    alt="Cari"
+                    width={22}
+                    height={22}
+                    className="object-contain transition-transform group-hover:scale-105"
                   />
-                </button>
+                </div>
+                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                  Cari
+                </span>
+              </button>
 
-                {/* Search Bar Flyout */}
-                {isSearchOpen && (
-                  <form
-                    onSubmit={handleSearchSubmit}
-                    className="absolute right-0 top-11 w-72 sm:w-80 bg-white border border-[#EBEBEB] rounded-lg shadow-figma-card p-2 flex items-center gap-2 z-50 animate-in fade-in duration-150"
-                  >
-                    <Search size={16} className="text-[#8C8C8C] shrink-0 ml-1" />
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Cari judul, kategori, usia..."
-                      className="w-full text-xs text-[#2B2B2B] bg-transparent focus:outline-none placeholder:text-[#8C8C8C]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setIsSearchOpen(false)}
-                      className="text-[#8C8C8C] hover:text-[#2B2B2B] p-1"
-                    >
-                      <X size={14} />
-                    </button>
-                  </form>
-                )}
-              </div>
-
-              {/* Customer Account Icon */}
+              {/* Akun */}
               <Link
                 href="/account"
-                className="p-1.5 text-[#2B2B2B] hover:text-[#D9744A] transition-colors cursor-pointer flex items-center justify-center"
+                className="flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
                 aria-label="Akun saya"
               >
-                <img
-                  src="/images/icons/icon-user.svg"
-                  alt="Account"
-                  className="w-5 h-5 object-contain"
-                />
+                <div className="w-[26px] h-[26px] flex items-center justify-center">
+                  <Image
+                    src="/images/icons/icon-user.svg"
+                    alt="Akun"
+                    width={22}
+                    height={22}
+                    className="object-contain transition-transform group-hover:scale-105"
+                  />
+                </div>
+                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                  Akun
+                </span>
               </Link>
 
-              {/* Shopping Bag Button with Badge */}
+              {/* Keranjang with Figma Counter Badge */}
               <button
                 type="button"
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-1.5 text-[#2B2B2B] hover:text-[#D9744A] transition-colors cursor-pointer flex items-center justify-center"
-                aria-label={`Keranjang belanja, ${totalItemsCount} item`}
+                className="relative flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                aria-label="Keranjang belanja"
               >
-                <img
-                  src="/images/icons/icon-cart.svg"
-                  alt="Cart"
-                  className="w-5 h-5 object-contain"
-                />
-                {totalItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#D9744A] text-white text-[10px] font-semibold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
-                    {totalItemsCount}
-                  </span>
-                )}
+                <div className="relative w-[26px] h-[26px] flex items-center justify-center">
+                  <Image
+                    src="/images/icons/icon-cart.svg"
+                    alt="Keranjang"
+                    width={22}
+                    height={22}
+                    className="object-contain transition-transform group-hover:scale-105"
+                  />
+                  {mounted && totalItemsCount > 0 && (
+                    <span
+                      suppressHydrationWarning
+                      className="absolute -top-1.5 -right-2.5 bg-[#B05A26] text-white text-[11px] font-semibold w-[20px] h-[20px] rounded-full flex items-center justify-center shadow-xs"
+                    >
+                      {totalItemsCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                  Keranjang
+                </span>
               </button>
 
             </div>
@@ -212,125 +212,79 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
           onClose={() => setIsMegaMenuOpen(false)}
           onSelectCategory={onCategorySelect}
         />
-      </div>
 
-      {/* Mobile Drawer Navigation */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden animate-in fade-in duration-200">
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col justify-between p-6 z-10 overflow-y-auto">
-            <div>
-              <div className="flex items-center justify-between pb-6 border-b border-[#EBEBEB]">
-                <img
-                  src="/BabyShallsLogo 1.PNG"
-                  alt="BabyShalls Logo"
-                  className="h-8 w-auto object-contain"
+        {/* Search Bar Dropdown */}
+        {isSearchOpen && (
+          <div className="border-t border-[#F2E4D6] bg-[#FFFBF5] px-6 py-4 animate-in fade-in duration-150">
+            <div className="max-w-[760px] mx-auto">
+              <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari judul buku, mainan, atau topik edukasi..."
+                  className="w-full bg-white border border-[#E6D2C0] rounded-[2px] py-3 pl-11 pr-24 text-[14px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26] shadow-xs"
+                />
+                <Image
+                  src="/images/icons/icon-search.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="absolute left-3.5 opacity-60 pointer-events-none"
                 />
                 <button
-                  type="button"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-[#6B6B6B] hover:text-[#2B2B2B] p-1"
-                  aria-label="Tutup menu"
+                  type="submit"
+                  className="absolute right-2 px-4 py-1.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[13px] font-medium rounded-[2px] transition-colors"
                 >
-                  <X size={20} />
+                  Cari
                 </button>
-              </div>
-
-              {/* Mobile Navigation List */}
-              <div className="py-6 space-y-4 text-left">
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  Shop Semua Produk
-                </Link>
-
-                <div className="pl-3 space-y-2 border-l-2 border-[#EBEBEB]">
-                  <Link
-                    href="/shop?category=Board+Books"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-[13px] text-[#6B6B6B] hover:text-[#D9744A]"
-                  >
-                    • Board Books
-                  </Link>
-                  <Link
-                    href="/shop?category=Picture+Books"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-[13px] text-[#6B6B6B] hover:text-[#D9744A]"
-                  >
-                    • Picture Books
-                  </Link>
-                  <Link
-                    href="/shop?category=Educational+Toys"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-[13px] text-[#6B6B6B] hover:text-[#D9744A]"
-                  >
-                    • Mainan Montessori
-                  </Link>
-                  <Link
-                    href="/hampers"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-[13px] text-[#6B6B6B] hover:text-[#D9744A]"
-                  >
-                    • Hampers Kado
-                  </Link>
-                </div>
-
-                <Link
-                  href="/shop?category=Preloved"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  Preloved
-                </Link>
-
-                <Link
-                  href="/events"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  Event &amp; Workshop
-                </Link>
-
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  About
-                </Link>
-
-                <Link
-                  href="/request-a-book"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  Request Buku
-                </Link>
-
-                <Link
-                  href="/account"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-[15px] font-semibold text-[#2B2B2B] hover:text-[#D9744A]"
-                >
-                  Akun &amp; Riwayat Pesanan
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile Drawer Footer */}
-            <div className="pt-6 border-t border-[#EBEBEB] text-xs text-[#6B6B6B] space-y-2">
-              <p className="font-semibold text-[#2B2B2B]">Butik BabyShalls</p>
-              <p>Citraland Puncak Tidar Blok HH-26, Malang</p>
-              <p>Selasa – Minggu: 10.00 – 19.00 WIB</p>
+              </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-[#F2E4D6] bg-white px-6 py-6 space-y-4 animate-in fade-in">
+            <Link
+              href="/shop"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
+            >
+              SHOP
+            </Link>
+            <Link
+              href="/preloved"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
+            >
+              PRELOVED
+            </Link>
+            <Link
+              href="/events"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
+            >
+              EVENT &amp; WORKSHOP
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
+            >
+              ABOUT
+            </Link>
+            <Link
+              href="/request-a-book"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
+            >
+              REQUEST BUKU
+            </Link>
+          </div>
+        )}
+      </div>
     </header>
   );
 };

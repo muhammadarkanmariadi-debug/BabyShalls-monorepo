@@ -2,14 +2,28 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Check, ShoppingBag, BookOpen, Share2, MapPin, Sparkles } from 'lucide-react';
-import { Header } from '../../../src/components/Header';
-import { Footer } from '../../../src/components/Footer';
-import { OrderDrawer } from '../../../src/components/OrderDrawer';
-import { mockProducts, formatIDR } from '../../../src/data/mockProducts';
-import { useCart } from '../../../src/context/CartContext';
-import { Product } from '../../../src/types';
+import {
+  Heart,
+  Truck,
+  Package,
+  Gift,
+  Store,
+  Star,
+  ChevronDown,
+  ChevronUp,
+  Check,
+  Share2,
+} from 'lucide-react';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { WireProductCard } from '@/components/common/WireProductCard';
+import { BannerHampers } from '@/components/home/BannerHampers';
+import { mockProducts, formatIDR } from '@/data/mockProducts';
+import { useCart } from '@/context/CartContext';
+import { Product } from '@/types';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -18,7 +32,7 @@ export default function ProductDetailPage() {
 
   const id = typeof params?.id === 'string' ? params.id : '';
 
-  // Get active product (support both mock and localStorage if synced)
+  // Get active product (support both mock and localStorage)
   const product: Product | undefined = useMemo(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -35,24 +49,29 @@ export default function ProductDetailPage() {
     return mockProducts.find((p) => p.id === id) || mockProducts[0];
   }, [id]);
 
-  const [selectedImage, setSelectedImage] = useState<string>(product?.coverImage || '');
+  const [selectedImage, setSelectedImage] = useState<string>(product?.coverImage || product?.images?.[0] || '/images/prod-boardbook.jpg');
+  const [selectedFormat, setSelectedFormat] = useState<string>('Board Book');
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdded, setIsAdded] = useState<boolean>(false);
+  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
+
+  // Accordions open/close state
+  const [openSection, setOpenSection] = useState<'desc' | 'specs' | 'shipping'>('desc');
 
   useEffect(() => {
     if (product) {
-      setSelectedImage(product.coverImage);
+      setSelectedImage(product.coverImage || product.images?.[0] || '/images/prod-boardbook.jpg');
     }
   }, [product]);
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#221F1F] flex flex-col justify-between">
+      <div className="min-h-screen bg-white flex flex-col justify-between">
         <Header />
-        <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-          <p className="text-2xl font-bold">Title not found</p>
-          <Link href="/" className="mt-4 inline-block text-sm text-[#C86D51] underline underline-offset-4">
-            Return to bookstore catalog
+        <div className="max-w-4xl mx-auto px-4 py-24 text-center">
+          <p className="text-2xl font-medium text-[#4A2A1C]">Produk Tidak Ditemukan</p>
+          <Link href="/shop" className="mt-4 inline-block text-sm text-[#B05A26] underline">
+            Kembali ke Katalog
           </Link>
         </div>
         <Footer />
@@ -60,293 +79,447 @@ export default function ProductDetailPage() {
     );
   }
 
+  // Thumbnails gallery
+  const galleryImages: string[] = [
+    product.coverImage || product.images?.[0] || '/images/prod-boardbook.jpg',
+    ...(product.images && product.images.length > 1
+      ? product.images.slice(1)
+      : [
+          '/images/preloved/preloved-sampul.png',
+          '/images/preloved/preloved-halaman-dalam.png',
+          '/images/preloved/preloved-detail-cacat.png',
+          '/images/store/toko-area-bermain.png',
+        ]),
+  ].filter(Boolean) as string[];
+
+  // Age label mapping
+  const getAgeBadge = (age?: string) => {
+    if (!age || age === 'All' || age === 'All Ages') return { label: 'Semua usia', bg: 'bg-[#FFF0E0]', text: 'text-[#B05A26]' };
+    if (age.includes('0–1') || age.includes('0–2') || age.toLowerCase().includes('newborn')) {
+      return { label: 'Newborn (0–1 th)', bg: 'bg-[#FEECE8]', text: 'text-[#C0392B]' };
+    }
+    if (age.includes('1–3') || age.includes('1-3')) {
+      return { label: '1–3 tahun', bg: 'bg-[#FFF3D6]', text: 'text-[#9A6500]' };
+    }
+    if (age.includes('3–5') || age.includes('3+')) {
+      return { label: '3+ tahun', bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
+    }
+    if (age.includes('6+')) {
+      return { label: '6+ tahun', bg: 'bg-[#E3EDF9]', text: 'text-[#2C5282]' };
+    }
+    return { label: age, bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
+  };
+
+  const ageBadge = getAgeBadge(product.ageGroup);
+  const isPreloved = product.category === 'Preloved Item' || product.condition === 'preloved';
+  const hasDiscount = Boolean(product.discountPercent && product.discountPercent > 0);
+
   const handleAddToCart = () => {
     addToCart(product, quantity);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
 
+  const handleBuyNow = () => {
+    addToCart(product, quantity);
+    router.push('/checkout');
+  };
+
   const relatedProducts = mockProducts
-    .filter((p) => p.id !== product.id && (p.category === product.category || p.ageGroup === product.ageGroup))
+    .filter((p) => p.id !== product.id)
     .slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
+    <div className="min-h-screen bg-white flex flex-col font-sans">
       <Header />
+      <TombolKembali fallbackUrl="/shop" label="Kembali ke Katalog" />
 
-      <main className="flex-grow w-full">
-        {/* Breadcrumb Navigation */}
-        <div className="w-full px-4 sm:px-6 lg:px-12 pt-6 pb-4">
-          <nav className="flex items-center space-x-2 text-xs text-[#68625D]">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <Link href="/shop" className="hover:text-[#E07A5F] transition-colors">
-              Toko
-            </Link>
-            <span>/</span>
-            <Link href={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[#E07A5F] transition-colors">
-              {product.category}
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-semibold truncate max-w-xs">{product.title}</span>
-          </nav>
-        </div>
+      {/* Breadcrumb Navigation (Figma #135:898) */}
+      <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-8 py-5">
+        <nav className="flex items-center gap-2 text-[13px] text-[#7A5644] overflow-x-auto whitespace-nowrap">
+          <Link href="/" className="hover:underline">Beranda</Link>
+          <span>/</span>
+          <Link href="/shop" className="hover:underline">Buku</Link>
+          <span>/</span>
+          <Link href={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:underline">
+            {product.category}
+          </Link>
+          <span>/</span>
+          <span className="font-semibold text-[#4A2A1C] truncate max-w-xs">{product.title}</span>
+        </nav>
+      </div>
 
-        {/* 2-Column Editorial Product Layout */}
-        <div className="w-full px-4 sm:px-6 lg:px-12 py-6 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            
-            {/* Left: Product Gallery */}
-            <div className="lg:col-span-7 flex flex-col sm:flex-row gap-4">
-              {product.images && product.images.length > 1 && (
-                <div className="order-2 sm:order-1 flex sm:flex-col gap-3 overflow-x-auto sm:overflow-visible">
-                  {product.images.map((img, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setSelectedImage(img)}
-                      className={`relative w-16 h-20 sm:w-20 sm:h-26 shrink-0 bg-white overflow-hidden border rounded-md transition-all cursor-pointer ${
-                        selectedImage === img ? 'border-[#E07A5F] ring-1 ring-[#E07A5F]' : 'border-[#EDE8E1] opacity-75 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={img} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+      {/* Main Product Section (Figma #135:900) */}
+      <section className="pb-16 max-w-[1200px] w-full mx-auto px-4 sm:px-8">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-14 items-start">
+          
+          {/* Left Column: Image Gallery (Figma #135:901, 600px width) */}
+          <div className="w-full lg:w-[580px] shrink-0">
+            {/* Main Image */}
+            <div className="relative aspect-square w-full rounded-[2px] overflow-hidden bg-[#F0F0F0] mb-4">
+              <Image
+                src={selectedImage || product.coverImage || product.images?.[0] || '/images/prod-boardbook.jpg'}
+                alt={product.title}
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="(max-width: 1024px) 100vw, 580px"
+              />
+              {hasDiscount && (
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="bg-[#C0392B] text-white text-xs font-semibold px-2.5 py-1 rounded-[2px]">
+                    -{product.discountPercent}%
+                  </span>
                 </div>
               )}
+            </div>
 
-              {/* Main 3:4 Book Cover */}
-              <div className="order-1 sm:order-2 flex-1 relative aspect-[3/4] bg-[#FAF8F5] rounded-md overflow-hidden border border-[#EDE8E1] shadow-xs">
-                <img
-                  src={selectedImage || product.coverImage}
-                  alt={product.title}
-                  className="w-full h-full object-cover object-center"
-                />
+            {/* Thumbnail Strip */}
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
+              {galleryImages.map((img, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedImage(img)}
+                  className={`relative w-20 h-20 rounded-[2px] overflow-hidden bg-[#F0F0F0] shrink-0 border-2 transition-all cursor-pointer ${
+                    selectedImage === img
+                      ? 'border-[#B05A26] opacity-100'
+                      : 'border-transparent opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <Image
+                    src={img}
+                    alt={`${product.title} view ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                  />
+                </button>
+              ))}
+            </div>
 
-                {product.badge && (
-                  <div className="absolute top-4 left-4 z-10">
-                    <span className="bg-[#FFFDF9]/95 text-[#E07A5F] border border-[#EDE8E1] text-xs uppercase tracking-wider font-bold px-2.5 py-1 rounded-xs shadow-xs">
-                      {product.badge}
-                    </span>
-                  </div>
-                )}
+            {/* Preloved notice if applicable */}
+            {isPreloved && (
+              <div className="mt-4 p-3 bg-[#FFFBF7] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644] flex items-center gap-2">
+                <Store className="w-4 h-4 text-[#B05A26] shrink-0" />
+                <span>
+                  <strong>Foto Asli Buku Preloved:</strong> Buku ini adalah koleksi preloved yang telah lolos kurasi kebersihan dan kelayakan baca tim BabyShalls.
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Product Information (Figma #135:917, 552px width) */}
+          <div className="flex-1 w-full flex flex-col">
+            
+            {/* Badges Row */}
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <span className={`${ageBadge.bg} ${ageBadge.text} text-xs font-semibold px-2.5 py-1 rounded-[2px]`}>
+                {ageBadge.label}
+              </span>
+              <span className="bg-[#FFF6EA] text-[#7A5644] border border-[#E6D2C0] text-xs font-medium px-2.5 py-1 rounded-[2px]">
+                {product.category}
+              </span>
+              {isPreloved ? (
+                <span className="border border-[#2A6E37] text-[#2A6E37] text-xs font-medium px-2.5 py-1 rounded-[2px]">
+                  Preloved · Sangat Baik
+                </span>
+              ) : (
+                <span className="bg-[#EBF7EE] text-[#2A6E37] text-xs font-medium px-2.5 py-1 rounded-[2px]">
+                  Buku Baru
+                </span>
+              )}
+            </div>
+
+            {/* Product Title */}
+            <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] leading-tight mb-2 tracking-tight">
+              {product.title}
+            </h1>
+
+            {/* Author / Subtitle */}
+            <p className="text-sm text-[#7A5644] mb-3">
+              karya <span className="font-medium text-[#4A2A1C]">{product.author}</span> · {product.publisher || 'BabyShalls Curated'} ({product.publicationYear || '2024'})
+            </p>
+
+            {/* Star Rating & Sold Count */}
+            <div className="flex items-center gap-2 text-xs text-[#7A5644] mb-5">
+              <div className="flex items-center text-[#E0A020]">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                ))}
+              </div>
+              <span className="font-semibold text-[#4A2A1C]">4.9</span>
+              <span>(18 ulasan pembaca)</span>
+              <span>•</span>
+              <span>Terjual 64</span>
+            </div>
+
+            {/* Price Row */}
+            <div className="flex items-baseline gap-3 pb-6 border-b border-[#F2E4D6] mb-6">
+              <span className="text-3xl font-bold text-[#4A2A1C]">
+                {formatIDR(product.price)}
+              </span>
+              {product.originalPrice && (
+                <span className="text-base text-[#C9B3A5] line-through font-normal">
+                  {formatIDR(product.originalPrice)}
+                </span>
+              )}
+              {hasDiscount && (
+                <span className="bg-[#C0392B] text-white text-xs font-semibold px-2 py-0.5 rounded-[2px]">
+                  Hemat {product.discountPercent}%
+                </span>
+              )}
+            </div>
+
+            {/* Format Selection */}
+            <div className="mb-6">
+              <label className="block text-xs font-semibold text-[#4A2A1C] mb-2 uppercase tracking-wider">
+                Pilihan Format:
+              </label>
+              <div className="flex items-center gap-2">
+                {['Board Book', 'Paperback', 'Hardcover'].map((fmt) => {
+                  const isActive = selectedFormat === fmt;
+                  return (
+                    <button
+                      key={fmt}
+                      type="button"
+                      onClick={() => setSelectedFormat(fmt)}
+                      className={`px-4 py-2 text-xs font-medium rounded-[2px] transition-colors cursor-pointer ${
+                        isActive
+                          ? 'bg-[#B05A26] text-white border border-[#B05A26]'
+                          : 'bg-white text-[#4A2A1C] border border-[#E6D2C0] hover:border-[#B05A26]'
+                      }`}
+                    >
+                      {fmt}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Right: Product Details & Actions */}
-            <div className="lg:col-span-5 space-y-6 text-left">
-              
-              {/* Title & Metadata */}
-              <div className="space-y-2.5 border-b border-[#EDE8E1] pb-6">
-                <div className="text-xs uppercase tracking-widest text-[#E07A5F] font-semibold">
-                  {product.category} • {product.ageGroup}
-                </div>
+            {/* Stock Alert */}
+            <div className="flex items-center gap-2 text-xs text-[#2A6E37] font-medium mb-4">
+              <span className="w-2 h-2 rounded-full bg-[#2A6E37] animate-pulse"></span>
+              <span>Stok tersedia di Toko Citraland Malang (sisa 4 buku)</span>
+            </div>
 
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[#2C2725] leading-tight">
-                  {product.title}
-                </h1>
-
-                <p className="text-sm text-[#68625D]">
-                  Oleh <span className="text-[#2C2725] font-medium">{product.author}</span>
-                  {product.publisher && ` • Penerbit: ${product.publisher}`}
-                </p>
-
-                <div className="pt-3 flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-[#2C2725]">
-                    {formatIDR(product.price)}
-                  </span>
-                  <span className="text-xs text-[#68625D]">
-                    (Termasuk kurasi)
-                  </span>
-                </div>
+            {/* Quantity Stepper & CTAs */}
+            <div className="flex flex-col sm:flex-row items-stretch gap-3 mb-6">
+              {/* Stepper */}
+              <div className="flex items-center border border-[#E6D2C0] rounded-[2px] bg-white h-12 w-32 shrink-0 justify-between px-3">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1 cursor-pointer"
+                >
+                  -
+                </button>
+                <span className="text-sm font-semibold text-[#4A2A1C]">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1 cursor-pointer"
+                >
+                  +
+                </button>
               </div>
 
-              {/* Physical Store Availability Notice */}
-              <div className="flex items-center gap-2 text-xs text-[#2C2725] bg-white border border-[#EDE8E1] p-3.5 rounded-md">
-                <span className={`w-2.5 h-2.5 rounded-full ${product.inStock ? 'bg-emerald-600' : 'bg-red-500'}`} />
-                <span>
-                  {product.inStock ? 'Stok Tersedia' : 'Stok Habis'} • Dapat diambil langsung di butik Citraland Puncak Tidar Malang atau dikirim ke seluruh Indonesia
-                </span>
-              </div>
+              {/* Add to Cart */}
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex-1 h-12 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium text-sm rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                {isAdded ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>Berhasil Ditambahkan!</span>
+                  </>
+                ) : (
+                  <span>+ Tambah ke Keranjang</span>
+                )}
+              </button>
 
-              {/* Quantity & Add to Bag Actions */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-[#EDE8E1] bg-white rounded-md h-12 px-3">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="text-base text-[#68625D] hover:text-[#2C2725] px-2 cursor-pointer"
-                    >
-                      −
-                    </button>
-                    <span className="w-10 text-center text-sm font-semibold text-[#2C2725]">
-                      {quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="text-base text-[#68625D] hover:text-[#2C2725] px-2 cursor-pointer"
-                    >
-                      +
-                    </button>
+              {/* Buy Now */}
+              <button
+                type="button"
+                onClick={handleBuyNow}
+                className="h-12 px-6 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-sm rounded-[2px] transition-colors cursor-pointer"
+              >
+                Beli Sekarang
+              </button>
+
+              {/* Wishlist Button */}
+              <button
+                type="button"
+                onClick={() => setIsWishlisted(!isWishlisted)}
+                aria-label="Wishlist"
+                className={`h-12 w-12 border rounded-[2px] flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                  isWishlisted
+                    ? 'border-[#C0392B] bg-[#FFF0F0] text-[#C0392B]'
+                    : 'border-[#E6D2C0] text-[#7A5644] hover:text-[#B05A26] hover:border-[#B05A26]'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+              </button>
+            </div>
+
+            {/* Benefit Highlights List (Figma Benefits) */}
+            <div className="bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] p-4 flex flex-col gap-3 mb-8 text-xs text-[#4A2A1C]">
+              <div className="flex items-center gap-3">
+                <Truck className="w-4 h-4 text-[#B05A26] shrink-0" />
+                <span>Dikirim langsung dari <strong>Citraland Puncak Tidar, Kota Malang</strong></span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
+                <span>Berat produk: <strong>± 350 gram</strong> (packing aman dengan bubble wrap ganda)</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Gift className="w-4 h-4 text-[#B05A26] shrink-0" />
+                <span>Bisa request <strong>bungkus kado & kartu ucapan gratis</strong> di checkout</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Store className="w-4 h-4 text-[#B05A26] shrink-0" />
+                <span>Tersedia opsi <strong>Ambil di Toko (Self Pick-up)</strong> tanpa biaya ongkir</span>
+              </div>
+            </div>
+
+            {/* Accordions (Deskripsi, Spesifikasi, Pengiriman) */}
+            <div className="border-t border-[#F2E4D6]">
+              {/* Accordion 1: Deskripsi */}
+              <div className="border-b border-[#F2E4D6]">
+                <button
+                  type="button"
+                  onClick={() => setOpenSection(openSection === 'desc' ? ('' as any) : 'desc')}
+                  className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
+                >
+                  <span>Deskripsi Buku & Manfaat Belajar</span>
+                  {openSection === 'desc' ? (
+                    <ChevronUp className="w-4 h-4 text-[#7A5644]" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-[#7A5644]" />
+                  )}
+                </button>
+                {openSection === 'desc' && (
+                  <div className="pb-5 text-sm text-[#7A5644] leading-relaxed space-y-3">
+                    <p>{product.description}</p>
+                    <p>
+                      Buku ini sangat cocok untuk melatih fokus visual, memperkaya kosakata dasar anak, serta membangun kebiasaan membaca sejak dini bersama orang tua. Halaman tebal dirancang khusus agar tahan dibolak-balik tangan mungil si kecil.
+                    </p>
                   </div>
-
-                  {/* Primary Add to Bag Button */}
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={!product.inStock}
-                    className="flex-1 h-12 bg-[#E07A5F] hover:bg-[#cc654b] text-white disabled:bg-neutral-300 text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors rounded-md flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                  >
-                    {isAdded ? (
-                      <>
-                        <Check size={16} strokeWidth={2} />
-                        <span>Berhasil Ditambahkan</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingBag size={16} strokeWidth={1.5} />
-                        <span>Tambah ke Keranjang</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Secondary Request or Custom Hamper */}
-                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                  <Link
-                    href={`/checkout?productId=${product.id}&qty=${quantity}`}
-                    onClick={() => addToCart(product, quantity)}
-                    className="h-11 border border-[#E07A5F] text-[#E07A5F] hover:bg-[#E07A5F] hover:text-white font-semibold flex items-center justify-center transition-colors rounded-md"
-                  >
-                    Beli Sekarang
-                  </Link>
-                  <Link
-                    href={`/request-a-book?title=${encodeURIComponent(product.title)}`}
-                    className="h-11 border border-[#EDE8E1] bg-white hover:border-[#E07A5F] text-[#2C2725] hover:text-[#E07A5F] font-semibold flex items-center justify-center transition-colors rounded-md"
-                  >
-                    Tanya Stok Toko
-                  </Link>
-                </div>
-              </div>
-
-              {/* Editorial Description / Synopsis */}
-              <div className="space-y-3 border-t border-[#EDE8E1] pt-6">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#2C2725]">
-                  Sinopsis &amp; Manfaat Belajar
-                </h3>
-                <p className="text-sm text-[#68625D] leading-relaxed font-normal">
-                  {product.description}
-                </p>
-                {product.excerpt && (
-                  <blockquote className="border-l-2 border-[#E07A5F] pl-4 py-1 text-xs text-[#2C2725] italic mt-3 bg-[#FBE7E3]/30 rounded-r-sm">
-                    “{product.excerpt}”
-                  </blockquote>
                 )}
               </div>
 
-              {/* Specifications Table */}
-              <div className="space-y-3 border-t border-[#EDE8E1] pt-6">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#2C2725]">
-                  Spesifikasi Buku
-                </h3>
-                <dl className="divide-y divide-[#EDE8E1] text-xs">
-                  {product.format && (
-                    <div className="py-2 flex justify-between">
-                      <dt className="text-[#68625D]">Format</dt>
-                      <dd className="font-semibold text-[#2C2725]">{product.format}</dd>
-                    </div>
+              {/* Accordion 2: Spesifikasi */}
+              <div className="border-b border-[#F2E4D6]">
+                <button
+                  type="button"
+                  onClick={() => setOpenSection(openSection === 'specs' ? ('' as any) : 'specs')}
+                  className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
+                >
+                  <span>Detail & Spesifikasi Lengkap</span>
+                  {openSection === 'specs' ? (
+                    <ChevronUp className="w-4 h-4 text-[#7A5644]" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-[#7A5644]" />
                   )}
-                  {product.pages && (
-                    <div className="py-2 flex justify-between">
-                      <dt className="text-[#68625D]">Jumlah Halaman</dt>
-                      <dd className="font-semibold text-[#2C2725]">{product.pages}</dd>
-                    </div>
-                  )}
-                  {product.language && (
-                    <div className="py-2 flex justify-between">
-                      <dt className="text-[#68625D]">Bahasa</dt>
-                      <dd className="font-semibold text-[#2C2725]">{product.language}</dd>
-                    </div>
-                  )}
-                  {product.dimensions && (
-                    <div className="py-2 flex justify-between">
-                      <dt className="text-[#68625D]">Dimensi</dt>
-                      <dd className="font-semibold text-[#2C2725]">{product.dimensions}</dd>
-                    </div>
-                  )}
-                  {product.moralTheme && (
-                    <div className="py-2 flex justify-between">
-                      <dt className="text-[#68625D]">Fokus Tema</dt>
-                      <dd className="font-semibold text-[#2C2725]">{product.moralTheme}</dd>
-                    </div>
-                  )}
-                </dl>
+                </button>
+                {openSection === 'specs' && (
+                  <div className="pb-5 text-xs text-[#4A2A1C]">
+                    <table className="w-full border-collapse">
+                      <tbody>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644] w-1/3">Judul Buku</td>
+                          <td className="py-2 font-medium">{product.title}</td>
+                        </tr>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644]">Penulis</td>
+                          <td className="py-2 font-medium">{product.author}</td>
+                        </tr>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644]">Penerbit</td>
+                          <td className="py-2 font-medium">{product.publisher || 'BabyShalls Books'}</td>
+                        </tr>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644]">Tahun Terbit</td>
+                          <td className="py-2 font-medium">{product.publicationYear || '2024'}</td>
+                        </tr>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644]">Kategori Usia</td>
+                          <td className="py-2 font-medium">{ageBadge.label}</td>
+                        </tr>
+                        <tr className="border-b border-[#F9EAE1]">
+                          <td className="py-2 text-[#7A5644]">Format / Halaman</td>
+                          <td className="py-2 font-medium">{selectedFormat} · 24 halaman tebal</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 text-[#7A5644]">Bahasa</td>
+                          <td className="py-2 font-medium">Bilingual / Bahasa Indonesia & Inggris</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
+              {/* Accordion 3: Pengiriman */}
+              <div className="border-b border-[#F2E4D6]">
+                <button
+                  type="button"
+                  onClick={() => setOpenSection(openSection === 'shipping' ? ('' as any) : 'shipping')}
+                  className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
+                >
+                  <span>Pengiriman & Kebijakan Toko</span>
+                  {openSection === 'shipping' ? (
+                    <ChevronUp className="w-4 h-4 text-[#7A5644]" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-[#7A5644]" />
+                  )}
+                </button>
+                {openSection === 'shipping' && (
+                  <div className="pb-5 text-sm text-[#7A5644] leading-relaxed space-y-2">
+                    <p>
+                      Pesanan yang masuk sebelum pukul 15.00 WIB akan dikirim pada hari yang sama. Kami melayani pengiriman ke seluruh Indonesia via JNE, J&T, SiCepat, serta instant kurir (GoSend) untuk area Malang Raya.
+                    </p>
+                    <p>
+                      <strong>Garansi BabyShalls:</strong> Jika buku yang diterima mengalami cacat cetak atau rusak dalam perjalanan, kami siap mengganti dengan buku baru atau refund 100% dengan melampirkan video unboxing dalam waktu 2x24 jam.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
           </div>
         </div>
+      </section>
 
-        {/* Related Products Grid */}
-        {relatedProducts.length > 0 && (
-          <section className="border-t border-[#EDE8E1] py-14 sm:py-20 bg-white">
-            <div className="w-full px-4 sm:px-6 lg:px-12">
-              <div className="mb-8 pb-4 border-b border-[#EDE8E1] text-left">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#E07A5F] block mb-1">
-                  Rekomendasi Kurator
-                </span>
-                <h2 className="text-2xl font-bold tracking-tight text-[#2C2725]">
-                  Buku &amp; Mainan Serupa
-                </h2>
-              </div>
+      {/* Rekomendasi Section (Figma #135:1031) */}
+      <section className="bg-[#FFFBF7] py-14 border-t border-[#F2E4D6]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-medium text-[#4A2A1C] tracking-tight">
+              Mungkin Kamu Juga Suka
+            </h2>
+            <Link
+              href="/shop"
+              className="text-sm font-medium text-[#B05A26] hover:underline"
+            >
+              Lihat Semua Buku →
+            </Link>
+          </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-10">
-                {relatedProducts.map((item) => (
-                  <div key={item.id} className="group flex flex-col text-left">
-                    <Link
-                      href={`/product/${item.id}`}
-                      className="relative aspect-[3/4] w-full overflow-hidden bg-[#FAF8F5] rounded-md border border-[#EDE8E1] block shadow-xs group-hover:border-[#E07A5F] transition-colors"
-                    >
-                      <img
-                        src={item.coverImage}
-                        alt={item.title}
-                        className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                    </Link>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6">
+            {relatedProducts.map((rel) => (
+              <WireProductCard key={rel.id} product={rel} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-                    <div className="mt-3 space-y-1">
-                      <div className="text-[10px] uppercase tracking-wider text-[#E07A5F] font-semibold">
-                        {item.category}
-                      </div>
-                      <Link href={`/product/${item.id}`} className="block">
-                        <h3 className="text-sm font-semibold text-[#2C2725] line-clamp-1 group-hover:text-[#E07A5F] transition-colors">
-                          {item.title}
-                        </h3>
-                      </Link>
-                      <p className="text-xs text-[#68625D] line-clamp-1">
-                        {item.author}
-                      </p>
-                      <p className="text-sm font-bold text-[#2C2725] pt-0.5">
-                        {formatIDR(item.price)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-      </main>
+      {/* Banner Hampers (Figma #150:1337) */}
+      <BannerHampers />
 
       <Footer />
-      <OrderDrawer />
     </div>
   );
 }

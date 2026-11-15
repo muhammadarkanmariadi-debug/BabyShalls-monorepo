@@ -2,21 +2,20 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  ArrowLeft,
   Package,
   Truck,
-  ExternalLink,
   Search,
   CheckCircle,
   Clock,
   MapPin,
-  Calendar
+  Calendar,
 } from 'lucide-react';
-import { Header } from '../../../src/components/Header';
-import { Footer } from '../../../src/components/Footer';
-import { OrderDrawer } from '../../../src/components/OrderDrawer';
-import { formatIDR } from '../../../src/data/mockProducts';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { formatIDR } from '@/data/mockProducts';
 
 export default function CustomerOrdersHistoryPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -31,43 +30,61 @@ export default function CustomerOrdersHistoryPage() {
           setOrders(saved);
         } else {
           // Default initial demo order
-          const defaultDemo = [
+          setOrders([
             {
-              orderId: 'BS-849201',
-              customerName: 'Sarah Nurhaliza',
-              customerPhone: '081234567890',
-              customerEmail: 'sarah.nurhaliza@example.com',
-              deliveryMethod: 'Ekspedisi Reguler (JNE / SiCepat)',
-              deliveryAddress: 'Jl. Dieng Atas No. 42, Sukun, Malang 65146',
-              paymentMethod: 'Transfer Bank BCA (816-123-9999)',
-              status: 'Dikirim',
+              orderId: 'BS-2026-0881',
+              customerName: 'Dina Permata',
+              customerPhone: '0812-3456-7890',
+              customerEmail: 'dina.permata@gmail.com',
+              deliveryMethod: 'JNE Reguler',
+              deliveryAddress: 'Jl. Puncak Tidar No. 18, Sukun, Malang 65146',
+              paymentMethod: 'QRIS Instan',
+              status: 'Sedang Dikirim',
               shippingTrackingNumber: 'JNE88291039401ID',
               courier: 'JNE Reguler',
               items: [
                 {
-                  productId: '1',
-                  title: 'The Very Hungry Caterpillar',
-                  coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80',
+                  productId: 'p-1',
+                  title: 'Little Bear & The Whispering Woods',
+                  coverImage: '/images/products/p-1-little-bear.png',
                   quantity: 1,
-                  price: 165000
+                  price: 165000,
+                },
+              ],
+              totalAmount: 183000,
+              createdAt: '2026-11-14T10:30:00Z',
+            },
+            {
+              orderId: 'BS-2026-0842',
+              customerName: 'Dina Permata',
+              customerPhone: '0812-3456-7890',
+              customerEmail: 'dina.permata@gmail.com',
+              deliveryMethod: 'Ambil di Toko Citraland Malang',
+              deliveryAddress: 'Citraland Puncak Tidar Blok HH-26, Malang',
+              paymentMethod: 'BCA Virtual Account',
+              status: 'Selesai',
+              shippingTrackingNumber: '-',
+              courier: 'Ambil di Toko',
+              items: [
+                {
+                  productId: 'p-2',
+                  title: 'Petualangan Si Kancil & Buaya Cerdik',
+                  coverImage: '/images/products/p-2-kancil.png',
+                  quantity: 1,
+                  price: 125000,
                 },
                 {
-                  productId: '2',
-                  title: 'Goodnight Moon',
-                  coverImage: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80',
+                  productId: 'p-6',
+                  title: 'Buku Kain Lembut: Suara Hewan Ternak',
+                  coverImage: '/images/products/p-6-buku-kain.png',
                   quantity: 1,
-                  price: 155000
-                }
+                  price: 120000,
+                },
               ],
-              subtotal: 320000,
-              shippingFee: 25000,
-              giftWrappingCost: 0,
-              total: 345000,
-              date: new Date(Date.now() - 86400000 * 2).toISOString()
-            }
-          ];
-          setOrders(defaultDemo);
-          localStorage.setItem('babyshalls_orders', JSON.stringify(defaultDemo));
+              totalAmount: 245000,
+              createdAt: '2026-11-02T14:15:00Z',
+            },
+          ]);
         }
       } catch {
         // fallback
@@ -76,242 +93,176 @@ export default function CustomerOrdersHistoryPage() {
   }, []);
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((ord) => {
-      if (statusFilter !== 'all' && ord.status !== statusFilter) {
-        return false;
-      }
+    return orders.filter((o) => {
+      // Status
+      if (statusFilter === 'menunggu' && !o.status.includes('Menunggu')) return false;
+      if (statusFilter === 'dikirim' && !o.status.includes('Dikirim')) return false;
+      if (statusFilter === 'selesai' && !o.status.includes('Selesai')) return false;
+
+      // Search
       if (searchTerm.trim()) {
         const q = searchTerm.toLowerCase();
-        const matchesId = ord.orderId?.toLowerCase().includes(q);
-        const matchesItem = ord.items?.some((i: any) => i.title?.toLowerCase().includes(q));
-        if (!matchesId && !matchesItem) return false;
+        const matchesId = o.orderId?.toLowerCase().includes(q);
+        const matchesItems = o.items?.some((i: any) => i.title?.toLowerCase().includes(q));
+        if (!matchesId && !matchesItems) return false;
       }
+
       return true;
     });
   }, [orders, statusFilter, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
+    <div className="min-h-screen bg-white flex flex-col font-sans">
       <Header />
+      <TombolKembali fallbackUrl="/account" label="Kembali ke Akun Profil" />
 
-      <main className="flex-grow w-full py-8 sm:py-12 md:py-16">
-        <div className="w-full px-4 sm:px-6 lg:px-12">
+      <main className="py-10 sm:py-14 flex-1 bg-[#FFFDF9]">
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-8">
           
-          {/* Breadcrumb Navigation */}
-          <nav className="text-xs text-[#68625D] mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <Link href="/account" className="hover:text-[#E07A5F] transition-colors">
-              Akun Saya
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-semibold">Riwayat Pesanan</span>
-          </nav>
-
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-6 mb-8 border-b border-[#EDE8E1] gap-4">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-[#F2E4D6]">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#2C2725]">
-                Riwayat &amp; Pelacakan Pesanan
+              <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
+                Riwayat &amp; Lacak Pesanan
               </h1>
-              <p className="text-xs sm:text-sm text-[#68625D] mt-1">
-                Lacak status verifikasi pembayaran, nomor resi pengiriman ekspedisi, atau jadwal pickup di butik Malang.
+              <p className="text-xs sm:text-sm text-[#7A5644] mt-1">
+                Pantau progres penyiapan buku, resi pengiriman kurir, dan riwayat belanja.
               </p>
             </div>
-            <Link
-              href="/shop"
-              className="px-4 py-2 bg-[#E07A5F] text-white rounded-md text-xs font-semibold hover:bg-[#cc654b] transition-colors self-start sm:self-auto"
-            >
-              + Belanja Lagi
-            </Link>
-          </div>
 
-          {/* Filters Bar */}
-          <div className="bg-white border border-[#EDE8E1] rounded-lg p-4 sm:p-5 mb-8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Status Tabs */}
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            {/* Filter pills */}
+            <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1 scrollbar-none">
               {[
-                { label: 'Semua', value: 'all' },
-                { label: 'Menunggu Pembayaran', value: 'Menunggu Pembayaran' },
-                { label: 'Diproses', value: 'Diproses' },
-                { label: 'Dikirim', value: 'Dikirim' },
-                { label: 'Selesai', value: 'Selesai' }
+                { key: 'all', label: 'Semua' },
+                { key: 'menunggu', label: 'Menunggu' },
+                { key: 'dikirim', label: 'Dikirim' },
+                { key: 'selesai', label: 'Selesai' },
               ].map((tab) => (
                 <button
-                  key={tab.value}
-                  type="button"
-                  onClick={() => setStatusFilter(tab.value)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                    statusFilter === tab.value
-                      ? 'bg-[#E07A5F] text-white'
-                      : 'bg-[#FFFDF9] border border-[#EDE8E1] text-[#68625D] hover:text-[#2C2725]'
+                  key={tab.key}
+                  onClick={() => setStatusFilter(tab.key)}
+                  className={`px-3.5 py-1.5 rounded-[2px] font-medium transition-colors cursor-pointer ${
+                    statusFilter === tab.key
+                      ? 'bg-[#B05A26] text-white'
+                      : 'bg-white border border-[#E6D2C0] text-[#7A5644] hover:border-[#B05A26]'
                   }`}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
-
-            {/* Search ID or Book Title */}
-            <div className="relative w-full sm:w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#68625D]" />
-              <input
-                type="text"
-                placeholder="Cari No. Order atau Judul..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-              />
-            </div>
           </div>
 
           {/* Orders List */}
-          {filteredOrders.length === 0 ? (
-            <div className="py-16 bg-white border border-[#EDE8E1] rounded-lg text-center p-8 shadow-xs space-y-3">
-              <Package size={36} className="mx-auto text-[#68625D]" />
-              <h3 className="text-base font-bold text-[#2C2725]">Tidak Ada Pesanan</h3>
-              <p className="text-xs text-[#68625D]">
-                Tidak ada pesanan dengan status atau kata kunci yang dipilih.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {filteredOrders.map((ord: any) => (
+          <div className="space-y-6">
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((ord) => (
                 <div
                   key={ord.orderId}
-                  className="bg-white border border-[#EDE8E1] rounded-lg p-5 sm:p-7 shadow-xs text-left space-y-5"
+                  className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 shadow-xs flex flex-col gap-4"
                 >
-                  {/* Order Card Header */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#EDE8E1]">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm sm:text-base text-[#2C2725]">
-                          Order #{ord.orderId}
-                        </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          ord.status === 'Selesai'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : ord.status === 'Dikirim'
-                            ? 'bg-blue-100 text-blue-800'
-                            : ord.status === 'Diproses'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-[#FBE7E3] text-[#E07A5F]'
-                        }`}>
-                          {ord.status || 'Menunggu Pembayaran'}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-[#68625D] flex items-center gap-1">
-                        <Calendar size={12} />
-                        <span>
-                          Dipesan pada{' '}
-                          {new Date(ord.date).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#F2E4D6] text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-sm text-[#4A2A1C]">
+                        {ord.orderId}
+                      </span>
+                      <span className="text-[#7A5644]">
+                        {new Date(ord.createdAt).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </span>
                     </div>
 
-                    <div className="text-right">
-                      <div className="text-xs text-[#68625D]">Total Pembayaran</div>
-                      <div className="text-base font-bold text-[#E07A5F]">
-                        {formatIDR(ord.total)}
-                      </div>
-                    </div>
+                    <span
+                      className={`text-xs font-semibold px-2.5 py-1 rounded-[2px] ${
+                        ord.status === 'Selesai'
+                          ? 'bg-[#DDF1E5] text-[#2A6E37]'
+                          : ord.status === 'Sedang Dikirim'
+                          ? 'bg-[#E3EDF9] text-[#2C5282]'
+                          : 'bg-[#FFF6EA] text-[#B05A26]'
+                      }`}
+                    >
+                      {ord.status}
+                    </span>
                   </div>
 
-                  {/* Shipping Resi Banner if available */}
-                  {ord.shippingTrackingNumber ? (
-                    <div className="bg-[#E2ECE0]/50 border border-[#C7DAC3] p-3.5 rounded-md flex flex-wrap items-center justify-between gap-2 text-xs">
-                      <div className="flex items-center gap-2 text-[#3A5C37]">
-                        <Truck size={17} />
-                        <span>
-                          Nomor Resi Pengiriman ({ord.courier || 'Ekspedisi'}):{' '}
-                          <strong className="font-mono text-sm">{ord.shippingTrackingNumber}</strong>
-                        </span>
-                      </div>
-                      <span className="text-[11px] text-[#3A5C37] font-semibold">
-                        Paket Sedang Dalam Pengiriman
-                      </span>
-                    </div>
-                  ) : ord.deliveryMethod?.includes('Ambil') ? (
-                    <div className="bg-[#FAF8F5] border border-[#EDE8E1] p-3 rounded-md text-xs text-[#68625D] flex items-center gap-2">
-                      <MapPin size={15} className="text-[#E07A5F]" />
-                      <span>
-                        Ambil di butik BabyShalls: Citraland Puncak Tidar Blok HH-26, Malang (Tunjukkan No. Order ini ke staf)
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="bg-[#FAF8F5] border border-[#EDE8E1] p-3 rounded-md text-xs text-[#68625D] flex items-center gap-2">
-                      <Clock size={15} className="text-[#E07A5F]" />
-                      <span>
-                        Pesanan sedang disiapkan di butik. Nomor resi kurir akan diupdate oleh admin setelah paket di-pickup ekspedisi.
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Items list */}
-                  <div className="divide-y divide-[#EDE8E1]">
+                  {/* Items */}
+                  <div className="divide-y divide-[#F9EAE1]">
                     {ord.items?.map((item: any, idx: number) => (
-                      <div key={idx} className="py-3 flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-3">
-                          {item.coverImage && (
-                            <img
-                              src={item.coverImage}
-                              alt={item.title}
-                              className="w-11 h-14 object-cover rounded-sm border border-[#EDE8E1]"
-                            />
-                          )}
-                          <div>
-                            <Link
-                              href={`/product/${item.productId}`}
-                              className="font-semibold text-[#2C2725] hover:text-[#E07A5F]"
-                            >
-                              {item.title}
-                            </Link>
-                            <div className="text-[11px] text-[#68625D] mt-0.5">
-                              {item.quantity} × {formatIDR(item.price)}
-                            </div>
-                          </div>
+                      <div key={idx} className="py-3 first:pt-0 last:pb-0 flex items-center gap-4">
+                        <div className="relative w-16 h-16 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0 border border-[#E6D2C0]">
+                          <Image
+                            src={item.coverImage || '/images/products/p-1-little-bear.png'}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
-                        <div className="font-bold text-[#2C2725]">
+
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-semibold text-[#4A2A1C] truncate">
+                            {item.title}
+                          </h4>
+                          <span className="text-xs text-[#7A5644]">
+                            {item.quantity} barang × {formatIDR(item.price)}
+                          </span>
+                        </div>
+
+                        <span className="text-xs font-bold text-[#4A2A1C] shrink-0">
                           {formatIDR(item.price * item.quantity)}
-                        </div>
+                        </span>
                       </div>
                     ))}
                   </div>
 
-                  {/* Footer Card Actions */}
-                  <div className="pt-3 border-t border-[#EDE8E1] flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div className="text-[#68625D]">
-                      Pengiriman: <span className="font-medium text-[#2C2725]">{ord.deliveryMethod}</span>
+                  {/* Delivery Info Box */}
+                  <div className="bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] p-3.5 text-xs text-[#7A5644] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-[#B05A26] shrink-0" />
+                      <span>Kurir: <strong>{ord.deliveryMethod}</strong></span>
+                      {ord.shippingTrackingNumber && ord.shippingTrackingNumber !== '-' && (
+                        <span>· Resi: <strong className="text-[#4A2A1C] font-mono">{ord.shippingTrackingNumber}</strong></span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Link
-                        href={`/order-success/${ord.orderId}`}
-                        className="font-semibold text-[#E07A5F] hover:underline flex items-center gap-1"
-                      >
-                        <span>Lihat Bukti &amp; Tagihan</span>
-                        <ExternalLink size={12} />
-                      </Link>
+
+                    <div className="flex items-center gap-2">
+                      <span>Total:</span>
+                      <strong className="text-sm text-[#B05A26]">{formatIDR(ord.totalAmount)}</strong>
                     </div>
                   </div>
 
+                  {/* Actions */}
+                  <div className="pt-2 flex items-center justify-end gap-3 text-xs">
+                    <Link
+                      href="/shop"
+                      className="px-4 py-2 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium rounded-[2px] transition-colors"
+                    >
+                      Beli Lagi
+                    </Link>
+                  </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            ) : (
+              <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-12 text-center">
+                <p className="text-sm text-[#7A5644] mb-4">
+                  Tidak ada pesanan pada filter ini.
+                </p>
+                <Link
+                  href="/shop"
+                  className="px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px]"
+                >
+                  Lihat Katalog Buku
+                </Link>
+              </div>
+            )}
+          </div>
 
         </div>
       </main>
 
       <Footer />
-      <OrderDrawer />
     </div>
   );
 }
-

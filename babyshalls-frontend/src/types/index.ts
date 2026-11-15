@@ -1,4 +1,21 @@
-export type AgeGroup = 'All Ages' | '0–2 Years' | '3–5 Years' | '6+ Years';
+export type AgeGroup =
+  | 'All Ages'
+  | '0–2 Years'
+  | '3–5 Years'
+  | '6+ Years'
+  | '0–1 Years'
+  | '1–3 Years'
+  | '0-2 Years'
+  | '3-5 Years'
+  | '0–2 tahun'
+  | '3–5 tahun'
+  | '6+ tahun'
+  | '3+ tahun'
+  | 'Newborn+'
+  | 'Ages 1-3'
+  | 'Ages 3+'
+  | 'Ages 6+'
+  | (string & {});
 
 export type ProductCategory =
   | 'All Products'
@@ -6,23 +23,42 @@ export type ProductCategory =
   | 'Picture Books'
   | 'Educational Toys'
   | 'Hampers'
-  | 'Preloved Item';
+  | 'Gift Hampers'
+  | 'Sound & Sensory'
+  | 'Wooden Toys'
+  | 'Early Readers'
+  | 'Preloved Kurasi'
+  | 'Preloved'
+  | 'Preloved Item'
+  | (string & {});
 
 export interface Product {
   id: string;
+  slug?: string;
   title: string;
-  author: string;
-  category: Exclude<ProductCategory, 'All Products'>;
+  author?: string;
+  authorOrBrand?: string;
+  category: string;
   ageGroup: AgeGroup;
   price: number;
   originalPrice?: number;
   discountPercent?: number;
-  coverImage: string;
+  coverImage?: string;
   images?: string[];
   description: string;
-  inStock: boolean;
+  inStock?: boolean;
+  stock?: number;
+  rating?: number;
+  reviewsCount?: number;
+  weightInGrams?: number;
   featured?: boolean;
   badge?: string; // e.g. "New", "Bestseller", "Staff Pick"
+  condition?: 'baru' | 'preloved' | string;
+  isPreloved?: boolean;
+  isNewArrival?: boolean;
+  isBestSeller?: boolean;
+  features?: string[];
+  tags?: string[];
   pages?: string;
   publisher?: string;
   staffNote?: string;
@@ -40,7 +76,7 @@ export interface AdminUser {
   id: string;
   name: string;
   email: string;
-  role: 'curator' | 'store_manager' | 'superadmin';
+  role: 'curator' | 'store_manager' | 'superadmin' | 'USER' | 'ADMIN';
   token?: string;
 }
 
@@ -58,12 +94,57 @@ export interface GiftWrappingState {
 
 export interface WorkshopEvent {
   id: string;
+  slug?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   date: string;
   time: string;
   location: string;
+  ageRecommendation?: string;
   price: number;
-  capacity: number;
+  capacity?: number;
+  quota?: number;
+  remainingQuota?: number;
+  seatsLeft?: number;
+  speaker?: string;
+  facilitator?: string;
+  description?: string;
   image: string;
+  bannerUrl?: string;
+  category?: string;
+  includes?: string[];
+  status?: string;
+}
+
+export interface CustomerReview {
+  id: string;
+  author: string;
+  location: string;
+  childAgeInfo: string;
+  rating: number;
+  comment: string;
+  date: string;
+  productPurchased?: string;
+}
+
+export interface SavedAddress {
+  id: string;
+  label: string;
+  receiverName: string;
+  receiverPhone: string;
+  streetAddress: string;
+  subdistrict: string;
+  city: string;
+  postalCode: string;
+  isDefault: boolean;
+}
+
+export interface DiscountVoucher {
+  code: string;
+  title: string;
+  discountType: 'FIXED' | 'PERCENT';
+  discountValue: number;
+  minSpend?: number;
+  maxDiscount?: number;
+  description: string;
 }

@@ -18,6 +18,10 @@ interface CartContextType {
   grandTotal: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  openCart: () => void;
+  toastMessage: string | null;
+  dismissToast: () => void;
+  showToast: (msg: string) => void;
   quickViewProduct: Product | null;
   setQuickViewProduct: (product: Product | null) => void;
   isStoreInfoOpen: boolean;
@@ -50,32 +54,46 @@ const GIFT_PRICES = {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('babyshalls_cart');
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // Ignore fallback
-      }
-    }
-    return [];
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [giftWrapping, setGiftWrapping] = useState<GiftWrappingState>(initialGiftWrapping);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const openCart = () => setIsCartOpen(true);
+  const dismissToast = () => setToastMessage(null);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((cur) => (cur === msg ? null : cur));
+    }, 4000);
+  };
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
   const [isWorkshopModalOpen, setIsWorkshopModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Save cart to localStorage
+  // Hydrate cart from localStorage on client mount
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem('babyshalls_cart');
+      if (saved) {
+        setItems(JSON.parse(saved));
+      }
+    } catch {
+      // Ignore fallback
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Save cart to localStorage only after hydration
+  useEffect(() => {
+    if (!isHydrated) return;
     try {
       localStorage.setItem('babyshalls_cart', JSON.stringify(items));
     } catch {
       // Ignore fallback
     }
-  }, [items]);
+  }, [items, isHydrated]);
 
   const addToCart = (product: Product, quantity = 1) => {
     setItems((prev) => {
@@ -199,6 +217,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         grandTotal,
         isCartOpen,
         setIsCartOpen,
+        openCart,
+        toastMessage,
+        dismissToast,
+        showToast,
         quickViewProduct,
         setQuickViewProduct,
         isStoreInfoOpen,

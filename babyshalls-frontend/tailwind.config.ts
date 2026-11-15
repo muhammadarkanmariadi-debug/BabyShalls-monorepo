@@ -8,39 +8,70 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          terracotta: '#D9744A',
-          'terracotta-dark': '#C25F37',
-          'terracotta-tint': '#FBE8DF',
-          dark: '#2B2B2B',
-          charcoal: '#121212',
-          muted: '#6B6B6B',
-          subtle: '#737373',
-          placeholder: '#8C8C8C',
-          disabled: '#B5B5B5',
-          tile: '#F0F0F0',
-          'bg-light': '#F5F5F5',
-          border: '#EBEBEB',
-          'border-dark': '#E2E2E2',
+        cream: {
+          50: '#FFFBF5',
+          100: '#FFF6EA',
+          200: '#F9E0C8',
         },
-        status: {
-          green: '#2A6E37',
-          'green-tint': '#DDF1E5',
-          blue: '#3F5FA0',
-          'blue-tint': '#E4ECFB',
-          red: '#C0392B',
-          'red-tint': '#FDE3E8',
-          amber: '#8A5A00',
-          'amber-tint': '#FFF1C7',
+        line: {
+          100: '#F2E4D6',
+          200: '#E6D2C0',
+        },
+        brick: {
+          100: '#FBE6D8',
+          300: '#EFA27A',
+          500: '#C86830',
+          600: '#B05A26',
+          700: '#8E431A',
+        },
+        brown: {
+          300: '#C9B3A5',
+          400: '#9A552A',
+          600: '#7A5644',
+          900: '#4A2A1C',
+        },
+        pink: {
+          100: '#FDE3E8',
+          300: '#FBA6B2',
+          500: '#F35766',
+          700: '#B83246',
+        },
+        sunny: {
+          100: '#FFF1C7',
+          400: '#F7C94B',
+          600: '#D89F29',
+          800: '#8A5A00',
+        },
+        mint: {
+          100: '#DDF1E5',
+          400: '#82BC85',
+          700: '#2A6E37',
+        },
+        teal: {
+          100: '#DDF6F9',
+          400: '#8DDBE6',
+          700: '#1F6B76',
+        },
+        blue: {
+          100: '#E4ECFB',
+          400: '#92B2F3',
+          600: '#5E82C0',
+          700: '#3F5FA0',
+        },
+        lilac: {
+          100: '#F3E6F2',
+          400: '#BA7EB8',
+          700: '#7E4A84',
         },
       },
       fontFamily: {
-        poppins: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        heading: ['var(--font-quicksand)', 'var(--font-poppins)', 'Poppins', 'sans-serif'],
       },
       boxShadow: {
-        'figma-card': '0px 2px 8px 0px rgba(74, 42, 28, 0.06), 0px 8px 24px 0px rgba(74, 42, 28, 0.06)',
-        'figma-hover': '0px 4px 12px 0px rgba(74, 42, 28, 0.08), 0px 16px 32px 0px rgba(74, 42, 28, 0.10)',
-        'figma-modal': '0px 8px 24px 0px rgba(74, 42, 28, 0.10), 0px 24px 64px 0px rgba(74, 42, 28, 0.16)',
+        card: '0px 2px 8px 0px rgba(74, 42, 28, 0.06), 0px 8px 24px 0px rgba(74, 42, 28, 0.06)',
+        hover: '0px 4px 12px 0px rgba(74, 42, 28, 0.08), 0px 16px 32px 0px rgba(74, 42, 28, 0.10)',
+        modal: '0px 8px 24px 0px rgba(74, 42, 28, 0.10), 0px 24px 64px 0px rgba(74, 42, 28, 0.16)',
       },
     },
   },
@@ -48,4 +79,3 @@ const config: Config = {
 };
 
 export default config;
-

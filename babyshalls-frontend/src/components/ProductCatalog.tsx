@@ -60,7 +60,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ initialCategory 
         const q = searchQuery.toLowerCase().trim();
         const matches =
           product.title.toLowerCase().includes(q) ||
-          product.author.toLowerCase().includes(q) ||
+          (product.author || product.authorOrBrand || '').toLowerCase().includes(q) ||
           product.category.toLowerCase().includes(q);
         if (!matches) return false;
       }
@@ -179,7 +179,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ initialCategory 
                     className="relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-[#F5F5F5] block"
                   >
                     <img
-                      src={product.coverImage}
+                      src={product.coverImage || product.images?.[0] || '/images/prod-boardbook.jpg'}
                       alt={product.title}
                       className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
                       loading="lazy"
@@ -233,7 +233,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ initialCategory 
                     </Link>
 
                     <p className="text-xs text-[#666666] line-clamp-1">
-                      {product.author}
+                      {product.author || product.authorOrBrand}
                     </p>
                   </div>
                 </div>

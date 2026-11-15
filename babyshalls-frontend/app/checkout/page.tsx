@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -13,12 +14,12 @@ import {
   QrCode,
   Gift,
   ShieldCheck,
-  ArrowRight
+  MapPin,
+  MessageCircle,
 } from 'lucide-react';
-import { Header } from '../../src/components/Header';
-import { Footer } from '../../src/components/Footer';
-import { useCart } from '../../src/context/CartContext';
-import { formatIDR } from '../../src/data/mockProducts';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { useCart } from '@/context/CartContext';
+import { formatIDR } from '@/data/mockProducts';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -29,572 +30,625 @@ export default function CheckoutPage() {
     updateGiftWrapping,
     giftWrappingCost,
     grandTotal,
-    clearCart
+    clearCart,
   } = useCart();
 
   // Form states
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
-  const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'ekspedisi' | 'instant'>('pickup');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('Malang');
-  const [postalCode, setPostalCode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bca' | 'mandiri'>('qris');
-  const [orderNotes, setOrderNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [recipientName, setRecipientName] = useState('Dina Permata');
+  const [recipientPhone, setRecipientPhone] = useState('0812-3456-7890');
+  const [recipientEmail, setRecipientEmail] = useState('dina.permata@gmail.com');
+  const [addressLine, setAddressLine] = useState('Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun');
+  const [city, setCity] = useState('Kota Malang');
+  const [postalCode, setPostalCode] = useState('65146');
 
-  // Shipping calculation
-  const shippingFee = deliveryMethod === 'pickup' ? 0 : deliveryMethod === 'ekspedisi' ? 25000 : 35000;
-  const finalTotal = grandTotal + shippingFee;
+  // Shipping selection
+  const [selectedCourier, setSelectedCourier] = useState<string>('jne');
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  // Gift options
+  const [isGift, setIsGift] = useState<boolean>(true);
+  const [giftNote, setGiftNote] = useState<string>(
+    'Selamat ulang tahun yang ke-3 adik Kenzo! Semoga tumbuh jadi anak yang sholeh, cerdas, dan gemar membaca. Peluk hangat dari Tante Dina.'
+  );
+  const [orderNotes, setOrderNotes] = useState<string>('Mohon sertakan pembatas buku BabyShalls.');
+
+  // Payment method
+  const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bca' | 'mandiri' | 'cc'>('qris');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
+
+  const courierOptions = [
+    {
+      id: 'jne',
+      name: 'JNE Reguler',
+      etd: '1–2 hari kerja',
+      price: 18000,
+      description: 'Pengiriman reguler ke seluruh Malang & Jawa Timur',
+    },
+    {
+      id: 'jnt',
+      name: 'J&T Express',
+      etd: '1–2 hari kerja',
+      price: 20000,
+      description: 'Cepat & terpercaya dengan resi otomatis',
+    },
+    {
+      id: 'sicepat',
+      name: 'SiCepat REG',
+      etd: '1–2 hari kerja',
+      price: 19000,
+      description: 'Layanan hemat dengan kurir terdekat',
+    },
+    {
+      id: 'gosend',
+      name: 'GoSend Instant / Same Day',
+      etd: 'Tiba hari ini (maks 3 jam)',
+      price: 25000,
+      description: 'Khusus alamat tujuan area Malang Raya',
+    },
+    {
+      id: 'pickup',
+      name: 'Ambil Sendiri di Toko (Self Pick-up)',
+      etd: 'Siap diambil dalam 1 jam',
+      price: 0,
+      description: 'Butik BabyShalls, Citraland Puncak Tidar Blok HH-26 Malang',
+    },
+  ];
+
+  const currentCourier = courierOptions.find((c) => c.id === selectedCourier) || courierOptions[0];
+  const shippingFee = currentCourier.price;
+  const giftFee = isGift ? 0 : 0; // Gratis kado
+  const calculatedGrandTotal = subtotal + shippingFee;
+
+  const handlePayOrder = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
     if (items.length === 0) {
-      setErrorMsg('Keranjang belanja Anda masih kosong.');
+      setErrorMsg('Keranjang belanjamu masih kosong.');
       return;
     }
 
-    if (!customerName.trim() || !customerPhone.trim()) {
-      setErrorMsg('Mohon lengkapi nama dan nomor WhatsApp Anda.');
+    if (!recipientName.trim() || !recipientPhone.trim()) {
+      setErrorMsg('Mohon lengkapi nama penerima dan nomor WhatsApp.');
       return;
     }
 
-    if (deliveryMethod !== 'pickup' && !address.trim()) {
+    if (selectedCourier !== 'pickup' && !addressLine.trim()) {
       setErrorMsg('Mohon masukkan alamat lengkap pengiriman.');
       return;
     }
 
     setIsSubmitting(true);
-    const orderId = `BS-${Date.now().toString().slice(-6)}`;
+    const orderId = `BS-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    const deliveryMethodLabel =
-      deliveryMethod === 'pickup'
-        ? 'Ambil Sendiri di Toko Citraland Puncak Tidar, Malang'
-        : deliveryMethod === 'ekspedisi'
-        ? 'Ekspedisi Reguler (JNE / SiCepat)'
-        : 'Kurir Instant Malang (GoSend / Grab)';
-
-    const paymentMethodLabel =
-      paymentMethod === 'qris'
-        ? 'QRIS Instan (BCA / GoPay / OVO)'
-        : paymentMethod === 'bca'
-        ? 'Transfer Bank BCA (No. Rek 816-123-9999)'
-        : 'Transfer Bank Mandiri (No. Rek 144-00-8888-222)';
-
-    const newOrder = {
+    const newOrderData = {
       orderId,
-      customerName,
-      customerPhone,
-      customerEmail: customerEmail || 'customer@example.com',
-      deliveryMethod: deliveryMethodLabel,
-      deliveryAddress: deliveryMethod === 'pickup' ? 'Butik BabyShalls Citraland Puncak Tidar Blok HH-26 Malang' : `${address}, ${city} ${postalCode}`.trim(),
-      paymentMethod: paymentMethodLabel,
+      customerName: recipientName,
+      customerPhone: recipientPhone,
+      customerEmail: recipientEmail,
+      deliveryMethod: currentCourier.name,
+      deliveryAddress:
+        selectedCourier === 'pickup'
+          ? 'Butik BabyShalls Citraland Puncak Tidar Blok HH-26 Malang'
+          : `${addressLine}, ${city} ${postalCode}`,
+      paymentMethod:
+        paymentMethod === 'qris'
+          ? 'QRIS Instan (BCA / GoPay / ShopeePay)'
+          : paymentMethod === 'bca'
+          ? 'BCA Virtual Account'
+          : paymentMethod === 'mandiri'
+          ? 'Mandiri Virtual Account'
+          : 'Kartu Kredit / Debit Online',
       status: 'Menunggu Pembayaran',
-      shippingTrackingNumber: '',
-      courier: deliveryMethod === 'pickup' ? 'Ambil di Toko' : deliveryMethod === 'ekspedisi' ? 'JNE Reguler' : 'GoSend Instant',
+      shippingTrackingNumber: selectedCourier === 'pickup' ? '-' : `JP${Date.now().toString().slice(-8)}`,
+      courier: currentCourier.name,
       items: items.map((i) => ({
         productId: i.product.id,
         title: i.product.title,
-        coverImage: i.product.coverImage,
+        price: i.product.price,
         quantity: i.quantity,
-        price: i.product.price
+        coverImage: i.product.coverImage,
       })),
-      giftWrapping,
       subtotal,
       shippingFee,
-      giftWrappingCost,
-      total: finalTotal,
-      orderNotes,
-      date: new Date().toISOString()
+      giftFee,
+      totalAmount: calculatedGrandTotal,
+      notes: orderNotes,
+      giftMessage: isGift ? giftNote : '',
+      createdAt: new Date().toISOString(),
     };
 
-    try {
-      const existing = JSON.parse(localStorage.getItem('babyshalls_orders') || '[]');
-      existing.unshift(newOrder);
-      localStorage.setItem('babyshalls_orders', JSON.stringify(existing));
-    } catch {
-      // fallback
+    // Save order to localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const existing = localStorage.getItem('babyshalls_orders');
+        const parsed = existing ? JSON.parse(existing) : [];
+        parsed.unshift(newOrderData);
+        localStorage.setItem('babyshalls_orders', JSON.stringify(parsed));
+      } catch {
+        // pass
+      }
     }
 
     setTimeout(() => {
       clearCart();
-      setIsSubmitting(false);
       router.push(`/order-success/${orderId}`);
-    }, 700);
+    }, 800);
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
-      <Header />
+    <div className="min-h-screen bg-[#FFFDF9] flex flex-col font-sans">
+      {/* Header Checkout (Figma Node #167:4652) */}
+      <header className="bg-white border-b border-[#F2E4D6] py-4 px-6 sm:px-12 sticky top-0 z-40">
+        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <span className="font-serif text-2xl font-bold text-[#B05A26] tracking-tight">
+              Baby Shall&apos;s
+            </span>
+          </Link>
 
-      <main className="flex-grow w-full py-8 sm:py-12 md:py-16">
-        <div className="w-full px-4 sm:px-6 lg:px-12">
-          
-          {/* Breadcrumb Navigation */}
-          <nav className="text-xs text-[#68625D] mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <Link href="/shop" className="hover:text-[#E07A5F] transition-colors">
-              Toko
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-semibold">Checkout Pesanan</span>
-          </nav>
-
-          <div className="mb-8 pb-4 border-b border-[#EDE8E1]">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#2C2725]">
-              Formulir Checkout &amp; Pembayaran
-            </h1>
-            <p className="text-xs sm:text-sm text-[#68625D] mt-1">
-              Selesaikan detail pengiriman dan pembayaran buku &amp; mainan si kecil dengan aman.
-            </p>
+          {/* Steps Stepper */}
+          <div className="hidden md:flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5 text-[#2A6E37] font-medium">
+              <span className="w-5 h-5 rounded-full bg-[#DDF1E5] text-[#2A6E37] flex items-center justify-center text-[10px]">
+                ✓
+              </span>
+              <span>Keranjang</span>
+            </div>
+            <div className="w-10 h-0.5 bg-[#B05A26]"></div>
+            <div className="flex items-center gap-1.5 text-[#B05A26] font-semibold">
+              <span className="w-5 h-5 rounded-full bg-[#B05A26] text-white flex items-center justify-center text-[10px]">
+                2
+              </span>
+              <span>Checkout</span>
+            </div>
+            <div className="w-10 h-0.5 bg-[#E6D2C0]"></div>
+            <div className="flex items-center gap-1.5 text-[#7A5644]">
+              <span className="w-5 h-5 rounded-full bg-[#FFF6EA] border border-[#E6D2C0] text-[#7A5644] flex items-center justify-center text-[10px]">
+                3
+              </span>
+              <span>Pembayaran</span>
+            </div>
           </div>
 
-          {items.length === 0 ? (
-            <div className="py-16 bg-white border border-[#EDE8E1] rounded-lg text-center max-w-lg mx-auto p-8 shadow-xs space-y-4">
-              <ShoppingBag size={36} className="mx-auto text-[#E07A5F]" />
-              <h2 className="text-xl font-bold text-[#2C2725]">Keranjang Belanja Masih Kosong</h2>
-              <p className="text-xs text-[#68625D]">
-                Anda belum memilih buku atau mainan. Silakan pilih judul buku favorit sebelum melanjutkan ke checkout.
-              </p>
-              <Link
-                href="/shop"
-                className="inline-block px-6 py-3 bg-[#E07A5F] hover:bg-[#cc654b] text-white text-xs font-semibold rounded-md transition-colors"
-              >
-                Mulai Belanja di Toko
-              </Link>
+          {/* Need help WA link */}
+          <a
+            href="https://wa.me/6281234567890?text=Halo%20Admin%20BabyShalls,%20saya%20butuh%20bantuan%20proses%20checkout"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#B05A26] hover:underline"
+          >
+            <MessageCircle className="w-4 h-4 text-[#2A6E37]" />
+            <span>Butuh bantuan?</span>
+          </a>
+        </div>
+      </header>
+
+      <TombolKembali fallbackUrl="/shop" label="Kembali Berbelanja" />
+
+      {/* Main Content (Figma Node #167:4674) */}
+      <main className="py-8 sm:py-12 flex-1">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+          
+          {errorMsg && (
+            <div className="mb-6 p-4 bg-[#FEECE8] border border-[#C0392B] rounded-[2px] text-xs text-[#C0392B] font-medium">
+              {errorMsg}
             </div>
-          ) : (
-            <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          )}
+
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
+            
+            {/* Left Column (Forms) */}
+            <div className="flex-1 w-full flex flex-col gap-6">
               
-              {/* Left Column: Checkout Inputs (8 cols) */}
-              <div className="lg:col-span-7 space-y-8">
-                
-                {/* 1. Informasi Kontak Pembeli */}
-                <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#EDE8E1]">
-                    <span className="w-6 h-6 rounded-full bg-[#E07A5F] text-white text-xs font-bold flex items-center justify-center">
+              {/* 1. Alamat Pengiriman (Figma #167:4676) */}
+              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
                       1
                     </span>
-                    <h2 className="text-base font-bold text-[#2C2725]">Data Pembeli &amp; Kontak</h2>
+                    <span>Alamat Pengiriman</span>
+                  </h2>
+                  <span className="text-xs text-[#2A6E37] bg-[#DDF1E5] px-2.5 py-0.5 rounded-[2px] font-medium">
+                    Alamat Utama
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                      Nama Penerima *
+                    </label>
+                    <input
+                      type="text"
+                      value={recipientName}
+                      onChange={(e) => setRecipientName(e.target.value)}
+                      className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
                   </div>
-
-                  <div className="space-y-3 pt-1">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                        Nama Lengkap Orang Tua / Pemesan <span className="text-[#E07A5F]">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Contoh: Sarah Nurhaliza"
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        className="w-full text-xs sm:text-sm px-3.5 py-2.5 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                          Nomor WhatsApp (Aktif) <span className="text-[#E07A5F]">*</span>
-                        </label>
-                        <input
-                          type="tel"
-                          required
-                          placeholder="Contoh: 081234567890"
-                          value={customerPhone}
-                          onChange={(e) => setCustomerPhone(e.target.value)}
-                          className="w-full text-xs sm:text-sm px-3.5 py-2.5 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                          Email (Untuk Kirim Invoice)
-                        </label>
-                        <input
-                          type="email"
-                          placeholder="nama@email.com"
-                          value={customerEmail}
-                          onChange={(e) => setCustomerEmail(e.target.value)}
-                          className="w-full text-xs sm:text-sm px-3.5 py-2.5 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                      Nomor WhatsApp *
+                    </label>
+                    <input
+                      type="text"
+                      value={recipientPhone}
+                      onChange={(e) => setRecipientPhone(e.target.value)}
+                      className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
                   </div>
                 </div>
 
-                {/* 2. Metode Pengiriman */}
-                <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#EDE8E1]">
-                    <span className="w-6 h-6 rounded-full bg-[#E07A5F] text-white text-xs font-bold flex items-center justify-center">
-                      2
-                    </span>
-                    <h2 className="text-base font-bold text-[#2C2725]">Metode Pengiriman</h2>
-                  </div>
-
-                  <div className="space-y-3 pt-1">
-                    {/* Pickup Option */}
-                    <label
-                      className={`flex items-start gap-3 p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        deliveryMethod === 'pickup'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryMethod"
-                        checked={deliveryMethod === 'pickup'}
-                        onChange={() => setDeliveryMethod('pickup')}
-                        className="mt-1 accent-[#E07A5F]"
-                      />
-                      <div className="flex-1 text-xs">
-                        <div className="flex items-center justify-between font-bold text-[#2C2725]">
-                          <span className="flex items-center gap-1.5">
-                            <Store size={15} className="text-[#E07A5F]" />
-                            Ambil Sendiri di Butik Citraland Malang
-                          </span>
-                          <span className="text-emerald-700 font-bold uppercase text-[11px]">GRATIS</span>
-                        </div>
-                        <p className="text-[#68625D] mt-0.5">
-                          Citraland Puncak Tidar Blok HH-26, Malang (Buka Selasa–Minggu, 10.00–19.00 WIB)
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Ekspedisi Option */}
-                    <label
-                      className={`flex items-start gap-3 p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        deliveryMethod === 'ekspedisi'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryMethod"
-                        checked={deliveryMethod === 'ekspedisi'}
-                        onChange={() => setDeliveryMethod('ekspedisi')}
-                        className="mt-1 accent-[#E07A5F]"
-                      />
-                      <div className="flex-1 text-xs">
-                        <div className="flex items-center justify-between font-bold text-[#2C2725]">
-                          <span className="flex items-center gap-1.5">
-                            <Truck size={15} className="text-[#E07A5F]" />
-                            Kurir Ekspedisi Reguler (JNE / SiCepat)
-                          </span>
-                          <span>Rp 25.000</span>
-                        </div>
-                        <p className="text-[#68625D] mt-0.5">
-                          Estimasi 2–4 hari kerja ke seluruh Indonesia dengan bubble wrap tebal &amp; kardus aman.
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Instant Malang Option */}
-                    <label
-                      className={`flex items-start gap-3 p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        deliveryMethod === 'instant'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="deliveryMethod"
-                        checked={deliveryMethod === 'instant'}
-                        onChange={() => setDeliveryMethod('instant')}
-                        className="mt-1 accent-[#E07A5F]"
-                      />
-                      <div className="flex-1 text-xs">
-                        <div className="flex items-center justify-between font-bold text-[#2C2725]">
-                          <span className="flex items-center gap-1.5">
-                            <Truck size={15} className="text-[#E07A5F]" />
-                            Kurir Instant Malang (GoSend / GrabExpress)
-                          </span>
-                          <span>Rp 35.000</span>
-                        </div>
-                        <p className="text-[#68625D] mt-0.5">
-                          Tiba di hari yang sama untuk wilayah Malang Kota &amp; Kabupaten (radius 15km).
-                        </p>
-                      </div>
-                    </label>
-
-                    {/* Address Fields if not pickup */}
-                    {deliveryMethod !== 'pickup' && (
-                      <div className="pt-3 space-y-3 animate-in fade-in duration-200">
-                        <div>
-                          <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                            Alamat Lengkap Penerima <span className="text-[#E07A5F]">*</span>
-                          </label>
-                          <textarea
-                            required
-                            rows={3}
-                            placeholder="Nama Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            className="w-full text-xs sm:text-sm px-3.5 py-2.5 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                              Kota / Kabupaten
-                            </label>
-                            <input
-                              type="text"
-                              value={city}
-                              onChange={(e) => setCity(e.target.value)}
-                              className="w-full text-xs sm:text-sm px-3.5 py-2 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                              Kode Pos
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="65146"
-                              value={postalCode}
-                              onChange={(e) => setPostalCode(e.target.value)}
-                              className="w-full text-xs sm:text-sm px-3.5 py-2 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* 3. Pilihan Gift Packaging & Kartu Ucapan */}
-                <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#EDE8E1]">
-                    <span className="w-6 h-6 rounded-full bg-[#E07A5F] text-white text-xs font-bold flex items-center justify-center">
-                      3
-                    </span>
-                    <h2 className="text-base font-bold text-[#2C2725]">Opsi Bingkisan / Kado</h2>
-                  </div>
-
-                  <div className="space-y-3 pt-1">
-                    <label className="flex items-center gap-3 text-xs font-semibold text-[#2C2725] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={giftWrapping.signatureBox}
-                        onChange={(e) => updateGiftWrapping({ signatureBox: e.target.checked, customRibbon: e.target.checked })}
-                        className="rounded border-[#EDE8E1] text-[#E07A5F] focus:ring-0 accent-[#E07A5F] cursor-pointer"
-                      />
-                      <span className="flex items-center gap-1.5">
-                        <Gift size={15} className="text-[#E07A5F]" />
-                        Bungkus Kado Estetik &amp; Pita Linen (+Rp 25.000)
-                      </span>
-                    </label>
-
-                    {giftWrapping.signatureBox && (
-                      <div className="space-y-3 pt-2 pl-6 animate-in fade-in duration-150">
-                        <div>
-                          <label className="block text-[11px] font-semibold text-[#68625D] mb-1">
-                            Pesan untuk Kartu Ucapan (Ditulis Tangan)
-                          </label>
-                          <textarea
-                            rows={2}
-                            placeholder="Tuliskan ucapan selamat ulang tahun atau selamat atas kelahiran..."
-                            value={giftWrapping.cardMessage}
-                            onChange={(e) => updateGiftWrapping({ cardMessage: e.target.value, birthdayCard: !!e.target.value })}
-                            className="w-full text-xs px-3 py-2 bg-[#FFFDF9] border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* 4. Metode Pembayaran */}
-                <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-7 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#EDE8E1]">
-                    <span className="w-6 h-6 rounded-full bg-[#E07A5F] text-white text-xs font-bold flex items-center justify-center">
-                      4
-                    </span>
-                    <h2 className="text-base font-bold text-[#2C2725]">Metode Pembayaran</h2>
-                  </div>
-
-                  <div className="space-y-2.5 pt-1">
-                    <label
-                      className={`flex items-center justify-between p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        paymentMethod === 'qris'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 text-xs font-bold text-[#2C2725]">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={paymentMethod === 'qris'}
-                          onChange={() => setPaymentMethod('qris')}
-                          className="accent-[#E07A5F]"
-                        />
-                        <QrCode size={16} className="text-[#E07A5F]" />
-                        <span>QRIS Instan (BCA, GoPay, OVO, ShopeePay)</span>
-                      </div>
-                      <span className="text-[10px] bg-[#E2ECE0] text-[#3A5C37] px-2 py-0.5 rounded-xs font-bold">
-                        Otomatis
-                      </span>
-                    </label>
-
-                    <label
-                      className={`flex items-center justify-between p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        paymentMethod === 'bca'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 text-xs font-bold text-[#2C2725]">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={paymentMethod === 'bca'}
-                          onChange={() => setPaymentMethod('bca')}
-                          className="accent-[#E07A5F]"
-                        />
-                        <CreditCard size={16} className="text-[#E07A5F]" />
-                        <span>Transfer Bank BCA (Manual Verifikasi)</span>
-                      </div>
-                      <span className="text-xs text-[#68625D]">816-123-9999</span>
-                    </label>
-
-                    <label
-                      className={`flex items-center justify-between p-3.5 border rounded-md cursor-pointer transition-colors ${
-                        paymentMethod === 'mandiri'
-                          ? 'border-[#E07A5F] bg-[#FBE7E3]/30'
-                          : 'border-[#EDE8E1] hover:border-[#E07A5F]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 text-xs font-bold text-[#2C2725]">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          checked={paymentMethod === 'mandiri'}
-                          onChange={() => setPaymentMethod('mandiri')}
-                          className="accent-[#E07A5F]"
-                        />
-                        <CreditCard size={16} className="text-[#E07A5F]" />
-                        <span>Transfer Bank Mandiri (Manual Verifikasi)</span>
-                      </div>
-                      <span className="text-xs text-[#68625D]">144-00-8888-222</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Catatan Tambahan */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#2C2725] mb-1">
-                    Catatan Khusus untuk Butik BabyShalls (Opsional)
+                <div className="mb-4">
+                  <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                    Alamat Lengkap (Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan) *
                   </label>
                   <textarea
                     rows={2}
-                    placeholder="Contoh: Tolong titipkan ke security perumahan jika rumah sedang kosong..."
-                    value={orderNotes}
-                    onChange={(e) => setOrderNotes(e.target.value)}
-                    className="w-full text-xs px-3.5 py-2.5 bg-white border border-[#EDE8E1] rounded-md focus:outline-none focus:border-[#E07A5F]"
+                    value={addressLine}
+                    onChange={(e) => setAddressLine(e.target.value)}
+                    className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
 
-              </div>
-
-              {/* Right Column: Order Summary (5 cols) */}
-              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
-                <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-7 shadow-xs space-y-5">
-                  <h2 className="text-base font-bold text-[#2C2725] pb-3 border-b border-[#EDE8E1]">
-                    Ringkasan Pesanan ({items.length} Judul)
-                  </h2>
-
-                  {/* Items list */}
-                  <div className="divide-y divide-[#EDE8E1] max-h-72 overflow-y-auto pr-1">
-                    {items.map(({ product, quantity }) => (
-                      <div key={product.id} className="py-3 flex gap-3 items-center">
-                        <img
-                          src={product.coverImage}
-                          alt={product.title}
-                          className="w-12 h-16 object-cover rounded-sm border border-[#EDE8E1] shrink-0"
-                        />
-                        <div className="flex-1 min-w-0 text-left">
-                          <h4 className="text-xs font-semibold text-[#2C2725] truncate">
-                            {product.title}
-                          </h4>
-                          <p className="text-[11px] text-[#68625D]">
-                            {quantity} × {formatIDR(product.price)}
-                          </p>
-                        </div>
-                        <div className="text-xs font-bold text-[#2C2725]">
-                          {formatIDR(product.price * quantity)}
-                        </div>
-                      </div>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                      Kota / Kabupaten *
+                    </label>
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
                   </div>
-
-                  {/* Calculations */}
-                  <div className="space-y-2 pt-3 border-t border-[#EDE8E1] text-xs text-[#68625D]">
-                    <div className="flex justify-between">
-                      <span>Subtotal Buku &amp; Mainan</span>
-                      <span className="font-semibold text-[#2C2725]">{formatIDR(subtotal)}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span>Biaya Pengiriman ({deliveryMethod === 'pickup' ? 'Ambil di Toko' : 'Ekspedisi'})</span>
-                      <span className="font-semibold text-[#2C2725]">
-                        {shippingFee === 0 ? 'GRATIS' : formatIDR(shippingFee)}
-                      </span>
-                    </div>
-
-                    {giftWrappingCost > 0 && (
-                      <div className="flex justify-between">
-                        <span>Gift Packaging</span>
-                        <span className="font-semibold text-[#E07A5F]">+{formatIDR(giftWrappingCost)}</span>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between text-base font-bold text-[#2C2725] pt-3 border-t border-[#EDE8E1]">
-                      <span>Total Pembayaran</span>
-                      <span className="text-[#E07A5F]">{formatIDR(finalTotal)}</span>
-                    </div>
-                  </div>
-
-                  {errorMsg && (
-                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-md">
-                      {errorMsg}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-4 bg-[#E07A5F] hover:bg-[#cc654b] text-white text-xs sm:text-sm font-semibold uppercase tracking-wider rounded-md transition-all shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    <span>{isSubmitting ? 'Memproses Pesanan...' : 'Konfirmasi & Buat Pesanan'}</span>
-                    <ArrowRight size={16} />
-                  </button>
-
-                  <div className="flex items-center justify-center gap-2 text-[11px] text-[#68625D] pt-1">
-                    <ShieldCheck size={14} className="text-emerald-700" />
-                    <span>Transaksi aman &amp; terdaftar di butik resmi BabyShalls</span>
+                  <div>
+                    <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                      Kode Pos
+                    </label>
+                    <input
+                      type="text"
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
+                      className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
                   </div>
                 </div>
               </div>
 
-            </form>
-          )}
+              {/* 2. Pilih Pengiriman (Figma #167:4690) */}
+              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
+                <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2 mb-5">
+                  <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
+                    2
+                  </span>
+                  <span>Pilih Opsi Pengiriman</span>
+                </h2>
 
+                <div className="flex flex-col gap-3">
+                  {courierOptions.map((courier) => {
+                    const isSelected = selectedCourier === courier.id;
+                    return (
+                      <label
+                        key={courier.id}
+                        className={`p-4 border rounded-[2px] flex items-start justify-between gap-4 cursor-pointer transition-all ${
+                          isSelected
+                            ? 'border-[#B05A26] bg-[#FFFBF7]'
+                            : 'border-[#E6D2C0] bg-white hover:border-[#B05A26]'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="courier_option"
+                            checked={isSelected}
+                            onChange={() => setSelectedCourier(courier.id)}
+                            className="mt-1 w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                          />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-sm text-[#4A2A1C]">
+                                {courier.name}
+                              </span>
+                              <span className="text-[11px] text-[#7A5644] bg-[#FFF6EA] px-2 py-0.5 rounded-[2px]">
+                                {courier.etd}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#7A5644] mt-1">
+                              {courier.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="font-semibold text-sm text-[#4A2A1C] shrink-0">
+                          {courier.price === 0 ? 'GRATIS' : formatIDR(courier.price)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Kado & Catatan (Figma #167:4733) */}
+              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
+                <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2 mb-5">
+                  <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
+                    3
+                  </span>
+                  <span>Bungkus Kado & Catatan Pesanan</span>
+                </h2>
+
+                {/* Gift Wrap Toggle */}
+                <div className="flex items-center justify-between pb-4 border-b border-[#F2E4D6] mb-4">
+                  <div className="flex items-center gap-3">
+                    <Gift className="w-5 h-5 text-[#B05A26]" />
+                    <div>
+                      <p className="text-sm font-semibold text-[#4A2A1C]">
+                        Bungkus Kado & Kartu Ucapan Spesial
+                      </p>
+                      <p className="text-xs text-[#7A5644]">
+                        Dibalut kertas kado estetik & pita kain BabyShalls (Gratis Promo)
+                      </p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isGift}
+                      onChange={(e) => setIsGift(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#B05A26]"></div>
+                  </label>
+                </div>
+
+                {isGift && (
+                  <div className="mb-4">
+                    <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                      Tulis Pesan untuk Kartu Ucapan Kado
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={giftNote}
+                      onChange={(e) => setGiftNote(e.target.value)}
+                      placeholder="Contoh: Selamat ulang tahun ke-3 adik Kenzo! Semoga cerdas dan bahagia selalu."
+                      className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                    Catatan Tambahan untuk Penjual (Opsional)
+                  </label>
+                  <input
+                    type="text"
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    placeholder="Contoh: Tolong kirim sebelum jam 16.00 WIB"
+                    className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                  />
+                </div>
+              </div>
+
+              {/* 4. Metode Pembayaran (Figma #167:4747) */}
+              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
+                <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2 mb-3">
+                  <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
+                    4
+                  </span>
+                  <span>Metode Pembayaran</span>
+                </h2>
+
+                <p className="text-xs text-[#7A5644] mb-4">
+                  Pembayaran diproses secara instan & aman dengan konfirmasi otomatis via <strong>Midtrans Payment Gateway</strong>.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  {/* QRIS */}
+                  <label
+                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
+                      paymentMethod === 'qris'
+                        ? 'border-[#B05A26] bg-[#FFFBF7]'
+                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_choice"
+                      checked={paymentMethod === 'qris'}
+                      onChange={() => setPaymentMethod('qris')}
+                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-[#4A2A1C] block">
+                        QRIS Instan
+                      </span>
+                      <span className="text-[11px] text-[#7A5644]">
+                        BCA, GoPay, ShopeePay, OVO
+                      </span>
+                    </div>
+                  </label>
+
+                  {/* BCA VA */}
+                  <label
+                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
+                      paymentMethod === 'bca'
+                        ? 'border-[#B05A26] bg-[#FFFBF7]'
+                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_choice"
+                      checked={paymentMethod === 'bca'}
+                      onChange={() => setPaymentMethod('bca')}
+                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-[#4A2A1C] block">
+                        BCA Virtual Account
+                      </span>
+                      <span className="text-[11px] text-[#7A5644]">
+                        Verifikasi otomatis 24 jam
+                      </span>
+                    </div>
+                  </label>
+
+                  {/* Mandiri VA */}
+                  <label
+                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
+                      paymentMethod === 'mandiri'
+                        ? 'border-[#B05A26] bg-[#FFFBF7]'
+                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_choice"
+                      checked={paymentMethod === 'mandiri'}
+                      onChange={() => setPaymentMethod('mandiri')}
+                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-[#4A2A1C] block">
+                        Mandiri Virtual Account
+                      </span>
+                      <span className="text-[11px] text-[#7A5644]">
+                        Konfirmasi instan
+                      </span>
+                    </div>
+                  </label>
+
+                  {/* Kartu Kredit */}
+                  <label
+                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
+                      paymentMethod === 'cc'
+                        ? 'border-[#B05A26] bg-[#FFFBF7]'
+                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment_choice"
+                      checked={paymentMethod === 'cc'}
+                      onChange={() => setPaymentMethod('cc')}
+                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                    />
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-[#4A2A1C] block">
+                        Kartu Kredit / Debit
+                      </span>
+                      <span className="text-[11px] text-[#7A5644]">
+                        Visa, Mastercard, JCB
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-[#2A6E37] bg-[#DDF1E5] p-3 rounded-[2px]">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span>Transaksi dienkripsi 256-bit SSL dan diproses langsung oleh payment gateway terverifikasi Bank Indonesia.</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column: Ringkasan Pesanan (Figma #167:4763, 400px width) */}
+            <aside className="w-full lg:w-[400px] shrink-0 sticky top-24">
+              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px] flex flex-col gap-5">
+                
+                <h3 className="text-lg font-medium text-[#4A2A1C]">
+                  Ringkasan Pesanan
+                </h3>
+
+                {/* Items Mini-list */}
+                <div className="flex flex-col gap-3.5 max-h-72 overflow-y-auto pr-1">
+                  {items.length > 0 ? (
+                    items.map((item) => (
+                      <div key={item.product.id} className="flex items-center gap-3">
+                        <div className="relative w-14 h-14 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0">
+                          <Image
+                            src={item.product.coverImage || item.product.images?.[0] || '/images/prod-boardbook.jpg'}
+                            alt={item.product.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-medium text-[#4A2A1C] truncate">
+                            {item.product.title}
+                          </h4>
+                          <span className="text-[11px] text-[#7A5644] block">
+                            {item.quantity} × {formatIDR(item.product.price)}
+                          </span>
+                        </div>
+                        <span className="text-xs font-semibold text-[#4A2A1C] shrink-0">
+                          {formatIDR(item.product.price * item.quantity)}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-[#7A5644] py-2">Tidak ada item di keranjang.</p>
+                  )}
+                </div>
+
+                {/* Price Breakdown */}
+                <div className="border-t border-[#F2E4D6] pt-4 flex flex-col gap-2.5 text-xs">
+                  <div className="flex items-center justify-between text-[#7A5644]">
+                    <span>Subtotal Produk</span>
+                    <span className="font-medium text-[#4A2A1C]">{formatIDR(subtotal)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[#7A5644]">
+                    <span>Biaya Pengiriman ({currentCourier.name})</span>
+                    <span className="font-medium text-[#4A2A1C]">
+                      {shippingFee === 0 ? 'GRATIS' : formatIDR(shippingFee)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[#7A5644]">
+                    <span>Bungkus Kado & Kartu</span>
+                    <span className="font-medium text-[#2A6E37]">
+                      {isGift ? 'GRATIS (Promo)' : '-'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Total */}
+                <div className="border-t border-[#F2E4D6] pt-4 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[#4A2A1C]">Total Tagihan</span>
+                  <span className="text-xl font-bold text-[#B05A26]">
+                    {formatIDR(calculatedGrandTotal)}
+                  </span>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="button"
+                  onClick={handlePayOrder}
+                  disabled={isSubmitting || items.length === 0}
+                  className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] disabled:bg-gray-300 text-white font-semibold text-sm rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  {isSubmitting ? (
+                    <span>Memproses Pesanan...</span>
+                  ) : (
+                    <span>Bayar Sekarang ({formatIDR(calculatedGrandTotal)})</span>
+                  )}
+                </button>
+
+                <p className="text-[11px] text-[#7A5644] text-center leading-relaxed">
+                  Dengan mengklik &quot;Bayar Sekarang&quot;, kamu menyetujui Ketentuan Layanan & Kebijakan Privasi Toko BabyShalls Malang.
+                </p>
+              </div>
+            </aside>
+
+          </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

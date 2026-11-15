@@ -2,23 +2,22 @@
 
 import React, { useState, useMemo, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { Search, ShoppingBag, Eye, Check, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
-import { Header } from '../../src/components/Header';
-import { Footer } from '../../src/components/Footer';
-import { OrderDrawer } from '../../src/components/OrderDrawer';
-import { ProductQuickViewModal } from '../../src/components/ProductQuickViewModal';
-import { mockProducts as defaultMockProducts, formatIDR } from '../../src/data/mockProducts';
-import { useCart } from '../../src/context/CartContext';
-import { Product } from '../../src/types';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { CampaignBanner } from '@/components/home/CampaignBanner';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { WireProductCard } from '@/components/common/WireProductCard';
+import { mockProducts as defaultMockProducts } from '@/data/mockProducts';
+import { Product } from '@/types';
+import { ChevronDown, X, SlidersHorizontal, RotateCcw } from 'lucide-react';
 
 function ShopContent() {
   const searchParams = useSearchParams();
   const initialCategoryParam = searchParams.get('category');
+  const initialAgeParam = searchParams.get('age');
   const initialSearchParam = searchParams.get('q');
-
-  const { searchQuery, setSearchQuery, addToCart, setQuickViewProduct } = useCart();
-  const [addedId, setAddedId] = useState<string | null>(null);
 
   // Load catalog items (synced with admin if modified in localStorage)
   const [catalogItems] = useState<Product[]>(() => {
@@ -38,14 +37,36 @@ function ShopContent() {
     return defaultMockProducts;
   });
 
-  const [activeCategory, setActiveCategory] = useState<string>(initialCategoryParam || 'All');
-  const [activeAge, setActiveAge] = useState<string>('All');
+  // State Filters
+  const [activeSubcategory, setActiveSubcategory] = useState<string>('Semua');
+  const [activeCategory, setActiveCategory] = useState<string>(initialCategoryParam || 'Semua Kategori');
+  const [selectedAge, setSelectedAge] = useState<string>(initialAgeParam || 'Semua');
+  const [selectedCondition, setSelectedCondition] = useState<string>('Semua');
   const [onlyInStock, setOnlyInStock] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'name-asc'>('featured');
-  const [localSearch, setLocalSearch] = useState<string>(initialSearchParam || searchQuery || '');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'terbaru' | 'harga-rendah' | 'harga-tinggi' | 'nama'>('terbaru');
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearchParam || '');
+  const [visibleCount, setVisibleCount] = useState<number>(9);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState<boolean>(false);
 
-  const categories = [
-    'All',
+  // Sub-categories list matching Figma
+  const subCategories = [
+    'Semua',
+    'Board Book',
+    'Picture Book',
+    'Buku Aktivitas',
+    'Chapter Book',
+    'Buku Impor',
+    'Buku Lokal'
+  ];
+
+  // Age options matching Figma
+  const ageOptions = ['Semua', '0–1 th', '1–3 th', '3+ th', '6+ th'];
+
+  // Categories for checkboxes
+  const categoryOptions = [
+    'Semua Kategori',
     'Board Books',
     'Picture Books',
     'Educational Toys',
@@ -53,29 +74,83 @@ function ShopContent() {
     'Preloved Item'
   ];
 
-  const ageGroups = ['All', '0–2 Years', '3–5 Years', '6+ Years'];
+  // Condition options
+  const conditionOptions = ['Semua', 'Baru', 'Preloved'];
 
-  const filteredAndSortedProducts = useMemo(() => {
+  // Reset all filters
+  const resetFilters = () => {
+    setActiveSubcategory('Semua');
+    setActiveCategory('Semua Kategori');
+    setSelectedAge('Semua');
+    setSelectedCondition('Semua');
+    setOnlyInStock(false);
+    setMinPrice('');
+    setMaxPrice('');
+    setSearchQuery('');
+    setSortBy('terbaru');
+  };
+
+  // Check if any filter is active
+  const hasActiveFilters =
+    activeSubcategory !== 'Semua' ||
+    activeCategory !== 'Semua Kategori' ||
+    selectedAge !== 'Semua' ||
+    selectedCondition !== 'Semua' ||
+    onlyInStock ||
+    minPrice !== '' ||
+    maxPrice !== '' ||
+    searchQuery !== '';
+
+  // Filtered & Sorted Products
+  const filteredProducts = useMemo(() => {
     let result = catalogItems.filter((product) => {
       // Stock filter
       if (onlyInStock && !product.inStock) return false;
 
       // Category filter
-      if (activeCategory !== 'All' && product.category !== activeCategory) {
+      if (activeCategory !== 'Semua Kategori' && product.category !== activeCategory) {
         return false;
       }
 
-      // Age group filter
-      if (activeAge !== 'All' && product.ageGroup !== activeAge && product.ageGroup !== 'All Ages') {
-        return false;
+      // Subcategory / Tag filter
+      if (activeSubcategory !== 'Semua') {
+        const titleLower = product.title.toLowerCase();
+        const catLower = (product.category || '').toLowerCase();
+        const subLower = activeSubcategory.toLowerCase();
+
+        if (subLower === 'board book' && !catLower.includes('board') && !titleLower.includes('board')) return false;
+        if (subLower === 'picture book' && !catLower.includes('picture') && !titleLower.includes('picture')) return false;
+        if (subLower === 'buku aktivitas' && !catLower.includes('aktivitas') && !titleLower.includes('activity') && !titleLower.includes('aktivitas')) return false;
+        if (subLower === 'buku impor' && !product.tags?.includes('impor') && !product.author?.match(/[a-z]/i)) return false;
+        if (subLower === 'buku lokal' && !product.tags?.includes('lokal')) return false;
       }
 
-      // Search filter
-      const q = localSearch.toLowerCase().trim();
-      if (q) {
+      // Age filter
+      if (selectedAge !== 'Semua') {
+        const pAge = product.ageGroup || '';
+        if (selectedAge === '0–1 th' && !pAge.includes('0–1') && !pAge.includes('0–2') && !pAge.toLowerCase().includes('newborn')) return false;
+        if (selectedAge === '1–3 th' && !pAge.includes('1–3') && !pAge.includes('1-3')) return false;
+        if (selectedAge === '3+ th' && !pAge.includes('3–5') && !pAge.includes('3+')) return false;
+        if (selectedAge === '6+ th' && !pAge.includes('6+')) return false;
+      }
+
+      // Condition filter
+      if (selectedCondition !== 'Semua') {
+        const isPre = product.category === 'Preloved Item' || product.condition === 'preloved';
+        if (selectedCondition === 'Baru' && isPre) return false;
+        if (selectedCondition === 'Preloved' && !isPre) return false;
+      }
+
+      // Price range
+      if (minPrice && product.price < Number(minPrice)) return false;
+      if (maxPrice && product.price > Number(maxPrice)) return false;
+
+      // Search query
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase().trim();
         const matches =
           product.title.toLowerCase().includes(q) ||
-          product.author.toLowerCase().includes(q) ||
+          (product.author || product.authorOrBrand || '').toLowerCase().includes(q) ||
           product.category.toLowerCase().includes(q);
         if (!matches) return false;
       }
@@ -83,324 +158,400 @@ function ShopContent() {
       return true;
     });
 
-    // Sorting
+    // Sort
     switch (sortBy) {
-      case 'price-asc':
+      case 'harga-rendah':
         result.sort((a, b) => a.price - b.price);
         break;
-      case 'price-desc':
+      case 'harga-tinggi':
         result.sort((a, b) => b.price - a.price);
         break;
-      case 'name-asc':
+      case 'nama':
         result.sort((a, b) => a.title.localeCompare(b.title));
         break;
-      case 'featured':
+      case 'terbaru':
       default:
-        // maintain default sequence
+        // maintain list
         break;
     }
 
     return result;
-  }, [catalogItems, activeCategory, activeAge, onlyInStock, localSearch, sortBy]);
+  }, [
+    catalogItems,
+    onlyInStock,
+    activeCategory,
+    activeSubcategory,
+    selectedAge,
+    selectedCondition,
+    minPrice,
+    maxPrice,
+    searchQuery,
+    sortBy,
+  ]);
 
-  const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product, 1);
-    setAddedId(product.id);
-    setTimeout(() => setAddedId(null), 1500);
-  };
+  const displayedProducts = filteredProducts.slice(0, visibleCount);
 
   return (
-    <div className="w-full">
-      {/* Page Title & Breadcrumb */}
-      <div className="bg-[#FAF8F5] border-b border-[#EDE8E1] py-8 sm:py-12">
-        <div className="w-full px-4 sm:px-6 lg:px-12">
-          <nav className="text-xs text-[#68625D] mb-3 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-medium">Toko</span>
-            {activeCategory !== 'All' && (
-              <>
-                <span>/</span>
-                <span className="text-[#E07A5F] font-semibold">{activeCategory}</span>
-              </>
-            )}
-          </nav>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#2C2725]">
-                {activeCategory === 'All' ? 'Katalog Buku & Mainan' : activeCategory}
-              </h1>
-              <p className="text-xs sm:text-sm text-[#68625D] mt-1 max-w-xl">
-                Buku bantal bertekstur, board books impor klasik, dan mainan kayu Montessori terkurasi dengan standar keamanan tinggi.
-              </p>
-            </div>
-            <div className="text-xs text-[#68625D]">
-              Menampilkan <span className="font-semibold text-[#2C2725]">{filteredAndSortedProducts.length}</span> produk
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#FFFFFF] flex flex-col font-sans">
+      <Header />
+      <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
-      <div className="w-full px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
-        {/* Filter Controls Bar */}
-        <div className="space-y-5 pb-8 mb-8 border-b border-[#EDE8E1]">
-          {/* Top Filter Row: Search & Sort */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#68625D]" />
-              <input
-                type="text"
-                placeholder="Cari judul buku, penulis, atau kata kunci..."
-                value={localSearch}
-                onChange={(e) => {
-                  setLocalSearch(e.target.value);
-                  setSearchQuery(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-white border border-[#EDE8E1] rounded-md text-[#2C2725] placeholder-[#8C8782] focus:outline-none focus:border-[#E07A5F] shadow-2xs"
-              />
-              {localSearch && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLocalSearch('');
-                    setSearchQuery('');
-                  }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#68625D] hover:text-[#2C2725]"
-                >
-                  Reset
-                </button>
-              )}
-            </div>
-
-            {/* Sort & In-Stock Options */}
-            <div className="flex items-center gap-4 self-end sm:self-auto">
-              <label className="flex items-center gap-2 text-xs text-[#68625D] cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={onlyInStock}
-                  onChange={(e) => setOnlyInStock(e.target.checked)}
-                  className="rounded border-[#EDE8E1] text-[#E07A5F] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#E07A5F]"
-                />
-                <span>Hanya Tersedia</span>
-              </label>
-
-              <div className="flex items-center gap-1.5 bg-white border border-[#EDE8E1] rounded-md px-3 py-2 text-xs text-[#2C2725]">
-                <ArrowUpDown size={13} className="text-[#68625D]" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-transparent focus:outline-none cursor-pointer font-medium"
-                >
-                  <option value="featured">Paling Populer</option>
-                  <option value="price-asc">Harga: Rendah ke Tinggi</option>
-                  <option value="price-desc">Harga: Tinggi ke Rendah</option>
-                  <option value="name-asc">Nama: A ke Z</option>
-                </select>
-              </div>
-            </div>
+      {/* Header Kategori Banner (Figma Node #133:332) */}
+      <section className="bg-[#FFF6EA] py-8 sm:py-10 border-b border-[#F2E4D6]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+          {/* Breadcrumbs */}
+          <div className="text-[13px] text-[#7A5644] mb-3">
+            <Link href="/" className="hover:underline">Beranda</Link>
+            <span className="mx-2">/</span>
+            <Link href="/shop" className="hover:underline">Belanja</Link>
+            <span className="mx-2">/</span>
+            <span className="font-semibold text-[#4A2A1C]">
+              {activeCategory === 'Semua Kategori' ? 'Buku & Koleksi' : activeCategory}
+            </span>
           </div>
 
-          {/* Categories Filter Pills */}
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-[#68625D] mb-2.5">
-              Kategori Produk:
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setActiveCategory(cat)}
-                  className={`text-xs px-3.5 py-1.5 rounded-md font-semibold transition-all cursor-pointer ${
-                    activeCategory === cat
-                      ? 'bg-[#E07A5F] text-white shadow-2xs'
-                      : 'bg-white border border-[#EDE8E1] text-[#68625D] hover:border-[#E07A5F] hover:text-[#E07A5F]'
-                  }`}
-                >
-                  {cat === 'All' ? 'Semua Kategori' : cat}
-                </button>
-              ))}
-            </div>
+          {/* Title & Count */}
+          <div className="flex flex-wrap items-baseline gap-3 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-medium text-[#4A2A1C] tracking-tight">
+              {activeCategory === 'Semua Kategori' ? 'Buku & Koleksi' : activeCategory}
+            </h1>
+            <span className="text-[16px] text-[#7A5644]">
+              {filteredProducts.length} produk
+            </span>
           </div>
 
-          {/* Age Group Filter Pills */}
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-[#68625D] mb-2.5">
-              Kelompok Usia:
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {ageGroups.map((age) => (
-                <button
-                  key={age}
-                  type="button"
-                  onClick={() => setActiveAge(age)}
-                  className={`text-xs px-3.5 py-1.5 rounded-md font-semibold transition-all cursor-pointer ${
-                    activeAge === age
-                      ? 'bg-[#E2ECE0] text-[#3A5C37] border border-[#C7DAC3] shadow-2xs'
-                      : 'bg-white border border-[#EDE8E1] text-[#68625D] hover:border-[#3A5C37]'
-                  }`}
-                >
-                  {age === 'All' ? 'Semua Usia' : age}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+          {/* Description */}
+          <p className="text-[15px] sm:text-[16px] text-[#7A5644] max-w-3xl mb-6 leading-relaxed">
+            Board book, picture book, sampai chapter book. Impor dan lokal pilihan yang ramah anak untuk tiap tahap tumbuh kembang si kecil.
+          </p>
 
-        {/* Product Grid */}
-        {filteredAndSortedProducts.length === 0 ? (
-          <div className="py-20 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#FAF8F5] border border-[#EDE8E1] flex items-center justify-center mx-auto text-[#68625D]">
-              <Search size={24} />
-            </div>
-            <h3 className="text-lg font-bold text-[#2C2725]">Tidak Ada Produk Ditemukan</h3>
-            <p className="text-xs sm:text-sm text-[#68625D] max-w-sm mx-auto">
-              Tidak ada buku atau mainan yang cocok dengan filter atau kata kunci Anda. Coba reset filter atau ajukan request buku.
-            </p>
-            <div className="pt-2 flex justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveCategory('All');
-                  setActiveAge('All');
-                  setOnlyInStock(false);
-                  setLocalSearch('');
-                  setSearchQuery('');
-                }}
-                className="px-5 py-2.5 bg-white border border-[#EDE8E1] rounded-md text-xs font-semibold text-[#2C2725] hover:border-[#E07A5F]"
-              >
-                Reset Semua Filter
-              </button>
-              <Link
-                href="/request-a-book"
-                className="px-5 py-2.5 bg-[#E07A5F] text-white rounded-md text-xs font-semibold hover:bg-[#cc654b]"
-              >
-                Request Buku Khusus
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-10 sm:gap-y-12">
-            {filteredAndSortedProducts.map((product) => {
-              const isJustAdded = addedId === product.id;
-
+          {/* Sub-category Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {subCategories.map((sub) => {
+              const isActive = activeSubcategory === sub;
               return (
-                <div
-                  key={product.id}
-                  className="group flex flex-col justify-between text-left transition-all"
+                <button
+                  key={sub}
+                  onClick={() => setActiveSubcategory(sub)}
+                  type="button"
+                  className={`px-4 py-2 rounded-[2px] text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                    isActive
+                      ? 'bg-[#B05A26] text-white border border-[#B05A26]'
+                      : 'bg-white text-[#4A2A1C] border border-[#E6D2C0] hover:border-[#B05A26]'
+                  }`}
                 >
-                  <div>
-                    {/* Book Cover Container with 3:4 aspect ratio */}
-                    <div className="relative aspect-[3/4] w-full bg-[#FAF8F5] rounded-md overflow-hidden border border-[#EDE8E1] group-hover:border-[#E07A5F] transition-colors mb-4 shadow-2xs">
-                      <Link href={`/product/${product.id}`} className="block w-full h-full">
-                        <img
-                          src={product.coverImage}
-                          alt={product.title}
-                          className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                      </Link>
-
-                      {/* Badges */}
-                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
-                        {product.badge && (
-                          <span className="bg-[#FFFDF9]/95 border border-[#EDE8E1] text-[#E07A5F] text-[10px] font-bold px-2 py-0.5 rounded-xs uppercase tracking-wider shadow-2xs">
-                            {product.badge}
-                          </span>
-                        )}
-                        {product.category === 'Preloved Item' && (
-                          <span className="bg-[#E2ECE0] text-[#3A5C37] text-[10px] font-bold px-2 py-0.5 rounded-xs uppercase tracking-wider shadow-2xs">
-                            Preloved
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Floating Quick Action Buttons */}
-                      <div className="absolute bottom-2.5 inset-x-2.5 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                        <button
-                          type="button"
-                          onClick={() => setQuickViewProduct(product)}
-                          className="flex-1 py-2 bg-white/95 hover:bg-white text-[#2C2725] hover:text-[#E07A5F] text-[11px] font-semibold rounded-sm border border-[#EDE8E1] shadow-xs flex items-center justify-center gap-1 cursor-pointer transition-colors"
-                          aria-label="Lihat cepat"
-                        >
-                          <Eye size={13} strokeWidth={1.5} />
-                          <span>Quick View</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={(e) => handleQuickAdd(e, product)}
-                          className={`p-2 rounded-sm shadow-xs transition-colors cursor-pointer ${
-                            isJustAdded
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-[#E07A5F] hover:bg-[#cc654b] text-white'
-                          }`}
-                          aria-label="Tambah ke keranjang"
-                          title="Tambah ke Keranjang"
-                        >
-                          {isJustAdded ? (
-                            <Check size={14} strokeWidth={2} />
-                          ) : (
-                            <ShoppingBag size={14} strokeWidth={1.5} />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Metadata & Typography */}
-                    <div className="space-y-1">
-                      <div className="text-[10px] uppercase tracking-wider text-[#68625D]">
-                        {product.category} • {product.ageGroup}
-                      </div>
-
-                      <Link href={`/product/${product.id}`} className="block">
-                        <h3 className="text-sm font-semibold text-[#2C2725] line-clamp-1 group-hover:text-[#E07A5F] transition-colors">
-                          {product.title}
-                        </h3>
-                      </Link>
-
-                      <p className="text-xs text-[#68625D] line-clamp-1 font-normal">
-                        {product.author}
-                      </p>
-
-                      <div className="pt-1 flex items-center justify-between">
-                        <span className="text-sm font-bold text-[#2C2725]">
-                          {formatIDR(product.price)}
-                        </span>
-                        <span className="text-[10px] text-emerald-800 font-medium">
-                          {product.inStock ? 'Tersedia' : 'Habis'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  {sub}
+                </button>
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      </section>
+
+      {/* Main Catalog Content (Figma Node #133:353) */}
+      <section className="py-10 sm:py-14 flex-1">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+            
+            {/* Mobile Filter Toggle Button */}
+            <div className="w-full lg:hidden flex items-center justify-between gap-3 border-b border-[#F2E4D6] pb-4">
+              <button
+                onClick={() => setIsFilterDrawerOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF6EA] text-[#B05A26] border border-[#E6D2C0] text-sm font-medium rounded-[2px]"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                <span>Filter & Kategori</span>
+              </button>
+
+              <span className="text-xs text-[#7A5644]">
+                Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+              </span>
+            </div>
+
+            {/* Left Filter Sidebar (Figma Desktop #133:354) */}
+            <aside className={`w-full lg:w-[264px] shrink-0 ${isFilterDrawerOpen ? 'fixed inset-0 z-50 bg-black/40 flex justify-end lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
+              <div className={`w-full max-w-xs lg:max-w-none bg-white p-6 lg:p-0 h-full lg:h-auto overflow-y-auto lg:overflow-visible flex flex-col gap-7 ${isFilterDrawerOpen ? 'shadow-2xl' : ''}`}>
+                
+                {/* Mobile Drawer Header */}
+                <div className="flex lg:hidden items-center justify-between pb-4 border-b border-[#F2E4D6]">
+                  <h3 className="font-semibold text-lg text-[#4A2A1C]">Filter Produk</h3>
+                  <button
+                    onClick={() => setIsFilterDrawerOpen(false)}
+                    className="p-1 text-gray-500 hover:text-black"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Filter: Usia (Figma #133:355) */}
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Usia</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {ageOptions.map((age) => {
+                      const isActive = selectedAge === age;
+                      return (
+                        <button
+                          key={age}
+                          type="button"
+                          onClick={() => setSelectedAge(age)}
+                          className={`px-3 py-1.5 text-xs rounded-[2px] transition-colors cursor-pointer ${
+                            isActive
+                              ? 'bg-[#B05A26] text-white font-medium'
+                              : 'bg-[#FFF6EA] text-[#4A2A1C] border border-[#E6D2C0] hover:border-[#B05A26]'
+                          }`}
+                        >
+                          {age}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Filter: Kategori (Figma #133:372) */}
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Kategori</h4>
+                  <div className="flex flex-col gap-2">
+                    {categoryOptions.map((cat) => (
+                      <label
+                        key={cat}
+                        className="flex items-center gap-2.5 text-sm text-[#4A2A1C] cursor-pointer group"
+                      >
+                        <input
+                          type="radio"
+                          name="category_filter"
+                          checked={activeCategory === cat}
+                          onChange={() => setActiveCategory(cat)}
+                          className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                        />
+                        <span className="group-hover:text-[#B05A26] transition-colors">{cat}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filter: Kondisi (Figma #133:406) */}
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Kondisi</h4>
+                  <div className="flex flex-col gap-2">
+                    {conditionOptions.map((cond) => (
+                      <label
+                        key={cond}
+                        className="flex items-center gap-2.5 text-sm text-[#4A2A1C] cursor-pointer group"
+                      >
+                        <input
+                          type="radio"
+                          name="condition_filter"
+                          checked={selectedCondition === cond}
+                          onChange={() => setSelectedCondition(cond)}
+                          className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
+                        />
+                        <span className="group-hover:text-[#B05A26] transition-colors">{cond}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filter: Harga (Figma #133:432) */}
+                <div className="flex flex-col gap-3">
+                  <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Rentang Harga</h4>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="w-full text-xs px-2.5 py-1.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
+                    <span className="text-gray-400 text-xs">-</span>
+                    <input
+                      type="number"
+                      placeholder="Maks"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="w-full text-xs px-2.5 py-1.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
+                  </div>
+                </div>
+
+                {/* Filter: Ketersediaan (Figma #133:443) */}
+                <div className="flex items-center justify-between border-t border-[#F2E4D6] pt-4">
+                  <span className="text-sm text-[#4A2A1C] font-medium">Hanya stok tersedia</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={onlyInStock}
+                      onChange={(e) => setOnlyInStock(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#B05A26]"></div>
+                  </label>
+                </div>
+
+                {/* Atur Ulang Filter Button (Figma #133:453) */}
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="w-full py-2.5 border border-[#C9B3A5] text-[#4A2A1C] text-sm font-medium rounded-[2px] hover:bg-[#FFF6EA] hover:border-[#B05A26] transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Atur Ulang Filter</span>
+                </button>
+              </div>
+            </aside>
+
+            {/* Right Products Content (Figma #133:455) */}
+            <main className="flex-1 min-w-0">
+              
+              {/* Toolbar: Active Filters & Sorting */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#F2E4D6]">
+                
+                {/* Active filter pills */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {hasActiveFilters && (
+                    <span className="text-xs text-[#7A5644] font-medium">Filter aktif:</span>
+                  )}
+
+                  {activeCategory !== 'Semua Kategori' && (
+                    <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
+                      {activeCategory}
+                      <button onClick={() => setActiveCategory('Semua Kategori')} className="hover:text-black">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+
+                  {selectedAge !== 'Semua' && (
+                    <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
+                      {selectedAge}
+                      <button onClick={() => setSelectedAge('Semua')} className="hover:text-black">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+
+                  {activeSubcategory !== 'Semua' && (
+                    <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
+                      {activeSubcategory}
+                      <button onClick={() => setActiveSubcategory('Semua')} className="hover:text-black">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+
+                  {selectedCondition !== 'Semua' && (
+                    <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
+                      {selectedCondition}
+                      <button onClick={() => setSelectedCondition('Semua')} className="hover:text-black">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+
+                  {hasActiveFilters && (
+                    <button
+                      onClick={resetFilters}
+                      className="text-xs text-[#C0392B] hover:underline ml-1"
+                    >
+                      Hapus Semua
+                    </button>
+                  )}
+                </div>
+
+                {/* Sort Dropdown & Count */}
+                <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                  <div className="relative">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      className="appearance-none bg-white border border-[#E6D2C0] text-[#4A2A1C] text-xs font-medium pl-3 pr-8 py-2 rounded-[2px] focus:outline-none focus:border-[#B05A26] cursor-pointer"
+                    >
+                      <option value="terbaru">Urutkan: Terbaru</option>
+                      <option value="harga-rendah">Harga: Rendah ke Tinggi</option>
+                      <option value="harga-tinggi">Harga: Tinggi ke Rendah</option>
+                      <option value="nama">Nama: A - Z</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-[#7A5644] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Counter Text */}
+              <div className="text-xs text-[#7A5644] mb-6">
+                Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+              </div>
+
+              {/* Products 3-Column Grid (Figma #133:485) */}
+              {displayedProducts.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-10 sm:gap-x-7 sm:gap-y-12">
+                  {displayedProducts.map((product) => (
+                    <WireProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                /* Empty State (Figma #134:4856) */
+                <div className="text-center py-16 px-4 bg-[#FFFBF7] rounded-[2px] border border-[#F2E4D6] flex flex-col items-center">
+                  <div className="relative w-32 h-32 mb-4">
+                    <Image
+                      src="/images/mascot/maskot-kaca-pembesar.png"
+                      alt="Tidak ditemukan"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <h3 className="text-lg font-medium text-[#4A2A1C] mb-1">
+                    Produk Tidak Ditemukan
+                  </h3>
+                  <p className="text-sm text-[#7A5644] max-w-sm mb-6 leading-relaxed">
+                    Kami tidak menemukan produk yang cocok dengan kombinasi filter atau kata kunci pencarianmu.
+                  </p>
+                  <button
+                    onClick={resetFilters}
+                    className="px-6 py-2.5 bg-[#B05A26] text-white text-sm font-medium rounded-[2px] hover:bg-[#964B1F] transition-colors"
+                  >
+                    Atur Ulang Filter
+                  </button>
+                </div>
+              )}
+
+              {/* Muat Lebih Banyak (Figma #133:581) */}
+              {displayedProducts.length < filteredProducts.length && (
+                <div className="flex flex-col items-center gap-3 mt-12 pt-8 border-t border-[#F2E4D6]">
+                  <span className="text-xs text-[#7A5644]">
+                    Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+                  </span>
+                  <div className="w-48 h-1 bg-[#F2E4D6] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#B05A26] transition-all duration-300"
+                      style={{
+                        width: `${(displayedProducts.length / filteredProducts.length) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + 9)}
+                    className="px-8 py-2.5 border border-[#C9B3A5] text-[#4A2A1C] text-sm font-medium rounded-[2px] hover:border-[#B05A26] hover:text-[#B05A26] transition-colors cursor-pointer mt-1"
+                  >
+                    Muat Lebih Banyak
+                  </button>
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+      </section>
+
+      {/* Campaign Banner (Figma Node #150:1332) */}
+      <CampaignBanner />
+
+      <Footer />
     </div>
   );
 }
 
 export default function ShopPage() {
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
-      <Header />
-      <main className="flex-grow w-full">
-        <Suspense fallback={<div className="p-12 text-center text-sm text-[#68625D]">Memuat katalog...</div>}>
-          <ShopContent />
-        </Suspense>
-      </main>
-      <Footer />
-      <OrderDrawer />
-      <ProductQuickViewModal />
-    </div>
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <ShopContent />
+    </Suspense>
   );
 }
-

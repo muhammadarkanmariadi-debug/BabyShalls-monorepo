@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface MegaMenuProps {
   isOpen: boolean;
@@ -51,7 +50,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
 
   return (
     <div
-      className="absolute top-full left-0 w-full bg-white border-b border-[#EBEBEB] shadow-figma-hover z-50 animate-in fade-in duration-150"
+      className="absolute top-full left-0 w-full bg-white border-b border-[#E6D2C0] shadow-hover z-50 animate-in fade-in duration-150"
       onMouseLeave={onClose}
     >
       <div className="max-w-[1440px] mx-auto px-8 lg:px-20 py-8">
@@ -59,7 +58,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
           
           {/* Column 1: Berdasarkan Usia */}
           <div className="space-y-4">
-            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#D9744A]">
+            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
               BERDASARKAN USIA
             </h4>
             <ul className="space-y-2.5">
@@ -68,7 +67,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
                   <Link
                     href={item.href}
                     onClick={() => handleLinkClick(item.label)}
-                    className="text-[14px] text-[#6B6B6B] hover:text-[#2B2B2B] hover:font-medium transition-colors"
+                    className="text-[14px] text-[#7A5644] hover:text-[#B05A26] hover:font-medium transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -79,7 +78,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
 
           {/* Column 2: Buku */}
           <div className="space-y-4">
-            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#D9744A]">
+            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
               BUKU
             </h4>
             <ul className="space-y-2.5">
@@ -88,7 +87,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
                   <Link
                     href={item.href}
                     onClick={() => handleLinkClick(item.label)}
-                    className="text-[14px] text-[#6B6B6B] hover:text-[#2B2B2B] hover:font-medium transition-colors"
+                    className="text-[14px] text-[#7A5644] hover:text-[#B05A26] hover:font-medium transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -99,7 +98,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
 
           {/* Column 3: Mainan & Kado */}
           <div className="space-y-4">
-            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#D9744A]">
+            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
               MAINAN &amp; KADO
             </h4>
             <ul className="space-y-2.5">
@@ -108,7 +107,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
                   <Link
                     href={item.href}
                     onClick={() => handleLinkClick(item.label)}
-                    className="text-[14px] text-[#6B6B6B] hover:text-[#2B2B2B] hover:font-medium transition-colors"
+                    className="text-[14px] text-[#7A5644] hover:text-[#B05A26] hover:font-medium transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -118,24 +117,24 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
           </div>
 
           {/* Column 4: Promo Menu */}
-          <div className="space-y-3.5 bg-[#F5F5F5] p-5 rounded-2xl flex flex-col justify-between">
-            <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#EBEBEB]">
+          <div className="space-y-3.5 bg-[#FFF6EA] border border-[#E6D2C0] p-5 rounded-2xl flex flex-col justify-between">
+            <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#F2E4D6]">
               <img
-                src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80"
+                src="/images/products/produk-picture-book-hutan.png"
                 alt="Koleksi Pilihan Bulan Ini"
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
-              <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-white/90 text-[#2B2B2B]">
+              <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-white/95 text-[#4A2A1C]">
                 Curated
               </span>
             </div>
 
             <div>
-              <h5 className="text-[14px] font-semibold text-[#2B2B2B]">
+              <h5 className="text-[14px] font-semibold text-[#4A2A1C]">
                 Koleksi Pilihan Bulan Ini
               </h5>
-              <p className="text-[12px] text-[#6B6B6B] mt-0.5">
+              <p className="text-[12px] text-[#7A5644] mt-0.5">
                 Pilihan board books &amp; balok Montessori terpopuler untuk tumbuh kembang si kecil.
               </p>
             </div>
@@ -143,10 +142,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             <Link
               href="/shop"
               onClick={() => handleLinkClick()}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#D9744A] hover:text-[#C25F37] transition-colors pt-1"
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#B05A26] hover:text-[#8E431A] transition-colors pt-1"
             >
               <span>Lihat Koleksi</span>
-              <img src="/images/icons/icon-arrow.svg" alt="" className="w-3.5 h-3.5" />
+              <img src="/images/icons/icon-arrow-right.svg" alt="" className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -155,4 +154,3 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
     </div>
   );
 };
-

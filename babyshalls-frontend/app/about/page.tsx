@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   MapPin,
   Clock,
@@ -11,170 +12,180 @@ import {
   Store,
   Phone,
   Mail,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react';
-import { Header } from '../../src/components/Header';
-import { Footer } from '../../src/components/Footer';
-import { OrderDrawer } from '../../src/components/OrderDrawer';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { TombolKembali } from '@/components/common/TombolKembali';
+import { CampaignBanner } from '@/components/home/CampaignBanner';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#FFFDF9] text-[#2C2725] flex flex-col justify-between selection:bg-[#E07A5F]/20 selection:text-[#E07A5F] w-full">
+    <div className="min-h-screen bg-white flex flex-col font-sans">
       <Header />
+      <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
-      <main className="flex-grow w-full py-8 sm:py-12 md:py-16">
-        <div className="w-full px-4 sm:px-6 lg:px-12">
+      {/* Hero Section */}
+      <section className="bg-[#FFF6EA] py-12 sm:py-16 border-b border-[#F2E4D6]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 text-center">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26] block mb-2">
+            TENTANG BABYSHALLS
+          </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#4A2A1C] tracking-tight mb-4">
+            Menumbuhkan Cinta Membaca Sejak Halaman Pertama
+          </h1>
+          <p className="text-sm sm:text-base text-[#7A5644] max-w-2xl mx-auto leading-relaxed">
+            BabyShalls adalah butik toko buku anak dan mainan edukatif di Malang. Didirikan dengan misi menghadirkan buku cerita bergambar berkualitas internasional dan mainan sensorik ramah anak yang dapat dinikmati bersama keluarga tercinta.
+          </p>
+        </div>
+      </section>
+
+      {/* Physical Store & Play Area Photo Gallery (From Figma Design System #48:205) */}
+      <section className="py-12 sm:py-16 bg-[#FFFDF9]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
           
-          {/* Breadcrumb Navigation */}
-          <nav className="text-xs text-[#68625D] mb-6 flex items-center gap-2">
-            <Link href="/" className="hover:text-[#E07A5F] transition-colors">
-              Beranda
-            </Link>
-            <span>/</span>
-            <span className="text-[#2C2725] font-semibold">Tentang BabyShalls</span>
-          </nav>
-
-          {/* Hero Section of About */}
-          <div className="max-w-4xl mx-auto text-center space-y-4 mb-14">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-[#E07A5F] block">
-              Boutique Bookstore &amp; Sensory Space
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#2C2725] leading-tight">
-              Menumbuhkan Cinta Membaca Sejak Halaman Pertama
-            </h1>
-            <p className="text-sm sm:text-base text-[#68625D] leading-relaxed max-w-2xl mx-auto">
-              BabyShalls lahir di Citraland Puncak Tidar, Malang sebagai sanctuary hangat bagi keluarga kecil. Tempat di mana buku bantal, dongeng klasik dunia, dan mainan kayu alami bersatu menemani petualangan masa kecil yang penuh rasa ingin tahu.
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight mb-2">
+              Kunjungi Butik Fisik Kami di Citraland Malang
+            </h2>
+            <p className="text-xs sm:text-sm text-[#7A5644] max-w-lg mx-auto">
+              Rasakan pengalaman membaca langsung bersama si kecil di ruang baca yang nyaman dan area bermain sensorik yang higienis.
             </p>
           </div>
 
-          {/* Large Editorial Imagery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
-            <div className="md:col-span-8 aspect-[16/10] rounded-lg overflow-hidden border border-[#EDE8E1] bg-neutral-100 shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1600&q=85"
-                alt="Sudut baca hangat anak di butik BabyShalls Citraland Malang"
-                className="w-full h-full object-cover"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {/* Tampak Depan */}
+            <div className="bg-white border border-[#F2E4D6] rounded-[2px] overflow-hidden flex flex-col">
+              <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
+                <Image
+                  src="/images/store/toko-tampak-depan.png"
+                  alt="Tampak Depan Butik BabyShalls Citraland Malang"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
+                  Butik Citraland Puncak Tidar
+                </h3>
+                <p className="text-xs text-[#7A5644]">
+                  Fasad butik hangat di kawasan asri Citraland Blok HH-26, Kota Malang.
+                </p>
+              </div>
             </div>
-            <div className="md:col-span-4 aspect-[4/5] rounded-lg overflow-hidden border border-[#EDE8E1] bg-neutral-100 shadow-xs">
-              <img
-                src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=85"
-                alt="Koleksi buku bantal dan board books berkualitas"
-                className="w-full h-full object-cover"
-              />
+
+            {/* Area Bermain */}
+            <div className="bg-white border border-[#F2E4D6] rounded-[2px] overflow-hidden flex flex-col">
+              <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
+                <Image
+                  src="/images/store/toko-area-bermain.png"
+                  alt="Area Bermain & Story Time"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
+                  Area Bermain &amp; Karpet Baca
+                </h3>
+                <p className="text-xs text-[#7A5644]">
+                  Sudut bermain anak yang dilengkapi mainan kayu montessori & karpet lembut.
+                </p>
+              </div>
+            </div>
+
+            {/* Rak Koleksi */}
+            <div className="bg-white border border-[#F2E4D6] rounded-[2px] overflow-hidden flex flex-col">
+              <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
+                <Image
+                  src="/images/store/toko-interior-rak.png"
+                  alt="Rak Buku Impor & Lokal"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
+                  Rak Koleksi Berdasarkan Usia
+                </h3>
+                <p className="text-xs text-[#7A5644]">
+                  Ribuan judul buku dikelompokkan rapi dari usia newborn hingga 6+ tahun.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* 3 Core Philosophies */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10 border-y border-[#EDE8E1] mb-16 text-left">
-            <div className="space-y-3">
-              <div className="w-10 h-10 rounded-md bg-[#FBE7E3] text-[#E07A5F] flex items-center justify-center">
-                <BookOpen size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#2C2725]">1. Kurasi Cerita Bermakna</h3>
-              <p className="text-xs sm:text-sm text-[#68625D] leading-relaxed">
-                Setiap judul buku di BabyShalls dipilih melalui pertimbangan nilai moral, estetika ilustrasi, dan keamanan material (tepi tumpul, tinta non-toxic, kertas tebal tahan sobek).
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="w-10 h-10 rounded-md bg-[#E2ECE0] text-[#3A5C37] flex items-center justify-center">
-                <Heart size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#2C2725]">2. Mainan Alami Montessori</h3>
-              <p className="text-xs sm:text-sm text-[#68625D] leading-relaxed">
-                Kami percaya pada mainan terbuka (open-ended toys) yang memicu imajinasi tanpa baterai atau layar gadget. Terbuat dari kayu alami bersertifikasi halus dan aman untuk tangan si kecil.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="w-10 h-10 rounded-md bg-[#FAF8F5] text-[#2C2725] border border-[#EDE8E1] flex items-center justify-center">
-                <Store size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-[#2C2725]">3. Komunitas Hangat Keluarga</h3>
-              <p className="text-xs sm:text-sm text-[#68625D] leading-relaxed">
-                Bukan sekadar toko ritel, butik kami di Citraland Malang rutin mengadakan sesi dongeng gratis dan workshop sensory play akhir pekan untuk mempererat bonding orang tua dan anak.
-              </p>
-            </div>
-          </div>
-
-          {/* Physical Store Location Card */}
-          <div className="bg-white border border-[#EDE8E1] rounded-lg p-6 sm:p-10 shadow-xs text-left max-w-4xl mx-auto space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDE8E1]">
-              <div>
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#E07A5F] block">
-                  Kunjungi Butik Fisik Kami
-                </span>
-                <h2 className="text-2xl font-bold text-[#2C2725]">
-                  BabyShalls Bookstore Citraland Malang
-                </h2>
-              </div>
-              <span className="px-3 py-1 bg-[#E2ECE0] text-[#3A5C37] text-xs font-bold rounded-full self-start sm:self-auto">
-                Buka Hari Ini
+          {/* Nilai Utama BabyShalls */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white border border-[#F2E4D6] rounded-[2px] p-8 sm:p-10 mb-12">
+            <div>
+              <span className="w-10 h-10 rounded-full bg-[#FFF6EA] text-[#B05A26] flex items-center justify-center font-bold mb-3">
+                1
               </span>
+              <h3 className="font-semibold text-base text-[#4A2A1C] mb-1.5">
+                Kurasi Ketat &amp; Berkelanjutan
+              </h3>
+              <p className="text-xs text-[#7A5644] leading-relaxed">
+                Setiap buku dipilih langsung berdasarkan nilai literasi, ilustrasi yang mendidik, dan bahan cetak non-toksik yang aman bagi balita.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-[#68625D]">
-              <div className="space-y-3">
-                <div className="flex items-start gap-2.5">
-                  <MapPin size={16} className="text-[#E07A5F] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-[#2C2725] block">Alamat Lengkap:</strong>
-                    <span>Kompleks Ruko Citraland Puncak Tidar Blok HH-26, Kalisongo, Sukun, Kota Malang, Jawa Timur 65146</span>
-                  </div>
-                </div>
+            <div>
+              <span className="w-10 h-10 rounded-full bg-[#FFF6EA] text-[#B05A26] flex items-center justify-center font-bold mb-3">
+                2
+              </span>
+              <h3 className="font-semibold text-base text-[#4A2A1C] mb-1.5">
+                Komunitas &amp; Workshop Gratis
+              </h3>
+              <p className="text-xs text-[#7A5644] leading-relaxed">
+                Kami rutin mengadakan sesi mendongeng dan kelas kreasi sensorik setiap akhir pekan tanpa memungut biaya dari keluarga di Malang.
+              </p>
+            </div>
 
-                <div className="flex items-start gap-2.5">
-                  <Clock size={16} className="text-[#E07A5F] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-[#2C2725] block">Jam Operasional:</strong>
-                    <span>Selasa – Minggu: 10.00 – 19.00 WIB</span>
-                    <span className="block text-[#8C8782]">(Senin Tutup untuk Perawatan &amp; Disinfeksi Buku)</span>
-                  </div>
-                </div>
+            <div>
+              <span className="w-10 h-10 rounded-full bg-[#FFF6EA] text-[#B05A26] flex items-center justify-center font-bold mb-3">
+                3
+              </span>
+              <h3 className="font-semibold text-base text-[#4A2A1C] mb-1.5">
+                Layanan Preloved &amp; Request Buku
+              </h3>
+              <p className="text-xs text-[#7A5644] leading-relaxed">
+                Menyediakan buku preloved berkondisi istimewa yang higienis serta layanan pencarian buku impor langka langsung ke penerbit.
+              </p>
+            </div>
+          </div>
+
+          {/* Jam Operasional & Kontak */}
+          <div className="bg-[#FFF6EA] border border-[#F2E4D6] rounded-[2px] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <Store className="w-8 h-8 text-[#B05A26] shrink-0 mt-1" />
+              <div>
+                <h4 className="font-semibold text-base text-[#4A2A1C] mb-1">
+                  Butik BabyShalls Official
+                </h4>
+                <p className="text-xs text-[#7A5644] leading-relaxed">
+                  Citraland Puncak Tidar Blok HH-26, Karangbesuki, Sukun, Kota Malang, Jawa Timur 65146
+                </p>
+                <p className="text-xs text-[#B05A26] font-medium mt-1">
+                  Buka Setiap Hari: 09.00 – 19.00 WIB
+                </p>
               </div>
-
-              <div className="space-y-3">
-                <div className="flex items-start gap-2.5">
-                  <Phone size={16} className="text-[#E07A5F] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-[#2C2725] block">Kontak &amp; WhatsApp Butik:</strong>
-                    <span>+62 812-3456-7890 (Customer Care)</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5">
-                  <Mail size={16} className="text-[#E07A5F] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-[#2C2725] block">Email Resmi:</strong>
-                    <span>hello@babyshalls.id / babyshalls.malang@gmail.com</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <div className="pt-4 flex flex-wrap gap-3 border-t border-[#EDE8E1]">
-              <Link
-                href="/shop"
-                className="px-6 py-3 bg-[#E07A5F] hover:bg-[#cc654b] text-white text-xs font-semibold uppercase tracking-wider rounded-md transition-colors"
-              >
-                Jelajahi Katalog Buku
-              </Link>
-              <Link
-                href="/events"
-                className="px-6 py-3 bg-[#FFFDF9] border border-[#EDE8E1] hover:border-[#E07A5F] text-[#2C2725] hover:text-[#E07A5F] text-xs font-semibold uppercase tracking-wider rounded-md transition-colors"
-              >
-                Daftar Workshop Gratis
-              </Link>
-            </div>
+            <a
+              href="https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors shrink-0"
+            >
+              Petunjuk Arah Google Maps →
+            </a>
           </div>
 
         </div>
-      </main>
+      </section>
 
+      <CampaignBanner />
       <Footer />
-      <OrderDrawer />
     </div>
   );
 }
-
