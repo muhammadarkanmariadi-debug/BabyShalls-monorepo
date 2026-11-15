@@ -1,9 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, type RequestHandler } from 'express';
 import { Role } from '@prisma/client';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { type Options as RateLimitOptions } from 'express-rate-limit';
 import { OAuth2Client } from 'google-auth-library';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
@@ -24,7 +24,11 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-const authRateLimiter = rateLimit({
+type RateLimitFactory = (options?: Partial<RateLimitOptions>) => RequestHandler;
+const rawRateLimit = rateLimit as unknown as RateLimitFactory | { default: RateLimitFactory };
+const rateLimitFactory = typeof rawRateLimit === 'function' ? rawRateLimit : rawRateLimit.default;
+
+const authRateLimiter = rateLimitFactory({
   windowMs: 15 * 60 * 1000, // 15 menit
   max: 15,
   standardHeaders: true,
