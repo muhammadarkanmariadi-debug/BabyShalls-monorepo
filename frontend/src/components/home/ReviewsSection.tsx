@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '../../hooks/useCms';
 
 const REVIEWS = [
   {
@@ -31,6 +32,8 @@ const REVIEWS = [
 ];
 
 export const ReviewsSection: React.FC = () => {
+  const { data: cms } = usePublicCms();
+
   return (
     <section className="py-12 lg:py-16 bg-white" id="reviews">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,10 +45,10 @@ export const ReviewsSection: React.FC = () => {
                   <Star key={idx} className="w-4 h-4 fill-[#FBBF24] text-[#FBBF24]" />
                 ))}
               </div>
-              <span>5.0 / 5.0 dari 500+ Orang Tua</span>
+              <span>{cms?.home_reviews_badge || DEFAULT_CMS_VALUES.home_reviews_badge}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A1A] tracking-tight">
-              Kata Mereka Tentang BabyShalls
+              {cms?.home_reviews_title || DEFAULT_CMS_VALUES.home_reviews_title}
             </h2>
           </div>
         </div>

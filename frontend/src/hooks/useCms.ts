@@ -15,6 +15,93 @@ export interface HeroSlideCms {
   imageAlt: string;
 }
 
+export type HomeSectionId =
+  | 'hero'
+  | 'shop_by_age'
+  | 'voucher_promo'
+  | 'new_arrivals'
+  | 'hampers'
+  | 'events'
+  | 'reviews';
+
+export const DEFAULT_HOME_SECTION_ORDER: HomeSectionId[] = [
+  'hero',
+  'shop_by_age',
+  'voucher_promo',
+  'new_arrivals',
+  'hampers',
+  'events',
+  'reviews',
+];
+
+export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
+  hero: 'Hero Carousel',
+  shop_by_age: 'Shop by Age',
+  voucher_promo: 'Voucher & Flash Sale',
+  new_arrivals: 'New In / Terlaris / Preloved',
+  hampers: 'Gift Hampers',
+  events: 'Workshops & Events',
+  reviews: 'Ulasan Orang Tua',
+};
+
+export type AboutSectionId =
+  | 'banner'
+  | 'intro'
+  | 'block_1'
+  | 'block_2'
+  | 'block_3'
+  | 'visit';
+
+export const DEFAULT_ABOUT_SECTION_ORDER: AboutSectionId[] = [
+  'banner',
+  'intro',
+  'block_1',
+  'block_2',
+  'block_3',
+  'visit',
+];
+
+export const ABOUT_SECTION_LABELS: Record<AboutSectionId, string> = {
+  banner: 'Banner Judul Utama',
+  intro: 'Paragraf Pengantar',
+  block_1: 'Blok Editorial 1 (The Shop)',
+  block_2: 'Blok Editorial 2 (The Books & Toys)',
+  block_3: 'Blok Editorial 3 (The Community)',
+  visit: 'Info Kunjungan & Jam Buka',
+};
+
+export interface FaqItemCms {
+  id: string;
+  q: string;
+  a: string;
+}
+
+export const DEFAULT_FAQ_ITEMS: FaqItemCms[] = [
+  {
+    id: 'faq-1',
+    q: 'Dari mana pesanan buku dan mainan BabyShalls dikirim?',
+    a: 'Seluruh pesanan dikemas dan dikirim langsung dari butik kami di Jl. Cempaka No. 12, Kota Malang menggunakan kurir terintegrasi KiriminAja (JNE, J&T, SiCepat, Pos Indonesia).',
+  },
+  {
+    id: 'faq-2',
+    q: 'Apakah layanan bungkus kado (Free Gift Wrapping) benar-benar gratis?',
+    a: 'Ya, 100% gratis! Anda dapat mencentang opsi Free Gift Wrapping saat checkout dan menuliskan pesan untuk kartu ucapan tanpa biaya tambahan.',
+  },
+  {
+    id: 'faq-3',
+    q: 'Apakah mainan kayu BabyShalls aman jika digigit balita?',
+    a: 'Aman. Mainan kayu kami menggunakan kayu solid halus bebas serpihan dan cat water-based non-toxic bersertifikasi SNI dan EN71.',
+  },
+  {
+    id: 'faq-4',
+    q: 'Bagaimana proses sanitasi buku dan mainan Preloved Kurasi?',
+    a: 'Setiap barang preloved melalui kurasi fisik ketat, dibersihkan dengan cairan food-grade, dan disterilkan menggunakan sinar UV-C sebelum dikemas.',
+  },
+];
+
+export const DEFAULT_GMAPS_EMBED_URL =
+  'https://maps.google.com/maps?q=Jl.%20Cempaka%20No.%2012%2C%20Lowokwaru%2C%20Kota%20Malang&t=&z=15&ie=UTF8&iwloc=&output=embed';
+
 export const DEFAULT_HERO_SLIDES: HeroSlideCms[] = [
   {
     id: 1,
@@ -56,10 +143,22 @@ export const DEFAULT_CMS_VALUES: Record<string, string> = {
   announcement_text_2: 'Pengiriman Terverifikasi Kota Malang (KiriminAja)',
   announcement_wa_url: 'https://wa.me/6281234567890',
   announcement_wa_label: 'WhatsApp CS',
+  home_shop_age_title: 'Shop by Age',
+  home_flash_sale_title: 'Flash Sale BabyShalls',
+  home_flash_sale_cta: 'Lihat Semua Promo →',
+  home_new_tab_new: 'New In!',
+  home_new_tab_bestseller: 'Produk Terlaris',
+  home_new_tab_preloved: 'Preloved Kurasi',
+  home_new_cta: 'Lihat Semua Katalog →',
   hampers_title: 'Gift Hampers',
   hampers_description:
     'Kado kelahiran, ulang tahun, atau acara spesial anak — dirangkai rapi dengan pita katun dan kartu ucapan personal.',
   hampers_image: '/images/hampers-gift.jpg',
+  home_events_badge: 'KOMUNITAS MALANG',
+  home_events_title: 'Workshops & Events',
+  home_events_cta: 'Lihat Semua Jadwal',
+  home_reviews_badge: '5.0 / 5.0 dari 500+ Orang Tua',
+  home_reviews_title: 'Kata Mereka Tentang BabyShalls',
   about_banner_title: 'Welcome to BabyShalls!',
   about_intro_1:
     'BabyShalls adalah butik kurasi buku anak berbahasa Inggris & Indonesia serta mainan kayu edukasi Montessori yang berlokasi di jantung Kota Malang. Kami menyediakan koleksi baru, preloved higienis bersanitasi UV, hingga paket hampers untuk segala usia anak.',
@@ -86,6 +185,16 @@ export const DEFAULT_CMS_VALUES: Record<string, string> = {
   about_visit_address: 'Jl. Cempaka No. 12, Lowokwaru, Kota Malang, Jawa Timur 65141',
   about_hours_weekday: 'Senin – Jumat: 09:00 – 17:00 WIB',
   about_hours_weekend: 'Sabtu – Minggu: 09:00 – 18:00 WIB',
+  footer_gmaps_embed_url: DEFAULT_GMAPS_EMBED_URL,
+  social_whatsapp_url: 'https://wa.me/6281234567890',
+  social_instagram_url: 'https://instagram.com/babyshalls.id',
+  social_tiktok_url: 'https://tiktok.com/@babyshalls.id',
+  social_email: 'hello@babyshalls.id',
+  faq_page_title: 'Tanya Jawab (FAQ)',
+  faq_page_subtitle: 'Informasi seputar pengiriman dari Malang, gift wrapping, dan keamanan mainan anak.',
+  faq_wa_title: 'Masih ada pertanyaan lain?',
+  faq_wa_subtitle: 'Tim CS BabyShalls Malang siap membantu via WhatsApp.',
+  faq_wa_url: 'https://wa.me/6281234567890',
 };
 
 export function usePublicCms() {
@@ -112,3 +221,56 @@ export function parseHeroSlides(rawJson?: string): HeroSlideCms[] {
   return DEFAULT_HERO_SLIDES;
 }
 
+export function parseSectionOrder<T extends string>(rawJson: string | undefined, defaults: T[]): T[] {
+  if (!rawJson) return defaults;
+  try {
+    const parsed = JSON.parse(rawJson);
+    if (Array.isArray(parsed)) {
+      const validSet = new Set(defaults);
+      const filtered = parsed.filter((item): item is T => typeof item === 'string' && validSet.has(item as T));
+      const missing = defaults.filter((item) => !filtered.includes(item));
+      const merged = [...filtered, ...missing];
+      if (merged.length > 0) return merged;
+    }
+  } catch {
+    // fallback
+  }
+  return defaults;
+}
+
+export function parseFaqItems(rawJson?: string): FaqItemCms[] {
+  if (!rawJson) return DEFAULT_FAQ_ITEMS;
+  try {
+    const parsed = JSON.parse(rawJson);
+    if (Array.isArray(parsed)) {
+      const valid = parsed.filter(
+        (item): item is FaqItemCms =>
+          item &&
+          typeof item === 'object' &&
+          typeof item.q === 'string' &&
+          typeof item.a === 'string' &&
+          item.q.trim().length > 0
+      );
+      if (valid.length > 0) return valid;
+    }
+  } catch {
+    // fallback
+  }
+  return DEFAULT_FAQ_ITEMS;
+}
+
+/**
+ * Extract a safe Google Maps embed URL from either a direct URL or a pasted <iframe src="..."> snippet.
+ */
+export function extractGmapsEmbedUrl(raw?: string): string {
+  const value = (raw || '').trim();
+  if (!value) return DEFAULT_GMAPS_EMBED_URL;
+
+  const iframeMatch = value.match(/src=["']([^"']+)["']/i);
+  const candidate = (iframeMatch ? iframeMatch[1] : value).trim();
+
+  if (/^https:\/\/(www\.)?(google\.com|maps\.google\.com)\/maps/i.test(candidate)) {
+    return candidate;
+  }
+  return DEFAULT_GMAPS_EMBED_URL;
+}

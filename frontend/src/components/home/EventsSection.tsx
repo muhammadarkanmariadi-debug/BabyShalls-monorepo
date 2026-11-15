@@ -2,10 +2,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Calendar, MapPin, Store } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { isReducedMotion } from '@/lib/motion';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '@/hooks/useCms';
 import { RequestBookForm } from '../request-book/RequestBookForm';
 
 if (typeof window !== 'undefined') {
@@ -13,6 +14,7 @@ if (typeof window !== 'undefined') {
 }
 
 export const EventsSection: React.FC = () => {
+  const { data: cms } = usePublicCms();
   const containerRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
@@ -53,17 +55,17 @@ export const EventsSection: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-wider text-[#1E543B] mb-1">
-                KOMUNITAS MALANG
+                {cms?.home_events_badge || DEFAULT_CMS_VALUES.home_events_badge}
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A1A] tracking-tight">
-                Workshops &amp; Events
+                {cms?.home_events_title || DEFAULT_CMS_VALUES.home_events_title}
               </h2>
             </div>
             <Link
               href="/events"
               className="inline-flex items-center gap-1.5 text-sm font-bold text-[#1A1A1A] hover:text-[#1E543B] transition-colors min-h-[44px]"
             >
-              <span>Lihat Semua Jadwal</span>
+              <span>{cms?.home_events_cta || DEFAULT_CMS_VALUES.home_events_cta}</span>
               <span>→</span>
             </Link>
           </div>
@@ -153,47 +155,7 @@ export const EventsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. Butik Fisik Kota Malang */}
-        <div className="rounded-3xl bg-[#F8FAFC] border border-[#E5E7EB] overflow-hidden grid grid-cols-1 md:grid-cols-[48%_52%] items-center">
-          <div className="h-72 md:h-full min-h-[320px] relative overflow-hidden bg-[#F1F5F9]">
-            <iframe
-              title="Peta Lokasi Butik BabyShalls Kota Malang"
-              src="https://maps.google.com/maps?q=Jl.%20Cempaka%20No.%2012%2C%20Lowokwaru%2C%20Kota%20Malang&t=&z=15&ie=UTF8&iwloc=&output=embed"
-              className="w-full h-full border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
-            />
-          </div>
-          <div className="p-8 sm:p-10 space-y-4">
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1E543B]">
-              <Store className="w-4 h-4" />
-              <span>BUTIK FISIK KOTA MALANG</span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A1A] tracking-tight">
-              Kunjungi Pojok Baca &amp; Bermain Kami
-            </h3>
-            <p className="text-sm text-[#4A4A4A] leading-relaxed">
-              Jl. Cempaka No. 12, Lowokwaru, Kota Malang • Buka setiap hari pukul 09.00 – 17.00 WIB. Anak-anak bebas mencoba mainan kayu Montessori dan membaca langsung di tempat.
-            </p>
-            <div className="pt-1 flex flex-wrap gap-3">
-              <Link
-                href="/about"
-                className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-full bg-white border border-[#E5E7EB] hover:border-[#1A1A1A] text-sm font-bold text-[#1A1A1A] transition-colors"
-              >
-                Tentang BabyShalls
-              </Link>
-              <Link
-                href="/catalog"
-                className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-full bg-[#F5B7A1] hover:bg-[#ED9E84] text-sm font-bold text-[#1A1A1A] transition-colors"
-              >
-                Lihat Stok Toko
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Form Request a Book (Langsung di bawah section Maps) */}
+        {/* 3. Form Request a Book (Langsung di bawah section Maps)
         <div className="rounded-3xl bg-white border border-[#E5E7EB] p-6 sm:p-10 space-y-6">
           <div className="max-w-2xl space-y-1.5">
             <h3 className="text-xl sm:text-2xl font-extrabold text-[#1A1A1A] tracking-tight">
@@ -204,7 +166,7 @@ export const EventsSection: React.FC = () => {
             </p>
           </div>
           <RequestBookForm compact />
-        </div>
+        </div> */}
       </div>
     </section>
   );

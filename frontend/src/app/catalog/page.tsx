@@ -7,6 +7,7 @@ import {
   SlidersHorizontal,
   Star,
   RotateCcw,
+  X,
 } from 'lucide-react';
 import { useStorefrontProducts } from '../../hooks/useProducts';
 import { ProductCard } from '../../components/product/ProductCard';
@@ -79,6 +80,18 @@ function CatalogContent() {
   const [minRating, setMinRating] = useState<number>(0);
   const [onlyDiscount, setOnlyDiscount] = useState<boolean>(false);
   const [onlyInStock, setOnlyInStock] = useState<boolean>(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
+
+  const activeFilterCount = [
+    selectedCategory !== 'all',
+    selectedSub !== 'all',
+    selectedAge !== 'all',
+    appliedMinPrice !== null || appliedMaxPrice !== null,
+    conditionFilter !== 'all',
+    minRating > 0,
+    onlyDiscount,
+    onlyInStock,
+  ].filter(Boolean).length;
 
   useEffect(() => {
     setSelectedAge(searchParams.get('age') || 'all');
@@ -218,6 +231,212 @@ function CatalogContent() {
     allProducts,
   ]);
 
+  const filterPanelContent = (
+    <>
+      <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-3">
+        <div className="flex items-center gap-2 text-sm font-extrabold text-[#1A1A1A]">
+          <SlidersHorizontal className="w-4 h-4 text-[#1E543B]" />
+          <span>FILTER</span>
+        </div>
+        <button
+          type="button"
+          onClick={resetAllFilters}
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#6B7280] hover:text-[#1A1A1A]"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Reset</span>
+        </button>
+      </div>
+
+      {/* 1. Kategori Utama */}
+      <div className="space-y-2.5">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
+          Kategori
+        </h2>
+        <div className="space-y-1.5">
+          {categories.map((cat) => (
+            <button
+              key={cat.value}
+              type="button"
+              onClick={() => updateUrlCategory(cat.value)}
+              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                selectedCategory === cat.value
+                  ? 'bg-[#FDF0B8] text-[#1A1A1A] font-bold'
+                  : 'text-[#4A4A4A] hover:bg-[#F8FAFC]'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. Sub-Kategori Dinamis */}
+      <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
+          Sub-Kategori
+        </h2>
+        <div className="flex flex-wrap gap-1.5">
+          {currentSubCategories.map((subItem) => (
+            <button
+              key={subItem.value}
+              type="button"
+              onClick={() => setSelectedSub(subItem.value)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors ${
+                selectedSub === subItem.value
+                  ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                  : 'bg-[#F8FAFC] text-[#4A4A4A] border-[#E5E7EB] hover:border-[#1A1A1A]'
+              }`}
+            >
+              {subItem.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. Kelompok Usia */}
+      <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
+          Kelompok Usia
+        </h2>
+        <div className="space-y-1">
+          {ageGroups.map((age) => (
+            <label
+              key={age.value}
+              className="flex items-center gap-2.5 py-1 text-xs font-semibold text-[#4A4A4A] cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="ageGroup"
+                checked={selectedAge === age.value}
+                onChange={() => setSelectedAge(age.value)}
+                className="accent-[#1E543B]"
+              />
+              <span>{age.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Batas Harga (Range Harga) */}
+      <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
+          Batas Harga (Rp)
+        </h2>
+        <form onSubmit={handleApplyPriceRange} className="space-y-2.5">
+          <div className="flex items-center gap-2">
+            <CurrencyInput
+              value={minPriceInput}
+              onChange={setMinPriceInput}
+              placeholder="MIN"
+              ariaLabel="Harga Minimal"
+              className="w-full rounded-lg"
+              inputClassName="h-[36px] px-2"
+            />
+            <span className="text-xs text-[#6B7280]">-</span>
+            <CurrencyInput
+              value={maxPriceInput}
+              onChange={setMaxPriceInput}
+              placeholder="MAX"
+              ariaLabel="Harga Maksimal"
+              className="w-full rounded-lg"
+              inputClassName="h-[36px] px-2"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full min-h-[38px] rounded-lg bg-[#F5B7A1] hover:bg-[#ED9E84] text-[#1A1A1A] text-xs font-bold transition-colors"
+          >
+            TERAPKAN
+          </button>
+        </form>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => applyPresetPrice(0, 100000)}
+            className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
+          >
+            &lt; 100rb
+          </button>
+          <button
+            type="button"
+            onClick={() => applyPresetPrice(100000, 200000)}
+            className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
+          >
+            100rb - 200rb
+          </button>
+          <button
+            type="button"
+            onClick={() => applyPresetPrice(200000, null)}
+            className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
+          >
+            &gt; 200rb
+          </button>
+        </div>
+      </div>
+
+      {/* 5. Kondisi Barang & Rating */}
+      <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
+          Kondisi &amp; Penilaian
+        </h2>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { label: 'Semua', value: 'all' },
+            { label: 'Baru (New)', value: 'new' },
+            { label: 'Preloved', value: 'preloved' },
+          ].map((cond) => (
+            <button
+              key={cond.value}
+              type="button"
+              onClick={() => setConditionFilter(cond.value as ConditionFilter)}
+              className={`px-3 py-1 rounded-full text-[11px] font-bold border ${
+                conditionFilter === cond.value
+                  ? 'bg-[#E9F3E4] border-[#1E543B] text-[#1E543B]'
+                  : 'bg-white border-[#E5E7EB] text-[#4A4A4A]'
+              }`}
+            >
+              {cond.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-1.5 pt-2">
+          <button
+            type="button"
+            onClick={() => setMinRating((r) => (r === 5 ? 0 : 5))}
+            className={`w-full flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+              minRating === 5
+                ? 'bg-[#FDF0B8] border-[#FCE694] text-[#1A1A1A]'
+                : 'bg-white border-[#E5E7EB] text-[#4A4A4A]'
+            }`}
+          >
+            <Star className="w-3.5 h-3.5 fill-[#FBBF24] text-[#FBBF24]" />
+            <span>Rating 5.0 Bintang</span>
+          </button>
+          <label className="flex items-center gap-2 text-xs font-semibold text-[#4A4A4A] pt-1 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={onlyDiscount}
+              onChange={(e) => setOnlyDiscount(e.target.checked)}
+              className="accent-[#1E543B]"
+            />
+            <span>Sedang Promo / Diskon</span>
+          </label>
+          <label className="flex items-center gap-2 text-xs font-semibold text-[#4A4A4A] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={onlyInStock}
+              onChange={(e) => setOnlyInStock(e.target.checked)}
+              className="accent-[#1E543B]"
+            />
+            <span>Stok Tersedia</span>
+          </label>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="py-8 lg:py-12 bg-[#F8FAFC] min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
@@ -232,215 +451,46 @@ function CatalogContent() {
 
         {/* SHOPEE-STYLE 2-COLUMN CATALOG LAYOUT */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* LEFT FILTER SIDEBAR */}
-          <aside className="lg:col-span-3 bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-6">
-            <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-3">
-              <div className="flex items-center gap-2 text-sm font-extrabold text-[#1A1A1A]">
-                <SlidersHorizontal className="w-4 h-4 text-[#1E543B]" />
-                <span>FILTER</span>
-              </div>
-              <button
-                type="button"
-                onClick={resetAllFilters}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#6B7280] hover:text-[#1A1A1A]"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset</span>
-              </button>
-            </div>
-
-            {/* 1. Kategori Utama */}
-            <div className="space-y-2.5">
-              <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
-                Kategori
-              </h2>
-              <div className="space-y-1.5">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.value}
-                    type="button"
-                    onClick={() => updateUrlCategory(cat.value)}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
-                      selectedCategory === cat.value
-                        ? 'bg-[#FDF0B8] text-[#1A1A1A] font-bold'
-                        : 'text-[#4A4A4A] hover:bg-[#F8FAFC]'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 2. Sub-Kategori Dinamis */}
-            <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
-              <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
-                Sub-Kategori
-              </h2>
-              <div className="flex flex-wrap gap-1.5">
-                {currentSubCategories.map((subItem) => (
-                  <button
-                    key={subItem.value}
-                    type="button"
-                    onClick={() => setSelectedSub(subItem.value)}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors ${
-                      selectedSub === subItem.value
-                        ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                        : 'bg-[#F8FAFC] text-[#4A4A4A] border-[#E5E7EB] hover:border-[#1A1A1A]'
-                    }`}
-                  >
-                    {subItem.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 3. Kelompok Usia */}
-            <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
-              <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
-                Kelompok Usia
-              </h2>
-              <div className="space-y-1">
-                {ageGroups.map((age) => (
-                  <label
-                    key={age.value}
-                    className="flex items-center gap-2.5 py-1 text-xs font-semibold text-[#4A4A4A] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="ageGroup"
-                      checked={selectedAge === age.value}
-                      onChange={() => setSelectedAge(age.value)}
-                      className="accent-[#1E543B]"
-                    />
-                    <span>{age.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* 4. Batas Harga (Range Harga) */}
-            <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
-              <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
-                Batas Harga (Rp)
-              </h2>
-              <form onSubmit={handleApplyPriceRange} className="space-y-2.5">
-                <div className="flex items-center gap-2">
-                  <CurrencyInput
-                    value={minPriceInput}
-                    onChange={setMinPriceInput}
-                    placeholder="MIN"
-                    ariaLabel="Harga Minimal"
-                    className="w-full rounded-lg"
-                    inputClassName="h-[36px] px-2"
-                  />
-                  <span className="text-xs text-[#6B7280]">-</span>
-                  <CurrencyInput
-                    value={maxPriceInput}
-                    onChange={setMaxPriceInput}
-                    placeholder="MAX"
-                    ariaLabel="Harga Maksimal"
-                    className="w-full rounded-lg"
-                    inputClassName="h-[36px] px-2"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full min-h-[38px] rounded-lg bg-[#F5B7A1] hover:bg-[#ED9E84] text-[#1A1A1A] text-xs font-bold transition-colors"
-                >
-                  TERAPKAN
-                </button>
-              </form>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => applyPresetPrice(0, 100000)}
-                  className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
-                >
-                  &lt; 100rb
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyPresetPrice(100000, 200000)}
-                  className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
-                >
-                  100rb - 200rb
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyPresetPrice(200000, null)}
-                  className="px-2.5 py-1 rounded-full bg-[#FAF4E8] text-[11px] font-semibold text-[#1A1A1A]"
-                >
-                  &gt; 200rb
-                </button>
-              </div>
-            </div>
-
-            {/* 5. Kondisi Barang & Rating */}
-            <div className="space-y-2.5 pt-4 border-t border-[#F3F4F6]">
-              <h2 className="text-xs font-extrabold uppercase tracking-wider text-[#1A1A1A]">
-                Kondisi &amp; Penilaian
-              </h2>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  { label: 'Semua', value: 'all' },
-                  { label: 'Baru (New)', value: 'new' },
-                  { label: 'Preloved', value: 'preloved' },
-                ].map((cond) => (
-                  <button
-                    key={cond.value}
-                    type="button"
-                    onClick={() => setConditionFilter(cond.value as ConditionFilter)}
-                    className={`px-3 py-1 rounded-full text-[11px] font-bold border ${
-                      conditionFilter === cond.value
-                        ? 'bg-[#E9F3E4] border-[#1E543B] text-[#1E543B]'
-                        : 'bg-white border-[#E5E7EB] text-[#4A4A4A]'
-                    }`}
-                  >
-                    {cond.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="space-y-1.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setMinRating((r) => (r === 5 ? 0 : 5))}
-                  className={`w-full flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
-                    minRating === 5
-                      ? 'bg-[#FDF0B8] border-[#FCE694] text-[#1A1A1A]'
-                      : 'bg-white border-[#E5E7EB] text-[#4A4A4A]'
-                  }`}
-                >
-                  <Star className="w-3.5 h-3.5 fill-[#FBBF24] text-[#FBBF24]" />
-                  <span>Rating 5.0 Bintang</span>
-                </button>
-                <label className="flex items-center gap-2 text-xs font-semibold text-[#4A4A4A] pt-1 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={onlyDiscount}
-                    onChange={(e) => setOnlyDiscount(e.target.checked)}
-                    className="accent-[#1E543B]"
-                  />
-                  <span>Sedang Promo / Diskon</span>
-                </label>
-                <label className="flex items-center gap-2 text-xs font-semibold text-[#4A4A4A] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={onlyInStock}
-                    onChange={(e) => setOnlyInStock(e.target.checked)}
-                    className="accent-[#1E543B]"
-                  />
-                  <span>Stok Tersedia</span>
-                </label>
-              </div>
-            </div>
+          {/* LEFT FILTER SIDEBAR (Desktop only) */}
+          <aside className="hidden lg:block lg:col-span-3 bg-white border border-[#E5E7EB] rounded-2xl p-5 space-y-6">
+            {filterPanelContent}
           </aside>
 
           {/* RIGHT MAIN CATALOG AREA */}
           <div className="lg:col-span-9 space-y-5">
-            {/* Shopee-style Sort & Search Bar */}
+            {/* Shopee-style Mobile Filter Button + Sort & Search Bar */}
             <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 space-y-3">
+              {/* Mobile Filter Trigger Bar */}
+              <div className="flex lg:hidden items-center justify-between gap-2 pb-3 border-b border-[#F3F4F6]">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-[#1E543B] bg-[#E9F3E4]/60 text-[#1E543B] text-xs font-extrabold hover:bg-[#E9F3E4] transition-colors"
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>Filter</span>
+                    {activeFilterCount > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#1E543B] text-white text-[10px]">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                  {activeFilterCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={resetAllFilters}
+                      className="inline-flex items-center gap-1 h-10 px-3 rounded-xl border border-[#E5E7EB] bg-white text-[#6B7280] text-xs font-bold hover:text-[#1A1A1A]"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Reset</span>
+                    </button>
+                  )}
+                </div>
+                <span className="text-xs font-bold text-[#6B7280]">
+                  {filteredProducts.length} produk
+                </span>
+              </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs font-bold text-[#6B7280] mr-1">Urutkan:</span>
@@ -512,6 +562,58 @@ function CatalogContent() {
           </div>
         </div>
       </div>
+
+      {/* Shopee-style Mobile Filter Drawer */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
+          <div
+            onClick={() => setIsMobileFilterOpen(false)}
+            className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+          />
+          <div className="relative w-full max-w-sm bg-white h-full shadow-2xl z-10 flex flex-col">
+            <div className="px-5 py-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#FFF8EF]">
+              <div className="flex items-center gap-2 text-sm font-extrabold text-[#1A1A1A]">
+                <SlidersHorizontal className="w-4 h-4 text-[#1E543B]" />
+                <span>Filter Katalog</span>
+                {activeFilterCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-[#1E543B] text-white text-[10px]">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="w-9 h-9 rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center text-[#1A1A1A]"
+                aria-label="Tutup filter"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+              {filterPanelContent}
+            </div>
+
+            <div className="p-4 border-t border-[#E5E7EB] bg-white flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={resetAllFilters}
+                className="h-11 px-4 rounded-xl border border-[#E5E7EB] bg-white text-xs font-bold text-[#4A4A4A]"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="flex-1 h-11 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] text-white text-xs font-extrabold transition-colors"
+              >
+                Lihat {filteredProducts.length} Produk
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

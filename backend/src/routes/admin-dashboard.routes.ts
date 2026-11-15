@@ -61,7 +61,7 @@ const updateBookRequestSchema = z.object({
   adminNotes: z.string().trim().max(1000).optional().nullable(),
 });
 
-const updateCmsSchema = z.record(z.string().trim().min(1), z.string().max(5000));
+const updateCmsSchema = z.record(z.string().trim().min(1), z.string().max(50000));
 
 function toSlug(input: string): string {
   return input

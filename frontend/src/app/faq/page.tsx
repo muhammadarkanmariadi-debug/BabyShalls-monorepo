@@ -2,32 +2,22 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, Search, HelpCircle } from 'lucide-react';
-
-const FAQS = [
-  {
-    q: 'Dari mana pesanan buku dan mainan BabyShalls dikirim?',
-    a: 'Seluruh pesanan dikemas dan dikirim langsung dari butik kami di Jl. Cempaka No. 12, Kota Malang menggunakan kurir terintegrasi KiriminAja (JNE, J&T, SiCepat, Pos Indonesia).',
-  },
-  {
-    q: 'Apakah layanan bungkus kado (Free Gift Wrapping) benar-benar gratis?',
-    a: 'Ya, 100% gratis! Anda dapat mencentang opsi Free Gift Wrapping saat checkout dan menuliskan pesan untuk kartu ucapan tanpa biaya tambahan.',
-  },
-  {
-    q: 'Apakah mainan kayu BabyShalls aman jika digigit balita?',
-    a: 'Aman. Mainan kayu kami menggunakan kayu solid halus bebas serpihan dan cat water-based non-toxic bersertifikasi SNI dan EN71.',
-  },
-  {
-    q: 'Bagaimana proses sanitasi buku dan mainan Preloved Kurasi?',
-    a: 'Setiap barang preloved melalui kurasi fisik ketat, dibersihkan dengan cairan food-grade, dan disterilkan menggunakan sinar UV-C sebelum dikemas.',
-  },
-];
+import { ChevronDown, Search } from 'lucide-react';
+import { DEFAULT_CMS_VALUES, parseFaqItems, usePublicCms } from '../../hooks/useCms';
 
 export default function FAQPage() {
+  const { data: cms } = usePublicCms();
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   const [query, setQuery] = useState('');
 
-  const filtered = FAQS.filter(
+  const faqs = parseFaqItems(cms?.faq_items_json);
+  const pageTitle = cms?.faq_page_title || DEFAULT_CMS_VALUES.faq_page_title;
+  const pageSubtitle = cms?.faq_page_subtitle || DEFAULT_CMS_VALUES.faq_page_subtitle;
+  const waTitle = cms?.faq_wa_title || DEFAULT_CMS_VALUES.faq_wa_title;
+  const waSubtitle = cms?.faq_wa_subtitle || DEFAULT_CMS_VALUES.faq_wa_subtitle;
+  const waUrl = cms?.faq_wa_url || DEFAULT_CMS_VALUES.faq_wa_url;
+
+  const filtered = faqs.filter(
     (item) =>
       item.q.toLowerCase().includes(query.toLowerCase()) ||
       item.a.toLowerCase().includes(query.toLowerCase())
@@ -37,13 +27,10 @@ export default function FAQPage() {
     <div className="bg-white min-h-screen py-12 lg:py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-8">
         <div className="text-center space-y-2">
-
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1A1A] tracking-tight">
-            Tanya Jawab (FAQ)
+            {pageTitle}
           </h1>
-          <p className="text-sm text-[#6B7280]">
-            Informasi seputar pengiriman dari Malang, gift wrapping, dan keamanan mainan anak.
-          </p>
+          <p className="text-sm text-[#6B7280]">{pageSubtitle}</p>
         </div>
 
         <div className="relative">
@@ -62,7 +49,7 @@ export default function FAQPage() {
             const isOpen = openIdx === idx;
             return (
               <div
-                key={item.q}
+                key={item.id || item.q}
                 className="border border-[#E5E7EB] rounded-2xl overflow-hidden bg-white"
               >
                 <button
@@ -83,15 +70,20 @@ export default function FAQPage() {
               </div>
             );
           })}
+          {filtered.length === 0 && (
+            <p className="text-center text-sm text-[#6B7280] py-8">
+              Tidak ada pertanyaan yang cocok dengan pencarian Anda.
+            </p>
+          )}
         </div>
 
         <div className="p-6 rounded-2xl bg-[#E9F3E4] border border-[#D4E6CA] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-extrabold text-[#1A1A1A]">Masih ada pertanyaan lain?</h2>
-            <p className="text-xs text-[#4A4A4A]">Tim CS BabyShalls Malang siap membantu via WhatsApp.</p>
+            <h2 className="text-sm font-extrabold text-[#1A1A1A]">{waTitle}</h2>
+            <p className="text-xs text-[#4A4A4A]">{waSubtitle}</p>
           </div>
           <Link
-            href="https://wa.me/6281234567890"
+            href={waUrl}
             target="_blank"
             className="min-h-[44px] inline-flex items-center px-6 rounded-full bg-[#25D366] text-white text-xs font-bold"
           >

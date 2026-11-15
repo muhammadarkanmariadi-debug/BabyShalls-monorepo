@@ -25,6 +25,7 @@ export interface AccountAddress {
   streetAddress: string;
   city: string;
   subdistrict: string;
+  subdistrictId?: number | null;
   postalCode: string;
   isDefault: boolean;
 }

@@ -23,11 +23,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'request', label: 'Request a Book', href: '/request-book', highlight: true },
 ];
 
-interface NavbarProps {
-  onOpenRequestBook?: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ onOpenRequestBook }) => {
+export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const category = (searchParams.get('category') || '').toLowerCase();
@@ -81,19 +77,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRequestBook }) => {
               ? 'font-bold text-[#1E543B] hover:bg-[#E9F3E4]/60'
               : 'font-medium text-[#555555] hover:text-[#1A1A1A] hover:bg-[#F8FAFC]'
           }`;
-
-          if (item.key === 'request' && onOpenRequestBook) {
-            return (
-              <button
-                key={item.key}
-                type="button"
-                onClick={onOpenRequestBook}
-                className={className}
-              >
-                {item.label}
-              </button>
-            );
-          }
 
           return (
             <Link

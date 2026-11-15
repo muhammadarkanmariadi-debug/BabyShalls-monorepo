@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Heart,
   LogIn,
+  Sparkles,
 } from 'lucide-react';
 import {
   AGE_GROUPS_DROPDOWN,
@@ -25,14 +26,41 @@ import {
   TOYS_CATEGORIES_DROPDOWN,
   HAMPERS_CATEGORIES_DROPDOWN,
 } from '@/data/categories';
+import { HeaderSearchBar } from './HeaderSearchBar';
 
 interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenRequestBook?: () => void;
 }
 
-export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, onOpenRequestBook }) => {
+const ACCORDION_SECTIONS = [
+  {
+    key: 'age',
+    label: 'Shop by Age',
+    icon: Sparkles,
+    dropdown: AGE_GROUPS_DROPDOWN,
+  },
+  {
+    key: 'books',
+    label: 'Books',
+    icon: BookOpen,
+    dropdown: BOOKS_CATEGORIES_DROPDOWN,
+  },
+  {
+    key: 'toys',
+    label: 'Toys',
+    icon: Shapes,
+    dropdown: TOYS_CATEGORIES_DROPDOWN,
+  },
+  {
+    key: 'hampers',
+    label: 'Hampers & Gifts',
+    icon: Gift,
+    dropdown: HAMPERS_CATEGORIES_DROPDOWN,
+  },
+] as const;
+
+export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -43,305 +71,218 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, onO
     setIsAuthenticated(Boolean(token));
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const toggleSection = (section: string) => {
     setExpandedSection((prev) => (prev === section ? null : section));
   };
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
+    <div
+      className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-300 ${
+        isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+      aria-hidden={!isOpen}
+    >
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs"
       />
 
-      {/* Drawer Content */}
-      <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-drawer p-6 flex flex-col justify-between overflow-y-auto z-10 border-r border-[#E5E7EB]">
-        <div>
+      {/* Top-Down Sliding Panel */}
+      <div
+        className={`fixed inset-x-0 top-0 max-h-[88vh] bg-white shadow-xl rounded-b-3xl border-b border-[#E5E7EB] overflow-y-auto z-10 transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <div className="max-w-2xl mx-auto px-5 pt-4 pb-6 space-y-5">
           {/* Top Brand & Close */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB]">
-            <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F6]">
+            <Link href="/" onClick={onClose} className="flex items-center">
               <img
-                src="/logo.png"
-                alt="BabyShalls Logo"
-                className="w-8 h-8 object-contain"
+                src="/images/babyshalls-logo.png"
+                alt="Baby Shall's Logo"
+                className="h-10 w-auto object-contain"
               />
-              <span className="text-base font-extrabold tracking-tight text-[#1A1A1A]">
-                BABYSHALLS
-              </span>
             </Link>
             <button
+              type="button"
               onClick={onClose}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#F8FAFC] text-[#1A1A1A]"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full border border-[#E5E7EB] hover:bg-[#F8FAFC] text-[#1A1A1A] transition-colors"
               aria-label="Tutup menu"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Navigation Accordions */}
-          <div className="mt-5 flex flex-col gap-1.5">
-            {/* 1. Shop by Age */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleSection('age')}
-                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span>Shop by Age</span>
-                </div>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'age' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
-                  }`}
-                />
-              </button>
-              {expandedSection === 'age' && (
-                <div className="pl-9 pr-2 py-1 space-y-1">
-                  <Link
-                    href={AGE_GROUPS_DROPDOWN.href}
-                    onClick={onClose}
-                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
-                  >
-                    → {AGE_GROUPS_DROPDOWN.viewAllText}
-                  </Link>
-                  {AGE_GROUPS_DROPDOWN.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={onClose}
-                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Search Bar (same as desktop) */}
+          <HeaderSearchBar className="w-full" onNavigate={onClose} />
 
-            {/* 2. Books */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleSection('books')}
-                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <BookOpen className="w-4 h-4 text-[#1E543B]" />
-                  <span>Books</span>
-                </div>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'books' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
-                  }`}
-                />
-              </button>
-              {expandedSection === 'books' && (
-                <div className="pl-9 pr-2 py-1 space-y-1">
-                  <Link
-                    href={BOOKS_CATEGORIES_DROPDOWN.href}
-                    onClick={onClose}
-                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
+          {/* Category Accordions */}
+          <div className="space-y-2">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#6B7280] px-1">
+              Kategori Kurasi
+            </p>
+            <div className="space-y-1.5">
+              {ACCORDION_SECTIONS.map(({ key, label, icon: Icon, dropdown }) => {
+                const isExpanded = expandedSection === key;
+                return (
+                  <div
+                    key={key}
+                    className="rounded-2xl border border-[#F3F4F6] bg-[#FAFAFA]/60 overflow-hidden"
                   >
-                    → {BOOKS_CATEGORIES_DROPDOWN.viewAllText}
-                  </Link>
-                  {BOOKS_CATEGORIES_DROPDOWN.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={onClose}
-                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(key)}
+                      className="w-full min-h-[46px] flex items-center justify-between px-4 py-2.5 hover:bg-[#FAF4E8]/70 font-bold text-sm text-[#1A1A1A] transition-colors"
                     >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+                      <span className="flex items-center gap-3">
+                        <Icon className="w-4 h-4 text-[#1E543B]" />
+                        <span>{label}</span>
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isExpanded ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
+                        }`}
+                      />
+                    </button>
 
-            {/* 3. Toys */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleSection('toys')}
-                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Shapes className="w-4 h-4 text-[#1E543B]" />
-                  <span>Toys</span>
-                </div>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'toys' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
-                  }`}
-                />
-              </button>
-              {expandedSection === 'toys' && (
-                <div className="pl-9 pr-2 py-1 space-y-1">
-                  <Link
-                    href={TOYS_CATEGORIES_DROPDOWN.href}
-                    onClick={onClose}
-                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
-                  >
-                    → {TOYS_CATEGORIES_DROPDOWN.viewAllText}
-                  </Link>
-                  {TOYS_CATEGORIES_DROPDOWN.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={onClose}
-                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
+                    {isExpanded && (
+                      <div className="px-4 pb-3 pt-1 space-y-2 bg-white border-t border-[#F3F4F6]">
+                        <Link
+                          href={dropdown.href}
+                          onClick={onClose}
+                          className="block py-2 px-3 text-xs font-bold text-[#1E543B] bg-[#E9F3E4]/60 hover:bg-[#E9F3E4] rounded-xl transition-colors"
+                        >
+                          → {dropdown.viewAllText}
+                        </Link>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {dropdown.items.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={item.href}
+                              onClick={onClose}
+                              className="py-2 px-3 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#FAF4E8] rounded-xl transition-colors"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            {/* 4. Hampers & Gifts */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleSection('hampers')}
-                className="w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#FAF4E8] font-bold text-sm text-[#1A1A1A] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Gift className="w-4 h-4 text-[#1E543B]" />
-                  <span>Hampers &amp; Gifts</span>
-                </div>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    expandedSection === 'hampers' ? 'rotate-180 text-[#1E543B]' : 'opacity-60'
-                  }`}
-                />
-              </button>
-              {expandedSection === 'hampers' && (
-                <div className="pl-9 pr-2 py-1 space-y-1">
-                  <Link
-                    href={HAMPERS_CATEGORIES_DROPDOWN.href}
-                    onClick={onClose}
-                    className="block py-2 px-2 text-xs font-bold text-[#1E543B] hover:bg-[#E9F3E4] rounded-lg transition-colors border-b border-[#E5E7EB] mb-1"
-                  >
-                    → {HAMPERS_CATEGORIES_DROPDOWN.viewAllText}
-                  </Link>
-                  {HAMPERS_CATEGORIES_DROPDOWN.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={onClose}
-                      className="block py-2 px-2 text-xs font-semibold text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Preloved Kurasi Link */}
+          {/* Highlighted Programs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <Link
               href="/catalog?category=Preloved"
               onClick={onClose}
-              className="flex items-center justify-between min-h-[44px] px-3 py-2 rounded-xl bg-[#E9F3E4] hover:bg-[#DCECD4] font-bold text-sm text-[#1A1A1A] transition-colors"
+              className="flex items-center justify-between min-h-[46px] px-4 py-2.5 rounded-2xl bg-[#E9F3E4] hover:bg-[#DCECD4] font-bold text-sm text-[#1A1A1A] transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <span>Preloved Kurasi</span>
-              </div>
-              <span className="text-[10px] font-bold bg-white text-[#1E543B] px-2 py-0.5 rounded-full">
+              <span>Preloved Kurasi</span>
+              <span className="text-[10px] font-bold bg-white text-[#1E543B] px-2.5 py-0.5 rounded-full">
                 Steril UV
               </span>
             </Link>
-
-            {/* Direct Links */}
             <Link
-              href="/events"
+              href="/request-book"
               onClick={onClose}
-              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-bold text-sm text-[#1A1A1A] transition-colors"
+              className="flex items-center gap-2.5 min-h-[46px] px-4 py-2.5 rounded-2xl bg-[#EBF1FA] hover:bg-[#DCE7F7] font-bold text-sm text-[#1E543B] transition-colors"
             >
-              <Calendar className="w-4 h-4 text-[#1E543B]" />
-              <span>Workshops &amp; Events</span>
-            </Link>
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onOpenRequestBook?.();
-              }}
-              className="w-full text-left flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl bg-[#EBF1FA] hover:bg-[#DCE7F7] font-bold text-sm text-[#1E543B] transition-colors cursor-pointer"
-            >
-              <BookmarkCheck className="w-4 h-4 text-[#1E543B]" />
+              <BookmarkCheck className="w-4 h-4 shrink-0" />
               <span>Request a Book (Jastip)</span>
-            </button>
-            {isAuthenticated ? (
-              <>
-                <Link
-                  href="/wishlist"
-                  onClick={onClose}
-                  className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#FDECE6] font-bold text-sm text-[#1A1A1A] transition-colors"
-                >
-                  <Heart className="w-4 h-4 text-[#1E543B]" />
-                  <span>Wishlist Saya</span>
-                </Link>
-                <Link
-                  href="/account"
-                  onClick={onClose}
-                  className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-bold text-sm text-[#1A1A1A] transition-colors"
-                >
-                  <User className="w-4 h-4 text-[#1E543B]" />
-                  <span>Akun &amp; Pesanan Saya</span>
-                </Link>
-              </>
-            ) : (
-              <Link
-                href="/account"
-                onClick={onClose}
-                className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] font-bold text-sm text-white transition-colors"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Masuk ke Akun</span>
-              </Link>
-            )}
-            <Link
-              href="/about"
-              onClick={onClose}
-              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-semibold text-sm text-[#4A4A4A] transition-colors"
-            >
-              <Info className="w-4 h-4" />
-              <span>Tentang BabyShalls</span>
-            </Link>
-            <Link
-              href="/faq"
-              onClick={onClose}
-              className="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl hover:bg-[#F8FAFC] font-semibold text-sm text-[#4A4A4A] transition-colors"
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span>Tanya Jawab (FAQ)</span>
             </Link>
           </div>
-        </div>
 
-        {/* Bottom Store Info */}
-        <div className="pt-6 border-t border-[#E5E7EB] space-y-3 text-xs text-[#4A4A4A]">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#1E543B]" />
-            <span>Jl. Cempaka No. 12, Lowokwaru, Malang</span>
+          {/* Quick Links Grid (Airy 2-Column Layout) */}
+          <div className="space-y-2">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#6B7280] px-1">
+              Menu Lainnya
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href="/events"
+                onClick={onClose}
+                className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl border border-[#F3F4F6] hover:bg-[#FAF4E8] font-bold text-xs text-[#1A1A1A] transition-colors"
+              >
+                <Calendar className="w-4 h-4 text-[#1E543B] shrink-0" />
+                <span>Workshops &amp; Events</span>
+              </Link>
+
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/wishlist"
+                    onClick={onClose}
+                    className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl border border-[#F3F4F6] hover:bg-[#FDECE6] font-bold text-xs text-[#1A1A1A] transition-colors"
+                  >
+                    <Heart className="w-4 h-4 text-[#1E543B] shrink-0" />
+                    <span>Wishlist Saya</span>
+                  </Link>
+                  <Link
+                    href="/account"
+                    onClick={onClose}
+                    className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl border border-[#F3F4F6] hover:bg-[#F8FAFC] font-bold text-xs text-[#1A1A1A] transition-colors"
+                  >
+                    <User className="w-4 h-4 text-[#1E543B] shrink-0" />
+                    <span>Akun &amp; Pesanan</span>
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/auth"
+                  onClick={onClose}
+                  className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-[#D9744A] hover:bg-[#c5633b] font-bold text-xs text-white transition-colors"
+                >
+                  <LogIn className="w-4 h-4 shrink-0" />
+                  <span>Masuk ke Akun</span>
+                </Link>
+              )}
+
+              <Link
+                href="/about"
+                onClick={onClose}
+                className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl border border-[#F3F4F6] hover:bg-[#F8FAFC] font-semibold text-xs text-[#4A4A4A] transition-colors"
+              >
+                <Info className="w-4 h-4 shrink-0" />
+                <span>Tentang BabyShalls</span>
+              </Link>
+
+              <Link
+                href="/faq"
+                onClick={onClose}
+                className="flex items-center gap-2.5 min-h-[44px] px-3.5 py-2.5 rounded-2xl border border-[#F3F4F6] hover:bg-[#F8FAFC] font-semibold text-xs text-[#4A4A4A] transition-colors"
+              >
+                <HelpCircle className="w-4 h-4 shrink-0" />
+                <span>Tanya Jawab (FAQ)</span>
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-[#1E543B]" />
-            <span>WA: +62 812-3456-7890</span>
+
+          {/* Store Footer */}
+          <div className="pt-4 border-t border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[#4A4A4A]">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#1E543B] shrink-0" />
+                <span>Jl. Cempaka No. 12, Lowokwaru, Malang</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-[#1E543B] shrink-0" />
+                <span>WA: +62 812-3456-7890</span>
+              </div>
+            </div>
+            <a
+              href="https://wa.me/6281234567890"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center min-h-[42px] px-5 bg-[#25D366] text-white font-bold rounded-full hover:bg-[#20ba59] transition-colors shrink-0"
+            >
+              Chat WhatsApp CS
+            </a>
           </div>
-          <a
-            href="https://wa.me/6281234567890"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center min-h-[44px] px-4 bg-[#25D366] text-white font-bold rounded-full hover:bg-[#20ba59] transition-colors"
-          >
-            Chat WhatsApp CS
-          </a>
         </div>
       </div>
     </div>

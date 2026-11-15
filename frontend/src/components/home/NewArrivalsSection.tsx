@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useStorefrontProducts } from '../../hooks/useProducts';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '../../hooks/useCms';
 import { ProductCard } from '../product/ProductCard';
 
 type HomeProductTab = 'new' | 'bestseller' | 'preloved';
@@ -10,6 +11,7 @@ type HomeProductTab = 'new' | 'bestseller' | 'preloved';
 export const NewArrivalsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<HomeProductTab>('new');
   const { products } = useStorefrontProducts();
+  const { data: cms } = usePublicCms();
 
   const displayProducts =
     activeTab === 'new'
@@ -24,9 +26,9 @@ export const NewArrivalsSection: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { id: 'new', label: 'New In!' },
-              { id: 'bestseller', label: 'Produk Terlaris' },
-              { id: 'preloved', label: 'Preloved Kurasi' },
+              { id: 'new', label: cms?.home_new_tab_new || DEFAULT_CMS_VALUES.home_new_tab_new },
+              { id: 'bestseller', label: cms?.home_new_tab_bestseller || DEFAULT_CMS_VALUES.home_new_tab_bestseller },
+              { id: 'preloved', label: cms?.home_new_tab_preloved || DEFAULT_CMS_VALUES.home_new_tab_preloved },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -46,7 +48,7 @@ export const NewArrivalsSection: React.FC = () => {
             href="/catalog"
             className="text-sm font-semibold text-[#1A1A1A] underline underline-offset-4 hover:text-[#1E543B]"
           >
-            Lihat Semua Katalog →
+            {cms?.home_new_cta || DEFAULT_CMS_VALUES.home_new_cta}
           </Link>
         </div>
 

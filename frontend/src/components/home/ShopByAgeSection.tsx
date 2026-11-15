@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '../../hooks/useCms';
 
 const AGE_GROUPS = [
   {
@@ -39,10 +40,13 @@ const AGE_GROUPS = [
 ];
 
 export const ShopByAgeSection: React.FC = () => {
+  const { data: cms } = usePublicCms();
+  const title = cms?.home_shop_age_title || DEFAULT_CMS_VALUES.home_shop_age_title;
+
   return (
     <section className="w-full bg-white py-12 border-b border-[#E2E8F0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-[#1A1A1A] mb-6">Shop by Age</h2>
+        <h2 className="text-2xl font-bold text-[#1A1A1A] mb-6">{title}</h2>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {AGE_GROUPS.map((group) => (

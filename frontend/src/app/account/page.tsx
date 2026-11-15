@@ -38,6 +38,7 @@ import {
   useUpdateAccountProfile,
 } from '../../hooks/useAccount';
 import { openMidtransSnap } from '../../lib/midtrans-snap';
+import { RegionOption, useSearchRegions } from '../../hooks/useShipping';
 import { useActiveCoupons, useClaimedVouchers } from '../../hooks/useCoupons';
 import { useWishlist } from '../../context/WishlistContext';
 import { PRODUCTS } from '../../data/products';
@@ -96,8 +97,22 @@ export default function AccountPage() {
   const [addrReceiver, setAddrReceiver] = useState('');
   const [addrPhone, setAddrPhone] = useState('');
   const [addrStreet, setAddrStreet] = useState('');
-  const [addrCity, setAddrCity] = useState('Kota Malang');
+  const [addrCity, setAddrCity] = useState('');
+  const [addrSubdistrict, setAddrSubdistrict] = useState('');
+  const [addrSubdistrictId, setAddrSubdistrictId] = useState<number | null>(null);
+  const [addrRegionQuery, setAddrRegionQuery] = useState('');
+  const [debouncedAddrRegionQuery, setDebouncedAddrRegionQuery] = useState('');
+  const [showAddrRegionList, setShowAddrRegionList] = useState(false);
   const [addrPostal, setAddrPostal] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAddrRegionQuery(addrRegionQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [addrRegionQuery]);
+
+  const { data: addrRegionOptions = [] } = useSearchRegions(debouncedAddrRegionQuery);
 
   useEffect(() => {
     if (profile) {
@@ -166,20 +181,29 @@ export default function AccountPage() {
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!addrSubdistrict.trim() || !addrCity.trim()) {
+      toast.error('Silakan pilih atau isi Kecamatan dan Kota/Provinsi tujuan.');
+      return;
+    }
     try {
       await createAddressMutation.mutateAsync({
         label: addrLabel,
         receiverName: addrReceiver,
         receiverPhone: addrPhone,
         streetAddress: addrStreet,
-        city: addrCity,
-        subdistrict: '-',
+        city: addrCity.trim(),
+        subdistrict: addrSubdistrict.trim(),
+        subdistrictId: addrSubdistrictId,
         postalCode: addrPostal,
         isDefault: addresses.length === 0,
       });
       setAddrReceiver('');
       setAddrPhone('');
       setAddrStreet('');
+      setAddrCity('');
+      setAddrSubdistrict('');
+      setAddrSubdistrictId(null);
+      setAddrRegionQuery('');
       setAddrPostal('');
       toast.success('Alamat baru tersimpan.');
     } catch (err) {
@@ -408,7 +432,63 @@ export default function AccountPage() {
                 <input type="text" required value={addrLabel} onChange={(e) => setAddrLabel(e.target.value)} placeholder="Label (Rumah/Kantor)" className="h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
                 <input type="text" required value={addrReceiver} onChange={(e) => setAddrReceiver(e.target.value)} placeholder="Nama Penerima *" className="h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
                 <input type="tel" required value={addrPhone} onChange={(e) => setAddrPhone(e.target.value)} placeholder="No. HP *" className="h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
-                <input type="text" required value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} placeholder="Alamat Lengkap *" className="sm:col-span-2 h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
+                <div className="relative sm:col-span-3">
+                  <input
+                    type="text"
+                    value={addrRegionQuery}
+                    onFocus={() => setShowAddrRegionList(true)}
+                    onBlur={() => setTimeout(() => setShowAddrRegionList(false), 180)}
+                    onChange={(e) => {
+                      setAddrRegionQuery(e.target.value);
+                      setShowAddrRegionList(true);
+                    }}
+                    placeholder="Cari Kecamatan, Kota &amp; Provinsi dari database wilayah..."
+                    className="w-full h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg focus:outline-none focus:border-[#D9744A]"
+                  />
+                  {showAddrRegionList && addrRegionOptions.length > 0 && (
+                    <div className="absolute z-20 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-[#E5E7EB] rounded-xl shadow-lg">
+                      {addrRegionOptions.map((reg: RegionOption) => (
+                        <button
+                          key={reg.id}
+                          type="button"
+                          onMouseDown={() => {
+                            setAddrSubdistrict(reg.districtName);
+                            setAddrCity(`${reg.cityName}, ${reg.provinceName}`);
+                            setAddrSubdistrictId(Number(reg.rajaongkirId) || null);
+                            setAddrRegionQuery(reg.searchLabel);
+                            if (reg.postalCode) setAddrPostal(reg.postalCode);
+                            setShowAddrRegionList(false);
+                          }}
+                          className="w-full text-left px-3.5 py-2.5 text-xs hover:bg-[#FAF4E8] border-b border-[#F3F4F6] last:border-b-0"
+                        >
+                          <div className="font-bold text-[#1A1A1A]">{reg.searchLabel}</div>
+                          {reg.postalCode && (
+                            <div className="text-[11px] text-[#6B7280]">
+                              Kode Pos: {reg.postalCode}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={addrSubdistrict}
+                  onChange={(e) => setAddrSubdistrict(e.target.value)}
+                  placeholder="Kecamatan *"
+                  className="h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg"
+                />
+                <input
+                  type="text"
+                  required
+                  value={addrCity}
+                  onChange={(e) => setAddrCity(e.target.value)}
+                  placeholder="Kota &amp; Provinsi *"
+                  className="sm:col-span-2 h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg"
+                />
+                <input type="text" required value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} placeholder="Alamat Lengkap (Jalan, No. Rumah, RT/RW) *" className="sm:col-span-2 h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
                 <div className="flex gap-2">
                   <input type="text" required value={addrPostal} onChange={(e) => setAddrPostal(e.target.value)} placeholder="Kode Pos *" className="w-28 h-10 px-3 bg-white border border-[#E5E7EB] rounded-lg" />
                   <button type="submit" className="flex-1 h-10 rounded-lg bg-[#1A1A1A] text-white font-bold inline-flex items-center justify-center gap-1">
@@ -422,7 +502,11 @@ export default function AccountPage() {
                     <div>
                       <span className="font-extrabold text-[#1A1A1A]">{addr.label}</span>
                       <span className="text-[#6B7280] ml-2">• {addr.receiverName} ({addr.receiverPhone})</span>
-                      <p className="text-[#4A4A4A] mt-1">{addr.streetAddress}, {addr.city} {addr.postalCode}</p>
+                      <p className="text-[#4A4A4A] mt-1">
+                        {addr.streetAddress}
+                        {addr.subdistrict && addr.subdistrict !== '-' ? `, Kec. ${addr.subdistrict}` : ''}
+                        {addr.city ? `, ${addr.city}` : ''} {addr.postalCode}
+                      </p>
                     </div>
                     <button
                       type="button"

@@ -6,6 +6,7 @@ import { Ticket, Check, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useStorefrontProducts } from '../../hooks/useProducts';
 import { useActiveCoupons, useClaimedVouchers } from '../../hooks/useCoupons';
+import { DEFAULT_CMS_VALUES, usePublicCms } from '../../hooks/useCms';
 import { formatIDR } from '../../lib/utils';
 
 const VOUCHER_BG_PALETTE = ['bg-[#FAF4E8]', 'bg-[#FDECE6]', 'bg-[#E9F3E4]'];
@@ -17,6 +18,7 @@ const HOME_VOUCHERS = [
 ];
 
 export const VoucherPromoSection: React.FC = () => {
+  const { data: cms } = usePublicCms();
   const { claimVoucher, isClaimed: checkClaimed } = useClaimedVouchers();
   const [secondsLeft, setSecondsLeft] = useState(8078); // ~02:14:38
   const { products } = useStorefrontProducts();
@@ -109,7 +111,7 @@ export const VoucherPromoSection: React.FC = () => {
             <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-1.5 text-lg font-extrabold text-[#1A1A1A]">
                 <Zap className="w-5 h-5 fill-[#FCE694] text-[#1A1A1A]" />
-                <span>Flash Sale BabyShalls</span>
+                <span>{cms?.home_flash_sale_title || DEFAULT_CMS_VALUES.home_flash_sale_title}</span>
               </div>
               <div className="flex items-center gap-1 text-xs font-extrabold">
                 <span className="px-2 py-1 rounded bg-[#1A1A1A] text-white font-mono">{hours}</span>
@@ -123,7 +125,7 @@ export const VoucherPromoSection: React.FC = () => {
               href="/catalog"
               className="text-xs font-bold text-[#1E543B] hover:underline"
             >
-              Lihat Semua Promo →
+              {cms?.home_flash_sale_cta || DEFAULT_CMS_VALUES.home_flash_sale_cta}
             </Link>
           </div>
 

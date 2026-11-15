@@ -20,6 +20,7 @@ import { useCart } from '../../context/CartContext';
 import { formatIDR, formatPhoneInput, formatWeight } from '../../lib/utils';
 import { useActiveCoupons, useValidateCoupon, CouponDto } from '../../hooks/useCoupons';
 import { useCreateOrder } from '../../hooks/useOrders';
+import { AccountAddress, useAccountAddresses } from '../../hooks/useAccount';
 import { useShippingRates, useSearchRegions, RegionOption } from '../../hooks/useShipping';
 import { openMidtransSnap } from '../../lib/midtrans-snap';
 import { ADMIN_TOKEN_STORAGE_KEY, USER_TOKEN_STORAGE_KEY, extractApiError } from '../../lib/axios';
@@ -115,6 +116,34 @@ export default function CheckoutPage() {
   const [destinationId, setDestinationId] = useState('46757');
 
   const { data: regionOptions = [] } = useSearchRegions(debouncedRegionQuery);
+  const { data: savedAddresses = [] } = useAccountAddresses(isAuthenticated);
+  const [hasAppliedDefaultAddress, setHasAppliedDefaultAddress] = useState(false);
+
+  const applySavedAddress = (addr: AccountAddress) => {
+    setRecipientName(addr.receiverName);
+    setPhone(formatPhoneInput(addr.receiverPhone));
+    setAddress(addr.streetAddress);
+    const fullCity =
+      addr.subdistrict && addr.subdistrict !== '-'
+        ? `${addr.subdistrict}, ${addr.city}`
+        : addr.city;
+    setCity(fullCity);
+    if (addr.subdistrictId) {
+      setDestinationId(String(addr.subdistrictId));
+    }
+    setPostalCode(addr.postalCode);
+  };
+
+  useEffect(() => {
+    if (hasAppliedDefaultAddress || savedAddresses.length === 0) return;
+    if (recipientName.trim() || address.trim()) return;
+    const def = savedAddresses.find((a) => a.isDefault) || savedAddresses[0];
+    if (def) {
+      applySavedAddress(def);
+      setIsEditingAddress(false);
+      setHasAppliedDefaultAddress(true);
+    }
+  }, [savedAddresses, hasAppliedDefaultAddress, recipientName, address]);
   const { data: shippingRatesData, isFetching: isFetchingShipping } = useShippingRates(
     destinationId,
     totalWeightInGrams,
@@ -517,36 +546,34 @@ export default function CheckoutPage() {
                   </div>
                 ) : (
                   <div className="space-y-4 pt-1">
-                    <div className="flex flex-wrap gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRecipientName('Bunda Rania Putri');
-                          setPhone('0812-3456-7890');
-                          setAddress('Jl. Soekarno Hatta Indah No. 8, Lowokwaru');
-                          setCity('Lowokwaru, Kota Malang, Jawa Timur');
-                          setDestinationId('46757');
-                          setPostalCode('65141');
-                          setIsEditingAddress(false);
-                        }}
-                        className="px-3 py-1 rounded-full bg-[#E9F3E4] text-[#1E543B] text-[11px] font-bold hover:opacity-90"
-                      >
-                        Pakai: Rumah Utama (Malang)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRecipientName('Ibu Dewi Santoso');
-                          setPhone('0813-9876-5432');
-                          setAddress('Jl. Dharmawangsa No. 45, Gubeng');
-                          setCity('Gubeng, Kota Surabaya, Jawa Timur');
-                          setPostalCode('60286');
-                        }}
-                        className="px-3 py-1 rounded-full bg-[#FAF4E8] text-[#1A1A1A] text-[11px] font-bold hover:opacity-90"
-                      >
-                        Pakai: Rumah Orang Tua (Surabaya)
-                      </button>
-                    </div>
+                    {savedAddresses.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {savedAddresses.map((addr) => (
+                          <button
+                            key={addr.id}
+                            type="button"
+                            onClick={() => {
+                              applySavedAddress(addr);
+                              setIsEditingAddress(false);
+                            }}
+                            className={`px-3 py-1 rounded-full text-[11px] font-bold hover:opacity-90 ${
+                              addr.isDefault
+                                ? 'bg-[#E9F3E4] text-[#1E543B]'
+                                : 'bg-[#FAF4E8] text-[#1A1A1A]'
+                            }`}
+                          >
+                            Pakai: {addr.label} ({addr.subdistrict && addr.subdistrict !== '-' ? addr.subdistrict : addr.city})
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-[#6B7280]">
+                        Belum ada alamat tersimpan di Buku Alamat akun Anda.{' '}
+                        <Link href="/account" className="font-bold text-[#D9744A] hover:underline">
+                          Tambah di Profil Akun →
+                        </Link>
+                      </p>
+                    )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
