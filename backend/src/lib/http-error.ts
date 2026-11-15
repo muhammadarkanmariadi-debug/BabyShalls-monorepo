@@ -124,6 +124,13 @@ export function handleRouteError(res: Response, err: unknown, fallback = 'Terjad
     if (err.code === 'P2003') {
       return sendError(res, 400, 'Referensi data terkait tidak ditemukan atau tidak valid.', 'BAD_REQUEST');
     }
+    if (err.code === 'P2020') {
+      return sendError(res, 400, 'Nilai angka melebihi batas maksimal yang diizinkan.', 'VALIDATION_ERROR');
+    }
+  }
+
+  if (err instanceof Error && err.message.includes('22003')) {
+    return sendError(res, 400, 'Nilai angka melebihi batas maksimal kolom database (maksimal < 10.000.000.000).', 'VALIDATION_ERROR');
   }
 
   if (err instanceof Prisma.PrismaClientValidationError) {
