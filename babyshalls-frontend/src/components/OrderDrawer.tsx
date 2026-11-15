@@ -97,17 +97,19 @@ export const OrderDrawer: React.FC = () => {
                         {/* Stepper */}
                         <div className="flex items-center border border-[#E6D2C0] rounded-[2px] h-7 px-1.5 bg-white">
                           <button
-                            onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
-                            className="text-xs text-[#7A5644] hover:text-[#B05A26] px-1"
+                            onClick={() => updateQuantity(item.product.id, -1)}
+                            className="text-xs text-[#7A5644] hover:text-[#B05A26] px-1 font-bold cursor-pointer"
+                            aria-label="Kurang satu"
                           >
                             -
                           </button>
-                          <span className="text-xs font-semibold text-[#4A2A1C] px-2">
+                          <span className="text-xs font-semibold text-[#4A2A1C] px-2 min-w-[20px] text-center">
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                            className="text-xs text-[#7A5644] hover:text-[#B05A26] px-1"
+                            onClick={() => updateQuantity(item.product.id, 1)}
+                            className="text-xs text-[#7A5644] hover:text-[#B05A26] px-1 font-bold cursor-pointer"
+                            aria-label="Tambah satu"
                           >
                             +
                           </button>

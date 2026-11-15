@@ -7,12 +7,16 @@ interface MegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCategory?: (category: string) => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const MegaMenu: React.FC<MegaMenuProps> = ({
   isOpen,
   onClose,
   onSelectCategory,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   if (!isOpen) return null;
 
@@ -38,7 +42,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
     { label: 'Montessori', href: '/shop?category=Montessori' },
     { label: 'Puzzle & Permainan', href: '/shop?category=Puzzles' },
     { label: 'Hampers', href: '/hampers' },
-    { label: 'Preloved', href: '/shop?category=Preloved' },
+    { label: 'Preloved', href: '/preloved' },
   ];
 
   const handleLinkClick = (categoryName?: string) => {
@@ -50,8 +54,9 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
 
   return (
     <div
-      className="absolute top-full left-0 w-full bg-white border-b border-[#E6D2C0] shadow-hover z-50 animate-in fade-in duration-150"
-      onMouseLeave={onClose}
+      className="absolute top-full left-0 w-full bg-white border-b border-[#E6D2C0] shadow-[0_16px_40px_rgba(74,42,28,0.12)] z-50 animate-in fade-in duration-150 before:content-[''] before:absolute before:-top-4 before:left-0 before:w-full before:h-4 before:bg-transparent"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave || onClose}
     >
       <div className="max-w-[1440px] mx-auto px-8 lg:px-20 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10 text-left">

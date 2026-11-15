@@ -22,7 +22,7 @@ export const RequestAndVisitSection: React.FC = () => {
               </p>
               <div className="pt-1">
                 <Link
-                  href="/request"
+                  href="/request-a-book"
                   className="inline-flex items-center justify-center px-7 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
                 >
                   Request Buku

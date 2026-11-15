@@ -19,12 +19,13 @@ import {
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { useCart } from '@/context/CartContext';
-import { formatIDR } from '@/data/mockProducts';
+import { formatIDR, mockProducts } from '@/data/mockProducts';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const {
     items,
+    addToCart,
     subtotal,
     giftWrapping,
     updateGiftWrapping,
@@ -592,7 +593,19 @@ export default function CheckoutPage() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-xs text-[#7A5644] py-2">Tidak ada item di keranjang.</p>
+                    <div className="py-4 text-center space-y-2.5 bg-[#FFFBF7] rounded-[2px] p-3 border border-[#F2E4D6]">
+                      <p className="text-xs text-[#7A5644]">Keranjang belanja masih kosong.</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addToCart(mockProducts[0], 1);
+                          addToCart(mockProducts[1], 1);
+                        }}
+                        className="w-full py-2 bg-[#FFF6EA] hover:bg-[#FBE6D8] border border-[#B05A26] text-[#B05A26] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
+                      >
+                        + Muat 2 Buku Demo untuk Coba Checkout
+                      </button>
+                    </div>
                   )}
                 </div>
 

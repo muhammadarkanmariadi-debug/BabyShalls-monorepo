@@ -20,6 +20,7 @@ import {
   Plus,
   Edit2,
   Trash2,
+  X,
 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -56,6 +57,35 @@ export default function AccountPage() {
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState('');
+
+  // Addresses State
+  const [addresses, setAddresses] = useState([
+    {
+      id: 'addr-1',
+      label: 'Rumah',
+      recipientName: 'Dina Permata',
+      phone: '0812-3456-7890',
+      fullAddress: 'Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun, Kota Malang 65146',
+      isPrimary: true,
+    },
+    {
+      id: 'addr-2',
+      label: 'Kantor',
+      recipientName: 'Dina Permata (Baby Room)',
+      phone: '0812-3456-7890',
+      fullAddress: 'Jl. Besar Ijen No. 45, Oro-oro Dowo, Klojen, Kota Malang 65115',
+      isPrimary: false,
+    },
+  ]);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [addressForm, setAddressForm] = useState({
+    id: '',
+    label: 'Rumah',
+    recipientName: '',
+    phone: '',
+    fullAddress: '',
+  });
 
   // Orders State
   const [orders, setOrders] = useState<any[]>([]);
@@ -369,45 +399,45 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Navigation Menu */}
-              <nav className="flex flex-col gap-1 text-xs">
+              {/* Navigation Menu (Horizontal pills on mobile/tablet, vertical sidebar on desktop) */}
+              <nav className="flex flex-row overflow-x-auto pb-2 lg:pb-0 gap-2 lg:gap-1 text-xs scrollbar-none lg:flex-col">
                 <button
                   type="button"
                   onClick={() => setActiveTab('profil')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'profil'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <User className="w-4 h-4 text-[#B05A26]" />
+                  <User className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Profil & Keamanan</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('alamat')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'alamat'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <MapPin className="w-4 h-4 text-[#B05A26]" />
+                  <MapPin className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Daftar Alamat</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('pesanan')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'pesanan'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <Package className="w-4 h-4 text-[#B05A26]" />
-                  <div className="flex-1 flex items-center justify-between">
+                  <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
+                  <div className="flex items-center gap-2 lg:flex-1 lg:justify-between">
                     <span>Pesanan Saya</span>
                     {orders.length > 0 && (
                       <span className="bg-[#B05A26] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
@@ -420,47 +450,47 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('tiket')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'tiket'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <Calendar className="w-4 h-4 text-[#B05A26]" />
-                  <span>Tiket Event & Workshop</span>
+                  <Calendar className="w-4 h-4 text-[#B05A26] shrink-0" />
+                  <span>Tiket Workshop</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('request')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'request'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <BookOpen className="w-4 h-4 text-[#B05A26]" />
-                  <span>Request Buku Saya</span>
+                  <BookOpen className="w-4 h-4 text-[#B05A26] shrink-0" />
+                  <span>Request Buku</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('wishlist')}
-                  className={`w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left transition-colors cursor-pointer ${
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
                     activeTab === 'wishlist'
                       ? 'bg-[#FBE6D8] text-[#4A2A1C] font-semibold'
-                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
+                      : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent'
                   }`}
                 >
-                  <Heart className="w-4 h-4 text-[#B05A26]" />
+                  <Heart className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Wishlist Favorit</span>
                 </button>
 
-                <div className="pt-3 mt-3 border-t border-[#F2E4D6]">
+                <div className="pt-0 lg:pt-3 lg:mt-3 border-t-0 lg:border-t border-[#F2E4D6] shrink-0 flex items-center">
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full py-2.5 px-3 rounded-[2px] flex items-center gap-3 text-left text-[#C0392B] hover:bg-[#FEECE8] transition-colors cursor-pointer font-medium"
+                    className="py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left text-[#C0392B] hover:bg-[#FEECE8] transition-colors cursor-pointer font-medium whitespace-nowrap lg:w-full"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Keluar Akun</span>
@@ -556,35 +586,52 @@ export default function AccountPage() {
                       Ubah Kata Sandi
                     </h2>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mb-4">
-                      <div>
-                        <label className="block text-[#7A5644] font-medium mb-1">
-                          Kata Sandi Lama
-                        </label>
-                        <input
-                          type="password"
-                          placeholder="Masukkan sandi saat ini"
-                          className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                        />
+                    {passwordMsg && (
+                      <div className="mb-4 p-3 bg-[#DDF1E5] text-[#2A6E37] border border-[#A7D7B5] rounded-[2px] text-xs font-medium flex items-center gap-2">
+                        <Check className="w-4 h-4" />
+                        <span>{passwordMsg}</span>
                       </div>
-                      <div>
-                        <label className="block text-[#7A5644] font-medium mb-1">
-                          Kata Sandi Baru
-                        </label>
-                        <input
-                          type="password"
-                          placeholder="Minimal 6 karakter"
-                          className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                        />
-                      </div>
-                    </div>
+                    )}
 
-                    <button
-                      type="button"
-                      className="px-6 py-2.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        setPasswordMsg('Kata sandi berhasil diperbarui dengan aman!');
+                        setTimeout(() => setPasswordMsg(''), 3000);
+                      }}
+                      className="space-y-4"
                     >
-                      Update Kata Sandi
-                    </button>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <label className="block text-[#7A5644] font-medium mb-1">
+                            Kata Sandi Lama
+                          </label>
+                          <input
+                            type="password"
+                            placeholder="Masukkan sandi saat ini"
+                            defaultValue="••••••••"
+                            className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#7A5644] font-medium mb-1">
+                            Kata Sandi Baru
+                          </label>
+                          <input
+                            type="password"
+                            placeholder="Minimal 6 karakter"
+                            className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
+                      >
+                        Update Kata Sandi
+                      </button>
+                    </form>
                   </div>
                 </div>
               )}
@@ -593,43 +640,215 @@ export default function AccountPage() {
               {activeTab === 'alamat' && (
                 <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 sm:p-7 shadow-xs">
                   <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#F2E4D6]">
-                    <h2 className="text-lg font-medium text-[#4A2A1C]">
-                      Daftar Alamat Pengiriman
-                    </h2>
+                    <div>
+                      <h2 className="text-lg font-medium text-[#4A2A1C]">
+                        Daftar Alamat Pengiriman
+                      </h2>
+                      <p className="text-xs text-[#7A5644] mt-0.5">
+                        Kelola alamat pengiriman pesanan buku dan hampers Anda
+                      </p>
+                    </div>
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px]"
+                      onClick={() => {
+                        setAddressForm({
+                          id: '',
+                          label: 'Rumah',
+                          recipientName: userProfile.name,
+                          phone: userProfile.phone,
+                          fullAddress: '',
+                        });
+                        setIsAddressModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Tambah Alamat Baru</span>
                     </button>
                   </div>
 
-                  {/* Primary Address Card */}
-                  <div className="p-5 border border-[#B05A26] bg-[#FFFBF7] rounded-[2px] relative">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-sm text-[#4A2A1C]">
-                        {userProfile.name} (Rumah)
-                      </span>
-                      <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
-                        Utama
-                      </span>
-                    </div>
+                  {/* List of Addresses */}
+                  <div className="grid grid-cols-1 gap-4">
+                    {addresses.map((addr) => (
+                      <div
+                        key={addr.id}
+                        className={`p-5 rounded-[2px] relative transition-all border ${
+                          addr.isPrimary
+                            ? 'border-[#B05A26] bg-[#FFFBF7]'
+                            : 'border-[#E6D2C0] bg-white hover:border-[#B05A26]/50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm text-[#4A2A1C]">
+                              {addr.recipientName} ({addr.label})
+                            </span>
+                            {addr.isPrimary && (
+                              <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
+                                Utama
+                              </span>
+                            )}
+                          </div>
 
-                    <p className="text-xs text-[#7A5644] mb-1">
-                      {userProfile.phone}
-                    </p>
-                    <p className="text-xs text-[#4A2A1C] max-w-xl leading-relaxed mb-4">
-                      {userProfile.address}
-                    </p>
+                          <div className="flex items-center gap-3 text-xs">
+                            {!addr.isPrimary && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAddresses((prev) =>
+                                    prev.map((a) => ({ ...a, isPrimary: a.id === addr.id }))
+                                  );
+                                }}
+                                className="text-xs text-[#7A5644] hover:text-[#B05A26] underline cursor-pointer"
+                              >
+                                Jadikan Utama
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAddressForm(addr);
+                                setIsAddressModalOpen(true);
+                              }}
+                              className="text-[#B05A26] font-medium hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                              <span>Ubah</span>
+                            </button>
+                            {addresses.length > 1 && !addr.isPrimary && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAddresses((prev) => prev.filter((a) => a.id !== addr.id));
+                                }}
+                                className="text-[#C0392B] font-medium hover:underline cursor-pointer"
+                              >
+                                Hapus
+                              </button>
+                            )}
+                          </div>
+                        </div>
 
-                    <div className="flex items-center gap-3 text-xs">
-                      <button className="text-[#B05A26] font-medium hover:underline flex items-center gap-1">
-                        <Edit2 className="w-3.5 h-3.5" />
-                        <span>Ubah Alamat</span>
-                      </button>
-                    </div>
+                        <p className="text-xs text-[#7A5644] mb-1">{addr.phone}</p>
+                        <p className="text-xs text-[#4A2A1C] max-w-2xl leading-relaxed">
+                          {addr.fullAddress}
+                        </p>
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Add / Edit Address Modal */}
+                  {isAddressModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
+                      <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-6 sm:p-7 max-w-lg w-full shadow-2xl relative text-left">
+                        <button
+                          type="button"
+                          onClick={() => setIsAddressModalOpen(false)}
+                          className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+
+                        <h3 className="text-base font-semibold text-[#4A2A1C] mb-4">
+                          {addressForm.id ? 'Ubah Alamat Pengiriman' : 'Tambah Alamat Pengiriman Baru'}
+                        </h3>
+
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            if (!addressForm.recipientName || !addressForm.fullAddress) return;
+                            if (addressForm.id) {
+                              setAddresses((prev) =>
+                                prev.map((a) => (a.id === addressForm.id ? { ...a, ...addressForm } : a))
+                              );
+                            } else {
+                              const newAddr = {
+                                id: `addr-${Date.now()}`,
+                                label: addressForm.label || 'Rumah',
+                                recipientName: addressForm.recipientName,
+                                phone: addressForm.phone || userProfile.phone,
+                                fullAddress: addressForm.fullAddress,
+                                isPrimary: addresses.length === 0,
+                              };
+                              setAddresses((prev) => [...prev, newAddr]);
+                            }
+                            setIsAddressModalOpen(false);
+                          }}
+                          className="space-y-3.5 text-xs"
+                        >
+                          <div>
+                            <label className="block text-[#7A5644] font-medium mb-1">
+                              Label Alamat (Contoh: Rumah, Kantor, Rumah Nenek)
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={addressForm.label}
+                              onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
+                              className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[#7A5644] font-medium mb-1">
+                                Nama Penerima
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={addressForm.recipientName}
+                                onChange={(e) => setAddressForm({ ...addressForm, recipientName: e.target.value })}
+                                className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[#7A5644] font-medium mb-1">
+                                Nomor WhatsApp / HP
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={addressForm.phone}
+                                onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                                className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[#7A5644] font-medium mb-1">
+                              Alamat Lengkap &amp; Kode Pos
+                            </label>
+                            <textarea
+                              rows={3}
+                              required
+                              placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, kode pos"
+                              value={addressForm.fullAddress}
+                              onChange={(e) => setAddressForm({ ...addressForm, fullAddress: e.target.value })}
+                              className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                            />
+                          </div>
+
+                          <div className="pt-2 flex justify-end gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => setIsAddressModalOpen(false)}
+                              className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] rounded-[2px] hover:bg-[#FFFBF7] cursor-pointer"
+                            >
+                              Batal
+                            </button>
+                            <button
+                              type="submit"
+                              className="px-5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium rounded-[2px] cursor-pointer shadow-xs"
+                            >
+                              Simpan Alamat
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

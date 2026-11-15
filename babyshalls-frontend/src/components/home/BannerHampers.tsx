@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react';
 
 export const BannerHampers: React.FC = () => {
   return (
-    <section className="relative w-full h-[520px] bg-[#FFFBF5] overflow-hidden">
+    <section className="relative w-full h-[460px] sm:h-[500px] lg:h-[520px] bg-[#FFFBF5] overflow-hidden">
       {/* Background Hampers Image */}
       <div className="absolute inset-0 w-full h-full">
         <Image
@@ -19,7 +19,7 @@ export const BannerHampers: React.FC = () => {
           sizes="100vw"
         />
         {/* Soft gradient fade on left for readable text on mobile/tablets */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFBF5]/95 via-[#FFFBF5]/80 to-transparent lg:from-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFBF5]/95 via-[#FFFBF5]/85 to-[#FFFBF5]/30 lg:from-transparent" />
       </div>
 
       {/* Teks Overlay on Left (Figma #131:38956 width: 761px, padding: 0 106px 0 76px) */}

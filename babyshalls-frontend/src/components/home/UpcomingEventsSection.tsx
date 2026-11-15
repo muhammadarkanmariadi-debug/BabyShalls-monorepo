@@ -16,6 +16,24 @@ export const UpcomingEventsSection: React.FC = () => {
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedEvent) {
+      try {
+        const existing = JSON.parse(localStorage.getItem('babyshalls_event_tickets') || '[]');
+        const newTicket = {
+          ticketId: `EVT-${Math.floor(1000 + Math.random() * 9000)}`,
+          eventTitle: selectedEvent.title,
+          eventDate: selectedEvent.date,
+          eventTime: selectedEvent.time,
+          location: selectedEvent.location || 'BabyShalls Citraland Puncak Tidar, Malang',
+          parentName: parentName || 'Bunda Sarah',
+          childName: childAge ? `Anak (${childAge})` : 'Kenzo (3 th)',
+          status: 'Tiket Aktif',
+        };
+        localStorage.setItem('babyshalls_event_tickets', JSON.stringify([newTicket, ...existing]));
+      } catch {
+        // Fallback
+      }
+    }
     setIsRegistered(true);
     setTimeout(() => {
       setSelectedEvent(null);
@@ -38,7 +56,7 @@ export const UpcomingEventsSection: React.FC = () => {
         </div>
 
         {/* 3 Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {mockWorkshops.slice(0, 3).map((evt) => (
             <WireEventCard
               key={evt.id}
