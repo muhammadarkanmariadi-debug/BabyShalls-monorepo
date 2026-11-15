@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: var(--font-poppins), 'Poppins', sans-serif;
+  --font-quicksand: var(--font-quicksand), 'Quicksand', sans-serif;
+  --font-sans: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* BabyShalls Design System — Primitive & Semantic Palette */
+  --color-cream-50: #FFFBF5;
+  --color-cream-100: #FFF6EA;
+  --color-cream-200: #F9E0C8;
+  
+  --color-line-100: #F2E4D6;
+  --color-line-200: #E6D2C0;
+
+  --color-brick-100: #FBE6D8;
+  --color-brick-300: #EFA27A;
+  --color-brick-500: #C86830;
+  --color-brick-600: #B05A26;
+  --color-brick-700: #8E431A;
+
+  --color-brown-300: #C9B3A5;
+  --color-brown-400: #9A552A;
+  --color-brown-600: #7A5644;
+  --color-brown-900: #4A2A1C;
+
+  --color-pink-100: #FDE3E8;
+  --color-pink-300: #FBA6B2;
+  --color-pink-500: #F35766;
+  --color-pink-700: #B83246;
+
+  --color-sunny-100: #FFF1C7;
+  --color-sunny-400: #F7C94B;
+  --color-sunny-600: #D89F29;
+  --color-sunny-800: #8A5A00;
+
+  --color-mint-100: #DDF1E5;
+  --color-mint-400: #82BC85;
+  --color-mint-700: #2A6E37;
+
+  --color-teal-100: #DDF6F9;
+  --color-teal-400: #8DDBE6;
+  --color-teal-700: #1F6B76;
+
+  --color-blue-100: #E4ECFB;
+  --color-blue-400: #92B2F3;
+  --color-blue-600: #5E82C0;
+  --color-blue-700: #3F5FA0;
+
+  --color-lilac-100: #F3E6F2;
+  --color-lilac-400: #BA7EB8;
+  --color-lilac-700: #7E4A84;
+
+  --color-red-600: #C0392B;
+
+  /* Semantic Aliases */
+  --color-bg-page: #FFF6EA;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-subtle: #FFFBF5;
+  --color-bg-warm: #F9E0C8;
+  --color-bg-disabled: #F2E4D6;
+
+  --color-text-primary: #4A2A1C;
+  --color-text-secondary: #7A5644;
+  --color-text-disabled: #C9B3A5;
+  --color-text-link: #B05A26;
+
+  --color-brand-primary: #B05A26;
+  --color-brand-primary-hover: #8E431A;
+  --color-brand-primary-soft: #FBE6D8;
+  --color-brand-logo: #C86830;
+  --color-brand-accent: #F35766;
+  --color-brand-accent-soft: #FDE3E8;
+
+  --color-border-default: #E6D2C0;
+  --color-border-subtle: #F2E4D6;
+  --color-border-strong: #C9B3A5;
+
+  /* Shadows (warm brown tone) */
+  --shadow-card: 0px 2px 8px 0px rgba(74, 42, 28, 0.06), 0px 8px 24px 0px rgba(74, 42, 28, 0.06);
+  --shadow-hover: 0px 4px 12px 0px rgba(74, 42, 28, 0.08), 0px 16px 32px 0px rgba(74, 42, 28, 0.10);
+  --shadow-modal: 0px 8px 24px 0px rgba(74, 42, 28, 0.10), 0px 24px 64px 0px rgba(74, 42, 28, 0.16);
+
+  /* Border Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+}
+
+:root {
+  --background: #FFF6EA;
+  --foreground: #4A2A1C;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #FFF6EA;
+    color: #4A2A1C;
+  }
+
+  body {
+    background-color: #FFF6EA;
+    color: #4A2A1C;
+    font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-quicksand), var(--font-poppins), 'Poppins', sans-serif;
+  }
+}
+
+.font-sans {
+  font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.font-heading {
+  font-family: var(--font-quicksand), var(--font-poppins), 'Poppins', sans-serif;
+}
+
+/* Minimalist warm scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF6EA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E6D2C0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B05A26;
+}
