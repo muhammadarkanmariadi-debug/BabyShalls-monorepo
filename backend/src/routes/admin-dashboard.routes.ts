@@ -1,6 +1,5 @@
 import { Router, Response } from 'express';
 import { AgeGroup, OrderStatus } from '@prisma/client';
-import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { sendOrderReceiptEmail } from '../lib/mailer.js';
@@ -455,6 +454,30 @@ router.get('/broadcasts', async (_req: AuthRequest, res: Response) => {
   }
 });
 
+const ALLOWED_BROADCAST_TAGS = new Set([
+  'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
+  'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'hr',
+]);
+
+function sanitizeBroadcastHtml(html: string): string {
+  const withoutDangerousBlocks = html
+    .replace(/<(script|style|iframe|object|embed|svg|math)[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+
+  return withoutDangerousBlocks.replace(/<\/?([a-zA-Z0-9-]+)([^>]*)>/g, (match, rawTag, attrs) => {
+    const tag = rawTag.toLowerCase();
+    if (!ALLOWED_BROADCAST_TAGS.has(tag)) return '';
+    if (match.startsWith('</')) return `</${tag}>`;
+    if (tag === 'br' || tag === 'hr') return `<${tag} />`;
+    if (tag !== 'a') return `<${tag}>`;
+
+    const hrefMatch = attrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+    const rawHref = (hrefMatch?.[1] || hrefMatch?.[2] || hrefMatch?.[3] || '').trim();
+    const safeHref = /^(https?:|mailto:)/i.test(rawHref) ? rawHref.replace(/"/g, '&quot;') : '#';
+    return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
+  });
+}
+
 /**
  * POST /api/admin/broadcast
  */
@@ -465,16 +488,7 @@ router.post('/broadcast', async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    const cleanHtml = sanitizeHtml(parsed.data.messageBody, {
-      allowedTags: [
-        'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
-        'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'hr',
-      ],
-      allowedAttributes: {
-        a: ['href', 'target', 'rel'],
-      },
-      allowedSchemes: ['http', 'https', 'mailto'],
-    });
+    const cleanHtml = sanitizeBroadcastHtml(parsed.data.messageBody);
 
     const result = await runEmailBroadcast({
       type: parsed.data.type,
