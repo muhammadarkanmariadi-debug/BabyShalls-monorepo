@@ -24,12 +24,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#4A2A1C] flex flex-col justify-between selection:bg-[#B05A26]/15 selection:text-[#B05A26] w-full overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-white text-[#4A2A1C] flex flex-col justify-between selection:bg-[#B05A26]/15 selection:text-[#B05A26] w-full font-sans">
       
       {/* 01 · HEADER (Strip Info + Navbar + Mega Menu) */}
       <Header onCategorySelect={handleCategorySelect} />
 
-      <main className="w-full flex-grow">
+      <main className="w-full flex-grow overflow-x-clip">
         {/* 02 · HERO (Figma Node #130:109) */}
         <HeroSection />
 

@@ -17,10 +17,16 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 12);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -45,30 +51,36 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white transition-all w-full border-b border-[#F2E4D6]">
-      {/* Main Bar: Figma #131:39041 - Height 96px */}
-      <div className="w-full bg-white">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12">
-          <div className="flex items-center justify-between min-h-[96px] py-1">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-200 border-b ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(74,42,28,0.06)] border-[#E6D2C0]'
+          : 'bg-white border-[#F2E4D6]'
+      }`}
+    >
+      {/* Main Bar: Compact & Sleek (Height 64px mobile / 70px desktop) */}
+      <div className="w-full">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-[64px] sm:h-[70px]">
             
-            {/* Left: Mobile Menu Trigger + Brand Logo (Bigger & Prominent) */}
-            <div className="flex items-center gap-4">
+            {/* Left: Mobile Menu Trigger + Brand Logo */}
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden text-[#4A2A1C] p-2 hover:bg-[#FFF6EA] rounded transition-colors"
+                className="lg:hidden text-[#4A2A1C] p-1.5 hover:bg-[#FFF6EA] rounded transition-colors"
                 aria-label="Toggle menu"
               >
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
 
-              <Link href="/" className="inline-block relative py-1" aria-label="BabyShalls Home">
-                <div className="relative w-[125px] sm:w-[155px] lg:w-[175px] h-[86px] sm:h-[92px]">
+              <Link href="/" className="inline-block relative py-0.5" aria-label="BabyShalls Home">
+                <div className="relative w-[105px] sm:w-[125px] h-[40px] sm:h-[46px]">
                   <Image
                     src="/BabyShallsLogo 1.PNG"
                     alt="Baby Shall's"
                     fill
-                    sizes="(max-width: 640px) 125px, (max-width: 1024px) 155px, 175px"
+                    sizes="(max-width: 640px) 105px, 125px"
                     priority
                     className="object-contain object-left"
                   />
@@ -76,8 +88,8 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
               </Link>
             </div>
 
-            {/* Center: Navigation Links matching Figma (Poppins Medium 16px UPPERCASE, gap: 28px) */}
-            <nav className="hidden lg:flex items-center gap-7">
+            {/* Center: Navigation Links matching Figma (Poppins Medium 14px UPPERCASE, gap: 24px) */}
+            <nav className="hidden lg:flex items-center gap-6">
               {/* SHOP with Dropdown */}
               <div
                 className="relative"
@@ -87,11 +99,11 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 <button
                   type="button"
                   onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
-                  className="flex items-center gap-1 text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide cursor-pointer"
+                  className="flex items-center gap-1 text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide cursor-pointer"
                 >
                   <span>SHOP</span>
                   <ChevronDown
-                    size={18}
+                    size={16}
                     className={`transition-transform duration-200 ${
                       isMegaMenuOpen ? 'rotate-180 text-[#B05A26]' : ''
                     }`}
@@ -101,53 +113,53 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
 
               <Link
                 href="/preloved"
-                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
+                className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide"
               >
                 PRELOVED
               </Link>
 
               <Link
                 href="/events"
-                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
+                className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide"
               >
                 EVENT &amp; WORKSHOP
               </Link>
 
               <Link
                 href="/about"
-                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
+                className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide"
               >
                 ABOUT
               </Link>
 
               <Link
                 href="/request-a-book"
-                className="text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-2 uppercase tracking-wide"
+                className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide"
               >
                 REQUEST BUKU
               </Link>
             </nav>
 
-            {/* Right: Actions matching Figma (Icon 26x26 + Text 12px SemiBold) */}
-            <div className="flex items-center gap-6">
+            {/* Right: Actions (Compact Icon 20x20 + Text 11px) */}
+            <div className="flex items-center gap-4 sm:gap-5">
               
               {/* Cari */}
               <button
                 type="button"
                 onClick={toggleSearch}
-                className="flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                className="flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
                 aria-label="Pencarian"
               >
-                <div className="w-[26px] h-[26px] flex items-center justify-center">
+                <div className="w-[20px] h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-search.svg"
                     alt="Cari"
-                    width={22}
-                    height={22}
+                    width={18}
+                    height={18}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
-                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Cari
                 </span>
               </button>
@@ -155,48 +167,48 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
               {/* Akun */}
               <Link
                 href="/account"
-                className="flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
+                className="flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
                 aria-label="Akun saya"
               >
-                <div className="w-[26px] h-[26px] flex items-center justify-center">
+                <div className="w-[20px] h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-user.svg"
                     alt="Akun"
-                    width={22}
-                    height={22}
+                    width={18}
+                    height={18}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
-                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Akun
                 </span>
               </Link>
 
-              {/* Keranjang with Figma Counter Badge */}
+              {/* Keranjang with Counter Badge */}
               <button
                 type="button"
                 onClick={() => setIsCartOpen(true)}
-                className="relative flex flex-col items-center justify-center gap-1 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                className="relative flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
                 aria-label="Keranjang belanja"
               >
-                <div className="relative w-[26px] h-[26px] flex items-center justify-center">
+                <div className="relative w-[20px] h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-cart.svg"
                     alt="Keranjang"
-                    width={22}
-                    height={22}
+                    width={18}
+                    height={18}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                   {mounted && totalItemsCount > 0 && (
                     <span
                       suppressHydrationWarning
-                      className="absolute -top-1.5 -right-2.5 bg-[#B05A26] text-white text-[11px] font-semibold w-[20px] h-[20px] rounded-full flex items-center justify-center shadow-xs"
+                      className="absolute -top-1.5 -right-2 bg-[#B05A26] text-white text-[10px] font-semibold w-[16px] h-[16px] rounded-full flex items-center justify-center shadow-xs"
                     >
                       {totalItemsCount}
                     </span>
                   )}
                 </div>
-                <span className="text-[12px] font-semibold tracking-[0.08em] text-[#4A2A1C] group-hover:text-[#B05A26]">
+                <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Keranjang
                 </span>
               </button>
