@@ -19,6 +19,32 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const megaMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnterShop = () => {
+    if (megaMenuTimerRef.current) {
+      clearTimeout(megaMenuTimerRef.current);
+      megaMenuTimerRef.current = null;
+    }
+    setIsMegaMenuOpen(true);
+  };
+
+  const handleMouseLeaveShop = () => {
+    if (megaMenuTimerRef.current) {
+      clearTimeout(megaMenuTimerRef.current);
+    }
+    megaMenuTimerRef.current = setTimeout(() => {
+      setIsMegaMenuOpen(false);
+    }, 280); // 280ms grace buffer so pointer moves into dropdown without collapsing
+  };
+
+  const handleCloseMegaMenuImmediate = () => {
+    if (megaMenuTimerRef.current) {
+      clearTimeout(megaMenuTimerRef.current);
+      megaMenuTimerRef.current = null;
+    }
+    setIsMegaMenuOpen(false);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -92,23 +118,31 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
             <nav className="hidden lg:flex items-center gap-6">
               {/* SHOP with Dropdown */}
               <div
-                className="relative"
-                onMouseEnter={() => setIsMegaMenuOpen(true)}
-                onMouseLeave={() => setIsMegaMenuOpen(false)}
+                className="relative py-2"
+                onMouseEnter={handleMouseEnterShop}
+                onMouseLeave={handleMouseLeaveShop}
               >
-                <button
-                  type="button"
-                  onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
-                  className="flex items-center gap-1 text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide cursor-pointer"
-                >
-                  <span>SHOP</span>
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-200 ${
-                      isMegaMenuOpen ? 'rotate-180 text-[#B05A26]' : ''
-                    }`}
-                  />
-                </button>
+                <div className="flex items-center gap-1">
+                  <Link
+                    href="/shop"
+                    className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide cursor-pointer"
+                  >
+                    SHOP
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsMegaMenuOpen((prev) => !prev)}
+                    className="p-0.5 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
+                    aria-label="Toggle menu shop"
+                  >
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-200 ${
+                        isMegaMenuOpen ? 'rotate-180 text-[#B05A26]' : ''
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
 
               <Link
@@ -221,7 +255,9 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
         {/* Mega Menu Dropdown */}
         <MegaMenu
           isOpen={isMegaMenuOpen}
-          onClose={() => setIsMegaMenuOpen(false)}
+          onClose={handleCloseMegaMenuImmediate}
+          onMouseEnter={handleMouseEnterShop}
+          onMouseLeave={handleMouseLeaveShop}
           onSelectCategory={onCategorySelect}
         />
 

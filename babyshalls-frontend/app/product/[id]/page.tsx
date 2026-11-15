@@ -39,14 +39,17 @@ export default function ProductDetailPage() {
         const saved = localStorage.getItem('babyshalls_catalog_data');
         if (saved) {
           const list: Product[] = JSON.parse(saved);
-          const found = list.find((p) => p.id === id);
+          const found = list.find((p) => p.id === id || p.slug === id || p.id.toLowerCase() === id.toLowerCase());
           if (found) return found;
         }
       } catch {
         // fallback
       }
     }
-    return mockProducts.find((p) => p.id === id) || mockProducts[0];
+    return (
+      mockProducts.find((p) => p.id === id || p.slug === id || p.id.toLowerCase() === id.toLowerCase()) ||
+      mockProducts[0]
+    );
   }, [id]);
 
   const [selectedImage, setSelectedImage] = useState<string>(product?.coverImage || product?.images?.[0] || '/images/prod-boardbook.jpg');
@@ -304,63 +307,67 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Quantity Stepper & CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch gap-3 mb-6">
-              {/* Stepper */}
-              <div className="flex items-center border border-[#E6D2C0] rounded-[2px] bg-white h-12 w-32 shrink-0 justify-between px-3">
+            <div className="flex flex-col gap-3 mb-6">
+              <div className="flex items-center gap-3">
+                {/* Stepper */}
+                <div className="flex items-center border border-[#E6D2C0] rounded-[2px] bg-white h-12 w-28 sm:w-36 shrink-0 justify-between px-2 sm:px-3">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1.5 cursor-pointer"
+                    aria-label="Kurang satu"
+                  >
+                    -
+                  </button>
+                  <span className="text-sm font-semibold text-[#4A2A1C] min-w-[20px] text-center">{quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1.5 cursor-pointer"
+                    aria-label="Tambah satu"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Add to Cart */}
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1 cursor-pointer"
+                  onClick={handleAddToCart}
+                  className="flex-1 h-12 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium text-xs sm:text-sm rounded-[2px] transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-sm px-3 sm:px-4"
                 >
-                  -
+                  {isAdded ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Ditambahkan!</span>
+                    </>
+                  ) : (
+                    <span>+ Tambah Keranjang</span>
+                  )}
                 </button>
-                <span className="text-sm font-semibold text-[#4A2A1C]">{quantity}</span>
+
+                {/* Wishlist Button */}
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1 cursor-pointer"
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  aria-label="Wishlist"
+                  className={`h-12 w-12 border rounded-[2px] flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                    isWishlisted
+                      ? 'border-[#C0392B] bg-[#FFF0F0] text-[#C0392B]'
+                      : 'border-[#E6D2C0] text-[#7A5644] hover:text-[#B05A26] hover:border-[#B05A26]'
+                  }`}
                 >
-                  +
+                  <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
                 </button>
               </div>
 
-              {/* Add to Cart */}
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex-1 h-12 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium text-sm rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    <span>Berhasil Ditambahkan!</span>
-                  </>
-                ) : (
-                  <span>+ Tambah ke Keranjang</span>
-                )}
-              </button>
-
-              {/* Buy Now */}
+              {/* Buy Now Full-Width */}
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="h-12 px-6 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-sm rounded-[2px] transition-colors cursor-pointer"
+                className="w-full h-12 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-sm rounded-[2px] transition-colors cursor-pointer flex items-center justify-center"
               >
                 Beli Sekarang
-              </button>
-
-              {/* Wishlist Button */}
-              <button
-                type="button"
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                aria-label="Wishlist"
-                className={`h-12 w-12 border rounded-[2px] flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                  isWishlisted
-                    ? 'border-[#C0392B] bg-[#FFF0F0] text-[#C0392B]'
-                    : 'border-[#E6D2C0] text-[#7A5644] hover:text-[#B05A26] hover:border-[#B05A26]'
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
               </button>
             </div>
 

@@ -92,18 +92,20 @@ export default function CartPage() {
                         <div className="flex items-center border border-[#E6D2C0] rounded-[2px] bg-white h-9 px-2">
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
+                            onClick={() => updateQuantity(item.product.id, -1)}
                             className="text-base text-[#7A5644] hover:text-[#B05A26] px-2 font-medium cursor-pointer"
+                            aria-label="Kurang satu"
                           >
                             -
                           </button>
-                          <span className="text-xs font-semibold text-[#4A2A1C] px-2">
+                          <span className="text-xs font-semibold text-[#4A2A1C] px-2 min-w-[20px] text-center">
                             {item.quantity}
                           </span>
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product.id, 1)}
                             className="text-base text-[#7A5644] hover:text-[#B05A26] px-2 font-medium cursor-pointer"
+                            aria-label="Tambah satu"
                           >
                             +
                           </button>

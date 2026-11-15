@@ -35,6 +35,7 @@ import {
   Filter,
   Eye,
   Camera,
+  Menu,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -71,6 +72,7 @@ export default function AdminDashboardPage() {
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [isMobileAdminSidebarOpen, setIsMobileAdminSidebarOpen] = useState(false);
 
   // Notifications
   const [unreadNotifications, setUnreadNotifications] = useState(3);
@@ -496,24 +498,47 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
+      {/* Mobile Sidebar Backdrop */}
+      {isMobileAdminSidebarOpen && (
+        <div
+          onClick={() => setIsMobileAdminSidebarOpen(false)}
+          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+        />
+      )}
+
       {/* =========================================================================
           01 · EXACT FIGMA ADMIN SIDEBAR (Figma Component #139:5692, width: 264px)
           ========================================================================= */}
-      <aside className="w-[264px] bg-white border-r border-[#E6D2C0] flex flex-col shrink-0 sticky top-0 h-screen select-none z-20">
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-[264px] bg-white border-r border-[#E6D2C0] flex flex-col shrink-0 select-none transition-transform duration-200 ${
+          isMobileAdminSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
         
         {/* Brand Header */}
-        <div className="p-6 pb-4 flex items-center gap-3">
-          <div className="relative w-[48px] h-[43px]">
-            <Image
-              src="/BabyShallsLogo 1.PNG"
-              alt="Baby Shall's Logo"
-              fill
-              className="object-contain object-left"
-            />
+        <div className="p-6 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-[48px] h-[43px]">
+              <Image
+                src="/BabyShallsLogo 1.PNG"
+                alt="Baby Shall's Logo"
+                fill
+                className="object-contain object-left"
+              />
+            </div>
+            <span className="text-[16px] font-medium text-[#B05A26]">
+              Admin
+            </span>
           </div>
-          <span className="text-[16px] font-medium text-[#B05A26]">
-            Admin
-          </span>
+
+          <button
+            type="button"
+            onClick={() => setIsMobileAdminSidebarOpen(false)}
+            className="lg:hidden p-1 text-[#7A5644] hover:text-[#4A2A1C]"
+            aria-label="Tutup sidebar"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Navigation Group Links */}
@@ -697,30 +722,40 @@ export default function AdminDashboardPage() {
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Topbar: Title, Actions, Notifications, Admin Avatar */}
-        <header className="sticky top-0 z-10 bg-white border-b border-[#E6D2C0] px-8 py-5 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-[24px] font-medium text-[#4A2A1C] capitalize">
-              {activeTab === 'dashboard' && 'Dashboard'}
-              {activeTab === 'orders' && 'Pesanan'}
-              {activeTab === 'products' && 'Produk'}
-              {activeTab === 'events' && 'Event & Check-in'}
-              {activeTab === 'requests' && 'Book Request'}
-              {activeTab === 'cms' && 'Konten (CMS)'}
-              {activeTab === 'users' && 'Pengguna'}
-              {activeTab === 'import-export' && 'Import / Export'}
-              {activeTab === 'shortlink' && 'Shortlink & QR'}
-            </h1>
-            <p className="text-[13px] text-[#7A5644]">
-              {activeTab === 'dashboard' && 'Ringkasan aktivitas toko & kurasi buku di Malang'}
-              {activeTab === 'orders' && 'Kelola & proses pesanan pelanggan toko online'}
-              {activeTab === 'products' && 'Katalog buku edukatif, mainan kayu & preloved'}
-              {activeTab === 'events' && 'Daftar peserta workshop & check-in tiket masuk'}
-              {activeTab === 'requests' && 'Concierge pencarian buku langka & impor'}
-              {activeTab === 'cms' && 'Pengaturan banner promosi & pengumuman toko'}
-              {activeTab === 'users' && 'Manajemen staf admin toko & kurator buku'}
-              {activeTab === 'import-export' && 'Sinkronisasi data katalog & transaksi via CSV'}
-              {activeTab === 'shortlink' && 'Generator QR code untuk meja kasir & rak buku'}
-            </p>
+        <header className="sticky top-0 z-10 bg-white border-b border-[#E6D2C0] px-4 sm:px-8 py-3.5 sm:py-5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileAdminSidebarOpen(!isMobileAdminSidebarOpen)}
+              className="lg:hidden p-2 text-[#4A2A1C] hover:bg-[#FFF6EA] rounded-[2px] cursor-pointer"
+              aria-label="Toggle admin sidebar"
+            >
+              <Menu size={20} />
+            </button>
+            <div>
+              <h1 className="text-[20px] sm:text-[24px] font-medium text-[#4A2A1C] capitalize">
+                {activeTab === 'dashboard' && 'Dashboard'}
+                {activeTab === 'orders' && 'Pesanan'}
+                {activeTab === 'products' && 'Produk'}
+                {activeTab === 'events' && 'Event & Check-in'}
+                {activeTab === 'requests' && 'Book Request'}
+                {activeTab === 'cms' && 'Konten (CMS)'}
+                {activeTab === 'users' && 'Pengguna'}
+                {activeTab === 'import-export' && 'Import / Export'}
+                {activeTab === 'shortlink' && 'Shortlink & QR'}
+              </h1>
+              <p className="text-[12px] sm:text-[13px] text-[#7A5644] hidden sm:block">
+                {activeTab === 'dashboard' && 'Ringkasan aktivitas toko & kurasi buku di Malang'}
+                {activeTab === 'orders' && 'Kelola & proses pesanan pelanggan toko online'}
+                {activeTab === 'products' && 'Katalog buku edukatif, mainan kayu & preloved'}
+                {activeTab === 'events' && 'Daftar peserta workshop & check-in tiket masuk'}
+                {activeTab === 'requests' && 'Concierge pencarian buku langka & impor'}
+                {activeTab === 'cms' && 'Pengaturan banner promosi & pengumuman toko'}
+                {activeTab === 'users' && 'Manajemen staf admin toko & kurator buku'}
+                {activeTab === 'import-export' && 'Sinkronisasi data katalog & transaksi via CSV'}
+                {activeTab === 'shortlink' && 'Generator QR code untuk meja kasir & rak buku'}
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -799,7 +834,7 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Content Body */}
-        <div className="p-8 max-w-[1300px] w-full mx-auto space-y-6">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-[1300px] w-full mx-auto space-y-6">
 
           {/* =========================================================================
               VIEW 01 · DASHBOARD (Figma Node #218:4704)
@@ -808,7 +843,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-6">
               
               {/* 5 KPI Cards (Figma #218:4716) */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <div className="bg-white p-5 rounded-[4px] border border-[#E6D2C0] shadow-xs flex flex-col justify-between">
                   <span className="text-[12px] font-semibold text-[#7A5644] uppercase tracking-wider">
                     Pendapatan Bulan Ini
@@ -1187,8 +1222,8 @@ export default function AdminDashboardPage() {
               )}
 
               {/* Orders Table */}
-              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-hidden shadow-xs">
-                <table className="w-full text-left text-xs text-[#4A2A1C]">
+              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs text-[#4A2A1C] min-w-[720px]">
                   <thead>
                     <tr className="bg-[#FFF6EA] border-b border-[#E6D2C0] text-[#7A5644] font-semibold">
                       <th className="py-3 px-4 w-10">
@@ -1331,8 +1366,8 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Products Table with #FFF6EA Header (Figma #218:5519) */}
-              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-hidden shadow-xs">
-                <table className="w-full text-left text-xs text-[#4A2A1C]">
+              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs text-[#4A2A1C] min-w-[700px]">
                   <thead>
                     <tr className="bg-[#FFF6EA] border-b border-[#E6D2C0] text-[#7A5644] font-semibold">
                       <th className="py-3 px-4 w-16">Foto</th>
@@ -1457,8 +1492,8 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Attendee Tickets Table */}
-              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-hidden shadow-xs">
-                <table className="w-full text-left text-xs text-[#4A2A1C]">
+              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs text-[#4A2A1C] min-w-[650px]">
                   <thead>
                     <tr className="bg-[#FFF6EA] border-b border-[#E6D2C0] text-[#7A5644] font-semibold">
                       <th className="py-3 px-4">Kode Tiket</th>
@@ -1545,8 +1580,8 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Requests Table */}
-              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-hidden shadow-xs">
-                <table className="w-full text-left text-xs text-[#4A2A1C]">
+              <div className="bg-white border border-[#E6D2C0] rounded-[4px] overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs text-[#4A2A1C] min-w-[700px]">
                   <thead>
                     <tr className="bg-[#FFF6EA] border-b border-[#E6D2C0] text-[#7A5644] font-semibold">
                       <th className="py-3 px-4">No. ID</th>

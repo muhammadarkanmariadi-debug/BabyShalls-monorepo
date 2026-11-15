@@ -40,8 +40,8 @@ export const HeroSection: React.FC = () => {
               Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-2">
+            {/* CTA Buttons (Desktop only - untouched Figma #131:36708) */}
+            <div className="hidden lg:flex items-center gap-3.5 pt-2">
               <Link
                 href="/shop"
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors shadow-xs"
@@ -58,8 +58,8 @@ export const HeroSection: React.FC = () => {
               </Link>
             </div>
 
-            {/* Slider Dots matching Figma (27x11 active, 11x11 inactive) */}
-            <div className="flex items-center gap-2.5 pt-6 lg:pt-8">
+            {/* Slider Dots (Desktop only) */}
+            <div className="hidden lg:flex items-center gap-2.5 pt-6 lg:pt-8">
               {[0, 1, 2, 3].map((idx) => (
                 <button
                   key={idx}
@@ -76,9 +76,9 @@ export const HeroSection: React.FC = () => {
 
           </div>
 
-          {/* Kolom Kanan: Foto Hero Maskot (Zoomed & Prominent directly on #FFF6EA background) */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end items-end">
-            <div className="relative w-full max-w-[460px] sm:max-w-[500px] lg:max-w-[530px] xl:max-w-[560px] h-[440px] sm:h-[520px] lg:h-[580px] xl:h-[620px]">
+          {/* Kolom Kanan: Foto Hero Maskot + Mobile CTAs directly below banner */}
+          <div className="lg:col-span-5 flex flex-col justify-center items-center lg:items-end">
+            <div className="relative w-full max-w-[340px] xs:max-w-[400px] sm:max-w-[480px] lg:max-w-[530px] xl:max-w-[560px] h-[340px] xs:h-[400px] sm:h-[480px] lg:h-[580px] xl:h-[620px]">
               <Image
                 src="/images/products/hero-mascot.png"
                 alt="Buku & mainan pilihan untuk si kecil"
@@ -87,6 +87,40 @@ export const HeroSection: React.FC = () => {
                 className="object-contain object-bottom scale-105 sm:scale-110 lg:scale-115 xl:scale-120 origin-bottom transition-transform"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 500px, 560px"
               />
+            </div>
+
+            {/* CTA Buttons (Mobile & Tablet only - placed below the hero banner mascot) */}
+            <div className="flex lg:hidden flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 w-full max-w-[420px] sm:max-w-none">
+              <Link
+                href="/shop"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] sm:text-[17px] font-medium rounded-[2.26px] transition-colors shadow-xs text-center"
+              >
+                <span>Belanja Sekarang</span>
+                <ArrowRight className="w-5 h-5 shrink-0" />
+              </Link>
+
+              <Link
+                href="/preloved"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[16px] sm:text-[17px] font-medium rounded-[2.26px] transition-colors text-center"
+              >
+                Lihat Preloved
+              </Link>
+            </div>
+
+            {/* Slider Dots (Mobile & Tablet only) */}
+            <div className="flex lg:hidden items-center justify-center gap-2.5 pt-4">
+              {[0, 1, 2, 3].map((idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveDot(idx)}
+                  aria-label={`Slide ${idx + 1}`}
+                  className={`h-[11px] rounded-[2.26px] transition-all cursor-pointer ${
+                    activeDot === idx
+                      ? 'w-[27px] bg-[#B05A26]'
+                      : 'w-[11px] bg-[#C9B3A5] hover:bg-[#B05A26]/50'
+                  }`}
+                />
+              ))}
             </div>
           </div>
 
