@@ -13,7 +13,7 @@ const HOW_IT_WORKS_STEPS = [
 
 export default function RequestBookPage() {
   return (
-    <div className="py-10 lg:py-14 bg-[#FFF8EF] min-h-screen">
+    <div className="py-10 lg:py-14 bg-white min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <Link
           href="/"
