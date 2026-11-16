@@ -4,8 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { useCms } from '@/context/CmsContext';
 
 export const HeroSection: React.FC = () => {
+  const { cms } = useCms();
+  const hero = cms.home;
   const [activeDot, setActiveDot] = useState(0);
 
   useEffect(() => {
@@ -26,18 +29,18 @@ export const HeroSection: React.FC = () => {
             {/* Tag: KOLEKSI TERBARU */}
             <div className="inline-flex items-center px-3.5 py-1 bg-[#FBE6D8] rounded-[2.26px] w-fit">
               <span className="text-[13.5px] font-semibold text-[#B05A26] uppercase tracking-[0.08em]">
-                KOLEKSI TERBARU
+                {hero.heroTag || 'KOLEKSI TERBARU'}
               </span>
             </div>
 
             {/* Title H1 */}
-            <h1 className="text-[34px] sm:text-[48px] lg:text-[58px] xl:text-[63px] font-medium text-[#4A2A1C] leading-[1.18] tracking-[-0.015em]">
-              Buku &amp; mainan<br className="hidden sm:inline" /> pilihan untuk si kecil
+            <h1 className="text-[34px] sm:text-[48px] lg:text-[58px] xl:text-[63px] font-medium text-[#4A2A1C] leading-[1.18] tracking-[-0.015em] whitespace-pre-line">
+              {hero.heroTitle || 'Buku & mainan\npilihan untuk si kecil'}
             </h1>
 
             {/* Subtitle / Paragraph */}
             <p className="text-[16px] sm:text-[18px] lg:text-[20px] text-[#7A5644] font-normal leading-[1.5] max-w-[540px]">
-              Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.
+              {hero.heroSubtitle || 'Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.'}
             </p>
 
             {/* CTA Buttons (Desktop only - untouched Figma #131:36708) */}
@@ -46,7 +49,7 @@ export const HeroSection: React.FC = () => {
                 href="/shop"
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors shadow-xs"
               >
-                <span>Belanja Sekarang</span>
+                <span>{hero.heroPrimaryCtaText || 'Belanja Sekarang'}</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
 
@@ -54,7 +57,7 @@ export const HeroSection: React.FC = () => {
                 href="/preloved"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors"
               >
-                Lihat Preloved
+                {hero.heroSecondaryCtaText || 'Lihat Preloved'}
               </Link>
             </div>
 
@@ -95,7 +98,7 @@ export const HeroSection: React.FC = () => {
                 href="/shop"
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] sm:text-[17px] font-medium rounded-[2.26px] transition-colors shadow-xs text-center"
               >
-                <span>Belanja Sekarang</span>
+                <span>{hero.heroPrimaryCtaText || 'Belanja Sekarang'}</span>
                 <ArrowRight className="w-5 h-5 shrink-0" />
               </Link>
 
@@ -103,7 +106,7 @@ export const HeroSection: React.FC = () => {
                 href="/preloved"
                 className="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[16px] sm:text-[17px] font-medium rounded-[2.26px] transition-colors text-center"
               >
-                Lihat Preloved
+                {hero.heroSecondaryCtaText || 'Lihat Preloved'}
               </Link>
             </div>
 

@@ -182,11 +182,18 @@ export default function CheckoutPage() {
       {/* Header Checkout (Figma Node #167:4652) */}
       <header className="bg-white border-b border-[#F2E4D6] py-4 px-6 sm:px-12 sticky top-0 z-40">
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-serif text-2xl font-bold text-[#B05A26] tracking-tight">
-              Baby Shall&apos;s
-            </span>
+          {/* Brand Logo (Consistent with Navbar) */}
+          <Link href="/" className="inline-block relative py-0.5" aria-label="BabyShalls Home">
+            <div className="relative w-[105px] sm:w-[125px] h-[38px] sm:h-[44px]">
+              <Image
+                src="/BabyShallsLogo 1.PNG"
+                alt="Baby Shall's"
+                fill
+                sizes="(max-width: 640px) 105px, 125px"
+                priority
+                className="object-contain object-left"
+              />
+            </div>
           </Link>
 
           {/* Steps Stepper */}

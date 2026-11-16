@@ -4,8 +4,16 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { useCms } from '@/context/CmsContext';
 
 export const BannerHampers: React.FC = () => {
+  const { cms } = useCms();
+  const hampers = cms.home;
+  const store = cms.store;
+  const waCustomHampersUrl = `https://wa.me/${store.whatsappNumber || '6281234567890'}?text=${encodeURIComponent(
+    'Halo BabyShalls, saya tertarik dengan pemesanan custom hampers.'
+  )}`;
+
   return (
     <section className="relative w-full h-[460px] sm:h-[500px] lg:h-[520px] bg-[#FFFBF5] overflow-hidden">
       {/* Background Hampers Image */}
@@ -26,11 +34,11 @@ export const BannerHampers: React.FC = () => {
       <div className="relative max-w-[1440px] mx-auto h-full px-6 sm:px-12 lg:px-20 flex flex-col justify-center items-start z-10">
         <div className="max-w-[620px] space-y-5">
           <h2 className="text-[28px] sm:text-[32px] font-medium text-[#4A2A1C] leading-[1.25] tracking-tight">
-            HAMPERS UNTUK SETIAP MOMEN
+            {hampers.hampersBannerTitle || 'HAMPERS UNTUK SETIAP MOMEN'}
           </h2>
 
           <p className="text-[16px] sm:text-[18px] text-[#7A5644] font-normal leading-[1.5]">
-            Paket buku dan mainan siap kado, dipilih sesuai usia si kecil. Gratis bungkus dan kartu ucapan.
+            {hampers.hampersBannerSubtitle || 'Paket buku dan mainan siap kado, dipilih sesuai usia si kecil. Gratis bungkus dan kartu ucapan.'}
           </p>
 
           <div className="pt-2">
@@ -38,14 +46,14 @@ export const BannerHampers: React.FC = () => {
               href="/hampers"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
             >
-              <span>LIHAT HAMPERS</span>
+              <span>{hampers.hampersBannerButtonText || 'LIHAT HAMPERS'}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           <div className="pt-1">
             <a
-              href="https://wa.me/6281234567890?text=Halo%20BabyShalls,%20saya%20tertarik%20dengan%20custom%20hampers"
+              href={waCustomHampersUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-[#B05A26] hover:text-[#8E431A] text-[16px] font-normal transition-colors"

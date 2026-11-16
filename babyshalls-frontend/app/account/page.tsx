@@ -219,91 +219,125 @@ export default function AccountPage() {
     return true;
   });
 
-  // If user is not authenticated, render exact Figma Masuk / Daftar Split Screen (#169:6204)
+  // If user is not authenticated, render dedicated Figma Auth Screen (#169:6204 & #169:6241 - NO Navbar & NO Footer)
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-white flex flex-col font-sans">
-        <Header />
-        <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
+      <div className="min-h-screen bg-[#FFFDF9] flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 font-sans">
+        
+        {/* Top Floating Back Link */}
+        <div className="w-full max-w-4xl mb-4 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors group"
+          >
+            <span className="text-[#B05A26] transition-transform group-hover:-translate-x-1">&larr;</span>
+            <span>Kembali ke Butik</span>
+          </Link>
+          
+          <Link href="/" className="inline-block relative">
+            <div className="relative w-28 h-9">
+              <Image
+                src="/BabyShallsLogo 1.PNG"
+                alt="Baby Shall's"
+                fill
+                sizes="112px"
+                className="object-contain"
+              />
+            </div>
+          </Link>
+        </div>
 
-        <main className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-[#FFFDF9]">
-          <div className="w-full max-w-5xl bg-white border border-[#F2E4D6] rounded-[2px] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[580px]">
-            
-            {/* Left Panel: Ilustrasi (Figma Node #169:6205, 50% width, bg #FBE6D8) */}
-            <div className="w-full md:w-1/2 bg-[#FBE6D8] p-8 sm:p-12 flex flex-col items-center justify-center text-center">
-              <span className="font-serif text-3xl font-bold text-[#B05A26] tracking-tight mb-2">
-                Baby Shall&apos;s
-              </span>
-
-              {/* Mascot Waving (Figma Node #169:6240) */}
-              <div className="relative w-56 h-56 my-4">
-                <Image
-                  src="/images/mascot/maskot-melambai.png"
-                  alt="Maskot BabyShalls"
-                  fill
-                  priority
-                  className="object-contain"
-                />
-              </div>
-
-              <h2 className="text-2xl font-medium text-[#4A2A1C] mb-2 tracking-tight">
-                Halo, selamat datang!
-              </h2>
-
-              <p className="text-xs sm:text-sm text-[#7A5644] max-w-xs leading-relaxed">
-                Masuk untuk melacak pesanan buku, menyimpan wishlist favorit, dan melihat tiket workshop anak.
-              </p>
+        {/* Card Container (Figma Node #169:6204) */}
+        <div className="w-full max-w-4xl bg-white border border-[#E6D2C0] rounded-[6px] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[560px]">
+          
+          {/* Left Panel: Ilustrasi & Sambutan (Figma Node #169:6205, bg #FBE6D8) */}
+          <div className="w-full md:w-5/12 bg-[#FBE6D8] p-8 sm:p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 my-2 shrink-0">
+              <Image
+                src="/images/mascot/maskot-melambai.png"
+                alt="Maskot BabyShalls"
+                fill
+                priority
+                className="object-contain"
+              />
             </div>
 
-            {/* Right Panel: Form Masuk / Daftar (Figma Node #169:6212) */}
-            <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#4A2A1C] mb-2 tracking-tight">
+              Halo, selamat datang!
+            </h2>
+
+            <p className="text-xs text-[#7A5644] max-w-xs leading-relaxed">
+              Masuk untuk melacak pesanan buku anak, menyimpan wishlist kurasi, dan mengakses tiket QR workshop si kecil.
+            </p>
+          </div>
+
+          {/* Right Panel: Form Masuk & Daftar (Figma Node #169:6212) */}
+          <div className="w-full md:w-7/12 p-6 sm:p-10 flex flex-col justify-center">
+            
+            {/* Tab Selector (Masuk / Daftar) */}
+            <div className="flex bg-[#F2E4D6] p-1 rounded-[4px] mb-6">
+              <button
+                type="button"
+                onClick={() => setAuthMode('masuk')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
+                  authMode === 'masuk'
+                    ? 'bg-white text-[#4A2A1C] shadow-xs'
+                    : 'text-[#7A5644] hover:text-[#4A2A1C]'
+                }`}
+              >
+                Masuk
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthMode('daftar')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
+                  authMode === 'daftar'
+                    ? 'bg-white text-[#4A2A1C] shadow-xs'
+                    : 'text-[#7A5644] hover:text-[#4A2A1C]'
+                }`}
+              >
+                Daftar Akun Baru
+              </button>
+            </div>
+
+            {/* Form Content */}
+            <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
               
-              {/* Tab Selector (Masuk / Daftar) */}
-              <div className="flex bg-[#F2E4D6] p-1 rounded-[2px] mb-6">
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('masuk')}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
-                    authMode === 'masuk'
-                      ? 'bg-white text-[#4A2A1C] shadow-xs'
-                      : 'text-[#7A5644] hover:text-[#4A2A1C]'
-                  }`}
-                >
-                  Masuk Akun
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('daftar')}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
-                    authMode === 'daftar'
-                      ? 'bg-white text-[#4A2A1C] shadow-xs'
-                      : 'text-[#7A5644] hover:text-[#4A2A1C]'
-                  }`}
-                >
-                  Daftar Baru
-                </button>
-              </div>
-
-              {/* Form Content */}
-              <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
-                {authMode === 'daftar' && (
-                  <div>
-                    <label className="block text-[#7A5644] font-medium mb-1">
-                      Nama Lengkap *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={authName}
-                      onChange={(e) => setAuthName(e.target.value)}
-                      placeholder="Nama lengkap Anda"
-                      className="w-full px-3 py-2.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                    />
-                  </div>
-                )}
-
+              {/* Field: Nama Lengkap (Only on Daftar) */}
+              {authMode === 'daftar' && (
                 <div>
-                  <label className="block text-[#7A5644] font-medium mb-1">
+                  <label className="block text-[#4A2A1C] font-semibold mb-1">
+                    Nama Lengkap *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={authName}
+                    onChange={(e) => setAuthName(e.target.value)}
+                    placeholder="Contoh: Rina Wahyuni"
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                  />
+                </div>
+              )}
+
+              {/* Field: Email */}
+              {authMode === 'daftar' ? (
+                <div>
+                  <label className="block text-[#4A2A1C] font-semibold mb-1">
+                    Alamat Email *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                    placeholder="email@anda.com"
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-[#4A2A1C] font-semibold mb-1">
                     Email atau Nomor WhatsApp *
                   </label>
                   <input
@@ -311,62 +345,93 @@ export default function AccountPage() {
                     required
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
-                    placeholder="email@anda.com / 0812xxxx"
-                    className="w-full px-3 py-2.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    placeholder="email@anda.com atau 0812xxxx"
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
+              )}
 
+              {/* Field: Nomor WhatsApp (Figma Node #169:6241 - WAJIB DI REGISTER) */}
+              {authMode === 'daftar' && (
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[#7A5644] font-medium">Kata Sandi *</label>
-                    {authMode === 'masuk' && (
-                      <a href="#forgot" className="text-[11px] text-[#B05A26] hover:underline">
-                        Lupa kata sandi?
-                      </a>
-                    )}
-                  </div>
+                  <label className="block text-[#4A2A1C] font-semibold mb-1">
+                    Nomor WhatsApp *
+                  </label>
                   <input
-                    type="password"
+                    type="tel"
                     required
-                    value={authPassword}
-                    onChange={(e) => setAuthPassword(e.target.value)}
-                    placeholder="Minimal 6 karakter"
-                    className="w-full px-3 py-2.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    value={authPhone}
+                    onChange={(e) => setAuthPhone(e.target.value)}
+                    placeholder="Contoh: 0812-3456-7890"
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
+                  <span className="text-[10px] text-[#7A5644] mt-0.5 block">
+                    Penting untuk informasi pengiriman resi &amp; tiket workshop anak.
+                  </span>
                 </div>
+              )}
 
-                {authMode === 'masuk' && (
-                  <div className="flex items-center gap-2 pt-1">
-                    <input
-                      type="checkbox"
-                      id="rememberMe"
-                      defaultChecked
-                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] rounded-[2px] focus:ring-[#B05A26]"
-                    />
-                    <label htmlFor="rememberMe" className="text-xs text-[#7A5644] cursor-pointer">
-                      Ingat saya di perangkat ini
-                    </label>
-                  </div>
+              {/* Field: Kata Sandi */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[#4A2A1C] font-semibold">Kata Sandi *</label>
+                  {authMode === 'masuk' && (
+                    <button
+                      type="button"
+                      onClick={() => alert('Fitur pemulihan kata sandi telah dikirim ke email/WhatsApp terdaftar.')}
+                      className="text-[11px] text-[#B05A26] hover:underline"
+                    >
+                      Lupa kata sandi?
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  required
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder={authMode === 'daftar' ? 'Minimal 8 karakter' : 'Masukkan kata sandi'}
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                />
+                {authMode === 'daftar' && (
+                  <span className="text-[10px] text-[#7A5644] mt-0.5 block">
+                    Gunakan minimal 8 karakter dengan kombinasi angka dan huruf.
+                  </span>
                 )}
+              </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm mt-2"
-                >
-                  {authMode === 'masuk' ? 'Masuk ke Akun' : 'Daftar Akun BabyShalls'}
-                </button>
+              {/* Remember Me on Masuk */}
+              {authMode === 'masuk' && (
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="rememberMe"
+                    defaultChecked
+                    className="w-4 h-4 accent-[#B05A26] rounded-[2px]"
+                  />
+                  <label htmlFor="rememberMe" className="text-xs text-[#7A5644] cursor-pointer">
+                    Ingat saya di perangkat ini
+                  </label>
+                </div>
+              )}
 
-                <p className="text-[11px] text-[#7A5644] text-center pt-2">
-                  Belanja tanpa akun? Kamu tetap bisa checkout langsung sebagai tamu.
-                </p>
-              </form>
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-xs mt-2"
+              >
+                {authMode === 'masuk' ? 'Masuk ke Akun' : 'Buat Akun BabyShalls'}
+              </button>
 
-            </div>
+              <p className="text-[11px] text-[#7A5644] text-center pt-2 leading-relaxed">
+                Belanja tanpa akun? Kamu tetap bisa checkout langsung sebagai tamu di keranjang belanja.
+              </p>
+            </form>
 
           </div>
-        </main>
 
-        <Footer />
+        </div>
+
       </div>
     );
   }

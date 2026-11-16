@@ -11,10 +11,13 @@ import { TombolKembali } from '@/components/common/TombolKembali';
 import { WireProductCard } from '@/components/common/WireProductCard';
 import { mockProducts } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
+import { useCms } from '@/context/CmsContext';
 import { ShieldCheck, Sparkles, CheckCircle2, Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 export default function PrelovedPage() {
   const { addToCart } = useCart();
+  const { cms } = useCms();
+  const prelovedCms = cms.preloved;
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [selectedCondition, setSelectedCondition] = useState<string>('Semua');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -78,32 +81,40 @@ export default function PrelovedPage() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FBE6D8] rounded-[2px]">
                   <Sparkles size={14} className="text-[#B05A26]" />
                   <span className="text-xs font-semibold text-[#B05A26] uppercase tracking-wider">
-                    KURASI PRELOVED TERBAIK
+                    {prelovedCms.badge || 'KURASI PRELOVED TERBAIK'}
                   </span>
                 </div>
 
                 <h1 className="text-[32px] sm:text-[44px] font-medium text-[#4A2A1C] leading-[1.2]">
-                  Buku Anak Pilihan Berkualitas, Bersih &amp; Steril UV
+                  {prelovedCms.title || prelovedCms.guaranteeTitle || 'Buku Anak Pilihan Berkualitas, Bersih & Steril UV'}
                 </h1>
 
                 <p className="text-[15px] sm:text-[17px] text-[#7A5644] leading-relaxed max-w-xl">
-                  Setiap buku preloved melalui proses kurasi 5 tahap: pemeriksaan kelengkapan halaman, sanitasi ramah anak, sterilisasi lampu UV-C, dan penilaian kondisi jujur.
+                  {prelovedCms.description || prelovedCms.guaranteeSubtitle || 'Setiap buku preloved melalui proses kurasi 5 tahap: pemeriksaan kelengkapan halaman, sanitasi ramah anak, sterilisasi lampu UV-C, dan penilaian kondisi jujur.'}
                 </p>
 
+                {/* UV notice banner */}
+                {(prelovedCms.uvNotice || prelovedCms.sterilizationNotice) && (
+                  <div className="p-3 bg-[#EBF6EC] border border-[#BCE1C3] rounded-[2px] text-xs text-[#2A6E37] font-medium flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 shrink-0" />
+                    <span>{prelovedCms.uvNotice || prelovedCms.sterilizationNotice}</span>
+                  </div>
+                )}
+
                 {/* 3 Guarantees */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
-                  <div className="flex items-center gap-2.5 p-3 bg-white rounded-[2px] border border-[#E6D2C0]">
-                    <ShieldCheck className="w-5 h-5 text-[#2A6E37] shrink-0" />
-                    <span className="text-xs font-medium text-[#4A2A1C]">Sterilisasi UV-C</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 p-3 bg-white rounded-[2px] border border-[#E6D2C0]">
-                    <CheckCircle2 className="w-5 h-5 text-[#2A6E37] shrink-0" />
-                    <span className="text-xs font-medium text-[#4A2A1C]">Halaman 100% Lengkap</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 p-3 bg-white rounded-[2px] border border-[#E6D2C0]">
-                    <Sparkles className="w-5 h-5 text-[#2A6E37] shrink-0" />
-                    <span className="text-xs font-medium text-[#4A2A1C]">Hemat Hingga 60%</span>
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  {(prelovedCms.guarantees && prelovedCms.guarantees.length > 0
+                    ? prelovedCms.guarantees
+                    : prelovedCms.steps || []
+                  ).map((g: any, idx: number) => (
+                    <div key={idx} className="flex items-center gap-2.5 p-3 bg-white rounded-[2px] border border-[#E6D2C0]">
+                      <CheckCircle2 className="w-5 h-5 text-[#2A6E37] shrink-0" />
+                      <div>
+                        <span className="text-xs font-semibold text-[#4A2A1C] block">{g.title}</span>
+                        {g.desc && <span className="text-[10px] text-[#7A5644] block">{g.desc}</span>}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
