@@ -16,17 +16,19 @@ export const redis = new Redis(REDIS_URL, {
   },
 });
 
-// Attempt connection non-blockingly
-redis
-  .connect()
-  .then(() => {
-    isRedisAvailable = true;
-    console.log('⚡ Redis Cache connected successfully.');
-  })
-  .catch(() => {
-    isRedisAvailable = false;
-    console.log('ℹ️  Redis not detected on localhost:6379. Using memory/direct fallback mode.');
-  });
+// Attempt connection non-blockingly (skip localhost Redis probe in serverless when REDIS_URL is unset)
+if (process.env.REDIS_URL || !process.env.VERCEL) {
+  redis
+    .connect()
+    .then(() => {
+      isRedisAvailable = true;
+      console.log('⚡ Redis Cache connected successfully.');
+    })
+    .catch(() => {
+      isRedisAvailable = false;
+      console.log('ℹ️  Redis not detected on localhost:6379. Using memory/direct fallback mode.');
+    });
+}
 
 redis.on('error', () => {
   isRedisAvailable = false;

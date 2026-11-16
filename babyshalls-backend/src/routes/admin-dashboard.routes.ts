@@ -1,6 +1,5 @@
 import { Router, Response } from 'express';
 import { AgeGroup, OrderStatus } from '@prisma/client';
-import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { sendOrderReceiptEmail } from '../lib/mailer.js';
@@ -21,11 +20,29 @@ const createProductSchema = z.object({
   name: z.string().trim().min(2, 'Nama produk minimal 2 karakter.').max(150, 'Nama produk maksimal 150 karakter.'),
   slug: z.string().trim().min(2).max(150).optional(),
   description: z.string().trim().min(2, 'Deskripsi minimal 2 karakter.').max(2000).default('Buku/mainan kurasi BabyShalls Malang.'),
-  price: z.number().positive('Harga produk harus lebih dari 0.'),
-  originalPrice: z.number().positive('Harga coret harus lebih dari 0.').optional().nullable(),
+  price: z
+    .number()
+    .positive('Harga produk harus lebih dari 0.')
+    .max(9_999_999_999, 'Harga produk maksimal Rp 9.999.999.999.'),
+  originalPrice: z
+    .number()
+    .positive('Harga coret harus lebih dari 0.')
+    .max(9_999_999_999, 'Harga coret maksimal Rp 9.999.999.999.')
+    .optional()
+    .nullable(),
   authorOrBrand: z.string().trim().max(100).optional().nullable(),
-  stock: z.number().int('Stok harus berupa bilangan bulat.').nonnegative('Stok tidak boleh negatif.').default(0),
-  weight: z.number().int('Berat harus berupa bilangan bulat (gram).').positive('Berat harus lebih dari 0 gram.').default(300),
+  stock: z
+    .number()
+    .int('Stok harus berupa bilangan bulat.')
+    .nonnegative('Stok tidak boleh negatif.')
+    .max(1_000_000, 'Stok maksimal 1.000.000.')
+    .default(0),
+  weight: z
+    .number()
+    .int('Berat harus berupa bilangan bulat (gram).')
+    .positive('Berat harus lebih dari 0 gram.')
+    .max(1_000_000, 'Berat maksimal 1.000.000 gram.')
+    .default(300),
   ageGroup: z.nativeEnum(AgeGroup).default(AgeGroup.ALL_AGES),
   category: z.string().trim().min(2, 'Kategori minimal 2 karakter.').max(60).default('Books'),
   subCategory: z.string().trim().max(60).optional().nullable(),
@@ -43,7 +60,7 @@ const updateBookRequestSchema = z.object({
   adminNotes: z.string().trim().max(1000).optional().nullable(),
 });
 
-const updateCmsSchema = z.record(z.string().trim().min(1), z.string().max(5000));
+const updateCmsSchema = z.record(z.string().trim().min(1), z.string().max(50000));
 
 function toSlug(input: string): string {
   return input
@@ -80,7 +97,7 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       },
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -108,7 +125,7 @@ router.get('/orders', async (_req: AuthRequest, res: Response) => {
       })),
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -194,7 +211,7 @@ router.patch('/orders/:id/status', async (req: AuthRequest, res: Response) => {
 
     return res.json({ success: true, data: updated });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -214,7 +231,7 @@ router.get('/products', async (_req: AuthRequest, res: Response) => {
       })),
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -242,7 +259,7 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
       message: `Produk ${created.name} berhasil ditambahkan.`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -267,7 +284,7 @@ router.patch('/products/:id', async (req: AuthRequest, res: Response) => {
       message: `Produk ${updated.name} berhasil diperbarui.`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -280,7 +297,7 @@ router.delete('/products/:id', async (req: AuthRequest, res: Response) => {
     await prisma.product.delete({ where: { id } });
     return res.json({ success: true, data: { id }, message: 'Produk berhasil dihapus.' });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -292,7 +309,7 @@ router.get('/book-requests', async (_req: AuthRequest, res: Response) => {
     const list = await prisma.bookRequest.findMany({ orderBy: { createdAt: 'desc' } });
     return res.json({ success: true, data: list });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -316,7 +333,7 @@ router.patch('/book-requests/:id', async (req: AuthRequest, res: Response) => {
     });
     return res.json({ success: true, data: updated });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -329,7 +346,7 @@ router.get('/cms', async (_req: AuthRequest, res: Response) => {
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
     return res.json({ success: true, data: map });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -355,7 +372,7 @@ router.put('/cms', async (req: AuthRequest, res: Response) => {
     );
     return res.json({ success: true, message: 'Konten halaman utama berhasil diperbarui.' });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -407,7 +424,7 @@ router.post('/events', async (req: AuthRequest, res: Response) => {
       message: `Event "${created.title}" berhasil dibuat.`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 
@@ -433,9 +450,33 @@ router.get('/broadcasts', async (_req: AuthRequest, res: Response) => {
     });
     return res.json({ success: true, data: logs });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
+
+const ALLOWED_BROADCAST_TAGS = new Set([
+  'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
+  'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'hr',
+]);
+
+function sanitizeBroadcastHtml(html: string): string {
+  const withoutDangerousBlocks = html
+    .replace(/<(script|style|iframe|object|embed|svg|math)[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+
+  return withoutDangerousBlocks.replace(/<\/?([a-zA-Z0-9-]+)([^>]*)>/g, (match, rawTag, attrs) => {
+    const tag = rawTag.toLowerCase();
+    if (!ALLOWED_BROADCAST_TAGS.has(tag)) return '';
+    if (match.startsWith('</')) return `</${tag}>`;
+    if (tag === 'br' || tag === 'hr') return `<${tag} />`;
+    if (tag !== 'a') return `<${tag}>`;
+
+    const hrefMatch = attrs.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+    const rawHref = (hrefMatch?.[1] || hrefMatch?.[2] || hrefMatch?.[3] || '').trim();
+    const safeHref = /^(https?:|mailto:)/i.test(rawHref) ? rawHref.replace(/"/g, '&quot;') : '#';
+    return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
+  });
+}
 
 /**
  * POST /api/admin/broadcast
@@ -447,16 +488,7 @@ router.post('/broadcast', async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    const cleanHtml = sanitizeHtml(parsed.data.messageBody, {
-      allowedTags: [
-        'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's',
-        'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'hr',
-      ],
-      allowedAttributes: {
-        a: ['href', 'target', 'rel'],
-      },
-      allowedSchemes: ['http', 'https', 'mailto'],
-    });
+    const cleanHtml = sanitizeBroadcastHtml(parsed.data.messageBody);
 
     const result = await runEmailBroadcast({
       type: parsed.data.type,
@@ -475,7 +507,7 @@ router.post('/broadcast', async (req: AuthRequest, res: Response) => {
       message: `Broadcast diproses untuk ${result.recipientCount} pelanggan (${result.sentCount} terkirim).`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
+    return handleRouteError(res, err, 'Gagal menambahkan produk.');
   }
 });
 

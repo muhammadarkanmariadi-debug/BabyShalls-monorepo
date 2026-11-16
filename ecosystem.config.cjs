@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'babyshalls-backend',
-      cwd: './backend',
+      cwd: './babyshalls-backend',
       script: 'dist/index.js',
       instances: 1,
       exec_mode: 'fork',
@@ -13,7 +13,7 @@ module.exports = {
     },
     {
       name: 'babyshalls-frontend',
-      cwd: './frontend',
+      cwd: './babyshalls-frontend',
       script: 'node_modules/next/dist/bin/next',
       args: 'start -p 3000',
       instances: 1,

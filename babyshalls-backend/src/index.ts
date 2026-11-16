@@ -22,11 +22,41 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(helmet());
+type HelmetOptions = {
+  crossOriginOpenerPolicy?: { policy: 'same-origin' | 'same-origin-allow-popups' | 'unsafe-none' } | boolean;
+  crossOriginResourcePolicy?: { policy: 'same-origin' | 'same-site' | 'cross-origin' } | boolean;
+};
+type HelmetFactory = (options?: HelmetOptions) => express.RequestHandler;
+const rawHelmet = helmet as unknown as HelmetFactory | { default: HelmetFactory };
+const helmetFactory = typeof rawHelmet === 'function' ? rawHelmet : rawHelmet.default;
+app.use(
+  helmetFactory({
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
+
+const configuredOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+  .split(',')
+  .map((o) => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const normalized = origin.replace(/\/+$/, '');
+      const isAllowed =
+        configuredOrigins.includes(normalized) ||
+        /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(normalized) ||
+        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalized);
+      if (isAllowed) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
     exposedHeaders: ['Idempotency-Replayed', 'Retry-After'],
   })
@@ -89,8 +119,12 @@ app.use('/api/book-requests', bookRequestRoutes);
 
 app.use(expressErrorHandler);
 
-app.listen(PORT, () => {
-  console.log(` BabyShalls Backend Server running on port ${PORT}`);
-  console.log(`📍 Logistics Origin locked to: Kota Malang, Jawa Timur`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(` BabyShalls Backend Server running on port ${PORT}`);
+    console.log(`📍 Logistics Origin locked to: Kota Malang, Jawa Timur`);
+  });
+}
+
+export default app;
 

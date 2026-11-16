@@ -66,8 +66,9 @@ const createAddressSchema = z.object({
   receiverName: z.string().trim().min(2, 'Nama penerima minimal 2 karakter.').max(100, 'Nama penerima maksimal 100 karakter.'),
   receiverPhone: indonesianPhoneSchema,
   streetAddress: z.string().trim().min(5, 'Alamat lengkap minimal 5 karakter.').max(300, 'Alamat maksimal 300 karakter.'),
-  city: z.string().trim().min(2, 'Kota wajib diisi.').max(100, 'Nama kota maksimal 100 karakter.'),
+  city: z.string().trim().min(2, 'Kota/Provinsi wajib diisi.').max(100, 'Nama kota maksimal 100 karakter.'),
   subdistrict: z.string().trim().min(2, 'Kecamatan minimal 2 karakter.').max(100).default('-'),
+  subdistrictId: z.number().int().positive().optional().nullable(),
   postalCode: postalCodeSchema,
   isDefault: z.boolean().optional().default(false),
 });

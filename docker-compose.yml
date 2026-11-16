@@ -51,7 +51,7 @@ services:
   # ==============================================================
   backend:
     build:
-      context: ./backend
+      context: ./babyshalls-backend
       dockerfile: Dockerfile
     container_name: babyshalls_backend
     restart: unless-stopped
@@ -85,7 +85,7 @@ services:
   # ==============================================================
   frontend:
     build:
-      context: ./frontend
+      context: ./babyshalls-frontend
       dockerfile: Dockerfile
     container_name: babyshalls_frontend
     restart: unless-stopped

@@ -4,14 +4,14 @@
   "private": true,
   "description": "BabyShalls E-Commerce Platform (Next.js 16 + Express API + Prisma + Redis)",
   "scripts": {
-    "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"magenta,cyan\" \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
-    "dev:frontend": "npm run dev --prefix frontend",
-    "dev:backend": "npm run dev --prefix backend",
-    "build": "npm run build --prefix backend && npm run build --prefix frontend",
-    "build:frontend": "npm run build --prefix frontend",
-    "build:backend": "npm run build --prefix backend",
-    "prisma:generate": "npm run prisma:generate --prefix backend",
-    "prisma:push": "npm run prisma:push --prefix backend"
+    "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"magenta,cyan\" \"npm run dev --prefix babyshalls-frontend\" \"npm run dev --prefix babyshalls-backend\"",
+    "dev:frontend": "npm run dev --prefix babyshalls-frontend",
+    "dev:backend": "npm run dev --prefix babyshalls-backend",
+    "build": "npm run build --prefix babyshalls-backend && npm run build --prefix babyshalls-frontend",
+    "build:frontend": "npm run build --prefix babyshalls-frontend",
+    "build:backend": "npm run build --prefix babyshalls-backend",
+    "prisma:generate": "npm run prisma:generate --prefix babyshalls-backend",
+    "prisma:push": "npm run prisma:push --prefix babyshalls-backend"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

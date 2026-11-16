@@ -1,321 +1,15 @@
 {
-  "backend/package.json": {
-    "mtime": 1794130858.440651,
-    "seen": 1794617667.7575586,
-    "ast_hash": "29054d7d02d4f6c9023c9ec3b30cf7a5",
-    "semantic_hash": "29054d7d02d4f6c9023c9ec3b30cf7a5"
-  },
-  "backend/src/index.ts": {
-    "mtime": 1794141398.7414937,
-    "seen": 1794617667.7575665,
-    "ast_hash": "03639d1dbfecb3436eb50b7cc90ab155",
-    "semantic_hash": "03639d1dbfecb3436eb50b7cc90ab155"
-  },
-  "backend/src/lib/kiriminaja.ts": {
-    "mtime": 1794130534.6405494,
-    "seen": 1794617667.7575698,
-    "ast_hash": "37693fe273c1da74c7a2f4193aa56e9e",
-    "semantic_hash": "37693fe273c1da74c7a2f4193aa56e9e"
-  },
-  "backend/src/lib/midtrans.ts": {
-    "mtime": 1794130534.6405494,
-    "seen": 1794617667.7575712,
-    "ast_hash": "f1326f2457fce422db8f3b8912e96c84",
-    "semantic_hash": "f1326f2457fce422db8f3b8912e96c84"
-  },
-  "backend/src/lib/prisma.ts": {
-    "mtime": 1794130534.6405494,
-    "seen": 1794617667.757573,
-    "ast_hash": "9a41442d558971019fece3e951f120e2",
-    "semantic_hash": "9a41442d558971019fece3e951f120e2"
-  },
-  "backend/src/lib/redis.ts": {
-    "mtime": 1794130890.9125824,
-    "seen": 1794617667.757574,
-    "ast_hash": "95dc68c705c6a7b659209bcf6b0e34e7",
-    "semantic_hash": "95dc68c705c6a7b659209bcf6b0e34e7"
-  },
-  "backend/src/middleware/auth.middleware.ts": {
-    "mtime": 1794130534.7043314,
-    "seen": 1794617667.7575755,
-    "ast_hash": "1380d9a04f170fca7e5de382443411d1",
-    "semantic_hash": "1380d9a04f170fca7e5de382443411d1"
-  },
-  "backend/tsconfig.json": {
-    "mtime": 1794130534.721868,
-    "seen": 1794617667.7575767,
-    "ast_hash": "8a99ada2a34e9fb0e88e529329471901",
-    "semantic_hash": "8a99ada2a34e9fb0e88e529329471901"
-  },
   "docker-compose.yml": {
     "mtime": 1794143194.4463184,
     "seen": 1794617667.7575777,
     "ast_hash": "68d2ba5be8bfc9d0265df687991e7764",
     "semantic_hash": "68d2ba5be8bfc9d0265df687991e7764"
   },
-  "frontend/eslint.config.mjs": {
-    "mtime": 1794142621.3003192,
-    "seen": 1794617667.7575788,
-    "ast_hash": "8c1011b2d2564db0a8ae2f8a3bb80475",
-    "semantic_hash": "8c1011b2d2564db0a8ae2f8a3bb80475"
-  },
-  "frontend/next.config.ts": {
-    "mtime": 1794142547.8415077,
-    "seen": 1794617667.75758,
-    "ast_hash": "84156587e0deb07b2fe344e5c30b7fde",
-    "semantic_hash": "84156587e0deb07b2fe344e5c30b7fde"
-  },
-  "frontend/package.json": {
-    "mtime": 1794132066.5060816,
-    "seen": 1794617667.7575817,
-    "ast_hash": "de457e07a56b8b0e2a5fafd9635b14b1",
-    "semantic_hash": "de457e07a56b8b0e2a5fafd9635b14b1"
-  },
-  "frontend/src/app/about/page.tsx": {
-    "mtime": 1794142650.271792,
-    "seen": 1794617667.757583,
-    "ast_hash": "ef46f3766e054288613ec516df723429",
-    "semantic_hash": "ef46f3766e054288613ec516df723429"
-  },
-  "frontend/src/app/account/page.tsx": {
-    "mtime": 1794222102.1733012,
-    "seen": 1794617667.7575839,
-    "ast_hash": "a5913d2566775ac069c432f9db7514ca",
-    "semantic_hash": "a5913d2566775ac069c432f9db7514ca"
-  },
-  "frontend/src/app/admin/page.tsx": {
-    "mtime": 1794142677.2645617,
-    "seen": 1794617667.7575848,
-    "ast_hash": "2de7426982473e87553a377e98adcf2c",
-    "semantic_hash": "2de7426982473e87553a377e98adcf2c"
-  },
-  "frontend/src/app/catalog/page.tsx": {
-    "mtime": 1794141398.5790625,
-    "seen": 1794617667.7575862,
-    "ast_hash": "d8c57d0027c25e1291b4b70bf8b171f3",
-    "semantic_hash": "d8c57d0027c25e1291b4b70bf8b171f3"
-  },
-  "frontend/src/app/checkout/page.tsx": {
-    "mtime": 1794221901.0665696,
-    "seen": 1794617667.7575872,
-    "ast_hash": "1b849df753c663db15ef382ab8f6ceaf",
-    "semantic_hash": "1b849df753c663db15ef382ab8f6ceaf"
-  },
-  "frontend/src/app/events/page.tsx": {
-    "mtime": 1794142704.155194,
-    "seen": 1794617667.7575884,
-    "ast_hash": "e1c6b0a9b72a7e99f75f5050bc9f3acb",
-    "semantic_hash": "e1c6b0a9b72a7e99f75f5050bc9f3acb"
-  },
-  "frontend/src/app/events/register/page.tsx": {
-    "mtime": 1794222057.1048405,
-    "seen": 1794617667.7575898,
-    "ast_hash": "c07d83bdce421a75cf9650dc3e6dd4df",
-    "semantic_hash": "c07d83bdce421a75cf9650dc3e6dd4df"
-  },
-  "frontend/src/app/faq/page.tsx": {
-    "mtime": 1794142863.6079843,
-    "seen": 1794617667.7575908,
-    "ast_hash": "0315a368dce5db00bce269f4631bf03e",
-    "semantic_hash": "0315a368dce5db00bce269f4631bf03e"
-  },
-  "frontend/src/app/layout.tsx": {
-    "mtime": 1794132172.3952303,
-    "seen": 1794617667.757592,
-    "ast_hash": "955fdcb9819fc25a7d4cfd576cad84f6",
-    "semantic_hash": "955fdcb9819fc25a7d4cfd576cad84f6"
-  },
-  "frontend/src/app/page.tsx": {
-    "mtime": 1794130221.5116265,
-    "seen": 1794617667.7575932,
-    "ast_hash": "497091a89f626fb104f79d5c266e605c",
-    "semantic_hash": "497091a89f626fb104f79d5c266e605c"
-  },
-  "frontend/src/app/product/[slug]/page.tsx": {
-    "mtime": 1794142872.065505,
-    "seen": 1794617667.7575946,
-    "ast_hash": "9b2a50bd61f731c94d2621450822f2fd",
-    "semantic_hash": "9b2a50bd61f731c94d2621450822f2fd"
-  },
-  "frontend/src/app/request-book/page.tsx": {
-    "mtime": 1794142879.604118,
-    "seen": 1794617667.757596,
-    "ast_hash": "17173d8eec97b782e7885e5fd35e59ae",
-    "semantic_hash": "17173d8eec97b782e7885e5fd35e59ae"
-  },
-  "frontend/src/components/cart/CartDrawer.tsx": {
-    "mtime": 1794130535.8041916,
-    "seen": 1794617667.7575972,
-    "ast_hash": "c3adfb7d54595725d8791a282f55f365",
-    "semantic_hash": "c3adfb7d54595725d8791a282f55f365"
-  },
-  "frontend/src/components/home/EventsSection.tsx": {
-    "mtime": 1794132793.8282301,
-    "seen": 1794617667.7575982,
-    "ast_hash": "c352e05ad2db24095091ff10706d2615",
-    "semantic_hash": "c352e05ad2db24095091ff10706d2615"
-  },
-  "frontend/src/components/home/HampersSection.tsx": {
-    "mtime": 1794132775.7876778,
-    "seen": 1794617667.757599,
-    "ast_hash": "add3cab41cf12e7a3fdad05f020bfcc7",
-    "semantic_hash": "add3cab41cf12e7a3fdad05f020bfcc7"
-  },
-  "frontend/src/components/home/HeroSection.tsx": {
-    "mtime": 1794132750.409361,
-    "seen": 1794617667.7576005,
-    "ast_hash": "06e353b1b6ce436c2ca2ac0fa135dc6d",
-    "semantic_hash": "06e353b1b6ce436c2ca2ac0fa135dc6d"
-  },
-  "frontend/src/components/home/NewArrivalsSection.tsx": {
-    "mtime": 1794142888.519043,
-    "seen": 1794617667.7576015,
-    "ast_hash": "08446965ef45d54d2e79fd3ccba48a25",
-    "semantic_hash": "08446965ef45d54d2e79fd3ccba48a25"
-  },
-  "frontend/src/components/home/ReviewsSection.tsx": {
-    "mtime": 1794132836.869573,
-    "seen": 1794617667.757603,
-    "ast_hash": "070724cce7556e9528db9a447ee9c9dd",
-    "semantic_hash": "070724cce7556e9528db9a447ee9c9dd"
-  },
-  "frontend/src/components/home/ShopByAgeSection.tsx": {
-    "mtime": 1794132757.7974038,
-    "seen": 1794617667.7576036,
-    "ast_hash": "6da45541c0563e0be47e2b65890f6f4e",
-    "semantic_hash": "6da45541c0563e0be47e2b65890f6f4e"
-  },
-  "frontend/src/components/layout/AnnouncementBar.tsx": {
-    "mtime": 1794131588.4450762,
-    "seen": 1794617667.7576048,
-    "ast_hash": "64ee3e76ecd489fbe117084d99f0f327",
-    "semantic_hash": "64ee3e76ecd489fbe117084d99f0f327"
-  },
-  "frontend/src/components/layout/Footer.tsx": {
-    "mtime": 1794140122.553023,
-    "seen": 1794617667.7576058,
-    "ast_hash": "472cf662ff5f0a748f62001c64b80dca",
-    "semantic_hash": "472cf662ff5f0a748f62001c64b80dca"
-  },
-  "frontend/src/components/layout/Header.tsx": {
-    "mtime": 1794142637.0565271,
-    "seen": 1794617667.7576072,
-    "ast_hash": "a28d1cb8f0d2f4d73a5c683744edeb7b",
-    "semantic_hash": "a28d1cb8f0d2f4d73a5c683744edeb7b"
-  },
-  "frontend/src/components/layout/MobileDrawer.tsx": {
-    "mtime": 1794139050.838508,
-    "seen": 1794617667.7576082,
-    "ast_hash": "44d9e7bdc5006d74862fb5a0cb44d5be",
-    "semantic_hash": "44d9e7bdc5006d74862fb5a0cb44d5be"
-  },
-  "frontend/src/components/layout/Navbar.tsx": {
-    "mtime": 1794141341.5556076,
-    "seen": 1794617667.7576094,
-    "ast_hash": "dea25f0f47b03104bceeae5a45f77449",
-    "semantic_hash": "dea25f0f47b03104bceeae5a45f77449"
-  },
-  "frontend/src/components/layout/SiteHeaderWrapper.tsx": {
-    "mtime": 1794130538.825252,
-    "seen": 1794617667.7576106,
-    "ast_hash": "e80e9dd4e9bcd9f6bbf84ad05f7b1526",
-    "semantic_hash": "e80e9dd4e9bcd9f6bbf84ad05f7b1526"
-  },
-  "frontend/src/components/layout/WhatsAppButton.tsx": {
-    "mtime": 1794131407.686057,
-    "seen": 1794617667.7576118,
-    "ast_hash": "78387558873782f6c3265312b2c8f965",
-    "semantic_hash": "78387558873782f6c3265312b2c8f965"
-  },
-  "frontend/src/components/product/AgeBadge.tsx": {
-    "mtime": 1794130538.825252,
-    "seen": 1794617667.7576127,
-    "ast_hash": "4313db428e055094bbc8b9ae2bb9ef71",
-    "semantic_hash": "4313db428e055094bbc8b9ae2bb9ef71"
-  },
-  "frontend/src/components/product/ProductCard.tsx": {
-    "mtime": 1794142895.3453283,
-    "seen": 1794617667.7576141,
-    "ast_hash": "0664a58bf78593b4ae99bdb7c4180884",
-    "semantic_hash": "0664a58bf78593b4ae99bdb7c4180884"
-  },
-  "frontend/src/components/product/ProductGallery.tsx": {
-    "mtime": 1794133982.6031184,
-    "seen": 1794617667.757615,
-    "ast_hash": "f2ea87a7da36200f544b90b6adc55f73",
-    "semantic_hash": "f2ea87a7da36200f544b90b6adc55f73"
-  },
-  "frontend/src/components/ui/Toast.tsx": {
-    "mtime": 1794130538.825252,
-    "seen": 1794617667.757616,
-    "ast_hash": "092823c5fc7406a308420de4d674bd66",
-    "semantic_hash": "092823c5fc7406a308420de4d674bd66"
-  },
-  "frontend/src/context/CartContext.tsx": {
-    "mtime": 1794130538.825252,
-    "seen": 1794617667.7576175,
-    "ast_hash": "0423357d164ec1d83d4070dc4c69426d",
-    "semantic_hash": "0423357d164ec1d83d4070dc4c69426d"
-  },
-  "frontend/src/context/SmoothScrollProvider.tsx": {
-    "mtime": 1794132710.6497798,
-    "seen": 1794617667.757619,
-    "ast_hash": "bd34daf450b4ef735ca77d764f6c4680",
-    "semantic_hash": "bd34daf450b4ef735ca77d764f6c4680"
-  },
-  "frontend/src/data/categories.ts": {
-    "mtime": 1794138913.541939,
-    "seen": 1794617667.7576199,
-    "ast_hash": "48fbcc43ddbe9f91ef76248c29770fdb",
-    "semantic_hash": "48fbcc43ddbe9f91ef76248c29770fdb"
-  },
-  "frontend/src/data/events.ts": {
-    "mtime": 1794139972.6900206,
-    "seen": 1794617667.757621,
-    "ast_hash": "03a5c39501f64a52cad9d6c7f5e0ed54",
-    "semantic_hash": "03a5c39501f64a52cad9d6c7f5e0ed54"
-  },
-  "frontend/src/data/products.ts": {
-    "mtime": 1794138822.9656162,
-    "seen": 1794617667.7576222,
-    "ast_hash": "00f18816eb26db24f276d41a2239cc25",
-    "semantic_hash": "00f18816eb26db24f276d41a2239cc25"
-  },
-  "frontend/src/data/reviews.ts": {
-    "mtime": 1794130538.8268642,
-    "seen": 1794617667.7576232,
-    "ast_hash": "26964e7795bb374831fd8181ee835982",
-    "semantic_hash": "26964e7795bb374831fd8181ee835982"
-  },
-  "frontend/src/lib/motion.ts": {
-    "mtime": 1794132719.0772524,
-    "seen": 1794617667.7576246,
-    "ast_hash": "3912088b4bbeda0ec8d9e852c895e0d8",
-    "semantic_hash": "3912088b4bbeda0ec8d9e852c895e0d8"
-  },
-  "frontend/src/lib/utils.ts": {
-    "mtime": 1794130917.7030845,
-    "seen": 1794617667.7576256,
-    "ast_hash": "9f4c69908e73568fa1d863c2171b8e95",
-    "semantic_hash": "9f4c69908e73568fa1d863c2171b8e95"
-  },
-  "frontend/src/types/index.ts": {
-    "mtime": 1794138708.3839633,
-    "seen": 1794617667.7576265,
-    "ast_hash": "dc37a3cd4c210aea53dcac9dcb9da276",
-    "semantic_hash": "dc37a3cd4c210aea53dcac9dcb9da276"
-  },
-  "frontend/tsconfig.json": {
-    "mtime": 1794129824.217738,
-    "seen": 1794617667.7576277,
-    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
-    "semantic_hash": "ee17fd1c97c735e9f3564e3f5251f125"
-  },
   "package.json": {
-    "mtime": 1794130996.1582036,
-    "seen": 1794617667.7576292,
-    "ast_hash": "12266daedad4b109864a4f7147249141",
-    "semantic_hash": "12266daedad4b109864a4f7147249141"
+    "mtime": 1794736060.570392,
+    "seen": 1794821730.0163448,
+    "ast_hash": "c5ea0ab42cd618c28ee27df5b3e03b8b",
+    "semantic_hash": "c5ea0ab42cd618c28ee27df5b3e03b8b"
   },
   "AGENTS.md": {
     "mtime": 1794131442.1466348,
@@ -324,34 +18,34 @@
     "semantic_hash": "73aa923d22bbed5c7bb96121e265ef5f"
   },
   "docs/API_SPECIFICATION.md": {
-    "mtime": 1794130995.9065285,
-    "seen": 1794617667.7576313,
-    "ast_hash": "54d6314f7469a476763b7689ff3dbe2a",
-    "semantic_hash": "54d6314f7469a476763b7689ff3dbe2a"
+    "mtime": 1794631481.2993448,
+    "seen": 1794821730.0163496,
+    "ast_hash": "f3bfc0f8a3cf0dc2163dfeb87dfd5677",
+    "semantic_hash": "f3bfc0f8a3cf0dc2163dfeb87dfd5677"
   },
   "docs/ARCHITECTURE.md": {
-    "mtime": 1794130995.951558,
-    "seen": 1794617667.7576323,
-    "ast_hash": "5a2bf7ae4f2e1de86bb69e370deb383d",
-    "semantic_hash": "5a2bf7ae4f2e1de86bb69e370deb383d"
+    "mtime": 1794629126.702897,
+    "seen": 1794821730.0163512,
+    "ast_hash": "82dceb0a02ad3de350ab39dc5ede436e",
+    "semantic_hash": "82dceb0a02ad3de350ab39dc5ede436e"
   },
   "docs/DATABASE_SCHEMA.md": {
-    "mtime": 1794133534.5537782,
-    "seen": 1794617667.7576334,
-    "ast_hash": "2e51a985059769bf4b0efcda2f314b28",
-    "semantic_hash": "2e51a985059769bf4b0efcda2f314b28"
+    "mtime": 1794629126.764146,
+    "seen": 1794821730.0163524,
+    "ast_hash": "82d3aac8f34f5b627a7123b3ff56b707",
+    "semantic_hash": "82d3aac8f34f5b627a7123b3ff56b707"
   },
   "docs/DESIGN.md": {
-    "mtime": 1794030488.508017,
-    "seen": 1794617667.7576349,
-    "ast_hash": "6749539de3fb54833cee62f4eb60e92b",
-    "semantic_hash": "6749539de3fb54833cee62f4eb60e92b"
+    "mtime": 1794618786.5045245,
+    "seen": 1794821730.0163538,
+    "ast_hash": "527e9b157664e48cb5750108c1edba9b",
+    "semantic_hash": "527e9b157664e48cb5750108c1edba9b"
   },
   "docs/PRD.md": {
-    "mtime": 1794129835.3449287,
-    "seen": 1794617667.7576358,
-    "ast_hash": "06305ede6b202db6fbc79a808fbfa22f",
-    "semantic_hash": "06305ede6b202db6fbc79a808fbfa22f"
+    "mtime": 1794629126.9972517,
+    "seen": 1794821730.016355,
+    "ast_hash": "cfd8e45895b2c31396e9f048aebcc154",
+    "semantic_hash": "cfd8e45895b2c31396e9f048aebcc154"
   },
   "docs/RULES.md": {
     "mtime": 1794130996.157205,
@@ -365,58 +59,958 @@
     "ast_hash": "8dc850b7ddb87104672af8861279e0a5",
     "semantic_hash": "8dc850b7ddb87104672af8861279e0a5"
   },
-  "frontend/AGENTS.md": {
-    "mtime": 1794129897.1769285,
-    "seen": 1794617667.7576394,
-    "ast_hash": "c98dbebb744eadc1acc4b9f58bfe0f42",
-    "semantic_hash": "c98dbebb744eadc1acc4b9f58bfe0f42"
+  "babyshalls-backend/package.json": {
+    "mtime": 1794747237.2289295,
+    "seen": 1794821730.0160065,
+    "ast_hash": "2bff47fbb12dcbc4a449754a674f0552",
+    "semantic_hash": "2bff47fbb12dcbc4a449754a674f0552"
   },
-  "frontend/README.md": {
-    "mtime": 1794129823.882205,
-    "seen": 1794617667.7576404,
-    "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
-    "semantic_hash": "f15aaa42d5d299d091b1171097ea56ad"
+  "babyshalls-backend/prisma/seed.ts": {
+    "mtime": 1794647085.013549,
+    "seen": 1794821730.0160117,
+    "ast_hash": "462530eb034009256878332eb6f3d0eb",
+    "semantic_hash": "462530eb034009256878332eb6f3d0eb"
   },
-  "frontend/public/BabyShalls Warm Style Guide and Homepage Mockup-2.png": {
-    "mtime": 1794026272.5079443,
-    "seen": 1794617667.7576418,
-    "ast_hash": "145dea8e9649b1a34573cd248d35933c",
-    "semantic_hash": "145dea8e9649b1a34573cd248d35933c"
+  "babyshalls-backend/src/index.ts": {
+    "mtime": 1794746829.849941,
+    "seen": 1794821730.0160146,
+    "ast_hash": "954f58d4761ff84e28b3663d96ac4267",
+    "semantic_hash": "954f58d4761ff84e28b3663d96ac4267"
   },
-  "frontend/public/BabyShallsLogo 1.PNG": {
-    "mtime": 1794138214.4110754,
-    "seen": 1794617667.7576427,
-    "ast_hash": "6ce2763f1dd058b86be4c42543030223",
-    "semantic_hash": "6ce2763f1dd058b86be4c42543030223"
+  "babyshalls-backend/src/lib/__tests__/idempotency.test.ts": {
+    "mtime": 1794653929.6204996,
+    "seen": 1794821730.0160165,
+    "ast_hash": "15d1c4897c1e8cbe2cbe4506f187e687",
+    "semantic_hash": "15d1c4897c1e8cbe2cbe4506f187e687"
   },
-  "frontend/public/hero-child-reading.jpg": {
-    "mtime": 1794027598.371511,
-    "seen": 1794617667.7576437,
-    "ast_hash": "56def314bb15e2a410ffc46fa71c5b28",
-    "semantic_hash": "56def314bb15e2a410ffc46fa71c5b28"
+  "babyshalls-backend/src/lib/broadcast.ts": {
+    "mtime": 1794633916.9460146,
+    "seen": 1794821730.0160177,
+    "ast_hash": "2c94560416e6cd91cbd9e65e399f3681",
+    "semantic_hash": "2c94560416e6cd91cbd9e65e399f3681"
   },
-  "frontend/public/logo.png": {
-    "mtime": 1794138601.2286122,
-    "seen": 1794617667.7576451,
-    "ast_hash": "3cd07b0d168a3b9d6ffc1a8858bdd4be",
-    "semantic_hash": "3cd07b0d168a3b9d6ffc1a8858bdd4be"
+  "babyshalls-backend/src/lib/http-error.ts": {
+    "mtime": 1794669771.8806107,
+    "seen": 1794821730.0160186,
+    "ast_hash": "5e8ac6178c5085e1504c9bd51c1a4883",
+    "semantic_hash": "5e8ac6178c5085e1504c9bd51c1a4883"
   },
-  "frontend/public/sitemap-babyshalls.png": {
-    "mtime": 1794220068.0968404,
-    "seen": 1794617667.757646,
-    "ast_hash": "2ee11d257f34bbf8980e182791c410b6",
-    "semantic_hash": "2ee11d257f34bbf8980e182791c410b6"
+  "babyshalls-backend/src/lib/idempotency-store.ts": {
+    "mtime": 1794654107.861994,
+    "seen": 1794821730.0160198,
+    "ast_hash": "1611d828846951de7dfd66c0e9f0b3fd",
+    "semantic_hash": "1611d828846951de7dfd66c0e9f0b3fd"
   },
-  "frontend/public/user-flow-babyshalls.png": {
-    "mtime": 1794220690.7624476,
-    "seen": 1794617667.7576473,
-    "ast_hash": "7910d724e61b0d1de2968fd71ce75726",
-    "semantic_hash": "7910d724e61b0d1de2968fd71ce75726"
+  "babyshalls-backend/src/lib/kiriminaja.ts": {
+    "mtime": 1794130534.6405494,
+    "seen": 1794821730.0160205,
+    "ast_hash": "37693fe273c1da74c7a2f4193aa56e9e",
+    "semantic_hash": "37693fe273c1da74c7a2f4193aa56e9e"
   },
-  "frontend/src/app/icon.png": {
-    "mtime": 1794138601.2286122,
-    "seen": 1794617667.7576487,
-    "ast_hash": "3cd07b0d168a3b9d6ffc1a8858bdd4be",
-    "semantic_hash": "3cd07b0d168a3b9d6ffc1a8858bdd4be"
+  "babyshalls-backend/src/lib/mailer.ts": {
+    "mtime": 1794650071.3566906,
+    "seen": 1794821730.0160215,
+    "ast_hash": "6af613354fdf72fdeb7e2db16439cc78",
+    "semantic_hash": "6af613354fdf72fdeb7e2db16439cc78"
+  },
+  "babyshalls-backend/src/lib/midtrans.ts": {
+    "mtime": 1794130534.6405494,
+    "seen": 1794821730.0160222,
+    "ast_hash": "f1326f2457fce422db8f3b8912e96c84",
+    "semantic_hash": "f1326f2457fce422db8f3b8912e96c84"
+  },
+  "babyshalls-backend/src/lib/otp.ts": {
+    "mtime": 1794633939.9721587,
+    "seen": 1794821730.0160232,
+    "ast_hash": "51f75c351b5c75790cc0aec03ab9db2c",
+    "semantic_hash": "51f75c351b5c75790cc0aec03ab9db2c"
+  },
+  "babyshalls-backend/src/lib/prisma.ts": {
+    "mtime": 1794130534.6405494,
+    "seen": 1794821730.0160244,
+    "ast_hash": "9a41442d558971019fece3e951f120e2",
+    "semantic_hash": "9a41442d558971019fece3e951f120e2"
+  },
+  "babyshalls-backend/src/lib/redis.ts": {
+    "mtime": 1794747238.626696,
+    "seen": 1794821730.0160253,
+    "ast_hash": "3a3bee71788672cc422ed7f33c517c4b",
+    "semantic_hash": "3a3bee71788672cc422ed7f33c517c4b"
+  },
+  "babyshalls-backend/src/middleware/auth.middleware.ts": {
+    "mtime": 1794647036.4655423,
+    "seen": 1794821730.0160263,
+    "ast_hash": "3081b358835043af7d0ad1bb9025206b",
+    "semantic_hash": "3081b358835043af7d0ad1bb9025206b"
+  },
+  "babyshalls-backend/src/middleware/idempotency.middleware.ts": {
+    "mtime": 1794654107.8972008,
+    "seen": 1794821730.0160275,
+    "ast_hash": "0d2967662ea8590b304ee91824c8cf60",
+    "semantic_hash": "0d2967662ea8590b304ee91824c8cf60"
+  },
+  "babyshalls-backend/src/modules/shipping/providers/binderbyte.provider.ts": {
+    "mtime": 1794645204.762892,
+    "seen": 1794821730.0160284,
+    "ast_hash": "9798a123374cb3920f96d8b99ea83049",
+    "semantic_hash": "9798a123374cb3920f96d8b99ea83049"
+  },
+  "babyshalls-backend/src/modules/shipping/providers/rajaongkir-v2.provider.ts": {
+    "mtime": 1794645684.5040853,
+    "seen": 1794821730.0160291,
+    "ast_hash": "088dea446272244932fcdc59dabfba4b",
+    "semantic_hash": "088dea446272244932fcdc59dabfba4b"
+  },
+  "babyshalls-backend/src/modules/shipping/providers/shipping-provider.interface.ts": {
+    "mtime": 1794645205.044559,
+    "seen": 1794821730.0160303,
+    "ast_hash": "8138605812db988822e594624af28b66",
+    "semantic_hash": "8138605812db988822e594624af28b66"
+  },
+  "babyshalls-backend/src/modules/shipping/seed-regions-cli.ts": {
+    "mtime": 1794646169.5540862,
+    "seen": 1794821730.016031,
+    "ast_hash": "ff635fc9c23af5cfbecc0441681bb54d",
+    "semantic_hash": "ff635fc9c23af5cfbecc0441681bb54d"
+  },
+  "babyshalls-backend/src/modules/shipping/shipping.routes.ts": {
+    "mtime": 1794645205.3261964,
+    "seen": 1794821730.016032,
+    "ast_hash": "0787468a187a40c24e88ddf24b8e4025",
+    "semantic_hash": "0787468a187a40c24e88ddf24b8e4025"
+  },
+  "babyshalls-backend/src/modules/shipping/shipping.seed.ts": {
+    "mtime": 1794645688.3121183,
+    "seen": 1794821730.016033,
+    "ast_hash": "a5093ebeba8a360d9fe5fcc12ca00ecd",
+    "semantic_hash": "a5093ebeba8a360d9fe5fcc12ca00ecd"
+  },
+  "babyshalls-backend/src/modules/shipping/shipping.service.ts": {
+    "mtime": 1794650808.3571074,
+    "seen": 1794821730.016034,
+    "ast_hash": "71d02e03ee1c7ed4068b2b91ff33471b",
+    "semantic_hash": "71d02e03ee1c7ed4068b2b91ff33471b"
+  },
+  "babyshalls-backend/src/modules/shipping/shipping.types.ts": {
+    "mtime": 1794645206.3155317,
+    "seen": 1794821730.0160346,
+    "ast_hash": "9a3f56b1777a969e6cc1eab7f1d68a4e",
+    "semantic_hash": "9a3f56b1777a969e6cc1eab7f1d68a4e"
+  },
+  "babyshalls-backend/src/routes/account.routes.ts": {
+    "mtime": 1794738744.1992104,
+    "seen": 1794821730.0160356,
+    "ast_hash": "d3e848fdfb2e5ea38cfa62c98c587e09",
+    "semantic_hash": "d3e848fdfb2e5ea38cfa62c98c587e09"
+  },
+  "babyshalls-backend/src/routes/admin-analytics.routes.ts": {
+    "mtime": 1794642856.7483008,
+    "seen": 1794821730.0160363,
+    "ast_hash": "695bc5abdae089fac8bff4db5cfdb167",
+    "semantic_hash": "695bc5abdae089fac8bff4db5cfdb167"
+  },
+  "babyshalls-backend/src/routes/admin-coupon.routes.ts": {
+    "mtime": 1794638210.6885483,
+    "seen": 1794821730.0160372,
+    "ast_hash": "49e705e12487b2be4a6fee8f13065c06",
+    "semantic_hash": "49e705e12487b2be4a6fee8f13065c06"
+  },
+  "babyshalls-backend/src/routes/admin-dashboard.routes.ts": {
+    "mtime": 1794747255.6046383,
+    "seen": 1794821730.0160384,
+    "ast_hash": "8996f8b2c73198f393dfbe1e6f77adbd",
+    "semantic_hash": "8996f8b2c73198f393dfbe1e6f77adbd"
+  },
+  "babyshalls-backend/src/routes/admin-events.routes.ts": {
+    "mtime": 1794640911.7468064,
+    "seen": 1794821730.0160391,
+    "ast_hash": "23df8e0d6d2a7e0a3999b3ce54d45f1b",
+    "semantic_hash": "23df8e0d6d2a7e0a3999b3ce54d45f1b"
+  },
+  "babyshalls-backend/src/routes/auth.routes.ts": {
+    "mtime": 1794746197.9873207,
+    "seen": 1794821730.0160398,
+    "ast_hash": "a156c6a4e8380eb659e049a5a87a2dab",
+    "semantic_hash": "a156c6a4e8380eb659e049a5a87a2dab"
+  },
+  "babyshalls-backend/src/routes/book-request.routes.ts": {
+    "mtime": 1794653973.5136106,
+    "seen": 1794821730.016041,
+    "ast_hash": "e4f6a38d303996fdcdc89052d9e582ec",
+    "semantic_hash": "e4f6a38d303996fdcdc89052d9e582ec"
+  },
+  "babyshalls-backend/src/routes/coupon.routes.ts": {
+    "mtime": 1794638171.0844467,
+    "seen": 1794821730.016042,
+    "ast_hash": "950772871555eea55d439e1cbc4ac977",
+    "semantic_hash": "950772871555eea55d439e1cbc4ac977"
+  },
+  "babyshalls-backend/src/routes/event.routes.ts": {
+    "mtime": 1794653971.6343873,
+    "seen": 1794821730.016043,
+    "ast_hash": "2d8dc0223cf61f6d75f40663af5391f8",
+    "semantic_hash": "2d8dc0223cf61f6d75f40663af5391f8"
+  },
+  "babyshalls-backend/src/routes/order.routes.ts": {
+    "mtime": 1794653969.4465141,
+    "seen": 1794821730.0160437,
+    "ast_hash": "d42575420229c7c3952e89533ef46d9a",
+    "semantic_hash": "d42575420229c7c3952e89533ef46d9a"
+  },
+  "babyshalls-backend/src/routes/product.routes.ts": {
+    "mtime": 1794638213.4173276,
+    "seen": 1794821730.016045,
+    "ast_hash": "517e5ade56d089a806d036ec1af7750a",
+    "semantic_hash": "517e5ade56d089a806d036ec1af7750a"
+  },
+  "babyshalls-backend/tsconfig.json": {
+    "mtime": 1794130534.721868,
+    "seen": 1794821730.0160458,
+    "ast_hash": "8a99ada2a34e9fb0e88e529329471901",
+    "semantic_hash": "8a99ada2a34e9fb0e88e529329471901"
+  },
+  "babyshalls-frontend/app/about/page.tsx": {
+    "mtime": 1794810580.73944,
+    "seen": 1794821730.016047,
+    "ast_hash": "1553ff35b825c981b6bc0a38728f7b8e",
+    "semantic_hash": "1553ff35b825c981b6bc0a38728f7b8e"
+  },
+  "babyshalls-frontend/app/account/orders/page.tsx": {
+    "mtime": 1794736568.0946298,
+    "seen": 1794821730.016048,
+    "ast_hash": "b02524f8e5a19be1cd942b1214e70e84",
+    "semantic_hash": "b02524f8e5a19be1cd942b1214e70e84"
+  },
+  "babyshalls-frontend/app/account/page.tsx": {
+    "mtime": 1794810580.7409356,
+    "seen": 1794821730.016049,
+    "ast_hash": "67694b6abf84e17453ee64ea6097a965",
+    "semantic_hash": "67694b6abf84e17453ee64ea6097a965"
+  },
+  "babyshalls-frontend/app/admin/login/page.tsx": {
+    "mtime": 1794736568.0946298,
+    "seen": 1794821730.0160496,
+    "ast_hash": "54a50c81fbc1f10beae0ce22e7cb84ec",
+    "semantic_hash": "54a50c81fbc1f10beae0ce22e7cb84ec"
+  },
+  "babyshalls-frontend/app/admin/page.tsx": {
+    "mtime": 1794810580.7429557,
+    "seen": 1794821730.0160506,
+    "ast_hash": "ebfc055c5a2880599876abe549ff46e5",
+    "semantic_hash": "ebfc055c5a2880599876abe549ff46e5"
+  },
+  "babyshalls-frontend/app/book-request/page.tsx": {
+    "mtime": 1794736568.0966272,
+    "seen": 1794821730.0160515,
+    "ast_hash": "a8c9d2642cc970e5fbf008502887fe3c",
+    "semantic_hash": "a8c9d2642cc970e5fbf008502887fe3c"
+  },
+  "babyshalls-frontend/app/cart/page.tsx": {
+    "mtime": 1794810580.7439544,
+    "seen": 1794821730.0160525,
+    "ast_hash": "f6b56e0e3c01daf30f6acd36c1424ca3",
+    "semantic_hash": "f6b56e0e3c01daf30f6acd36c1424ca3"
+  },
+  "babyshalls-frontend/app/checkout/page.tsx": {
+    "mtime": 1794810580.744965,
+    "seen": 1794821730.0160532,
+    "ast_hash": "9a109d8ebc619243bd22d47fb9328420",
+    "semantic_hash": "9a109d8ebc619243bd22d47fb9328420"
+  },
+  "babyshalls-frontend/app/events/[id]/page.tsx": {
+    "mtime": 1794810580.744965,
+    "seen": 1794821730.0160542,
+    "ast_hash": "be185dfe9bb0ab2c68ddaa0f1ad73c44",
+    "semantic_hash": "be185dfe9bb0ab2c68ddaa0f1ad73c44"
+  },
+  "babyshalls-frontend/app/events/[id]/register/page.tsx": {
+    "mtime": 1794810580.7459648,
+    "seen": 1794821730.0160553,
+    "ast_hash": "b2d8ecee911c87c462310483b8c2f5a1",
+    "semantic_hash": "b2d8ecee911c87c462310483b8c2f5a1"
+  },
+  "babyshalls-frontend/app/events/page.tsx": {
+    "mtime": 1794810580.7459648,
+    "seen": 1794821730.016056,
+    "ast_hash": "cca44d84ff3057793d70f347bd92524f",
+    "semantic_hash": "cca44d84ff3057793d70f347bd92524f"
+  },
+  "babyshalls-frontend/app/faq/page.tsx": {
+    "mtime": 1794810580.746966,
+    "seen": 1794821730.0160568,
+    "ast_hash": "f7e63f064ee5546b1f9c2f02db20b1a4",
+    "semantic_hash": "f7e63f064ee5546b1f9c2f02db20b1a4"
+  },
+  "babyshalls-frontend/app/hampers/page.tsx": {
+    "mtime": 1794736568.0996282,
+    "seen": 1794821730.016058,
+    "ast_hash": "8a6c01b96f3044e5f23f89bcbb661922",
+    "semantic_hash": "8a6c01b96f3044e5f23f89bcbb661922"
+  },
+  "babyshalls-frontend/app/layout.tsx": {
+    "mtime": 1794810580.7479625,
+    "seen": 1794821730.016059,
+    "ast_hash": "199e662b97e535a39e0d044e6f734bb2",
+    "semantic_hash": "199e662b97e535a39e0d044e6f734bb2"
+  },
+  "babyshalls-frontend/app/login/page.tsx": {
+    "mtime": 1794810580.7479625,
+    "seen": 1794821730.0160596,
+    "ast_hash": "b1b82cda1d212cd7b34755fa661e5a99",
+    "semantic_hash": "b1b82cda1d212cd7b34755fa661e5a99"
+  },
+  "babyshalls-frontend/app/not-found.tsx": {
+    "mtime": 1794736568.0996282,
+    "seen": 1794821730.0160606,
+    "ast_hash": "28c99b56eded4314bb1f1a99cdf3f4c0",
+    "semantic_hash": "28c99b56eded4314bb1f1a99cdf3f4c0"
+  },
+  "babyshalls-frontend/app/order-success/[id]/page.tsx": {
+    "mtime": 1794736568.1006293,
+    "seen": 1794821730.0160615,
+    "ast_hash": "c0ff8829bd35328b991c446ec15df266",
+    "semantic_hash": "c0ff8829bd35328b991c446ec15df266"
+  },
+  "babyshalls-frontend/app/page.tsx": {
+    "mtime": 1794736568.1006293,
+    "seen": 1794821730.0160623,
+    "ast_hash": "d2fdfc60bced80cb1e6150fc90801d73",
+    "semantic_hash": "d2fdfc60bced80cb1e6150fc90801d73"
+  },
+  "babyshalls-frontend/app/preloved/page.tsx": {
+    "mtime": 1794810580.7489612,
+    "seen": 1794821730.0160632,
+    "ast_hash": "7a6122e3ed8be88c7590fea667455e6c",
+    "semantic_hash": "7a6122e3ed8be88c7590fea667455e6c"
+  },
+  "babyshalls-frontend/app/product/[id]/page.tsx": {
+    "mtime": 1794745034.4620528,
+    "seen": 1794821730.0160642,
+    "ast_hash": "1ce06072bface71f91a6cc0b22a184dc",
+    "semantic_hash": "1ce06072bface71f91a6cc0b22a184dc"
+  },
+  "babyshalls-frontend/app/products/[id]/page.tsx": {
+    "mtime": 1794736568.1016295,
+    "seen": 1794821730.0160654,
+    "ast_hash": "0e83550d2b54d8e142f422c3e021f575",
+    "semantic_hash": "0e83550d2b54d8e142f422c3e021f575"
+  },
+  "babyshalls-frontend/app/request-a-book/page.tsx": {
+    "mtime": 1794736568.1026285,
+    "seen": 1794821730.016066,
+    "ast_hash": "90706301003c7d8e0e124b75cf4ca73c",
+    "semantic_hash": "90706301003c7d8e0e124b75cf4ca73c"
+  },
+  "babyshalls-frontend/app/request/page.tsx": {
+    "mtime": 1794736568.1026285,
+    "seen": 1794821730.016067,
+    "ast_hash": "9929ca3940bb884b9d11fd3aa464cabb",
+    "semantic_hash": "9929ca3940bb884b9d11fd3aa464cabb"
+  },
+  "babyshalls-frontend/app/shop/page.tsx": {
+    "mtime": 1794736568.1026285,
+    "seen": 1794821730.0160677,
+    "ast_hash": "bda93ce3f972ca9d7afeba775dce1d1a",
+    "semantic_hash": "bda93ce3f972ca9d7afeba775dce1d1a"
+  },
+  "babyshalls-frontend/eslint.config.mjs": {
+    "mtime": 1794736568.1026285,
+    "seen": 1794821730.0160687,
+    "ast_hash": "6c4307ffa009658f5c97f5629094c0c2",
+    "semantic_hash": "6c4307ffa009658f5c97f5629094c0c2"
+  },
+  "babyshalls-frontend/next.config.ts": {
+    "mtime": 1794745034.4620528,
+    "seen": 1794821730.0160694,
+    "ast_hash": "82912efbca1dcdad33ae5b31f5458aa2",
+    "semantic_hash": "82912efbca1dcdad33ae5b31f5458aa2"
+  },
+  "babyshalls-frontend/package.json": {
+    "mtime": 1794736568.1056294,
+    "seen": 1794821730.0160704,
+    "ast_hash": "811f217c79ed90ff8d0d44f5413ff8c6",
+    "semantic_hash": "811f217c79ed90ff8d0d44f5413ff8c6"
+  },
+  "babyshalls-frontend/postcss.config.mjs": {
+    "mtime": 1794736568.1056294,
+    "seen": 1794821730.016071,
+    "ast_hash": "13da65b54004c34f729b796e5da1ab19",
+    "semantic_hash": "13da65b54004c34f729b796e5da1ab19"
+  },
+  "babyshalls-frontend/src/components/AboutBabyShalls.tsx": {
+    "mtime": 1794736568.7738404,
+    "seen": 1794821730.016072,
+    "ast_hash": "2739fb84f6c1025e95e9f51e60c9afd0",
+    "semantic_hash": "2739fb84f6c1025e95e9f51e60c9afd0"
+  },
+  "babyshalls-frontend/src/components/BookRequestBanner.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.0160732,
+    "ast_hash": "95fed0f79ebbc0c96d5715b8bfedd036",
+    "semantic_hash": "95fed0f79ebbc0c96d5715b8bfedd036"
+  },
+  "babyshalls-frontend/src/components/CategoryShowcase.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.016074,
+    "ast_hash": "d2db8430969163b2b73ca9e1a372bd4b",
+    "semantic_hash": "d2db8430969163b2b73ca9e1a372bd4b"
+  },
+  "babyshalls-frontend/src/components/CuratorSpotlight.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.0160747,
+    "ast_hash": "df8fdb00fe32596f6b0158661cfaf110",
+    "semantic_hash": "df8fdb00fe32596f6b0158661cfaf110"
+  },
+  "babyshalls-frontend/src/components/EventsSection.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.0160758,
+    "ast_hash": "b4f36ba2565cdd139cea8b3640e42790",
+    "semantic_hash": "b4f36ba2565cdd139cea8b3640e42790"
+  },
+  "babyshalls-frontend/src/components/ExploreBanner.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.0160768,
+    "ast_hash": "59ce25d903e75f2bc771d256b7df8b4f",
+    "semantic_hash": "59ce25d903e75f2bc771d256b7df8b4f"
+  },
+  "babyshalls-frontend/src/components/FaqSection.tsx": {
+    "mtime": 1794736568.7748404,
+    "seen": 1794821730.0160775,
+    "ast_hash": "2a79132d58377f9a4dafdb758f5263c2",
+    "semantic_hash": "2a79132d58377f9a4dafdb758f5263c2"
+  },
+  "babyshalls-frontend/src/components/FeaturedCollections.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160787,
+    "ast_hash": "0925b7063adadad69ac89a83821bfb85",
+    "semantic_hash": "0925b7063adadad69ac89a83821bfb85"
+  },
+  "babyshalls-frontend/src/components/FloatingWhatsApp.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160794,
+    "ast_hash": "12128272895361d13fc9c11237d33a68",
+    "semantic_hash": "12128272895361d13fc9c11237d33a68"
+  },
+  "babyshalls-frontend/src/components/Footer.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160801,
+    "ast_hash": "d22f1afe138747b9ea3c0ac50aaa0acf",
+    "semantic_hash": "d22f1afe138747b9ea3c0ac50aaa0acf"
+  },
+  "babyshalls-frontend/src/components/GiftHampersBanner.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160809,
+    "ast_hash": "fc91adea425294193fd32008f5671f57",
+    "semantic_hash": "fc91adea425294193fd32008f5671f57"
+  },
+  "babyshalls-frontend/src/components/GiftWrapping.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160818,
+    "ast_hash": "96043fcb75dc423ceb7c7b6c63af5b53",
+    "semantic_hash": "96043fcb75dc423ceb7c7b6c63af5b53"
+  },
+  "babyshalls-frontend/src/components/HampersSection.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160828,
+    "ast_hash": "eecc944c9aae57ed9fa631a32830541a",
+    "semantic_hash": "eecc944c9aae57ed9fa631a32830541a"
+  },
+  "babyshalls-frontend/src/components/Header.tsx": {
+    "mtime": 1794736568.7758417,
+    "seen": 1794821730.0160847,
+    "ast_hash": "29e780a2805e63b40064acfbcdae1333",
+    "semantic_hash": "29e780a2805e63b40064acfbcdae1333"
+  },
+  "babyshalls-frontend/src/components/Hero.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160859,
+    "ast_hash": "9d3f1be82729cf0dbd6bc8051fa6ac8d",
+    "semantic_hash": "9d3f1be82729cf0dbd6bc8051fa6ac8d"
+  },
+  "babyshalls-frontend/src/components/NewArrivals.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160868,
+    "ast_hash": "a1b5e5b2d1fb8abfcecfb14de0992c13",
+    "semantic_hash": "a1b5e5b2d1fb8abfcecfb14de0992c13"
+  },
+  "babyshalls-frontend/src/components/OrderDrawer.tsx": {
+    "mtime": 1794745034.4630532,
+    "seen": 1794821730.0160878,
+    "ast_hash": "1b5e10c656e5854ac37cf111c0123175",
+    "semantic_hash": "1b5e10c656e5854ac37cf111c0123175"
+  },
+  "babyshalls-frontend/src/components/PrelovedHighlights.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160885,
+    "ast_hash": "1b6b3f4b22336186182ff4892dd939be",
+    "semantic_hash": "1b6b3f4b22336186182ff4892dd939be"
+  },
+  "babyshalls-frontend/src/components/ProductCatalog.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160897,
+    "ast_hash": "3e1ec2405ccd908cd33e3b664d3f7d4e",
+    "semantic_hash": "3e1ec2405ccd908cd33e3b664d3f7d4e"
+  },
+  "babyshalls-frontend/src/components/ProductQuickViewModal.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160906,
+    "ast_hash": "47f507b062b559f9b944616c04efa4af",
+    "semantic_hash": "47f507b062b559f9b944616c04efa4af"
+  },
+  "babyshalls-frontend/src/components/ReadingGuideSection.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160913,
+    "ast_hash": "6f3ee8d2cab1ebccd66a8020edb06481",
+    "semantic_hash": "6f3ee8d2cab1ebccd66a8020edb06481"
+  },
+  "babyshalls-frontend/src/components/ReviewsSection.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160923,
+    "ast_hash": "58fa29eee259578e76880d6c7c9d5609",
+    "semantic_hash": "58fa29eee259578e76880d6c7c9d5609"
+  },
+  "babyshalls-frontend/src/components/ShopByAge.tsx": {
+    "mtime": 1794736568.7768414,
+    "seen": 1794821730.0160933,
+    "ast_hash": "af269bb0e1f601b73f43c643c13ca5c7",
+    "semantic_hash": "af269bb0e1f601b73f43c643c13ca5c7"
+  },
+  "babyshalls-frontend/src/components/StoreAtmosphere.tsx": {
+    "mtime": 1794736568.778348,
+    "seen": 1794821730.016094,
+    "ast_hash": "2043ffbe36fefb50976e87c00845d1ec",
+    "semantic_hash": "2043ffbe36fefb50976e87c00845d1ec"
+  },
+  "babyshalls-frontend/src/components/StoreInfoModal.tsx": {
+    "mtime": 1794736568.778811,
+    "seen": 1794821730.016095,
+    "ast_hash": "ee16e6aff6539d8262250ccfc962d189",
+    "semantic_hash": "ee16e6aff6539d8262250ccfc962d189"
+  },
+  "babyshalls-frontend/src/components/WorkshopBanner.tsx": {
+    "mtime": 1794736568.778811,
+    "seen": 1794821730.016096,
+    "ast_hash": "599a0b2a904908587a847e81ae2b0b47",
+    "semantic_hash": "599a0b2a904908587a847e81ae2b0b47"
+  },
+  "babyshalls-frontend/src/components/WorkshopModal.tsx": {
+    "mtime": 1794736568.7793174,
+    "seen": 1794821730.016097,
+    "ast_hash": "d0e24a66f861c544ff61c1f62f1f5a21",
+    "semantic_hash": "d0e24a66f861c544ff61c1f62f1f5a21"
+  },
+  "babyshalls-frontend/src/components/admin/AdminBookRequestsSection.tsx": {
+    "mtime": 1794736568.7793174,
+    "seen": 1794821730.0160978,
+    "ast_hash": "3cc23e975c66a2fda165b8184e692764",
+    "semantic_hash": "3cc23e975c66a2fda165b8184e692764"
+  },
+  "babyshalls-frontend/src/components/admin/AdminBroadcastSection.tsx": {
+    "mtime": 1794736568.780326,
+    "seen": 1794821730.0160987,
+    "ast_hash": "0edf5562819e606b1cdaac7ed6224d72",
+    "semantic_hash": "0edf5562819e606b1cdaac7ed6224d72"
+  },
+  "babyshalls-frontend/src/components/admin/AdminCatalogSection.tsx": {
+    "mtime": 1794736568.780326,
+    "seen": 1794821730.0160997,
+    "ast_hash": "40c996470ab70eae9f142edaf877f1bb",
+    "semantic_hash": "40c996470ab70eae9f142edaf877f1bb"
+  },
+  "babyshalls-frontend/src/components/admin/AdminCmsSection.tsx": {
+    "mtime": 1794736568.7813244,
+    "seen": 1794821730.0161006,
+    "ast_hash": "e080e29c160ec4696b68bb9baaa3099e",
+    "semantic_hash": "e080e29c160ec4696b68bb9baaa3099e"
+  },
+  "babyshalls-frontend/src/components/admin/AdminModal.tsx": {
+    "mtime": 1794736568.7813244,
+    "seen": 1794821730.0161016,
+    "ast_hash": "92d50fe4b759783974a690e25a5470ec",
+    "semantic_hash": "92d50fe4b759783974a690e25a5470ec"
+  },
+  "babyshalls-frontend/src/components/admin/AdminOrdersSection.tsx": {
+    "mtime": 1794736568.7823234,
+    "seen": 1794821730.016103,
+    "ast_hash": "2ac3ffcd6c6895b9300765bd98f7b1f6",
+    "semantic_hash": "2ac3ffcd6c6895b9300765bd98f7b1f6"
+  },
+  "babyshalls-frontend/src/components/admin/AdminVouchersSection.tsx": {
+    "mtime": 1794736568.7833233,
+    "seen": 1794821730.0161037,
+    "ast_hash": "66f6232ebc96707b8c20f675cc47cd00",
+    "semantic_hash": "66f6232ebc96707b8c20f675cc47cd00"
+  },
+  "babyshalls-frontend/src/components/admin/AdminWorkshopsSection.tsx": {
+    "mtime": 1794736568.7833233,
+    "seen": 1794821730.0161045,
+    "ast_hash": "288787402da464d4b2434561c694c8b8",
+    "semantic_hash": "288787402da464d4b2434561c694c8b8"
+  },
+  "babyshalls-frontend/src/components/admin/CmsAboutCanvas.tsx": {
+    "mtime": 1794736568.7843246,
+    "seen": 1794821730.0161054,
+    "ast_hash": "3947f554ed872f90f147ee6e9e10b79e",
+    "semantic_hash": "3947f554ed872f90f147ee6e9e10b79e"
+  },
+  "babyshalls-frontend/src/components/admin/CmsHomeCanvas.tsx": {
+    "mtime": 1794736568.7843246,
+    "seen": 1794821730.0161061,
+    "ast_hash": "6bd8c7e218c77c4bb2420c66354d70da",
+    "semantic_hash": "6bd8c7e218c77c4bb2420c66354d70da"
+  },
+  "babyshalls-frontend/src/components/admin/DataTableToolbar.tsx": {
+    "mtime": 1794736568.785323,
+    "seen": 1794821730.0161073,
+    "ast_hash": "8f414206892cba5da194ee425988eb5a",
+    "semantic_hash": "8f414206892cba5da194ee425988eb5a"
+  },
+  "babyshalls-frontend/src/components/admin/EventQrScannerModal.tsx": {
+    "mtime": 1794736568.785323,
+    "seen": 1794821730.016108,
+    "ast_hash": "8205d7356781a584f5ba42cf2d400be0",
+    "semantic_hash": "8205d7356781a584f5ba42cf2d400be0"
+  },
+  "babyshalls-frontend/src/components/admin/MultiImageUploader.tsx": {
+    "mtime": 1794736568.785323,
+    "seen": 1794821730.016109,
+    "ast_hash": "3eed81b16174a5a73b37d8fc7fa6e151",
+    "semantic_hash": "3eed81b16174a5a73b37d8fc7fa6e151"
+  },
+  "babyshalls-frontend/src/components/admin/ProductFormModal.tsx": {
+    "mtime": 1794736568.7863228,
+    "seen": 1794821730.0161097,
+    "ast_hash": "9a4f23d3187f38e7d85b23d1e055d828",
+    "semantic_hash": "9a4f23d3187f38e7d85b23d1e055d828"
+  },
+  "babyshalls-frontend/src/components/admin/RichTextEditor.tsx": {
+    "mtime": 1794736568.7863228,
+    "seen": 1794821730.016111,
+    "ast_hash": "df8cf144a8076887e53c0f14729c06e6",
+    "semantic_hash": "df8cf144a8076887e53c0f14729c06e6"
+  },
+  "babyshalls-frontend/src/components/admin/SalesAnalyticsChart.tsx": {
+    "mtime": 1794736568.787324,
+    "seen": 1794821730.0161116,
+    "ast_hash": "e7a57db7a3868447342c5b05efaf9921",
+    "semantic_hash": "e7a57db7a3868447342c5b05efaf9921"
+  },
+  "babyshalls-frontend/src/components/admin/WorkshopFormModal.tsx": {
+    "mtime": 1794736568.787324,
+    "seen": 1794821730.0161123,
+    "ast_hash": "0a6c069f28ef049787b6e7f59143aabc",
+    "semantic_hash": "0a6c069f28ef049787b6e7f59143aabc"
+  },
+  "babyshalls-frontend/src/components/admin/WorkshopShareModal.tsx": {
+    "mtime": 1794736568.788323,
+    "seen": 1794821730.0161135,
+    "ast_hash": "89807a9d54239dd8c87ccd92507c6448",
+    "semantic_hash": "89807a9d54239dd8c87ccd92507c6448"
+  },
+  "babyshalls-frontend/src/components/common/FloatingWhatsApp.tsx": {
+    "mtime": 1794736568.788323,
+    "seen": 1794821730.0161142,
+    "ast_hash": "da194b7d9a79a27ea369fc45c5543c1f",
+    "semantic_hash": "da194b7d9a79a27ea369fc45c5543c1f"
+  },
+  "babyshalls-frontend/src/components/common/MegaMenu.tsx": {
+    "mtime": 1794745034.4630532,
+    "seen": 1794821730.0161152,
+    "ast_hash": "45477baaea4f4ace8592334de21374e6",
+    "semantic_hash": "45477baaea4f4ace8592334de21374e6"
+  },
+  "babyshalls-frontend/src/components/common/StripInfo.tsx": {
+    "mtime": 1794736568.7893243,
+    "seen": 1794821730.016116,
+    "ast_hash": "fe2fec7236c1046a38b74226d918b930",
+    "semantic_hash": "fe2fec7236c1046a38b74226d918b930"
+  },
+  "babyshalls-frontend/src/components/common/TombolKembali.tsx": {
+    "mtime": 1794810580.757537,
+    "seen": 1794821730.016117,
+    "ast_hash": "e99c3f4171363a2c7b54ed35fe01ce50",
+    "semantic_hash": "e99c3f4171363a2c7b54ed35fe01ce50"
+  },
+  "babyshalls-frontend/src/components/common/WireEventCard.tsx": {
+    "mtime": 1794736568.7893243,
+    "seen": 1794821730.0161178,
+    "ast_hash": "cc3617c9a043545e9900d2f173a5540f",
+    "semantic_hash": "cc3617c9a043545e9900d2f173a5540f"
+  },
+  "babyshalls-frontend/src/components/common/WireProductCard.tsx": {
+    "mtime": 1794745034.4630532,
+    "seen": 1794821730.0161188,
+    "ast_hash": "a16331cf064c3f4e542c66005f6d208a",
+    "semantic_hash": "a16331cf064c3f4e542c66005f6d208a"
+  },
+  "babyshalls-frontend/src/components/home/BannerHampers.tsx": {
+    "mtime": 1794810580.757537,
+    "seen": 1794821730.0161197,
+    "ast_hash": "35dffe122bf003ea31e3f0fd696e9b06",
+    "semantic_hash": "35dffe122bf003ea31e3f0fd696e9b06"
+  },
+  "babyshalls-frontend/src/components/home/CampaignBanner.tsx": {
+    "mtime": 1794810580.758535,
+    "seen": 1794821730.016121,
+    "ast_hash": "9aab81d37630b3eeb155744e44568a2f",
+    "semantic_hash": "9aab81d37630b3eeb155744e44568a2f"
+  },
+  "babyshalls-frontend/src/components/home/HampersSection.tsx": {
+    "mtime": 1794736568.7913241,
+    "seen": 1794821730.0161216,
+    "ast_hash": "495f01f65f469ea572a2e34130175049",
+    "semantic_hash": "495f01f65f469ea572a2e34130175049"
+  },
+  "babyshalls-frontend/src/components/home/HeroSection.tsx": {
+    "mtime": 1794810580.758535,
+    "seen": 1794821730.0161226,
+    "ast_hash": "1983f4d80ddc89b5a74e5cd817501c3e",
+    "semantic_hash": "1983f4d80ddc89b5a74e5cd817501c3e"
+  },
+  "babyshalls-frontend/src/components/home/NewArrivalsSection.tsx": {
+    "mtime": 1794736568.7913241,
+    "seen": 1794821730.0161233,
+    "ast_hash": "1d2a30ddade1d782fea3ec94560bd9eb",
+    "semantic_hash": "1d2a30ddade1d782fea3ec94560bd9eb"
+  },
+  "babyshalls-frontend/src/components/home/RequestAndVisitSection.tsx": {
+    "mtime": 1794810580.7595367,
+    "seen": 1794821730.0161245,
+    "ast_hash": "22c25cac908c46048e419b0801915b80",
+    "semantic_hash": "22c25cac908c46048e419b0801915b80"
+  },
+  "babyshalls-frontend/src/components/home/UpcomingEventsSection.tsx": {
+    "mtime": 1794745034.4650533,
+    "seen": 1794821730.0161252,
+    "ast_hash": "cfe60e0fe8253bed0d43266394b308c2",
+    "semantic_hash": "cfe60e0fe8253bed0d43266394b308c2"
+  },
+  "babyshalls-frontend/src/components/layout/Footer.tsx": {
+    "mtime": 1794810580.7605362,
+    "seen": 1794821730.0161262,
+    "ast_hash": "83901886b0a4271b2004cf58a20435ee",
+    "semantic_hash": "83901886b0a4271b2004cf58a20435ee"
+  },
+  "babyshalls-frontend/src/components/layout/Header.tsx": {
+    "mtime": 1794810580.7605362,
+    "seen": 1794821730.0161269,
+    "ast_hash": "8f77e7e7aba2818182e1f6e1acb8fd04",
+    "semantic_hash": "8f77e7e7aba2818182e1f6e1acb8fd04"
+  },
+  "babyshalls-frontend/src/components/ui/CloudinaryUploadButton.tsx": {
+    "mtime": 1794736568.793323,
+    "seen": 1794821730.0161278,
+    "ast_hash": "7066442b831c82e5d1974fc3292398a9",
+    "semantic_hash": "7066442b831c82e5d1974fc3292398a9"
+  },
+  "babyshalls-frontend/src/components/ui/CurrencyInput.tsx": {
+    "mtime": 1794736568.794323,
+    "seen": 1794821730.0161288,
+    "ast_hash": "78daf4491f85d466776c3a5cb0938a41",
+    "semantic_hash": "78daf4491f85d466776c3a5cb0938a41"
+  },
+  "babyshalls-frontend/src/components/ui/Toast.tsx": {
+    "mtime": 1794736568.794323,
+    "seen": 1794821730.0161295,
+    "ast_hash": "db6732666250e269c1d0d1ec81108313",
+    "semantic_hash": "db6732666250e269c1d0d1ec81108313"
+  },
+  "babyshalls-frontend/src/context/CartContext.tsx": {
+    "mtime": 1794736568.794323,
+    "seen": 1794821730.0161304,
+    "ast_hash": "e13fc976e5d48a12d115c142d1ff9728",
+    "semantic_hash": "e13fc976e5d48a12d115c142d1ff9728"
+  },
+  "babyshalls-frontend/src/context/CmsContext.tsx": {
+    "mtime": 1794810580.7605362,
+    "seen": 1794821730.0161316,
+    "ast_hash": "cdba12f306b2146b0534a504df1dd5f6",
+    "semantic_hash": "cdba12f306b2146b0534a504df1dd5f6"
+  },
+  "babyshalls-frontend/src/context/QueryProvider.tsx": {
+    "mtime": 1794745034.466055,
+    "seen": 1794821730.0161326,
+    "ast_hash": "85ecec529dac776e5933e44f1fea2aa6",
+    "semantic_hash": "85ecec529dac776e5933e44f1fea2aa6"
+  },
+  "babyshalls-frontend/src/data/categories.ts": {
+    "mtime": 1794736568.7953246,
+    "seen": 1794821730.0161333,
+    "ast_hash": "cd76c881545af4728e0a090227b1ad2f",
+    "semantic_hash": "cd76c881545af4728e0a090227b1ad2f"
+  },
+  "babyshalls-frontend/src/data/events.ts": {
+    "mtime": 1794736568.7963252,
+    "seen": 1794821730.0161345,
+    "ast_hash": "7a502613aff10e5487cde73d2d92377f",
+    "semantic_hash": "7a502613aff10e5487cde73d2d92377f"
+  },
+  "babyshalls-frontend/src/data/eventsData.ts": {
+    "mtime": 1794810580.762048,
+    "seen": 1794821730.0161352,
+    "ast_hash": "db4a6992342f266fd5c51ea8ce1be1a2",
+    "semantic_hash": "db4a6992342f266fd5c51ea8ce1be1a2"
+  },
+  "babyshalls-frontend/src/data/mockProducts.ts": {
+    "mtime": 1794736568.7963252,
+    "seen": 1794821730.016136,
+    "ast_hash": "a4b46398ebf9ad5d6646990ac62e6b92",
+    "semantic_hash": "a4b46398ebf9ad5d6646990ac62e6b92"
+  },
+  "babyshalls-frontend/src/data/products.ts": {
+    "mtime": 1794736568.7963252,
+    "seen": 1794821730.016137,
+    "ast_hash": "0e84b6a0552ff44d74fd6ec0863f436b",
+    "semantic_hash": "0e84b6a0552ff44d74fd6ec0863f436b"
+  },
+  "babyshalls-frontend/src/data/reviews.ts": {
+    "mtime": 1794736568.797326,
+    "seen": 1794821730.0161378,
+    "ast_hash": "7a05a42d88a67bdbfe8dc9a5cfa22bb4",
+    "semantic_hash": "7a05a42d88a67bdbfe8dc9a5cfa22bb4"
+  },
+  "babyshalls-frontend/src/hooks/useAccount.ts": {
+    "mtime": 1794736568.7983234,
+    "seen": 1794821730.0161386,
+    "ast_hash": "1b27101be21fa1bb4b5cbe4d042fd9e9",
+    "semantic_hash": "1b27101be21fa1bb4b5cbe4d042fd9e9"
+  },
+  "babyshalls-frontend/src/hooks/useAdminCoupons.ts": {
+    "mtime": 1794736568.7983234,
+    "seen": 1794821730.0161395,
+    "ast_hash": "2700bfef93c9a479e45a8c8112add6ac",
+    "semantic_hash": "2700bfef93c9a479e45a8c8112add6ac"
+  },
+  "babyshalls-frontend/src/hooks/useAdminDashboard.ts": {
+    "mtime": 1794736568.7983234,
+    "seen": 1794821730.0161402,
+    "ast_hash": "aec09f809c8ed79f64501b5c229c35c9",
+    "semantic_hash": "aec09f809c8ed79f64501b5c229c35c9"
+  },
+  "babyshalls-frontend/src/hooks/useAdminEvents.ts": {
+    "mtime": 1794736568.799323,
+    "seen": 1794821730.0161414,
+    "ast_hash": "be90096b26ec7d191fb47973836c6661",
+    "semantic_hash": "be90096b26ec7d191fb47973836c6661"
+  },
+  "babyshalls-frontend/src/hooks/useAuth.ts": {
+    "mtime": 1794736568.799323,
+    "seen": 1794821730.0161424,
+    "ast_hash": "00dfc8b408bdc077297640ddcb3fc24c",
+    "semantic_hash": "00dfc8b408bdc077297640ddcb3fc24c"
+  },
+  "babyshalls-frontend/src/hooks/useBookRequests.ts": {
+    "mtime": 1794736568.8003232,
+    "seen": 1794821730.0161433,
+    "ast_hash": "666980ecda4243d57f4f9f43140985c2",
+    "semantic_hash": "666980ecda4243d57f4f9f43140985c2"
+  },
+  "babyshalls-frontend/src/hooks/useCms.ts": {
+    "mtime": 1794736568.8003232,
+    "seen": 1794821730.016144,
+    "ast_hash": "2e609db76f52d2d4a5221c8103baae0b",
+    "semantic_hash": "2e609db76f52d2d4a5221c8103baae0b"
+  },
+  "babyshalls-frontend/src/hooks/useCoupons.ts": {
+    "mtime": 1794736568.8013232,
+    "seen": 1794821730.0161452,
+    "ast_hash": "f431bb9ff5e9c917f4e108c0c26fe040",
+    "semantic_hash": "f431bb9ff5e9c917f4e108c0c26fe040"
+  },
+  "babyshalls-frontend/src/hooks/useEvents.ts": {
+    "mtime": 1794736568.8013232,
+    "seen": 1794821730.016146,
+    "ast_hash": "3ad5b066189bde954ca2d1119e5c53c3",
+    "semantic_hash": "3ad5b066189bde954ca2d1119e5c53c3"
+  },
+  "babyshalls-frontend/src/hooks/useOrders.ts": {
+    "mtime": 1794736568.8013232,
+    "seen": 1794821730.016147,
+    "ast_hash": "e231a76ee3946c71f7f347ac4a25a77c",
+    "semantic_hash": "e231a76ee3946c71f7f347ac4a25a77c"
+  },
+  "babyshalls-frontend/src/hooks/useProducts.ts": {
+    "mtime": 1794736568.8013232,
+    "seen": 1794821730.0161476,
+    "ast_hash": "2f3e9f4763fc13f1207fc33e8f37375a",
+    "semantic_hash": "2f3e9f4763fc13f1207fc33e8f37375a"
+  },
+  "babyshalls-frontend/src/hooks/useShipping.ts": {
+    "mtime": 1794736568.8023236,
+    "seen": 1794821730.0161488,
+    "ast_hash": "6e36288cb35847066f278df319ca5097",
+    "semantic_hash": "6e36288cb35847066f278df319ca5097"
+  },
+  "babyshalls-frontend/src/lib/axios.ts": {
+    "mtime": 1794736568.8023236,
+    "seen": 1794821730.0161495,
+    "ast_hash": "3deee7ced801b1c118f12a2843fcfced",
+    "semantic_hash": "3deee7ced801b1c118f12a2843fcfced"
+  },
+  "babyshalls-frontend/src/lib/midtrans-snap.ts": {
+    "mtime": 1794736568.8033235,
+    "seen": 1794821730.0161505,
+    "ast_hash": "6d5697f906bc5cf8ea1ee05c0ef47cfc",
+    "semantic_hash": "6d5697f906bc5cf8ea1ee05c0ef47cfc"
+  },
+  "babyshalls-frontend/src/lib/motion.ts": {
+    "mtime": 1794736568.8033235,
+    "seen": 1794821730.0161512,
+    "ast_hash": "49f58945fc3fd354c7305eb86081d33f",
+    "semantic_hash": "49f58945fc3fd354c7305eb86081d33f"
+  },
+  "babyshalls-frontend/src/lib/utils.ts": {
+    "mtime": 1794736568.8033235,
+    "seen": 1794821730.0161524,
+    "ast_hash": "63cce9ca8e63587ed1c78cce4f79c481",
+    "semantic_hash": "63cce9ca8e63587ed1c78cce4f79c481"
+  },
+  "babyshalls-frontend/src/types/index.ts": {
+    "mtime": 1794736568.804324,
+    "seen": 1794821730.016153,
+    "ast_hash": "0d849dbaaa3d09cfc69d3491a5884de7",
+    "semantic_hash": "0d849dbaaa3d09cfc69d3491a5884de7"
+  },
+  "babyshalls-frontend/tailwind.config.ts": {
+    "mtime": 1794736568.804324,
+    "seen": 1794821730.016154,
+    "ast_hash": "1b1c126119948b2ed7bbac75560f72f0",
+    "semantic_hash": "1b1c126119948b2ed7bbac75560f72f0"
+  },
+  "babyshalls-frontend/tsconfig.json": {
+    "mtime": 1794736568.804324,
+    "seen": 1794821730.0161548,
+    "ast_hash": "60171c98f841188bbbad1a740155fc92",
+    "semantic_hash": "60171c98f841188bbbad1a740155fc92"
+  },
+  "ecosystem.config.cjs": {
+    "mtime": 1794632316.9176686,
+    "seen": 1794821730.0163426,
+    "ast_hash": "f4faff5c447e766471151488f2bc42d1",
+    "semantic_hash": "f4faff5c447e766471151488f2bc42d1"
+  },
+  "README.md": {
+    "mtime": 1794736568.0686283,
+    "seen": 1794821730.0163457,
+    "ast_hash": "a044ae97f319266a06f3a90471131a95",
+    "semantic_hash": "a044ae97f319266a06f3a90471131a95"
+  },
+  "babyshalls-frontend/AGENTS.md": {
+    "mtime": 1794736568.0916271,
+    "seen": 1794821730.016347,
+    "ast_hash": "efb888862c9f94a087a633f105bfafb5",
+    "semantic_hash": "efb888862c9f94a087a633f105bfafb5"
+  },
+  "babyshalls-frontend/README.md": {
+    "mtime": 1794736568.0926306,
+    "seen": 1794821730.016348,
+    "ast_hash": "9162add00befbcdb432430f405c4ad8d",
+    "semantic_hash": "9162add00befbcdb432430f405c4ad8d"
+  },
+  "docs/superpowers/plans/2026-11-14-idempotency-key.md": {
+    "mtime": 1794653857.239209,
+    "seen": 1794821730.0163565,
+    "ast_hash": "bedace9bde3a2bdfac50ddc0361bf782",
+    "semantic_hash": "bedace9bde3a2bdfac50ddc0361bf782"
   }
 }
