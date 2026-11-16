@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 className="lg:hidden text-[#4A2A1C] p-1.5 hover:bg-[#FFF6EA] rounded transition-colors"
                 aria-label="Toggle menu"
               >
-                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                {isMobileMenuOpen ? <X size={24} strokeWidth={2.5} /> : <Menu size={24} strokeWidth={2.5} />}
               </button>
 
               <Link href="/" className="inline-block relative py-0.5" aria-label="BabyShalls Home">
@@ -198,39 +198,52 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
               </Link>
             </nav>
 
+<<<<<<< HEAD
             {/* Right: Actions (Compact Icon 20x20 + Text 11px) */}
             <div className="flex items-center gap-4 sm:gap-5">
 
+=======
+            {/* Right: Actions (Desktop: Icon + Text, Mobile: Full Icon Only) */}
+            <div className="flex items-center gap-2 sm:gap-5">
+              
+>>>>>>> a66eeab (test)
               {/* Cari */}
               <button
                 type="button"
                 onClick={toggleSearch}
-                className="flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                className="flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
                 aria-label="Pencarian"
               >
-                <div className="w-[20px] h-[20px] flex items-center justify-center">
+                <div className="w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-search.svg"
                     alt="Cari"
-                    width={18}
-                    height={18}
+                    width={22}
+                    height={22}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
-                <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
+                <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Cari
                 </span>
               </button>
 
               {/* Masuk / Akun */}
               <Link
+<<<<<<< HEAD
                 href={mounted && isLoggedIn ? '/account' : '/login'}
                 className="flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
                 aria-label={mounted && isLoggedIn ? 'Akun saya' : 'Masuk ke akun'}
+=======
+                href="/account"
+                className="flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
+                aria-label="Akun saya"
+>>>>>>> a66eeab (test)
               >
-                <div className="w-[20px] h-[20px] flex items-center justify-center">
+                <div className="w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-user.svg"
+<<<<<<< HEAD
                     alt={mounted && isLoggedIn ? 'Akun' : 'Masuk'}
                     width={18}
                     height={18}
@@ -239,33 +252,43 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 </div>
                 <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   {mounted && isLoggedIn ? 'Akun' : 'Masuk'}
+=======
+                    alt="Akun"
+                    width={22}
+                    height={22}
+                    className="object-contain transition-transform group-hover:scale-105"
+                  />
+                </div>
+                <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
+                  Akun
+>>>>>>> a66eeab (test)
                 </span>
               </Link>
 
               {/* Keranjang */}
               <Link
                 href="/cart"
-                className="relative flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
+                className="relative flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
                 aria-label="Keranjang belanja"
               >
-                <div className="relative w-[20px] h-[20px] flex items-center justify-center">
+                <div className="relative w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-cart.svg"
                     alt="Keranjang"
-                    width={18}
-                    height={18}
+                    width={22}
+                    height={22}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                   {mounted && totalItemsCount > 0 && (
                     <span
                       suppressHydrationWarning
-                      className="absolute -top-1.5 -right-2 bg-[#B05A26] text-white text-[10px] font-semibold w-[16px] h-[16px] rounded-full flex items-center justify-center shadow-xs"
+                      className="absolute -top-1.5 -right-2 bg-[#B05A26] text-white text-[10px] font-bold w-[17px] h-[17px] rounded-full flex items-center justify-center shadow-xs"
                     >
                       {totalItemsCount}
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
+                <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Keranjang
                 </span>
               </Link>

@@ -1,12 +1,20 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { X, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Gift } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { formatIDR } from '../data/mockProducts';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  X,
+  Plus,
+  Minus,
+  Trash2,
+  ArrowRight,
+  ShieldCheck,
+  Gift,
+} from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { formatIDR } from "../data/mockProducts";
 
 export const OrderDrawer: React.FC = () => {
   const router = useRouter();
@@ -23,12 +31,12 @@ export const OrderDrawer: React.FC = () => {
 
   const handleGoToCheckout = () => {
     setIsCartOpen(false);
-    router.push('/checkout');
+    router.push("/checkout");
   };
 
   const handleGoToCartPage = () => {
     setIsCartOpen(false);
-    router.push('/cart');
+    router.push("/cart");
   };
 
   return (
@@ -39,9 +47,8 @@ export const OrderDrawer: React.FC = () => {
         onClick={() => setIsCartOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col font-sans">
-          
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
+        <div className="w-screen max-w-full sm:max-w-md bg-white shadow-2xl flex flex-col font-sans">
           {/* Drawer Header */}
           <div className="px-6 py-5 border-b border-[#F2E4D6] flex items-center justify-between bg-[#FFFBF7]">
             <div className="flex items-baseline gap-2">
@@ -65,10 +72,17 @@ export const OrderDrawer: React.FC = () => {
             {items.length > 0 ? (
               <div className="flex flex-col divide-y divide-[#F2E4D6]">
                 {items.map((item) => (
-                  <div key={item.product.id} className="py-4 first:pt-0 last:pb-0 flex gap-4">
+                  <div
+                    key={item.product.id}
+                    className="py-4 first:pt-0 last:pb-0 flex gap-4"
+                  >
                     <div className="relative w-18 h-18 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0 border border-[#E6D2C0]">
                       <Image
-                        src={item.product.coverImage || item.product.images?.[0] || '/images/prod-boardbook.jpg'}
+                        src={
+                          item.product.coverImage ||
+                          item.product.images?.[0] ||
+                          "/images/prod-boardbook.jpg"
+                        }
                         alt={item.product.title}
                         fill
                         className="object-cover"
@@ -138,12 +152,13 @@ export const OrderDrawer: React.FC = () => {
                   Keranjangmu masih kosong
                 </h3>
                 <p className="text-xs text-[#7A5644] mb-6 max-w-xs leading-relaxed">
-                  Pilih buku cerita atau mainan edukatif favorit untuk si kecil sekarang.
+                  Pilih buku cerita atau mainan edukatif favorit untuk si kecil
+                  sekarang.
                 </p>
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
-                    router.push('/shop');
+                    router.push("/shop");
                   }}
                   className="px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px]"
                 >
@@ -188,7 +203,6 @@ export const OrderDrawer: React.FC = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
