@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins, Quicksand } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
+import { CmsProvider } from '@/context/CmsContext';
 import { QueryProvider } from '@/context/QueryProvider';
 import { Toaster } from 'react-hot-toast';
 
@@ -41,8 +42,9 @@ export default function RootLayout({
     <html lang="id" className={`${poppins.variable} ${quicksand.variable} scroll-smooth`}>
       <body className="min-h-screen bg-[#FFF6EA] text-[#4A2A1C] font-sans antialiased selection:bg-[#FBE6D8] selection:text-[#B05A26]">
         <QueryProvider>
-          <CartProvider>
-            {children}
+          <CmsProvider>
+            <CartProvider>
+              {children}
             <Toaster
               position="top-center"
               toastOptions={{
@@ -70,7 +72,8 @@ export default function RootLayout({
               }}
             />
           </CartProvider>
-        </QueryProvider>
+        </CmsProvider>
+      </QueryProvider>
       </body>
     </html>
   );

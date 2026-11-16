@@ -218,10 +218,9 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 </span>
               </Link>
 
-              {/* Keranjang with Counter Badge */}
-              <button
-                type="button"
-                onClick={() => setIsCartOpen(true)}
+              {/* Keranjang with Counter Badge -> Navigates to dedicated /cart page */}
+              <Link
+                href="/cart"
                 className="relative flex flex-col items-center justify-center text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
                 aria-label="Keranjang belanja"
               >
@@ -245,7 +244,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 <span className="text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
                   Keranjang
                 </span>
-              </button>
+              </Link>
 
             </div>
 

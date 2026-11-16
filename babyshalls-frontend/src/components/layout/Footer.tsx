@@ -1,68 +1,73 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronDown, MapPin } from 'lucide-react';
+import { MapPin, Clock, MessageCircle, ExternalLink, Navigation } from 'lucide-react';
+import { useCms } from '@/context/CmsContext';
 
 export const OPENING_HOURS = 'Setiap hari 10.00 – 17.00 WIB';
 
 export const Footer: React.FC = () => {
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
-  const toggleAccordion = (key: string) => {
-    setOpenAccordion((prev) => (prev === key ? null : key));
-  };
+  const { cms } = useCms();
+  const store = cms.store;
 
-  const waNumber = process.env.NEXT_PUBLIC_WA_NUMBER || '6281234567890';
-  const waGroupUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(
+  const waNumber = store.whatsappNumber || process.env.NEXT_PUBLIC_WA_NUMBER || '6281234567890';
+  const waGroupUrl = store.whatsappCommunityUrl || `https://wa.me/${waNumber}?text=${encodeURIComponent(
     'Halo BabyShalls, saya ingin bergabung ke grup komunitas katalog dan event.'
   )}`;
+  const mapsUrl = store.googleMapsUrl || 'https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang';
 
   return (
-    <footer id="about" className="bg-[#F9E0C8] text-[#4A2A1C] pt-8 sm:pt-12 lg:pt-14 pb-8 w-full">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12">
+    <footer id="about" className="bg-[#FFF6EA] text-[#4A2A1C] border-t border-[#E6D2C0] pt-12 sm:pt-14 pb-8 w-full font-sans">
+      <div className="max-w-[1240px] mx-auto px-5 sm:px-8 lg:px-10">
         
         {/* =========================================================================
-            DESKTOP FOOTER LAYOUT (Figma #130:351, 100% untouched for desktop lg+)
+            SECTION 1 · 5-COLUMN NAVIGATION GRID
             ========================================================================= */}
-        <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-10 pb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10">
           
-          {/* Kolom 1: Brand (340px) */}
+          {/* Kolom 1: Brand & Lokasi (Span 4) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="inline-block relative">
-              <div className="relative w-20 h-18">
+            <Link href="/" className="inline-block relative py-0.5" aria-label="BabyShalls Home">
+              <div className="relative w-32 h-11">
                 <Image
                   src="/BabyShallsLogo 1.PNG"
                   alt="Baby Shall's"
                   fill
-                  sizes="80px"
+                  sizes="128px"
                   className="object-contain object-left"
                 />
               </div>
             </Link>
-            <p className="text-[14px] text-[#7A5644] leading-relaxed max-w-sm">
-              Toko buku anak dan mainan edukasi di Malang sejak 2020. Ada area bermain gratis di toko.
+
+            <p className="text-xs sm:text-[13px] text-[#7A5644] leading-relaxed max-w-sm">
+              Toko buku anak impor &amp; lokal terkurasi serta mainan edukasi di Citraland Malang. Menumbuhkan cinta membaca dan imajinasi sejak hari pertama si kecil.
             </p>
-            <p className="text-[14px] text-[#4A2A1C] leading-relaxed">
-              Citraland Puncak Tidar HH-26, Malang<br />
-              <span className="text-[#7A5644]">Setiap hari 10.00–17.00 (dummy)</span>
-            </p>
+
+            <div className="bg-white/80 border border-[#E6D2C0] p-3.5 rounded-[4px] space-y-2 text-xs text-[#4A2A1C] max-w-sm shadow-2xs">
+              <div className="flex items-start gap-2.5">
+                <MapPin size={15} className="text-[#B05A26] shrink-0 mt-0.5" />
+                <span className="leading-snug">
+                  {store.address}, {store.city}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 text-[#7A5644]">
+                <Clock size={15} className="text-[#B05A26] shrink-0" />
+                <span>Buka: {store.operatingHours || OPENING_HOURS}</span>
+              </div>
+            </div>
           </div>
 
-          {/* Kolom 2: Belanja */}
+          {/* Kolom 2: Belanja (Span 2) */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-[18px] font-medium text-[#4A2A1C]">
+            <h4 className="text-sm font-semibold text-[#4A2A1C] uppercase tracking-wider">
               Belanja
             </h4>
-            <ul className="space-y-2 text-[14px] text-[#7A5644]">
-              <li>
-                <Link href="/shop?tab=usia" className="hover:text-[#B05A26] transition-colors">
-                  Belanja per Usia
-                </Link>
-              </li>
+            <ul className="space-y-2.5 text-xs text-[#7A5644]">
               <li>
                 <Link href="/shop" className="hover:text-[#B05A26] transition-colors">
-                  Buku
+                  Katalog Buku Anak
                 </Link>
               </li>
               <li>
@@ -72,359 +77,205 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link href="/hampers" className="hover:text-[#B05A26] transition-colors">
-                  Hampers
+                  Kado &amp; Parsel Bayi
                 </Link>
               </li>
               <li>
                 <Link href="/preloved" className="hover:text-[#B05A26] transition-colors">
-                  Preloved
+                  Preloved Steril UV
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?tab=usia" className="hover:text-[#B05A26] transition-colors">
+                  Belanja Berdasar Usia
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Kolom 3: Bantuan */}
+          {/* Kolom 3: Bantuan (Span 2) */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-[18px] font-medium text-[#4A2A1C]">
+            <h4 className="text-sm font-semibold text-[#4A2A1C] uppercase tracking-wider">
               Bantuan
             </h4>
-            <ul className="space-y-2 text-[14px] text-[#7A5644]">
+            <ul className="space-y-2.5 text-xs text-[#7A5644]">
               <li>
                 <Link href="/faq" className="hover:text-[#B05A26] transition-colors">
-                  Cara Belanja
+                  Panduan Belanja
                 </Link>
               </li>
               <li>
                 <Link href="/faq#pengiriman" className="hover:text-[#B05A26] transition-colors">
-                  Pengiriman
+                  Pengiriman &amp; Ambil Toko
                 </Link>
               </li>
               <li>
-                <Link href="/faq#pengembalian" className="hover:text-[#B05A26] transition-colors">
-                  Pengembalian
-                </Link>
-              </li>
-              <li>
-                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#B05A26] transition-colors">
-                  Hubungi Kami
-                </a>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:text-[#B05A26] transition-colors">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Kolom 4: BabyShalls */}
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-[18px] font-medium text-[#4A2A1C]">
-              BabyShalls
-            </h4>
-            <ul className="space-y-2 text-[14px] text-[#7A5644]">
-              <li>
-                <Link href="/about" className="hover:text-[#B05A26] transition-colors">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/events" className="hover:text-[#B05A26] transition-colors">
-                  Event &amp; Workshop
+                <Link href="/faq#preloved" className="hover:text-[#B05A26] transition-colors">
+                  Standar Sterilisasi UV
                 </Link>
               </li>
               <li>
                 <Link href="/request-a-book" className="hover:text-[#B05A26] transition-colors">
-                  Request Buku
+                  Layanan Request Buku
                 </Link>
               </li>
               <li>
-                <a href="#lokasi" className="hover:text-[#B05A26] transition-colors">
-                  Kunjungi Toko
+                <a
+                  href={`https://wa.me/${waNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#B05A26] transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Chat WhatsApp Admin</span>
+                  <ExternalLink size={11} />
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Kolom 5: Ajakan WhatsApp Card (300px white card) */}
+          {/* Kolom 4: BabyShalls (Span 2) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-sm font-semibold text-[#4A2A1C] uppercase tracking-wider">
+              BabyShalls
+            </h4>
+            <ul className="space-y-2.5 text-xs text-[#7A5644]">
+              <li>
+                <Link href="/about" className="hover:text-[#B05A26] transition-colors">
+                  Tentang Kami
+                </Link>
+              </li>
+              <li>
+                <Link href="/events" className="hover:text-[#B05A26] transition-colors">
+                  Event &amp; Sensory Play
+                </Link>
+              </li>
+              <li>
+                <Link href="/about#gallery" className="hover:text-[#B05A26] transition-colors">
+                  Area Bermain Toko Fisik
+                </Link>
+              </li>
+              <li>
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#B05A26] transition-colors"
+                >
+                  Petunjuk Arah Maps
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Kolom 5: WhatsApp Community Box (Span 2) */}
           <div className="lg:col-span-2">
-            <div className="bg-white p-5 rounded-[2px] space-y-3 w-full max-w-[300px]">
-              <div className="space-y-1">
-                <h4 className="text-[18px] font-medium text-[#4A2A1C]">
-                  Gabung Grup WhatsApp
-                </h4>
-                <p className="text-[14px] text-[#7A5644] leading-relaxed">
-                  Katalog terbaru &amp; info Live Sale lebih dulu.
-                </p>
-              </div>
+            <div className="bg-white p-4 sm:p-5 rounded-[4px] border border-[#E6D2C0] shadow-2xs space-y-2.5">
+              <span className="text-[10px] font-bold text-[#2A6E37] bg-[#DDF1E5] px-2 py-0.5 rounded-[2px] uppercase tracking-wider">
+                KOMUNITAS ORANG TUA
+              </span>
+              <h5 className="text-xs font-semibold text-[#4A2A1C] leading-snug">
+                Grup Komunitas WhatsApp
+              </h5>
+              <p className="text-[11px] text-[#7A5644] leading-relaxed">
+                Update buku impor restock, live sale, &amp; kuota workshop sebelum umum.
+              </p>
               <a
                 href={waGroupUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center py-3 px-5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors"
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs"
               >
-                Gabung Sekarang
+                <MessageCircle size={13} />
+                <span>Gabung Grup</span>
               </a>
             </div>
           </div>
 
         </div>
 
-        {/* Peta Lokasi Desktop (iframe Google Maps: full-width x 220px) */}
-        <div id="lokasi" className="hidden lg:block my-6 w-full h-[220px] rounded-[2px] overflow-hidden border border-[#CCCCCC] bg-[#F0F0F0]">
-          <iframe
-            title="Lokasi BabyShalls Malang"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15805.214088915474!2d112.58550186175535!3d-7.96752763666245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7882650df9ae93%3A0xe54e58b1eb9b4646!2sCitraland%20Puncak%20Tidar%20Malang!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen={false}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+        {/* =========================================================================
+            SECTION 2 · PETA LOKASI BUTIK CITRALAND (GOOGLE MAPS IFRAME - RAPI & ELEGAN)
+            ========================================================================= */}
+        <div id="lokasi" className="mb-10 bg-white border border-[#E6D2C0] rounded-[6px] overflow-hidden shadow-2xs">
+          {/* Header Bar Peta */}
+          <div className="bg-[#FFFDF9] px-4 sm:px-6 py-3 border-b border-[#F2E4D6] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 text-[#4A2A1C] font-semibold">
+              <MapPin size={15} className="text-[#B05A26] shrink-0" />
+              <span>Peta Lokasi Butik BabyShalls &bull; {store.address}, {store.city}</span>
+            </div>
+
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-[#B05A26] hover:text-[#8E431A] font-medium hover:underline shrink-0"
+            >
+              <Navigation size={13} />
+              <span>Buka di Google Maps ↗</span>
+            </a>
+          </div>
+
+          {/* Embedded Google Maps Frame */}
+          <div className="w-full h-[200px] sm:h-[230px] bg-[#F0F0F0] relative">
+            <iframe
+              title="Peta Lokasi Butik BabyShalls Citraland Malang"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.378938166945!2d112.5971!3d-7.9602!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwNTcnMzYuNyJTIDExMsKwMzUnNDkuNiJF!5e0!3m2!1sid!2sid!4v1620000000000!5m2!1sid!2sid"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full"
+            />
+          </div>
         </div>
 
         {/* =========================================================================
-            MOBILE COMPACT FOOTER (< lg - clean, compact, non-bloated)
+            SECTION 3 · BOTTOM BAR: MEDSOS, METODE BAYAR & COPYRIGHT
             ========================================================================= */}
-        <div className="block lg:hidden space-y-5 pb-6">
-          {/* Brand & Tagline */}
-          <div className="space-y-2">
-            <Link href="/" className="inline-block relative">
-              <div className="relative w-18 h-12">
-                <Image
-                  src="/BabyShallsLogo 1.PNG"
-                  alt="Baby Shall's"
-                  fill
-                  sizes="72px"
-                  className="object-contain object-left"
-                />
-              </div>
-            </Link>
-            <p className="text-[13px] text-[#7A5644] leading-relaxed">
-              Toko buku anak &amp; mainan edukasi di Citraland Malang sejak 2020.
-            </p>
-          </div>
-
-          {/* Accordion Menu Links */}
-          <div className="border-y border-[#E6D2C0] divide-y divide-[#E6D2C0]">
-            {/* Accordion 1: Belanja */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleAccordion('belanja')}
-                className="w-full py-3 flex items-center justify-between text-[15px] font-medium text-[#4A2A1C] cursor-pointer"
-              >
-                <span>Belanja</span>
-                <ChevronDown
-                  size={18}
-                  className={`text-[#7A5644] transition-transform duration-200 ${
-                    openAccordion === 'belanja' ? 'rotate-180 text-[#B05A26]' : ''
-                  }`}
-                />
-              </button>
-              {openAccordion === 'belanja' && (
-                <ul className="pb-3 space-y-2 text-[14px] text-[#7A5644] pl-1 animate-in fade-in duration-150">
-                  <li>
-                    <Link href="/shop?tab=usia" className="hover:text-[#B05A26] block py-0.5">
-                      Belanja per Usia
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/shop" className="hover:text-[#B05A26] block py-0.5">
-                      Buku Anak
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/shop?category=Educational+Toys" className="hover:text-[#B05A26] block py-0.5">
-                      Mainan Edukasi
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/hampers" className="hover:text-[#B05A26] block py-0.5">
-                      Hampers Kado
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/preloved" className="hover:text-[#B05A26] block py-0.5">
-                      Preloved Terkurasi
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </div>
-
-            {/* Accordion 2: Bantuan */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleAccordion('bantuan')}
-                className="w-full py-3 flex items-center justify-between text-[15px] font-medium text-[#4A2A1C] cursor-pointer"
-              >
-                <span>Bantuan &amp; Layanan</span>
-                <ChevronDown
-                  size={18}
-                  className={`text-[#7A5644] transition-transform duration-200 ${
-                    openAccordion === 'bantuan' ? 'rotate-180 text-[#B05A26]' : ''
-                  }`}
-                />
-              </button>
-              {openAccordion === 'bantuan' && (
-                <ul className="pb-3 space-y-2 text-[14px] text-[#7A5644] pl-1 animate-in fade-in duration-150">
-                  <li>
-                    <Link href="/faq" className="hover:text-[#B05A26] block py-0.5">
-                      Cara Belanja
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/faq#pengiriman" className="hover:text-[#B05A26] block py-0.5">
-                      Pengiriman
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/faq#pengembalian" className="hover:text-[#B05A26] block py-0.5">
-                      Pengembalian
-                    </Link>
-                  </li>
-                  <li>
-                    <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#B05A26] block py-0.5">
-                      Hubungi Kami via WhatsApp
-                    </a>
-                  </li>
-                  <li>
-                    <Link href="/faq" className="hover:text-[#B05A26] block py-0.5">
-                      FAQ
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </div>
-
-            {/* Accordion 3: BabyShalls */}
-            <div>
-              <button
-                type="button"
-                onClick={() => toggleAccordion('about')}
-                className="w-full py-3 flex items-center justify-between text-[15px] font-medium text-[#4A2A1C] cursor-pointer"
-              >
-                <span>Tentang BabyShalls</span>
-                <ChevronDown
-                  size={18}
-                  className={`text-[#7A5644] transition-transform duration-200 ${
-                    openAccordion === 'about' ? 'rotate-180 text-[#B05A26]' : ''
-                  }`}
-                />
-              </button>
-              {openAccordion === 'about' && (
-                <ul className="pb-3 space-y-2 text-[14px] text-[#7A5644] pl-1 animate-in fade-in duration-150">
-                  <li>
-                    <Link href="/about" className="hover:text-[#B05A26] block py-0.5">
-                      Tentang Toko
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/events" className="hover:text-[#B05A26] block py-0.5">
-                      Event &amp; Workshop
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/request-a-book" className="hover:text-[#B05A26] block py-0.5">
-                      Request Buku
-                    </Link>
-                  </li>
-                  <li>
-                    <a href="https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang" target="_blank" rel="noopener noreferrer" className="hover:text-[#B05A26] block py-0.5">
-                      Kunjungi Toko di Malang
-                    </a>
-                  </li>
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* Compact WhatsApp Community Bar */}
-          <div className="bg-white p-3.5 rounded-[2px] border border-[#E6D2C0] flex items-center justify-between gap-3 shadow-xs">
-            <div className="min-w-0">
-              <h4 className="text-[14px] font-medium text-[#4A2A1C] leading-snug">
-                Grup WhatsApp Komunitas
-              </h4>
-              <p className="text-[12px] text-[#7A5644] truncate">
-                Katalog &amp; info Live Sale lebih dulu
-              </p>
-            </div>
-            <a
-              href={waGroupUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[13px] font-medium rounded-[2px] transition-colors shrink-0"
-            >
-              Gabung
-            </a>
-          </div>
-
-          {/* Compact Store Location Card */}
-          <div className="bg-[#FFFBF7] p-3.5 rounded-[2px] border border-[#E6D2C0] flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <span className="text-[13px] font-medium text-[#4A2A1C] block">
-                Citraland Puncak Tidar HH-26, Malang
-              </span>
-              <span className="text-[11px] text-[#7A5644] block">
-                Setiap hari 10.00 – 17.00 WIB
-              </span>
-            </div>
-            <a
-              href="https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-3 py-1.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-white text-[11px] font-medium rounded-[2px] transition-colors shrink-0"
-            >
-              <MapPin size={12} className="text-[#B05A26]" />
-              <span>Petunjuk Arah</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Bottom Bar: Medsos, Metode Bayar, Copyright */}
-        <div className="pt-6 border-t-[1.5px] border-[#E6D2C0] flex flex-col md:flex-row items-center justify-between gap-4 text-[13px] text-[#7A5644]">
+        <div className="pt-6 border-t border-[#E6D2C0] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#7A5644]">
           
-          {/* Sosial Media & Metode Bayar */}
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 w-full md:w-auto">
+          {/* Sosial Media & Metode Pembayaran */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
             {/* Medsos */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <a
                 href={`https://wa.me/${waNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white rounded-[2px] flex items-center justify-center hover:opacity-90 transition-opacity"
-                aria-label="WhatsApp"
+                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#B05A26] transition-colors shadow-2xs"
+                aria-label="WhatsApp BabyShalls"
               >
-                <img
+                <Image
                   src="/images/icons/icon-whatsapp.svg"
                   alt="WhatsApp"
-                  className="w-5 h-5 object-contain"
+                  width={16}
+                  height={16}
                 />
               </a>
               <a
-                href="https://instagram.com/babyshalls"
+                href={store.instagramUrl || 'https://instagram.com/babyshalls'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white rounded-[2px] flex items-center justify-center hover:opacity-90 transition-opacity"
-                aria-label="Instagram"
+                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#B05A26] transition-colors shadow-2xs"
+                aria-label="Instagram BabyShalls"
               >
-                <img
+                <Image
                   src="/images/icons/icon-instagram.svg"
                   alt="Instagram"
-                  className="w-5 h-5 object-contain"
+                  width={16}
+                  height={16}
                 />
               </a>
             </div>
 
-            {/* Metode Bayar */}
-            <div className="flex items-center gap-2 pl-2">
-              {['QRIS', 'Visa', 'Mastercard', 'VA'].map((method) => (
+            {/* Metode Bayar Pills */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {['QRIS', 'Visa', 'Mastercard', 'Virtual Account'].map((method) => (
                 <span
                   key={method}
-                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white border border-[#F2E4D6] rounded-[2px] text-[12px] sm:text-[13px] font-medium text-[#7A5644]"
+                  className="px-2.5 py-0.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[10px] font-semibold text-[#7A5644] shadow-2xs"
                 >
                   {method}
                 </span>
@@ -433,8 +284,8 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Copyright */}
-          <div className="text-center md:text-right">
-            <p>© 2026 BabyShalls · Malang</p>
+          <div className="text-center md:text-right text-[11px] text-[#7A5644]">
+            <p>&copy; 2026 BabyShalls &bull; Citraland Malang. All rights reserved.</p>
           </div>
 
         </div>

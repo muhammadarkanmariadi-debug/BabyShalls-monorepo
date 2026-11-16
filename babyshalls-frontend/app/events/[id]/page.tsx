@@ -3,96 +3,47 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import { Calendar, MapPin, Users, Check, Sparkles, Clock, Share2 } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Share2,
+  Check,
+  ChevronDown,
+  Sparkles,
+  Gift,
+  CheckCircle2,
+} from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
+import { getEventById } from '@/data/eventsData';
 
 export default function EventDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const eventId = typeof params?.id === 'string' ? params.id : '';
+  const rawId = typeof params?.id === 'string' ? params.id : 'nature-craft';
 
-  // Form states
-  const [parentName, setParentName] = useState('');
-  const [childName, setChildName] = useState('');
-  const [childAge, setChildAge] = useState('4');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [childrenCount, setChildrenCount] = useState(1);
+  const [copiedShare, setCopiedShare] = useState(false);
 
-  // Mock Event Data
-  const eventData = {
-    id: eventId || 'nature-craft',
-    title: 'Little Explorers: Nature Craft & Sensory Play',
-    category: 'Workshop',
-    date: 'Sabtu, 28 November 2026',
-    time: '09.30 – 11.30 WIB',
-    location: 'BabyShalls Citraland Puncak Tidar Blok HH-26, Kota Malang',
-    age: '3–7 tahun',
-    price: 'GRATIS',
-    status: 'Sisa Sedikit',
-    seatsLeft: 3,
-    totalSeats: 15,
-    facilitator: 'Kak Nisa (Penggiat Montessori & Dongeng Anak)',
-    image: '/images/events/event-workshop-alam.png',
-    description:
-      'Aktivitas luar ruang dan kreasi seni sensorik yang dirancang khusus untuk merangsang rasa ingin tahu si kecil. Anak-anak akan diajak mengeksplorasi dedaunan, ranting kering, bunga pinus, dan tanah liat organik menjadi karya seni kolase yang bisa dibawa pulang.',
-    learnings: [
-      'Melatih koordinasi motorik halus dan kekuatan jari jemari melalui cetakan clay alami',
-      'Mengenalkan tekstur, aroma, dan warna dari dedaunan flora lokal Malang',
-      'Membangun keberanian berkreasi dan percaya diri mengekspresikan ide',
-      'Mempererat ikatan (bonding) interaktif antara orang tua dan anak',
-    ],
-    facilities: [
-      'Seluruh bahan workshop (tanah liat alami, kanvas kayu, lem aman anak)',
-      'Snack sehat & minuman jus buah segar untuk anak dan orang tua',
-      'Sertifikat partisipasi Little Explorer BabyShalls',
-      'Voucher belanja buku anak sebesar Rp 25.000',
-    ],
-    terms: [
-      'Wajib didampingi oleh 1 orang tua atau wali dewasa selama sesi berlangsung',
-      'Membawa pakaian ganti dan botol minum (tumbler) pribadi',
-      'Hadir 15 menit sebelum acara dimulai untuk registrasi ulang tiket QR',
-    ],
-  };
+  // Dynamic Event Data from single source of truth
+  const eventData = getEventById(rawId);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const isFree = eventData.isFree || eventData.price === 0;
+  const totalPrice = childrenCount * eventData.price;
+  const quotaPercent = Math.min(
+    100,
+    Math.round((eventData.quotaFilled / eventData.quotaTotal) * 100)
+  );
 
-    const ticketId = `EVT-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newRegistration = {
-      ticketId,
-      eventId: eventData.id,
-      eventTitle: eventData.title,
-      eventDate: eventData.date,
-      eventTime: eventData.time,
-      location: eventData.location,
-      parentName,
-      childName,
-      childAge,
-      phone,
-      email,
-      registeredAt: new Date().toISOString(),
-    };
-
+  const handleShare = () => {
     if (typeof window !== 'undefined') {
-      try {
-        const existing = JSON.parse(localStorage.getItem('babyshalls_event_tickets') || '[]');
-        existing.unshift(newRegistration);
-        localStorage.setItem('babyshalls_event_tickets', JSON.stringify(existing));
-      } catch {
-        // pass
-      }
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2500);
     }
-
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 600);
   };
 
   return (
@@ -100,258 +51,306 @@ export default function EventDetailPage() {
       <Header />
       <TombolKembali fallbackUrl="/events" label="Kembali ke Daftar Event" />
 
-      {/* Hero Event Banner (Figma Node #169:5198) */}
-      <section className="pt-6 pb-4 max-w-[1200px] w-full mx-auto px-4 sm:px-8">
-        {/* Breadcrumb */}
-        <div className="text-[13px] text-[#7A5644] mb-4">
-          <Link href="/" className="hover:underline">Beranda</Link>
-          <span className="mx-2">/</span>
-          <Link href="/events" className="hover:underline">Event & Workshop</Link>
-          <span className="mx-2">/</span>
-          <span className="font-semibold text-[#4A2A1C]">{eventData.title}</span>
-        </div>
-
-        {/* 16:9 Wide Photo */}
-        <div className="relative aspect-[21/9] sm:aspect-[2.4/1] w-full rounded-[2px] overflow-hidden bg-[#F0F0F0] mb-8">
-          <Image
-            src={eventData.image}
-            alt={eventData.title}
-            fill
-            priority
-            className="object-cover"
-          />
-        </div>
-      </section>
-
-      {/* Main Content (Figma Node #169:5202, 2 Columns) */}
-      <section className="pb-16 max-w-[1200px] w-full mx-auto px-4 sm:px-8 flex-1">
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
-          
-          {/* Left Column: Event Information (Figma #169:5203) */}
-          <div className="flex-1 w-full flex flex-col">
-            
-            {/* Badges */}
-            <div className="flex items-center gap-2 flex-wrap mb-3">
-              <span className="bg-[#FFF6EA] text-[#B05A26] border border-[#E6D2C0] text-xs font-semibold px-2.5 py-1 rounded-[2px]">
-                {eventData.category}
-              </span>
-              <span className="bg-[#2A6E37] text-white text-xs font-bold px-2.5 py-1 rounded-[2px]">
-                {eventData.price}
-              </span>
-              <span className="bg-[#DDF1E5] text-[#2A6E37] text-xs font-medium px-2.5 py-1 rounded-[2px]">
-                Usia {eventData.age}
-              </span>
+      <main className="flex-1">
+        {/* Hero Section (Figma Frame #169:5198) */}
+        <section className="pt-2 pb-6">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+            {/* Breadcrumb (Figma #169:5199) */}
+            <div className="text-[13px] text-[#7A5644] mb-4">
+              <Link href="/events" className="hover:text-[#B05A26] transition-colors">
+                Event
+              </Link>
+              <span className="mx-2">/</span>
+              <span className="text-[#4A2A1C] font-medium">{eventData.title}</span>
             </div>
 
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] leading-tight mb-4 tracking-tight">
-              {eventData.title}
-            </h1>
-
-            {/* Schedule & Location Box */}
-            <div className="bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] p-5 mb-8 flex flex-col gap-3.5 text-xs text-[#4A2A1C]">
-              <div className="flex items-center gap-3">
-                <Calendar className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span><strong>Waktu:</strong> {eventData.date} · {eventData.time}</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#B05A26] shrink-0 mt-0.5" />
-                <span><strong>Lokasi:</strong> {eventData.location}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Users className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span><strong>Fasilitator:</strong> {eventData.facilitator}</span>
-              </div>
+            {/* Banner Image 16:9 (Figma #169:5460) */}
+            <div className="relative w-full h-[260px] sm:h-[340px] md:h-[400px] bg-[#F2E4D6] rounded-[2px] overflow-hidden">
+              <Image
+                src={eventData.image}
+                alt={eventData.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1200px) 100vw, 1200px"
+              />
             </div>
-
-            {/* Description */}
-            <div className="space-y-4 text-sm text-[#7A5644] leading-relaxed mb-8">
-              <h2 className="text-lg font-semibold text-[#4A2A1C]">
-                Tentang Kegiatan Ini
-              </h2>
-              <p>{eventData.description}</p>
-            </div>
-
-            {/* What they will learn */}
-            <div className="mb-8">
-              <h3 className="text-base font-semibold text-[#4A2A1C] mb-3">
-                Manfaat & Kegiatan Belajar:
-              </h3>
-              <ul className="space-y-2 text-xs sm:text-sm text-[#7A5644]">
-                {eventData.learnings.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5">
-                    <Check className="w-4 h-4 text-[#2A6E37] shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Facilities Included */}
-            <div className="mb-8">
-              <h3 className="text-base font-semibold text-[#4A2A1C] mb-3">
-                Fasilitas Peserta (Termasuk):
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm text-[#7A5644]">
-                {eventData.facilities.map((fac, idx) => (
-                  <div key={idx} className="bg-[#FFF6EA] p-3 rounded-[2px] border border-[#E6D2C0] flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-[#B05A26] shrink-0" />
-                    <span>{fac}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Terms */}
-            <div className="border-t border-[#F2E4D6] pt-6">
-              <h3 className="text-sm font-semibold text-[#4A2A1C] mb-2">
-                Ketentuan Peserta:
-              </h3>
-              <ul className="list-disc list-inside text-xs text-[#7A5644] space-y-1">
-                {eventData.terms.map((t, idx) => (
-                  <li key={idx}>{t}</li>
-                ))}
-              </ul>
-            </div>
-
           </div>
+        </section>
 
-          {/* Right Column: Sticky Registration Card (Figma #169:5247, 384px width) */}
-          <aside className="w-full lg:w-[384px] shrink-0 sticky top-24">
-            <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 sm:p-7 shadow-sm">
+        {/* Content Section (Figma Frame #169:5202) */}
+        <section className="pb-20">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+            <div className="flex flex-col lg:flex-row items-start gap-12">
               
-              {!isSuccess ? (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  
-                  {/* Status & Quota */}
-                  <div className="flex items-center justify-between pb-4 border-b border-[#F2E4D6]">
-                    <div>
-                      <span className="text-xs text-[#7A5644] block">Biaya Registrasi</span>
-                      <span className="text-2xl font-bold text-[#2A6E37]">GRATIS</span>
+              {/* Kolom Info Kiri (Figma Frame #169:5203) */}
+              <div className="flex-1 w-full space-y-7">
+                
+                {/* Badges (Figma Frame #169:5204) */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-[#F3E6F2] text-[#7E4A84] text-[13px] font-medium px-2.5 py-1 rounded-[2px]">
+                    {eventData.category}
+                  </span>
+                  <span className="bg-[#DDF1E5] text-[#2A6E37] text-[13px] font-medium px-2.5 py-1 rounded-[2px]">
+                    {eventData.age}
+                  </span>
+                  {isFree ? (
+                    <span className="bg-[#2A6E37] text-white text-[13px] font-semibold px-2.5 py-1 rounded-[2px] shadow-xs">
+                      GRATIS (Tanpa Biaya)
+                    </span>
+                  ) : (
+                    <span className="bg-[#B05A26] text-white text-[13px] font-semibold px-2.5 py-1 rounded-[2px] shadow-xs">
+                      Workshop Berbayar ({eventData.priceLabel})
+                    </span>
+                  )}
+                </div>
+
+                {/* H1 Title (Figma #169:5209) */}
+                <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-medium text-[#4A2A1C] leading-[1.25] tracking-tight">
+                  {eventData.title}
+                </h1>
+
+                {/* Info Card (Figma Frame #169:5210) */}
+                <div className="bg-[#FFFDF9] border border-[#E6D2C0] rounded-[2px] p-6 space-y-3.5">
+                  <div className="flex items-center gap-2.5 text-base text-[#7A5644]">
+                    <Calendar className="w-5 h-5 text-[#B05A26] shrink-0" />
+                    <span>{eventData.date}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-base text-[#7A5644]">
+                    <Clock className="w-5 h-5 text-[#B05A26] shrink-0" />
+                    <span>{eventData.time}</span>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-base text-[#7A5644]">
+                    <MapPin className="w-5 h-5 text-[#B05A26] shrink-0 mt-0.5" />
+                    <span>{eventData.location}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-base text-[#7A5644]">
+                    <Users className="w-5 h-5 text-[#B05A26] shrink-0" />
+                    <span>{eventData.companion}</span>
+                  </div>
+                </div>
+
+                {/* Tentang Kegiatan (Figma Frame #169:5223) */}
+                <div className="space-y-3">
+                  <h2 className="text-2xl font-medium text-[#4A2A1C]">
+                    Tentang kegiatan
+                  </h2>
+                  <p className="text-base text-[#7A5644] leading-relaxed">
+                    {eventData.description}
+                  </p>
+                </div>
+
+                {/* Agenda Kegiatan (Figma Frame #169:5226) */}
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-medium text-[#4A2A1C]">
+                    Agenda
+                  </h2>
+                  <div className="space-y-3">
+                    {eventData.agenda.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-4 text-base">
+                        <span className="font-medium text-[#B05A26] min-w-[55px]">
+                          {item.time}
+                        </span>
+                        <span className="text-[#7A5644]">
+                          {item.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Fasilitas & Manfaat Belajar */}
+                {eventData.facilities && eventData.facilities.length > 0 && (
+                  <div className="space-y-3">
+                    <h2 className="text-2xl font-medium text-[#4A2A1C]">
+                      Fasilitas Peserta
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {eventData.facilities.map((fac, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2 p-3 bg-[#FFFDF9] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644]"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-[#2A6E37] shrink-0 mt-0.5" />
+                          <span>{fac}</span>
+                        </div>
+                      ))}
                     </div>
-                    <span className="bg-[#FEECE8] text-[#C0392B] text-xs font-semibold px-2.5 py-1 rounded-[2px]">
-                      Sisa {eventData.seatsLeft} kursi
+                  </div>
+                )}
+
+                {/* Yang perlu dibawa (Figma Frame #169:5240) */}
+                <div className="bg-[#FFF1C7] rounded-[2px] p-5 space-y-2 border border-[#FBE6A2]">
+                  <h3 className="text-base font-medium text-[#4A2A1C]">
+                    Yang perlu dibawa
+                  </h3>
+                  <p className="text-sm text-[#7A5644]">
+                    {eventData.itemsToBring.map((item) => `• ${item}`).join('   ')}
+                  </p>
+                </div>
+
+                {/* Lokasi Peta Embed (Figma Frame #169:5243) */}
+                <div className="space-y-3">
+                  <h2 className="text-2xl font-medium text-[#4A2A1C]">
+                    Lokasi Butik
+                  </h2>
+                  <div className="w-full h-[220px] rounded-[2px] overflow-hidden border border-[#E6D2C0]">
+                    <iframe
+                      title="Lokasi BabyShalls Malang"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.272714207119!2d112.58335017476834!3d-7.970747492054238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788265005b76db%3A0x67980590807661ee!2sCitraland%20Puncak%20Tidar%20Malang!5e0!3m2!1sid!2sid!4v1714400000000!5m2!1sid!2sid"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Kartu Daftar Sticky Kanan (Figma Frame #169:5247) */}
+              <div className="w-full lg:w-[384px] shrink-0 lg:sticky lg:top-24">
+                <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-7 shadow-[0px_2px_8px_rgba(74,42,28,0.06),0px_8px_24px_rgba(74,42,28,0.06)] space-y-4">
+                  
+                  {/* Harga (Figma Frame #169:5248) - Free vs Paid Support */}
+                  <div className="flex items-baseline gap-2 pb-2">
+                    {isFree ? (
+                      <>
+                        <span className="text-[32px] font-bold text-[#2A6E37] leading-none">
+                          GRATIS
+                        </span>
+                        <span className="text-sm text-[#7A5644]">
+                          (Tanpa Biaya / anak)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[32px] font-medium text-[#4A2A1C] leading-none">
+                          {eventData.priceLabel}
+                        </span>
+                        <span className="text-base text-[#7A5644]">
+                          / anak
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Kuota (Figma Frame #169:5251) */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[13px]">
+                      <span className="font-medium text-[#4A2A1C]">Kuota Peserta</span>
+                      <span className="text-[#7A5644]">
+                        {eventData.quotaFilled} / {eventData.quotaTotal} terisi
+                      </span>
+                    </div>
+                    {/* Progress Bar (Figma #169:5255 & #169:5256) */}
+                    <div className="w-full h-2 bg-[#F2E4D6] rounded-[2px] overflow-hidden">
+                      <div
+                        className={`h-full rounded-[2px] transition-all duration-300 ${
+                          eventData.status === 'Penuh'
+                            ? 'bg-gray-400'
+                            : isFree
+                            ? 'bg-[#2A6E37]'
+                            : 'bg-[#8A5A00]'
+                        }`}
+                        style={{ width: `${quotaPercent}%` }}
+                      />
+                    </div>
+                    {eventData.seatsLeft > 0 && eventData.seatsLeft <= 5 && (
+                      <span className="text-[11px] font-medium text-red-600 block">
+                        Tersisa hanya {eventData.seatsLeft} kursi lagi!
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Input / Jumlah anak (Figma Frame #169:5257) */}
+                  <div className="space-y-1.5 pt-1">
+                    <label className="block text-[13px] font-medium text-[#4A2A1C]">
+                      Jumlah anak yang didaftarkan
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={childrenCount}
+                        onChange={(e) => setChildrenCount(Number(e.target.value))}
+                        disabled={eventData.status === 'Penuh'}
+                        className="w-full appearance-none px-4 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-base text-[#4A2A1C] focus:outline-hidden focus:border-[#B05A26] cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value={1}>1 anak</option>
+                        <option value={2}>2 anak</option>
+                        <option value={3}>3 anak</option>
+                        <option value={4}>4 anak</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-[#7A5644] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  {/* Total (Figma Frame #169:5262) */}
+                  <div className="flex items-center justify-between pt-3 border-t border-[#F2E4D6]">
+                    <span className="text-base text-[#7A5644]">Total Biaya</span>
+                    <span className="text-lg font-bold text-[#4A2A1C]">
+                      {isFree ? (
+                        <span className="text-[#2A6E37]">GRATIS (Rp0)</span>
+                      ) : (
+                        `Rp${totalPrice.toLocaleString('id-ID')}`
+                      )}
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-semibold text-[#4A2A1C]">
-                    Daftar Sekarang untuk Anak & Orang Tua
-                  </h3>
+                  {/* Tombol / Daftar Sekarang (Figma Frame #169:5265) */}
+                  {eventData.status === 'Penuh' ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full py-3.5 bg-gray-200 text-gray-500 font-medium text-base rounded-[2px] text-center cursor-not-allowed"
+                    >
+                      Kuota Penuh
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/events/${eventData.id}/register`}
+                      className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-medium text-base rounded-[2px] text-center transition-colors flex items-center justify-center gap-2 shadow-xs"
+                    >
+                      {isFree ? 'Daftar Workshop Gratis' : 'Daftar Sekarang'}
+                    </Link>
+                  )}
 
-                  <div className="space-y-3 text-xs">
-                    <div>
-                      <label className="block text-[#7A5644] font-medium mb-1">
-                        Nama Lengkap Orang Tua *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={parentName}
-                        onChange={(e) => setParentName(e.target.value)}
-                        placeholder="Contoh: Rina Wahyuni"
-                        className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                      />
-                    </div>
+                  {/* Caption (Figma #169:5267) */}
+                  <p className="text-[13px] text-[#7A5644] leading-relaxed">
+                    Tiket QR dikirim ke email &amp; bisa dibuka di menu Akun → Tiket Event.
+                  </p>
 
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <div>
-                        <label className="block text-[#7A5644] font-medium mb-1">
-                          Nama Anak *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={childName}
-                          onChange={(e) => setChildName(e.target.value)}
-                          placeholder="Nama panggilan"
-                          className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[#7A5644] font-medium mb-1">
-                          Usia Anak *
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="12"
-                          required
-                          value={childAge}
-                          onChange={(e) => setChildAge(e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[#7A5644] font-medium mb-1">
-                        Nomor WhatsApp *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="0812-xxxx-xxxx"
-                        className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[#7A5644] font-medium mb-1">
-                        Email (opsional)
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="email@anda.com"
-                        className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                      />
-                    </div>
+                  {/* Tombol / Bagikan Event (Figma Frame #169:5268) */}
+                  <div className="pt-2 border-t border-[#F2E4D6]">
+                    <button
+                      type="button"
+                      onClick={handleShare}
+                      className="w-full py-2 flex items-center justify-center gap-2 text-sm font-medium text-[#B05A26] hover:text-[#8E431A] transition-colors cursor-pointer"
+                    >
+                      {copiedShare ? (
+                        <>
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span className="text-green-600">Link Berhasil Disalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-4 h-4" />
+                          <span>Bagikan Event</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full mt-2 py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm"
-                  >
-                    {isSubmitting ? 'Mendaftarkan...' : 'Kirim Pendaftaran (Gratis)'}
-                  </button>
-
-                  <p className="text-[11px] text-[#7A5644] text-center leading-relaxed">
-                    Tiket QR akan langsung dibuat dan dapat dilihat di menu <strong>Tiket Event</strong> pada profil akunmu.
-                  </p>
-                </form>
-              ) : (
-                /* Registered State */
-                <div className="text-center py-4 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-[#DDF1E5] text-[#2A6E37] flex items-center justify-center mb-3">
-                    <Check className="w-6 h-6 stroke-[2.5]" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-[#4A2A1C] mb-1">
-                    Pendaftaran Berhasil!
-                  </h3>
-                  <p className="text-xs text-[#7A5644] mb-6">
-                    Kursi untuk <strong>{childName} & {parentName}</strong> telah terkonfirmasi untuk acara {eventData.date}.
-                  </p>
-                  <Link
-                    href="/account"
-                    className="w-full py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors"
-                  >
-                    Buka Tiket QR di Profil
-                  </Link>
                 </div>
-              )}
+              </div>
 
             </div>
-          </aside>
-
-        </div>
-      </section>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>
   );
 }
-

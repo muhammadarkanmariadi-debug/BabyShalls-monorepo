@@ -3,8 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCms } from '@/context/CmsContext';
 
 export const RequestAndVisitSection: React.FC = () => {
+  const { cms } = useCms();
+  const home = cms.home;
+  const store = cms.store;
+  const waVisitUrl = `https://wa.me/${store.whatsappNumber || '6281234567890'}?text=${encodeURIComponent(
+    'Halo BabyShalls, saya ingin berkunjung dan konsultasi buku di toko.'
+  )}`;
+
   return (
     <section className="py-16 sm:py-20 bg-white w-full">
       <div className="max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-12">
@@ -14,18 +22,18 @@ export const RequestAndVisitSection: React.FC = () => {
           <div className="flex flex-col sm:flex-row bg-white border border-[#E6D2C0] rounded-[2px] overflow-hidden min-h-[280px]">
             {/* Teks Kiri */}
             <div className="flex-1 p-7 sm:p-8 flex flex-col justify-center space-y-3.5">
-              <h3 className="text-[22px] sm:text-[24px] font-medium text-[#4A2A1C] leading-[1.25]">
-                Buku yang kamu<br className="hidden sm:inline" /> cari belum ada?
+              <h3 className="text-[22px] sm:text-[24px] font-medium text-[#4A2A1C] leading-[1.25] whitespace-pre-line">
+                {home.requestCardTitle || 'Buku yang kamu\ncari belum ada?'}
               </h3>
               <p className="text-[14px] text-[#7A5644] font-normal leading-[1.5]">
-                Tulis judul atau penulisnya, kami bantu carikan dan kabari lewat WhatsApp.
+                {home.requestCardSubtitle || 'Tulis judul atau penulisnya, kami bantu carikan dan kabari lewat WhatsApp.'}
               </p>
               <div className="pt-1">
                 <Link
                   href="/request-a-book"
                   className="inline-flex items-center justify-center px-7 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
                 >
-                  Request Buku
+                  {home.requestCardButtonText || 'Request Buku'}
                 </Link>
               </div>
             </div>
@@ -47,22 +55,22 @@ export const RequestAndVisitSection: React.FC = () => {
             {/* Teks Kiri */}
             <div className="flex-1 p-7 sm:p-8 flex flex-col justify-center space-y-3.5">
               <h3 className="text-[22px] sm:text-[24px] font-medium text-[#4A2A1C] leading-[1.25]">
-                Kunjungi toko kami
+                {home.storeVisitTitle || 'Kunjungi toko kami'}
               </h3>
               <p className="text-[14px] text-[#7A5644] font-normal leading-[1.5]">
-                Citraland Puncak Tidar HH-26, Malang. Ada area bermain gratis untuk si kecil.
+                {home.storeVisitSubtitle || 'Citraland Puncak Tidar HH-26, Malang. Ada area bermain gratis untuk si kecil.'}
               </p>
               <div className="pt-1 flex flex-col sm:flex-row gap-2.5">
                 <a
-                  href="https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang"
+                  href={store.googleMapsUrl || 'https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
                 >
-                  Petunjuk Arah
+                  {home.storeVisitButtonText || 'Petunjuk Arah'}
                 </a>
                 <a
-                  href="https://wa.me/6281234567890?text=Halo%20BabyShalls,%20saya%20ingin%20berkunjung%20ke%20toko"
+                  href={waVisitUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-3.5 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[16px] font-medium rounded-[2px] transition-colors"

@@ -22,17 +22,15 @@ export function TombolKembali({ fallbackUrl = '/', label = 'Kembali', className 
   };
 
   return (
-    <div className={`w-full bg-[#FFFBF7] border-b border-[#F2E4D6] py-2 px-6 sm:px-12 flex items-center justify-center ${className}`}>
-      <div className="max-w-[1200px] w-full flex items-center">
-        <button
-          onClick={handleBack}
-          type="button"
-          className="inline-flex items-center gap-2 text-[#4A2A1C] hover:text-[#B05A26] text-sm font-medium transition-colors cursor-pointer py-1"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{label}</span>
-        </button>
-      </div>
+    <div className={`max-w-[1200px] w-full mx-auto px-4 sm:px-8 pt-4 pb-1 ${className}`}>
+      <button
+        onClick={handleBack}
+        type="button"
+        className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors cursor-pointer group"
+      >
+        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5 text-[#B05A26]" />
+        <span>{label}</span>
+      </button>
     </div>
   );
 }
