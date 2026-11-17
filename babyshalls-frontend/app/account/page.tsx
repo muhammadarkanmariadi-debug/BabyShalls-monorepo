@@ -1,16 +1,10 @@
 "use client";
 
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { USER_TOKEN_STORAGE_KEY } from '@/lib/axios';
-=======
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
->>>>>>> a66eeab (test)
 import {
   User,
   Package,
@@ -29,22 +23,12 @@ import {
   Edit2,
   Trash2,
   X,
-<<<<<<< HEAD
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { WireProductCard } from '@/components/common/WireProductCard';
 import { mockProducts, formatIDR } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
 import { useAccountProfile, useUpdateAccountProfile } from '@/hooks/useAccount';
-=======
-} from "lucide-react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { TombolKembali } from "@/components/common/TombolKembali";
-import { WireProductCard } from "@/components/common/WireProductCard";
-import { mockProducts, formatIDR } from "@/data/mockProducts";
-import { useCart } from "@/context/CartContext";
->>>>>>> a66eeab (test)
 
 type TabKey =
   | "profil"
@@ -58,7 +42,6 @@ export default function AccountPage() {
   const router = useRouter();
   const { addToCart } = useCart();
 
-<<<<<<< HEAD
   // Authentication State (checked from real JWT in localStorage)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -98,37 +81,18 @@ export default function AccountPage() {
   const [authPassword, setAuthPassword] = useState('');
   const [authName, setAuthName] = useState('');
   const [authPhone, setAuthPhone] = useState('');
-=======
-  // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  const [authMode, setAuthMode] = useState<"masuk" | "daftar">("masuk");
-
-  // Auth Inputs
-  const [authEmail, setAuthEmail] = useState("dina.permata@gmail.com");
-  const [authPassword, setAuthPassword] = useState("********");
-  const [authName, setAuthName] = useState("Dina Permata");
-  const [authPhone, setAuthPhone] = useState("0812-3456-7890");
->>>>>>> a66eeab (test)
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<TabKey>("profil");
 
   // User Profile (synced from PostgreSQL /api/account/profile)
   const [userProfile, setUserProfile] = useState({
-<<<<<<< HEAD
-    name: '',
-    email: '',
-    phone: '',
-    city: 'Kota Malang',
-    address: '',
-=======
     name: "Dina Permata",
     email: "dina.permata@gmail.com",
     phone: "0812-3456-7890",
     city: "Kota Malang",
     address:
       "Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun, Kota Malang 65146",
->>>>>>> a66eeab (test)
   });
 
   useEffect(() => {

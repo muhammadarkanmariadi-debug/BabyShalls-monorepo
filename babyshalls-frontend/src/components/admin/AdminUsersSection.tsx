@@ -69,13 +69,13 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
   }, [users, search, roleFilter]);
 
   return (
-    <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
+    <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
-        <h2 className="text-base font-semibold text-[#4A2A1C]">
-          Pengguna ({filtered.length}/{users.length})
+        <h2 className="text-base font-bold text-[#4A2A1C]">
+          Pengguna &amp; Hak Akses ({filtered.length}/{users.length})
         </h2>
         <p className="text-xs text-[#7A5644]">
-          Kelola daftar akun pelanggan dan hak akses administrator BabyShalls.
+          Kelola daftar akun bunda/pelanggan dan hak akses administrator toko BabyShalls.
         </p>
       </div>
 
@@ -86,7 +86,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
         filterValue={roleFilter}
         onFilterChange={setRoleFilter}
         filterOptions={[
-          { label: 'Admin', value: 'ADMIN' },
+          { label: 'Admin Toko', value: 'ADMIN' },
           { label: 'Pelanggan (USER)', value: 'USER' },
         ]}
         filterLabel="Semua Peran"
@@ -99,47 +99,48 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644]">Memuat data pengguna...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat data pengguna...</p>
       ) : filtered.length === 0 ? (
         <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada pengguna yang cocok.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FFF6EA] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
+            <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
-                <th className="py-3 px-3">Nama</th>
-                <th className="py-3 px-3">Email</th>
-                <th className="py-3 px-3">Telepon</th>
-                <th className="py-3 px-3">Pesanan</th>
-                <th className="py-3 px-3">Peran</th>
-                <th className="py-3 px-3 text-right">Aksi</th>
+                <th className="py-3 px-3.5">Nama</th>
+                <th className="py-3 px-3.5">Email</th>
+                <th className="py-3 px-3.5">Telepon</th>
+                <th className="py-3 px-3.5">Total Pesanan</th>
+                <th className="py-3 px-3.5">Peran</th>
+                <th className="py-3 px-3.5 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2E4D6]">
               {filtered.map((u) => (
-                <tr key={u.id} className="hover:bg-[#FFFDF9]">
-                  <td className="py-3 px-3 font-semibold text-[#4A2A1C]">{u.name}</td>
-                  <td className="py-3 px-3 text-[#7A5644]">{u.email}</td>
-                  <td className="py-3 px-3 text-[#7A5644]">{u.phone || '-'}</td>
-                  <td className="py-3 px-3 font-semibold">{u.ordersCount}</td>
-                  <td className="py-3 px-3">
+                <tr key={u.id} className="hover:bg-[#FFF8EF]/50 transition-colors">
+                  <td className="py-3 px-3.5 font-bold text-[#4A2A1C]">{u.name}</td>
+                  <td className="py-3 px-3.5 text-[#7A5644]">{u.email}</td>
+                  <td className="py-3 px-3.5 text-[#7A5644]">{u.phone || '-'}</td>
+                  <td className="py-3 px-3.5 font-bold text-[#3F5FA0]">{u.ordersCount} pesanan</td>
+                  <td className="py-3 px-3.5">
                     <span
-                      className={`px-2.5 py-0.5 rounded-[2px] text-[10px] font-bold ${u.role === 'ADMIN'
-                          ? 'bg-[#FBE6D8] text-[#B05A26]'
-                          : 'bg-[#E9F3E4] text-[#1E543B]'
-                        }`}
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        u.role === 'ADMIN'
+                          ? 'bg-[#FBE6D8] text-[#8E431A] border border-[#EFA27A]/60'
+                          : 'bg-[#E4ECFB] text-[#3F5FA0] border border-[#92B2F3]/60'
+                      }`}
                     >
-                      {u.role}
+                      {u.role === 'ADMIN' ? 'Admin Toko' : 'Pelanggan'}
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-right">
+                  <td className="py-3 px-3.5 text-right">
                     <button
                       type="button"
                       onClick={() => {
                         setEditingUser(u);
                         setDraftRole(u.role);
                       }}
-                      className="px-3 py-1 rounded-[4px] border border-[#E6D2C0] text-[#4A2A1C] font-semibold hover:bg-[#FFF6EA] inline-flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] font-semibold hover:bg-[#E4ECFB] inline-flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       <Shield className="w-3 h-3" /> Ubah Peran
                     </button>

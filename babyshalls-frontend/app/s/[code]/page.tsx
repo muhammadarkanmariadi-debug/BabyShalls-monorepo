@@ -13,32 +13,7 @@ export default function ShortlinkRedirectPage() {
   useEffect(() => {
     const code = params?.code;
     if (!code) return;
-
-    let cancelled = false;
-    apiClient
-      .get<{ success: boolean; data: { targetUrl: string } }>(`/shortlinks/${encodeURIComponent(code)}`)
-      .then((res) => {
-        if (cancelled) return;
-        const target = res.data?.data?.targetUrl;
-        if (!target) {
-          setErrorMsg('Shortlink tidak ditemukan.');
-          return;
-        }
-        if (target.startsWith('/')) {
-          router.replace(target);
-        } else {
-          window.location.replace(target);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setErrorMsg('Shortlink tidak ditemukan atau sudah tidak aktif.');
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    router.replace(`/babyshalls/${encodeURIComponent(code)}`);
   }, [params?.code, router]);
 
   if (errorMsg) {

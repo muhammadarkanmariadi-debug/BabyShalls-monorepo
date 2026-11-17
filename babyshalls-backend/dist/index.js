@@ -19,7 +19,7 @@ import shippingRoutes from './modules/shipping/shipping.routes.js';
 import { adminShortlinkRouter, publicShortlinkRouter } from './routes/shortlink.routes.js';
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const rawHelmet = helmet;
 const helmetFactory = typeof rawHelmet === 'function' ? rawHelmet : rawHelmet.default;
 app.use(helmetFactory({

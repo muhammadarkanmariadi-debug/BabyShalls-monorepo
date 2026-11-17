@@ -16,6 +16,13 @@ const STATUS_OPTIONS: { label: string; value: AdminBookRequest['status'] }[] = [
   { label: 'COMPLETED', value: 'COMPLETED' },
 ];
 
+const STATUS_BADGE_REQUEST: Record<AdminBookRequest['status'], string> = {
+  PENDING: 'bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]/60',
+  QUOTED: 'bg-[#DDF6F9] text-[#1F6B76] border border-[#8DDBE6]/60',
+  ORDERED: 'bg-[#E4ECFB] text-[#3F5FA0] border border-[#92B2F3]/60',
+  COMPLETED: 'bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60',
+};
+
 export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
   const { data: requests = [], isLoading } = useAdminBookRequests(enabled);
   const updateMutation = useUpdateBookRequest();
@@ -69,12 +76,12 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
   };
 
   return (
-    <div className="bg-white border border-[#EBDCCB] rounded-2xl p-6 space-y-4">
+    <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
-        <h2 className="text-base font-extrabold text-[#502E1E]">
+        <h2 className="text-base font-bold text-[#4A2A1C]">
           Book Request Jastip ({filtered.length}/{requests.length})
         </h2>
-        <p className="text-xs text-[#6B3F2A]">Kelola permintaan buku impor &amp; konfirmasi harga via WhatsApp.</p>
+        <p className="text-xs text-[#7A5644]">Kelola permintaan buku impor &amp; konfirmasi harga via WhatsApp ke bunda.</p>
       </div>
 
       <DataTableToolbar
@@ -100,41 +107,41 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#6B7280]">Memuat permintaan buku...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat permintaan buku...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-[#6B7280] py-6 text-center">Belum ada permintaan Book Request yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Belum ada permintaan Book Request yang cocok.</p>
       ) : (
-        <div className="divide-y divide-[#F3ECE2] text-xs">
+        <div className="divide-y divide-[#F2E4D6] text-xs">
           {filtered.map((req) => (
-            <div key={req.id} className="py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div key={req.id} className="py-3.5 flex flex-wrap items-center justify-between gap-3 hover:bg-[#FFF8EF]/40 px-2 rounded-lg transition-colors">
               <div>
-                <div className="font-extrabold text-[#1A1A1A]">{req.title}</div>
-                <div className="text-[#6B7280] mt-0.5">
-                  Pemohon: {req.customerName || 'Pelanggan'} ({req.whatsappNumber})
+                <div className="font-bold text-[#4A2A1C] text-sm">{req.title}</div>
+                <div className="text-[#7A5644] mt-0.5">
+                  Pemohon: <strong className="text-[#4A2A1C]">{req.customerName || 'Pelanggan'}</strong> ({req.whatsappNumber})
                   {req.authorPublisher ? ` • ${req.authorPublisher}` : ''}
                 </div>
                 {req.adminNotes && (
-                  <div className="text-[11px] text-[#502E1E] mt-1 bg-[#FCF6EC] px-2.5 py-1 rounded-lg inline-block">
-                    Catatan: {req.adminNotes}
+                  <div className="text-[11px] text-[#8E431A] mt-1 bg-[#FBE6D8] border border-[#EFA27A]/50 px-2.5 py-1 rounded-[4px] inline-block">
+                    Catatan Staf: {req.adminNotes}
                   </div>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full bg-[#FCF6EC] border border-[#EBDCCB] font-bold text-[#502E1E]">
+                <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${STATUS_BADGE_REQUEST[req.status] || 'bg-[#F2E4D6] text-[#4A2A1C]'}`}>
                   {req.status}
                 </span>
                 <a
                   href={`https://wa.me/${req.whatsappNumber.replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#E9F3E4] text-[#1E543B] font-bold"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[4px] bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60 font-semibold hover:bg-[#CEEAD6] transition-colors"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" /> WA
+                  <MessageCircle className="w-3.5 h-3.5" /> Chat WA
                 </a>
                 <button
                   type="button"
                   onClick={() => openModal(req)}
-                  className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#502E1E] hover:bg-[#FCF6EC] cursor-pointer"
+                  className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors cursor-pointer"
                   title="Detail & Catatan"
                 >
                   <Edit2 className="w-3.5 h-3.5" />

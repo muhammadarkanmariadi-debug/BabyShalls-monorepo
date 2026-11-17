@@ -124,12 +124,12 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
   };
 
   return (
-    <div className="bg-white border border-[#EBDCCB] rounded-2xl p-6 space-y-4">
+    <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
-        <h2 className="text-base font-extrabold text-[#502E1E]">
+        <h2 className="text-base font-bold text-[#4A2A1C]">
           Manajemen Kupon &amp; Voucher ({filtered.length}/{vouchers.length})
         </h2>
-        <p className="text-xs text-[#6B3F2A]">Kelola promo diskon nominal, persentase, &amp; subsidi ongkir.</p>
+        <p className="text-xs text-[#7A5644]">Kelola promo diskon nominal, persentase, &amp; subsidi ongkir toko.</p>
       </div>
 
       <DataTableToolbar
@@ -154,7 +154,7 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
           <button
             type="button"
             onClick={() => openModal(null)}
-            className="h-[38px] px-4 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
+            className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
           >
             <Plus className="w-4 h-4" /> Tambah Kupon
           </button>
@@ -162,20 +162,22 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#6B7280]">Memuat kupon...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat kupon...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-[#6B7280] py-6 text-center">Belum ada kupon yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Belum ada kupon yang cocok.</p>
       ) : (
-        <div className="divide-y divide-[#F3ECE2] text-xs">
+        <div className="divide-y divide-[#F2E4D6] text-xs">
           {filtered.map((v) => (
-            <div key={v.id} className="py-3 flex flex-wrap items-center justify-between gap-4">
+            <div key={v.id} className="py-3 flex flex-wrap items-center justify-between gap-4 hover:bg-[#FFF8EF]/40 px-2 rounded-lg transition-colors">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-extrabold text-[#502E1E] text-sm">{v.code}</span>
-                  <span className="text-[#6B3F2A]">• {formatDiscountLabel(v)}</span>
+                  <span className="font-mono font-bold text-sm px-2.5 py-0.5 rounded-[4px] bg-[#F3E6F2] text-[#7E4A84] border border-[#BA7EB8]/60">
+                    {v.code}
+                  </span>
+                  <span className="font-semibold text-[#4A2A1C]">• {formatDiscountLabel(v)}</span>
                 </div>
-                <div className="text-[11px] text-[#6B7280] mt-0.5">
-                  {v.description || 'Tanpa deskripsi'} • Min Order: {formatIDR(v.minOrder)} • Terpakai: {v.usedCount}
+                <div className="text-[11px] text-[#7A5644] mt-1">
+                  {v.description || 'Tanpa deskripsi'} • Min Order: {formatIDR(v.minOrder)} • Terpakai: <strong className="text-[#3F5FA0]">{v.usedCount}</strong>
                   {v.maxUsage ? `/${v.maxUsage}` : ''}
                 </div>
               </div>
@@ -192,15 +194,18 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                       }
                     )
                   }
-                  className={`px-3 py-1 rounded-full font-bold cursor-pointer ${v.isActive ? 'bg-[#E9F3E4] text-[#1E543B]' : 'bg-[#F3F4F6] text-[#6B7280]'
-                    }`}
+                  className={`px-3 py-1 rounded-full font-bold text-[11px] cursor-pointer transition-colors ${
+                    v.isActive
+                      ? 'bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60'
+                      : 'bg-[#FDE3E8] text-[#C0392B] border border-[#FBA6B2]/60'
+                  }`}
                 >
                   {v.isActive ? 'Aktif' : 'Nonaktif'}
                 </button>
                 <button
                   type="button"
                   onClick={() => openModal(v)}
-                  className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#502E1E] hover:bg-[#FCF6EC] cursor-pointer"
+                  className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors cursor-pointer"
                   title="Edit Kupon"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -214,7 +219,7 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                       onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus kupon.')),
                     });
                   }}
-                  className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#6B7280] hover:text-red-600 cursor-pointer"
+                  className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
                   title="Hapus Kupon"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

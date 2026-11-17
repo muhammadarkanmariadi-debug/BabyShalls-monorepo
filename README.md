@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Babyshalls — Butik Buku Cerita Anak & Mainan Edukatif Malang
 
 > **Brand Identity:** Kurasi Buku Cerita Anak, Mainan Edukasi Kayu Montessori, Hampers Kado Personal & Storytelling Workshop.  
@@ -115,6 +114,3 @@ Tersedia tombol **1-Klik Isi Akun Demo**:
 2. **Panduan Membaca Anak:** Panduan usia membaca (0-2 thn, 3-5 thn, 6+ thn) untuk mendampingi orang tua.
 3. **Katalog & Sinopsis Mendalam:** Tombol *Intip Sinopsis* menampilkan cuplikan cerita, nilai moral karakter, spesifikasi bahan, format buku, dan bahasa.
 4. **Tanya Stok WhatsApp Terintegrasi:** Tombol *Tanya WA* otomatis menyusun pesan ramah yang menyebutkan judul buku dan harga untuk ditanyakan ke admin toko.
-=======
-# babyshalls-prototipe-haikal
->>>>>>> 4d9929b0283fb1293fa06c228e9faf84a2c0d9f1

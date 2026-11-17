@@ -4,7 +4,7 @@ export const ADMIN_TOKEN_STORAGE_KEY = 'babyshalls_admin_token';
 export const USER_TOKEN_STORAGE_KEY = 'babyshalls_user_token';
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',

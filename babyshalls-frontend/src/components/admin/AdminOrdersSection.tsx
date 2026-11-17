@@ -38,12 +38,12 @@ const COURIER_OPTIONS = [
 ];
 
 const STATUS_BADGE: Record<AdminOrder['status'], string> = {
-  PENDING_PAYMENT: 'bg-amber-100 text-amber-800',
-  PAID: 'bg-emerald-100 text-emerald-800',
-  PROCESSING: 'bg-blue-100 text-blue-800',
-  SHIPPED: 'bg-indigo-100 text-indigo-800',
-  COMPLETED: 'bg-[#E9F3E4] text-[#1E543B]',
-  CANCELLED: 'bg-red-100 text-red-700',
+  PENDING_PAYMENT: 'bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]',
+  PAID: 'bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]',
+  PROCESSING: 'bg-[#E4ECFB] text-[#3F5FA0] border border-[#92B2F3]',
+  SHIPPED: 'bg-[#DDF6F9] text-[#1F6B76] border border-[#8DDBE6]',
+  COMPLETED: 'bg-[#E9F3E4] text-[#1E543B] border border-[#A7D7A9]',
+  CANCELLED: 'bg-[#FDE3E8] text-[#C0392B] border border-[#FBA6B2]',
 };
 
 export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
@@ -144,34 +144,39 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
   };
 
   return (
-    <div className="bg-white border border-[#EBDCCB] rounded-2xl p-6 space-y-4">
+    <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-extrabold text-[#502E1E]">
+          <h2 className="text-base font-bold text-[#4A2A1C]">
             Pesanan Masuk ({filteredOrders.length}/{orders.length})
           </h2>
-          <p className="text-xs text-[#6B3F2A]">
-            Pantau pembayaran Midtrans, input resi mandiri (Wahana/JNE/J&amp;T), &amp; lacak resi BinderByte.
+          <p className="text-xs text-[#7A5644]">
+            Pantau pembayaran Midtrans, input resi pengiriman, &amp; lacak pengiriman dari Malang.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {quotaStats && (
-            <span className="text-[11px] font-bold text-[#502E1E] px-3 py-1 rounded-full bg-[#FCF6EC] border border-[#EBDCCB]">
+            <span className="text-[11px] font-bold text-[#8A5A00] px-3 py-1 rounded-full bg-[#FFF1C7] border border-[#F7C94B]/60">
               Sisa Kuota Resi BinderByte: {quotaStats.binderByte.remaining.toLocaleString('id-ID')} /{' '}
               {quotaStats.binderByte.totalQuota.toLocaleString('id-ID')}
             </span>
           )}
-          <span className="text-xs font-bold text-[#1E543B] inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E9F3E4]">
+          <span className="text-xs font-bold text-[#2A6E37] inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF1E5] border border-[#82BC85]/60">
             <Truck className="w-3.5 h-3.5" /> Malang Hub Origin
           </span>
         </div>
       </div>
 
-      {/* Quick Status Tabs (Figma Admin – Pesanan) */}
+      {/* Quick Status Tabs (Figma Admin – Pesanan) with Pastel Tokens */}
       <div className="flex flex-wrap gap-1.5 border-b border-[#E6D2C0] pb-3">
         {[
-          { label: 'Semua', value: 'ALL' },
-          ...ORDER_STATUS_OPTIONS,
+          { label: 'Semua', value: 'ALL', activeCls: 'bg-[#FBE6D8] text-[#8E431A] font-semibold border-b-2 border-[#B05A26]' },
+          { label: 'Menunggu Bayar', value: 'PENDING_PAYMENT', activeCls: 'bg-[#FFF1C7] text-[#8A5A00] font-semibold border-b-2 border-[#F7C94B]' },
+          { label: 'Sudah Dibayar', value: 'PAID', activeCls: 'bg-[#DDF1E5] text-[#2A6E37] font-semibold border-b-2 border-[#82BC85]' },
+          { label: 'Diproses', value: 'PROCESSING', activeCls: 'bg-[#E4ECFB] text-[#3F5FA0] font-semibold border-b-2 border-[#92B2F3]' },
+          { label: 'Dikirim', value: 'SHIPPED', activeCls: 'bg-[#DDF6F9] text-[#1F6B76] font-semibold border-b-2 border-[#8DDBE6]' },
+          { label: 'Selesai', value: 'COMPLETED', activeCls: 'bg-[#E9F3E4] text-[#1E543B] font-semibold border-b-2 border-[#A7D7A9]' },
+          { label: 'Dibatalkan', value: 'CANCELLED', activeCls: 'bg-[#FDE3E8] text-[#C0392B] font-semibold border-b-2 border-[#FBA6B2]' },
         ].map((tab) => {
           const active = statusFilter === tab.value;
           return (
@@ -179,10 +184,8 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3 py-1.5 rounded-[4px] text-xs font-medium transition-colors cursor-pointer ${
-                active
-                  ? 'bg-[#FBE6D8] text-[#B05A26] font-semibold'
-                  : 'text-[#7A5644] hover:bg-[#FFF6EA]'
+              className={`px-3 py-1.5 rounded-[4px] text-xs font-medium transition-all cursor-pointer ${
+                active ? tab.activeCls : 'text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C]'
               }`}
             >
               {tab.label}
@@ -216,23 +219,23 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#6B7280]">Memuat pesanan...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat pesanan...</p>
       ) : filteredOrders.length === 0 ? (
-        <p className="text-xs text-[#6B7280] py-6 text-center">Tidak ada pesanan yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada pesanan yang cocok.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FCF6EC] text-[#6B3F2A] font-bold border-b border-[#EBDCCB]">
+            <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
-                <th className="py-3 px-3">Order ID</th>
-                <th className="py-3 px-3">Pelanggan</th>
-                <th className="py-3 px-3">Status</th>
-                <th className="py-3 px-3">Kurir &amp; Resi</th>
-                <th className="py-3 px-3">Total</th>
-                <th className="py-3 px-3 text-right">Aksi</th>
+                <th className="py-3 px-3.5">Order ID</th>
+                <th className="py-3 px-3.5">Pelanggan</th>
+                <th className="py-3 px-3.5">Status</th>
+                <th className="py-3 px-3.5">Kurir &amp; Resi</th>
+                <th className="py-3 px-3.5">Total</th>
+                <th className="py-3 px-3.5 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F3ECE2]">
+            <tbody className="divide-y divide-[#F2E4D6]">
               {filteredOrders.map((ord) => {
                 const customerName =
                   ord.shippingAddress?.recipientName ||
@@ -240,33 +243,33 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                   ord.user?.name ||
                   '-';
                 return (
-                  <tr key={ord.id} className="hover:bg-[#FCF6EC]/40">
-                    <td className="py-3 px-3 font-bold text-[#1A1A1A]">{ord.orderNumber}</td>
-                    <td className="py-3 px-3">
-                      <div className="font-semibold text-[#1A1A1A]">{customerName}</div>
-                      <div className="text-[11px] text-[#6B7280]">{ord.shippingAddress?.city || '-'}</div>
+                  <tr key={ord.id} className="hover:bg-[#FFF8EF]/50 transition-colors">
+                    <td className="py-3 px-3.5 font-bold text-[#4A2A1C]">{ord.orderNumber}</td>
+                    <td className="py-3 px-3.5">
+                      <div className="font-semibold text-[#4A2A1C]">{customerName}</div>
+                      <div className="text-[11px] text-[#7A5644]">{ord.shippingAddress?.city || '-'}</div>
                     </td>
-                    <td className="py-3 px-3">
+                    <td className="py-3 px-3.5">
                       <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${STATUS_BADGE[ord.status]}`}>
                         {ord.status}
                       </span>
                     </td>
-                    <td className="py-3 px-3">
-                      <div className="font-semibold uppercase text-[#502E1E]">
+                    <td className="py-3 px-3.5">
+                      <div className="font-semibold uppercase text-[#4A2A1C]">
                         {ord.courierCode || '-'} {ord.courierService || ''}
                       </div>
                       {ord.waybillNumber && (
-                        <div className="text-[11px] font-mono text-[#1E543B]">{ord.waybillNumber}</div>
+                        <div className="text-[11px] font-mono text-[#2A6E37] font-bold">{ord.waybillNumber}</div>
                       )}
                     </td>
-                    <td className="py-3 px-3 font-bold text-[#1A1A1A]">{formatIDR(ord.grandTotal)}</td>
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-3 px-3.5 font-bold text-[#4A2A1C]">{formatIDR(ord.grandTotal)}</td>
+                    <td className="py-3 px-3.5 text-right">
                       <div className="inline-flex items-center gap-1.5">
                         {ord.status !== 'CANCELLED' && (
                           <button
                             type="button"
                             onClick={() => openWaybillModal(ord)}
-                            className="px-2.5 py-1 rounded-lg bg-[#FDF0B8] text-[#502E1E] font-bold hover:bg-[#FCE694] cursor-pointer"
+                            className="px-2.5 py-1 rounded-[4px] bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]/60 font-semibold hover:bg-[#FFE7A3] cursor-pointer transition-colors"
                           >
                             {ord.waybillNumber ? 'Edit Resi' : 'Input Resi'}
                           </button>
@@ -280,7 +283,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                                 waybill: ord.waybillNumber || '',
                               })
                             }
-                            className="px-2.5 py-1 rounded-lg bg-[#E9F3E4] text-[#1E543B] font-bold hover:opacity-90 inline-flex items-center gap-1 cursor-pointer"
+                            className="px-2.5 py-1 rounded-[4px] bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60 font-semibold hover:bg-[#CEEAD6] inline-flex items-center gap-1 cursor-pointer transition-colors"
                             title="Lacak Resi"
                           >
                             <Search className="w-3 h-3" /> Lacak
@@ -289,7 +292,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                         <button
                           type="button"
                           onClick={() => openDetailModal(ord)}
-                          className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#502E1E] hover:bg-[#FCF6EC] cursor-pointer"
+                          className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] cursor-pointer transition-colors"
                           title="Detail & Update Pesanan"
                         >
                           <Eye className="w-3.5 h-3.5" />

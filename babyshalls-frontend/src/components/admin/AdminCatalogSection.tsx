@@ -27,6 +27,33 @@ const CATEGORY_OPTIONS = [
   'Preloved Kurasi',
 ].map((c) => ({ label: c, value: c }));
 
+function getCategoryBadge(category: string) {
+  const c = category.toLowerCase();
+  if (c.includes('board') || c.includes('picture') || c.includes('reader')) {
+    return 'bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]/60';
+  }
+  if (c.includes('toy') || c.includes('sensory') || c.includes('sound')) {
+    return 'bg-[#DDF6F9] text-[#1F6B76] border border-[#8DDBE6]/60';
+  }
+  if (c.includes('hamper')) {
+    return 'bg-[#F3E6F2] text-[#7E4A84] border border-[#BA7EB8]/60';
+  }
+  if (c.includes('preloved')) {
+    return 'bg-[#FDE3E8] text-[#B83246] border border-[#FBA6B2]/60';
+  }
+  return 'bg-[#E4ECFB] text-[#3F5FA0] border border-[#92B2F3]/60';
+}
+
+function getStockBadge(stock: number) {
+  if (stock > 5) {
+    return 'bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60';
+  }
+  if (stock > 0) {
+    return 'bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]/60';
+  }
+  return 'bg-[#FDE3E8] text-[#C0392B] border border-[#FBA6B2]/60';
+}
+
 export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
   const { data: products = [], isLoading } = useAdminProducts(enabled);
   const updateMutation = useUpdateAdminProduct();
@@ -70,13 +97,15 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
   };
 
   return (
-    <div className="bg-white border border-[#EBDCCB] rounded-2xl p-6 space-y-4">
+    <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-extrabold text-[#502E1E]">
+          <h2 className="text-base font-bold text-[#4A2A1C]">
             Manajemen Katalog SKU ({filteredProducts.length}/{products.length})
           </h2>
-          <p className="text-xs text-[#6B3F2A]">Kelola buku kurasi, mainan kayu, hampers &amp; stok.</p>
+          <p className="text-xs text-[#7A5644]">
+            Kelola buku kurasi, mainan kayu montessori, hampers &amp; stok toko Malang.
+          </p>
         </div>
       </div>
 
@@ -106,7 +135,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
             />
             <Link
               href="/admin/products/new"
-              className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5"
+              className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
             >
               <Plus className="w-4 h-4" /> Tambah Produk
             </Link>
@@ -115,79 +144,86 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#6B7280]">Memuat produk dari PostgreSQL...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat produk dari database...</p>
       ) : filteredProducts.length === 0 ? (
-        <p className="text-xs text-[#6B7280] py-6 text-center">Tidak ada produk yang cocok dengan filter.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada produk yang cocok dengan filter.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FCF6EC] text-[#6B3F2A] font-bold border-b border-[#EBDCCB]">
+            <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
-                <th className="py-3 px-3">Produk</th>
-                <th className="py-3 px-3">Kategori &amp; Usia</th>
-                <th className="py-3 px-3">Harga</th>
-                <th className="py-3 px-3">Berat</th>
-                <th className="py-3 px-3">Stok</th>
-                <th className="py-3 px-3 text-right">Aksi</th>
+                <th className="py-3 px-3.5">Produk</th>
+                <th className="py-3 px-3.5">Kategori &amp; Usia</th>
+                <th className="py-3 px-3.5">Harga</th>
+                <th className="py-3 px-3.5">Berat</th>
+                <th className="py-3 px-3.5">Stok &amp; Status</th>
+                <th className="py-3 px-3.5 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F3ECE2]">
+            <tbody className="divide-y divide-[#F2E4D6]">
               {filteredProducts.map((p) => {
                 const thumb = Array.isArray(p.images) && p.images[0] ? p.images[0] : '/images/placeholder-book.jpg';
                 return (
-                  <tr key={p.id} className="hover:bg-[#FCF6EC]/40">
-                    <td className="py-3 px-3">
+                  <tr key={p.id} className="hover:bg-[#FFF8EF]/50 transition-colors">
+                    <td className="py-3 px-3.5">
                       <div className="flex items-center gap-3">
                         <img
                           src={thumb}
                           alt={p.name}
-                          className="w-10 h-10 rounded-lg object-cover border border-[#EBDCCB] shrink-0"
+                          className="w-10 h-10 rounded-md object-cover border border-[#E6D2C0] shrink-0"
                         />
                         <div>
-                          <div className="font-bold text-[#1A1A1A] line-clamp-1">{p.name}</div>
+                          <div className="font-bold text-[#4A2A1C] line-clamp-1">{p.name}</div>
                           {p.authorOrBrand && (
-                            <div className="text-[11px] text-[#6B7280]">{p.authorOrBrand}</div>
+                            <div className="text-[11px] text-[#7A5644]">{p.authorOrBrand}</div>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-3">
-                      <div className="font-semibold text-[#502E1E]">{p.category}</div>
-                      <div className="text-[11px] text-[#6B7280]">{p.ageGroup}</div>
+                    <td className="py-3 px-3.5">
+                      <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${getCategoryBadge(p.category)}`}>
+                        {p.category}
+                      </span>
+                      <div className="text-[11px] text-[#7A5644] mt-1">{p.ageGroup}</div>
                     </td>
-                    <td className="py-3 px-3">
-                      <div className="font-bold text-[#1A1A1A]">{formatIDR(p.price)}</div>
+                    <td className="py-3 px-3.5">
+                      <div className="font-bold text-[#4A2A1C]">{formatIDR(p.price)}</div>
                       {p.originalPrice && p.originalPrice > p.price && (
-                        <div className="text-[10px] line-through text-[#9CA3AF]">
+                        <div className="text-[10px] line-through text-[#C9B3A5]">
                           {formatIDR(p.originalPrice)}
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-3 text-[#6B7280]">{p.weight || 300}g</td>
-                    <td className="py-3 px-3">
-                      <div className="inline-flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleAdjustStock(p.id, p.stock - 1)}
-                          className="w-6 h-6 rounded border border-[#EBDCCB] font-bold hover:bg-[#FCF6EC] cursor-pointer"
-                        >
-                          -
-                        </button>
-                        <span className="font-bold w-6 text-center">{p.stock}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleAdjustStock(p.id, p.stock + 1)}
-                          className="w-6 h-6 rounded border border-[#EBDCCB] font-bold hover:bg-[#FCF6EC] cursor-pointer"
-                        >
-                          +
-                        </button>
+                    <td className="py-3 px-3.5 text-[#7A5644]">{p.weight || 300}g</td>
+                    <td className="py-3 px-3.5">
+                      <div className="flex items-center gap-2">
+                        <div className="inline-flex items-center gap-1 rounded bg-[#FFFDF9] border border-[#E6D2C0] p-0.5">
+                          <button
+                            type="button"
+                            onClick={() => handleAdjustStock(p.id, p.stock - 1)}
+                            className="w-5 h-5 rounded flex items-center justify-center font-bold text-[#4A2A1C] hover:bg-[#FFF6EA] cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="font-bold w-6 text-center text-xs text-[#4A2A1C]">{p.stock}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleAdjustStock(p.id, p.stock + 1)}
+                            className="w-5 h-5 rounded flex items-center justify-center font-bold text-[#4A2A1C] hover:bg-[#FFF6EA] cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${getStockBadge(p.stock)}`}>
+                          {p.stock > 5 ? 'Ready' : p.stock > 0 ? 'Menipis' : 'Habis'}
+                        </span>
                       </div>
                     </td>
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-3 px-3.5 text-right">
                       <div className="inline-flex items-center gap-1.5">
                         <Link
                           href={`/admin/products/${p.id}/edit`}
-                          className="p-1.5 rounded-[4px] border border-[#E6D2C0] text-[#4A2A1C] hover:bg-[#FFF6EA]"
+                          className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors"
                           title="Edit Produk"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -195,7 +231,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
                         <button
                           type="button"
                           onClick={() => setDeletingProduct(p)}
-                          className="p-1.5 rounded-[4px] border border-[#E6D2C0] text-[#7A5644] hover:text-red-600 cursor-pointer"
+                          className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
                           title="Hapus Produk"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
