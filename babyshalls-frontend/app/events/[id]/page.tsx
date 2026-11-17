@@ -16,8 +16,6 @@ import {
   Gift,
   CheckCircle2,
 } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { getEventById } from '@/data/eventsData';
 
@@ -48,7 +46,6 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/events" label="Kembali ke Daftar Event" />
 
       <main className="flex-1">
@@ -350,7 +347,6 @@ export default function EventDetailPage() {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 }

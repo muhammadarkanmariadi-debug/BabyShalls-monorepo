@@ -17,8 +17,6 @@ import {
   Smile,
   Compass,
 } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { CampaignBanner } from '@/components/home/CampaignBanner';
 import { useCms } from '@/context/CmsContext';
@@ -35,7 +33,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
       {/* Hero Section with Mascot & Story (Figma Pastel Terracotta & Cream) */}
@@ -338,7 +335,6 @@ export default function AboutPage() {
       </section>
 
       <CampaignBanner />
-      <Footer />
     </div>
   );
 }

@@ -1,7 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useStorefrontProducts } from '@/hooks/useProducts';
+import { MAIN_CATEGORIES, resolveProductTaxonomy } from '@/lib/catalog-categories';
 
 interface MegaMenuProps {
   isOpen: boolean;
@@ -18,32 +20,46 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
   onMouseEnter,
   onMouseLeave,
 }) => {
-  if (!isOpen) return null;
+  const { products } = useStorefrontProducts();
+  const [showAllSubcategories, setShowAllSubcategories] = useState(false);
 
   const ageGroups = [
-    { label: 'Newborn (0–12 bln)', href: '/shop?age=0-12m' },
-    { label: '1–3 tahun', href: '/shop?age=1-3y' },
-    { label: '3+ tahun', href: '/shop?age=3-5y' },
-    { label: '6+ tahun', href: '/shop?age=6y' },
+    { label: 'Newborn (0–12 bln)', href: '/shop?age=0%E2%80%931+th' },
+    { label: '1–3 tahun', href: '/shop?age=1%E2%80%933+th' },
+    { label: '3+ tahun', href: '/shop?age=3%2B+th' },
+    { label: '6+ tahun', href: '/shop?age=6%2B+th' },
     { label: 'Semua usia', href: '/shop' },
   ];
 
-  const bookCategories = [
-    { label: 'Board Book', href: '/shop?category=Board+Books' },
-    { label: 'Picture Book', href: '/shop?category=Picture+Books' },
-    { label: 'Buku Aktivitas', href: '/shop?category=Activity+Books' },
-    { label: 'Chapter Book', href: '/shop?category=Chapter+Books' },
-    { label: 'Buku Impor', href: '/shop?tag=impor' },
-    { label: 'Buku Lokal', href: '/shop?tag=lokal' },
+  const mainCategories = [
+    ...MAIN_CATEGORIES.map((cat) => ({
+      label: cat,
+      href: `/shop?category=${encodeURIComponent(cat)}`,
+    })),
+    { label: 'Semua Produk', href: '/shop' },
   ];
 
-  const toyCategories = [
-    { label: 'Mainan Edukasi', href: '/shop?category=Educational+Toys' },
-    { label: 'Montessori', href: '/shop?category=Montessori' },
-    { label: 'Puzzle & Permainan', href: '/shop?category=Puzzles' },
-    { label: 'Hampers', href: '/hampers' },
-    { label: 'Preloved', href: '/preloved' },
-  ];
+  const allSubCategories = useMemo(() => {
+    const map = new Map<string, { label: string; href: string }>();
+    products.forEach((p) => {
+      const { mainCategory, subCategory } = resolveProductTaxonomy(p);
+      if (subCategory && !map.has(subCategory.toLowerCase())) {
+        map.set(subCategory.toLowerCase(), {
+          label: subCategory,
+          href: `/shop?category=${encodeURIComponent(mainCategory)}&subCategory=${encodeURIComponent(subCategory)}`,
+        });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label));
+  }, [products]);
+
+  if (!isOpen) return null;
+
+  const MAX_SUB_VISIBLE = 4;
+  const visibleSubCategories = showAllSubcategories
+    ? allSubCategories
+    : allSubCategories.slice(0, MAX_SUB_VISIBLE);
+  const hiddenSubCount = Math.max(0, allSubCategories.length - MAX_SUB_VISIBLE);
 
   const handleLinkClick = (categoryName?: string) => {
     if (categoryName && onSelectCategory) {
@@ -60,7 +76,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
     >
       <div className="max-w-[1440px] mx-auto px-8 lg:px-20 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10 text-left">
-          
+
           {/* Column 1: Berdasarkan Usia */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
@@ -81,13 +97,13 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             </ul>
           </div>
 
-          {/* Column 2: Buku */}
+          {/* Column 2: Kategori (4 Jenis Barang) */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
-              BUKU
+              KATEGORI
             </h4>
             <ul className="space-y-2.5">
-              {bookCategories.map((item) => (
+              {mainCategories.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
@@ -101,13 +117,13 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             </ul>
           </div>
 
-          {/* Column 3: Mainan & Kado */}
+          {/* Column 3: Sub-Kategori (terbatas + Lihat lainnya) */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
-              MAINAN &amp; KADO
+              SUB-KATEGORI
             </h4>
             <ul className="space-y-2.5">
-              {toyCategories.map((item) => (
+              {visibleSubCategories.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
@@ -118,6 +134,17 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
                   </Link>
                 </li>
               ))}
+              {hiddenSubCount > 0 && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setShowAllSubcategories((prev) => !prev)}
+                    className="text-[13px] font-semibold text-[#B05A26] hover:underline cursor-pointer"
+                  >
+                    {showAllSubcategories ? 'Lebih sedikit' : `Lihat lainnya (+${hiddenSubCount})`}
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -135,14 +162,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
               </span>
             </div>
 
-            <div>
-              <h5 className="text-[14px] font-semibold text-[#4A2A1C]">
-                Koleksi Pilihan Bulan Ini
-              </h5>
-              <p className="text-[12px] text-[#7A5644] mt-0.5">
-                Pilihan board books &amp; balok Montessori terpopuler untuk tumbuh kembang si kecil.
-              </p>
-            </div>
+
 
             <Link
               href="/shop"

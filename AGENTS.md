@@ -26,6 +26,9 @@ Setiap kali Anda menerima tugas atau instruksi baru, **baca dokumen acuan terkai
 | **Skema Database PostgreSQL & Prisma Model** | [`docs/DATABASE_SCHEMA.md`](file:///e:/Project/OWN%20PROJECT/BabyShalls/docs/DATABASE_SCHEMA.md) |
 | **Panduan Gaya Desain, Warna, & Tipografi** | [`docs/DESIGN.md`](file:///e:/Project/OWN%20PROJECT/BabyShalls/docs/DESIGN.md) |
 | **Histori Audit & Roadmap Refactoring 4 Minggu** | [`docs/AUDIT_AND_ROADMAP.md`](file:///e:/Project/OWN%20PROJECT/BabyShalls/docs/AUDIT_AND_ROADMAP.md) |
+| **Konteks Sprint & Alur Kerja Dev 1 (Arkan - Lokal)** | [`docs/DEV1_ARKAN_SPRINT_PLAYBOOK.md`](file:///e:/Project/OWN%20PROJECT/BabyShalls/docs/DEV1_ARKAN_SPRINT_PLAYBOOK.md) *(jika tersedia di workspace lokal)* |
+
+> **Aturan Otomatis Dev 1 (Arkan — Laptop Lokal):** Jika file [`docs/DEV1_ARKAN_SPRINT_PLAYBOOK.md`](file:///e:/Project/OWN%20PROJECT/BabyShalls/docs/DEV1_ARKAN_SPRINT_PLAYBOOK.md) ada di workspace ini, AI Agent **WAJIB membacanya secara otomatis** sebelum memulai task sprint apa pun dan mengikuti alur **5-Step Gate**: (1) Sync konteks Notion & `docs/`, (2) Buat **Implementation Plan** dan tunggu **verifikasi Arkan** sebelum mengedit kode, (3) Update Notion ke `In Progress` & eksekusi, (4) Verifikasi `npm run build` (`0 error`) & siapkan poin review, (5) Update Notion ke `Review / Check` dengan ringkasan perubahan.
 
 ---
 

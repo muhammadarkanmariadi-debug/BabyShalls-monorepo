@@ -4,31 +4,37 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Lock, Mail, ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, AlertCircle, KeyRound } from 'lucide-react';
 import { ADMIN_TOKEN_STORAGE_KEY, USER_TOKEN_STORAGE_KEY, apiClient } from '@/lib/axios';
+import { AuthResponse, OtpChallengeResponse, useResendOtp, useVerifyOtp } from '@/hooks/useAuth';
 
-/**
- * Admin Login Page — Exact Match with Figma Node #218:4683
- * Centered Card (440px), Logo (62x56), Poppins Medium H2 32px,
- * Terracotta #B05A26 Submit Button, Clean Minimalist Design.
- */
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('admin@babyshalls.com');
-  const [password, setPassword] = useState('babyshalls2026');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [requiresOtp, setRequiresOtp] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
 
-  const fillDemoAccount = (role: 'admin' | 'curator') => {
-    if (role === 'admin') {
-      setEmail('admin@babyshalls.com');
-      setPassword('babyshalls2026');
-    } else {
-      setEmail('curator@babyshalls.com');
-      setPassword('curator123');
+  const verifyOtpMutation = useVerifyOtp();
+  const resendOtpMutation = useResendOtp();
+
+  const handleSuccessAdminAuth = (authData: AuthResponse) => {
+    if (authData.user?.role !== 'ADMIN') {
+      setErrorMessage('Akses ditolak (403): Akun ini bukan Admin BabyShalls.');
+      return;
     }
-    setErrorMessage('');
+
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, authData.token);
+      window.localStorage.removeItem(USER_TOKEN_STORAGE_KEY);
+      window.localStorage.setItem('babyshalls_admin_user', JSON.stringify(authData.user));
+      window.dispatchEvent(new Event('babyshalls-auth-changed'));
+    }
+
+    router.push('/admin');
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,55 +43,49 @@ export default function AdminLoginPage() {
     setErrorMessage('');
 
     try {
-      // 1. Try real backend API
-      try {
-        const response = await apiClient.post('/auth/login', { email, password });
-        if (response.data?.success && response.data?.data) {
-          const authData = response.data.data;
-          if (typeof window !== 'undefined') {
-            window.localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, authData.token);
-            window.localStorage.setItem('babyshalls_admin_user', JSON.stringify(authData.user));
-            window.dispatchEvent(new Event('babyshalls-auth-changed'));
-          }
-          router.push('/admin');
-          return;
-        }
-      } catch (apiErr: any) {
-        if (apiErr?.response?.data?.error || apiErr?.response?.data?.message) {
-          setErrorMessage(apiErr.response.data.error || apiErr.response.data.message);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // 2. Fallback offline development authentication
-      if (
-        (email === 'admin@babyshalls.com' && (password === 'babyshalls2026' || password === 'babyshalls2025')) ||
-        (email === 'curator@babyshalls.com' && password === 'curator123')
-      ) {
-        const mockAdmin = {
-          id: 'admin-1',
-          name: email.includes('admin') ? 'Superadmin BabyShalls' : 'Kurator Utama',
-          email,
-          role: 'ADMIN',
-        };
-        const mockToken = `mock-admin-token-${Date.now()}`;
-
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, mockToken);
-          window.localStorage.setItem('babyshalls_admin_user', JSON.stringify(mockAdmin));
-          window.dispatchEvent(new Event('babyshalls-auth-changed'));
-        }
-
-        setTimeout(() => {
-          router.push('/admin');
-        }, 400);
-      } else {
-        setErrorMessage('Email atau kata sandi admin tidak sesuai.');
+      if (requiresOtp) {
+        const authData = await verifyOtpMutation.mutateAsync({
+          email: email.trim(),
+          otp: otpCode.trim(),
+        });
+        handleSuccessAdminAuth(authData);
         setIsLoading(false);
+        return;
       }
-    } catch {
-      setErrorMessage('Terjadi kendala saat login. Silakan coba lagi.');
+
+      const response = await apiClient.post<{
+        success: boolean;
+        data: AuthResponse | OtpChallengeResponse;
+      }>('/auth/login', { email: email.trim(), password });
+
+      const payload = response.data?.data;
+      if (!payload) {
+        setErrorMessage('Respons autentikasi tidak valid.');
+        setIsLoading(false);
+        return;
+      }
+
+      if ('requiresOtp' in payload && payload.requiresOtp) {
+        setRequiresOtp(true);
+        setIsLoading(false);
+        return;
+      }
+
+      if ('token' in payload) {
+        handleSuccessAdminAuth(payload);
+      }
+    } catch (apiErr: unknown) {
+      const errObj = apiErr as {
+        response?: { data?: { error?: string; message?: string } };
+        message?: string;
+      };
+      setErrorMessage(
+        errObj?.response?.data?.error ||
+          errObj?.response?.data?.message ||
+          errObj?.message ||
+          'Email atau kata sandi admin tidak sesuai.'
+      );
+    } finally {
       setIsLoading(false);
     }
   };
@@ -103,11 +103,9 @@ export default function AdminLoginPage() {
         </Link>
       </div>
 
-      {/* Main Centered Login Card (Figma Node #218:4684: 440px width, 40px padding, 16px gap) */}
+      {/* Main Centered Login Card */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-[440px] bg-white border border-[#E6D2C0] rounded-[4px] p-8 sm:p-10 shadow-sm flex flex-col gap-4">
-          
-          {/* Brand Logo (Figma #218:4703: width 62.22, height 56) */}
           <div className="relative w-[62px] h-[56px] mb-1">
             <Image
               src="/BabyShallsLogo 1.PNG"
@@ -118,12 +116,10 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          {/* Heading H2 (Figma #218:4687: Poppins Medium 32px, text #4A2A1C) */}
           <h1 className="text-[28px] sm:text-[32px] font-medium text-[#4A2A1C] leading-[1.25] tracking-[-0.005em]">
-            Masuk Admin
+            {requiresOtp ? 'Verifikasi OTP Admin' : 'Masuk Admin'}
           </h1>
 
-          {/* Error Notice */}
           {errorMessage && (
             <div className="p-3 bg-[#FDF2F2] border border-[#F8B4B4] rounded-[4px] text-xs text-[#C0392B] flex items-center gap-2">
               <AlertCircle size={14} className="shrink-0" />
@@ -131,93 +127,104 @@ export default function AdminLoginPage() {
             </div>
           )}
 
-          {/* Login Form */}
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            {/* Input Email (Figma #218:4688) */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-[#4A2A1C]">
-                Email
-              </label>
-              <div className="relative flex items-center">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@babyshalls.com"
-                  required
-                  className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[4px] text-[14px] text-[#4A2A1C] placeholder-[#C9B3A5] focus:outline-none focus:border-[#B05A26] transition-colors"
-                />
-              </div>
-            </div>
+            {!requiresOtp ? (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-medium text-[#4A2A1C]">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@babyshalls.com"
+                    required
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[4px] text-[14px] text-[#4A2A1C] placeholder-[#C9B3A5] focus:outline-none focus:border-[#B05A26] transition-colors"
+                  />
+                </div>
 
-            {/* Input Kata Sandi (Figma #218:4692) */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-[#4A2A1C]">
-                Kata sandi
-              </label>
-              <div className="relative flex items-center">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-medium text-[#4A2A1C]">
+                    Kata sandi
+                  </label>
+                  <div className="relative flex items-center">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      className="w-full px-3.5 py-2.5 pr-10 bg-white border border-[#E6D2C0] rounded-[4px] text-[14px] text-[#4A2A1C] placeholder-[#C9B3A5] focus:outline-none focus:border-[#B05A26] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 text-[#7A5644] hover:text-[#4A2A1C] p-1"
+                      aria-label="Toggle password visibility"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <label className="text-[13px] font-medium text-[#4A2A1C] flex items-center gap-1.5">
+                  <KeyRound size={14} className="text-[#B05A26]" />
+                  <span>Kode OTP 6 Digit ({email})</span>
+                </label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="123456"
                   required
-                  className="w-full px-3.5 py-2.5 pr-10 bg-white border border-[#E6D2C0] rounded-[4px] text-[14px] text-[#4A2A1C] placeholder-[#C9B3A5] focus:outline-none focus:border-[#B05A26] transition-colors"
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[4px] text-[16px] tracking-[0.25em] font-semibold text-[#4A2A1C] focus:outline-none focus:border-[#B05A26] transition-colors"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-[#7A5644] hover:text-[#4A2A1C] p-1"
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <button
+                    type="button"
+                    onClick={() => resendOtpMutation.mutate({ email: email.trim() })}
+                    className="text-[#B05A26] hover:underline cursor-pointer"
+                  >
+                    Kirim ulang OTP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRequiresOtp(false);
+                      setOtpCode('');
+                    }}
+                    className="text-[#7A5644] hover:underline cursor-pointer"
+                  >
+                    Ganti akun
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Tombol Masuk (Figma #218:4697: bg #B05A26, text white, rounded 2px, Poppins Medium 16px) */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || verifyOtpMutation.isPending}
               className="w-full mt-2 py-3 px-5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 shadow-xs"
             >
-              {isLoading ? (
+              {isLoading || verifyOtpMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span>Masuk</span>
+                <span>{requiresOtp ? 'Verifikasi OTP' : 'Masuk'}</span>
               )}
             </button>
           </form>
 
-          {/* Caption (Figma #218:4699: text #7A5644, 13px) */}
           <p className="text-[13px] text-[#7A5644] text-center mt-1">
             Hanya untuk akun dengan peran Admin.
           </p>
-
-          {/* Quick Demo Helper */}
-          <div className="pt-3 border-t border-[#F2E4D6] flex items-center justify-center gap-2">
-            <span className="text-[11px] text-[#C9B3A5]">Akun Demo:</span>
-            <button
-              type="button"
-              onClick={() => fillDemoAccount('admin')}
-              className="text-[11px] font-medium text-[#B05A26] hover:underline"
-            >
-              Superadmin
-            </button>
-            <span className="text-[11px] text-[#C9B3A5]">·</span>
-            <button
-              type="button"
-              onClick={() => fillDemoAccount('curator')}
-              className="text-[11px] font-medium text-[#B05A26] hover:underline"
-            >
-              Kurator
-            </button>
-          </div>
-
         </div>
       </main>
 
-      {/* Footer copyright */}
       <footer className="p-6 text-center text-xs text-[#C9B3A5]">
         &copy; {new Date().getFullYear()} BabyShalls Malang · Sistem Administrasi
       </footer>

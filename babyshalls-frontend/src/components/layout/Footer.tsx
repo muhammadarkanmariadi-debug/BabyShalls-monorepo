@@ -21,12 +21,12 @@ export const Footer: React.FC = () => {
   return (
     <footer id="about" className="bg-[#FFF6EA] text-[#4A2A1C] border-t border-[#E6D2C0] pt-12 sm:pt-14 pb-8 w-full font-sans">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 lg:px-10">
-        
+
         {/* =========================================================================
             SECTION 1 · 5-COLUMN NAVIGATION GRID
             ========================================================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10">
-          
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-10 gap-8 lg:gap-8 pb-10">
+
           {/* Kolom 1: Brand & Lokasi (Span 4) */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="inline-block relative py-0.5" aria-label="BabyShalls Home">
@@ -81,7 +81,7 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/preloved" className="hover:text-[#B05A26] transition-colors">
+                <Link href="/shop?category=Preloved" className="hover:text-[#B05A26] transition-colors">
                   Preloved Steril UV
                 </Link>
               </li>
@@ -167,29 +167,6 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Kolom 5: WhatsApp Community Box (Span 2) */}
-          <div className="lg:col-span-2">
-            <div className="bg-white p-4 sm:p-5 rounded-[4px] border border-[#E6D2C0] shadow-2xs space-y-2.5">
-              <span className="text-[10px] font-bold text-[#2A6E37] bg-[#DDF1E5] px-2 py-0.5 rounded-[2px] uppercase tracking-wider">
-                KOMUNITAS ORANG TUA
-              </span>
-              <h5 className="text-xs font-semibold text-[#4A2A1C] leading-snug">
-                Grup Komunitas WhatsApp
-              </h5>
-              <p className="text-[11px] text-[#7A5644] leading-relaxed">
-                Update buku impor restock, live sale, &amp; kuota workshop sebelum umum.
-              </p>
-              <a
-                href={waGroupUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs"
-              >
-                <MessageCircle size={13} />
-                <span>Gabung Grup</span>
-              </a>
-            </div>
-          </div>
 
         </div>
 
@@ -235,51 +212,101 @@ export const Footer: React.FC = () => {
             SECTION 3 · BOTTOM BAR: MEDSOS, METODE BAYAR & COPYRIGHT
             ========================================================================= */}
         <div className="pt-6 border-t border-[#E6D2C0] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#7A5644]">
-          
-          {/* Sosial Media & Metode Pembayaran */}
+
+          {/* Sosial Media & Partner Pembayaran/Pengiriman */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            {/* Medsos */}
+            {/* Medsos: WhatsApp, Instagram, TikTok */}
             <div className="flex items-center gap-2">
               <a
                 href={`https://wa.me/${waNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#B05A26] transition-colors shadow-2xs"
+                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#25D366] transition-colors shadow-2xs"
                 aria-label="WhatsApp BabyShalls"
+                title="WhatsApp BabyShalls"
               >
-                <Image
-                  src="/images/icons/icon-whatsapp.svg"
-                  alt="WhatsApp"
-                  width={16}
-                  height={16}
-                />
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-[#25D366]" aria-hidden="true">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.12c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.43.75-2.13 1.01-2.42.27-.29.58-.36.77-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .89 2.15.07.15.12.32.02.51-.1.19-.15.32-.29.49-.15.17-.3.38-.43.51-.14.15-.29.31-.12.6.17.29.75 1.24 1.61 2 1.11.99 2.04 1.3 2.33 1.45.29.14.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.22.55.34.07.12.07.7-.17 1.38z" />
+                </svg>
               </a>
               <a
                 href={store.instagramUrl || 'https://instagram.com/babyshalls'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#B05A26] transition-colors shadow-2xs"
+                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#E4405F] transition-colors shadow-2xs"
                 aria-label="Instagram BabyShalls"
+                title="Instagram BabyShalls"
               >
-                <Image
-                  src="/images/icons/icon-instagram.svg"
-                  alt="Instagram"
-                  width={16}
-                  height={16}
-                />
+                <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FD5949" />
+                      <stop offset="50%" stopColor="#D6249F" />
+                      <stop offset="100%" stopColor="#285AEB" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    fill="url(#ig-grad)"
+                    d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.tiktok.com/@babyshalls"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center justify-center hover:border-[#111111] transition-colors shadow-2xs"
+                aria-label="TikTok BabyShalls"
+                title="TikTok BabyShalls"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-[#111111]" aria-hidden="true">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z" />
+                </svg>
               </a>
             </div>
 
-            {/* Metode Bayar Pills */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {['QRIS', 'Visa', 'Mastercard', 'Virtual Account'].map((method) => (
-                <span
-                  key={method}
-                  className="px-2.5 py-0.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[10px] font-semibold text-[#7A5644] shadow-2xs"
-                >
-                  {method}
+            {/* Partner Logos: Midtrans, RajaOngkir, BinderByte */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Midtrans */}
+              <div
+                className="h-8 px-2.5 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center gap-1.5 shadow-2xs"
+                title="Pembayaran Midtrans"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+                  <rect x="2" y="5" width="4" height="14" rx="2" fill="#002855" />
+                  <rect x="10" y="2" width="4" height="20" rx="2" fill="#00A3E0" />
+                  <rect x="18" y="5" width="4" height="14" rx="2" fill="#002855" />
+                </svg>
+                <span className="text-[11px] font-bold tracking-tight text-[#002855]">midtrans</span>
+              </div>
+
+              {/* RajaOngkir */}
+              <div
+                className="h-8 px-2.5 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center gap-1.5 shadow-2xs"
+                title="Cek Ongkir RajaOngkir"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+                  <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" fill="#F97316" />
+                  <path d="M12 12l9-5M12 12v10M12 12L3 7" stroke="#FFFFFF" strokeWidth="1.8" fill="none" />
+                </svg>
+                <span className="text-[11px] font-bold tracking-tight text-[#1E293B]">
+                  Raja<span className="text-[#F97316]">Ongkir</span>
                 </span>
-              ))}
+              </div>
+
+              {/* BinderByte */}
+              <div
+                className="h-8 px-2.5 bg-white border border-[#E6D2C0] rounded-[2px] flex items-center gap-1.5 shadow-2xs"
+                title="Tracking & Kurir BinderByte"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" fill="#0D9488" />
+                  <path d="M8 12l3 3 5-6" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
+                <span className="text-[11px] font-bold tracking-tight text-[#0F172A]">
+                  Binder<span className="text-[#0D9488]">Byte</span>
+                </span>
+              </div>
             </div>
           </div>
 

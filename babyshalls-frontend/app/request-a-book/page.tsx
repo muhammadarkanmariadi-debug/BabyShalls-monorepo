@@ -5,8 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Check, UploadCloud, ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 
 function RequestABookContent() {
@@ -87,7 +85,6 @@ function RequestABookContent() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
       {/* Main Section (Figma Node #169:5909, 2 Columns) */}
@@ -390,7 +387,6 @@ function RequestABookContent() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

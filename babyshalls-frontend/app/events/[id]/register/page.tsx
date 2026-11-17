@@ -16,8 +16,6 @@ import {
   QrCode,
   ArrowRight,
 } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { getEventById } from '@/data/eventsData';
 
@@ -120,7 +118,6 @@ export default function EventRegistrationPage() {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl={`/events/${eventData.id}`} label="Kembali ke Detail Event" />
 
       {/* SUCCESS STATE - Figma Node #169:5717 */}
@@ -500,7 +497,6 @@ export default function EventRegistrationPage() {
         </main>
       )}
 
-      <Footer />
     </div>
   );
 }

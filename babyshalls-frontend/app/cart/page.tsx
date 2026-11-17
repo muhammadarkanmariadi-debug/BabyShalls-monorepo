@@ -5,12 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Trash2, ArrowRight, ShieldCheck, Gift, Check, Heart, X } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { BannerHampers } from '@/components/home/BannerHampers';
 import { useCart } from '@/context/CartContext';
-import { formatIDR } from '@/data/mockProducts';
+import { formatIDR } from '@/lib/utils';
 
 export default function CartPage() {
   const router = useRouter();
@@ -55,7 +53,6 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/shop" label="Lanjut Belanja" />
 
       {/* Main Cart Area (Figma Node #137:1087) */}
@@ -352,7 +349,6 @@ export default function CartPage() {
       )}
 
       <BannerHampers />
-      <Footer />
     </div>
   );
 }

@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, MapPin, Users, Sparkles, ArrowRight } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { ALL_EVENTS, PAST_EVENTS, MockEvent } from '@/data/eventsData';
 
@@ -31,7 +29,6 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
       {/* Hero Event Banner (Figma Node #169:4499, #F3E6F2 background) */}
@@ -270,7 +267,6 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

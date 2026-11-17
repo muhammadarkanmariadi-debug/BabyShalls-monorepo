@@ -39,6 +39,7 @@ export interface Product {
   author?: string;
   authorOrBrand?: string;
   category: string;
+  subCategory?: string;
   ageGroup: AgeGroup;
   price: number;
   originalPrice?: number;

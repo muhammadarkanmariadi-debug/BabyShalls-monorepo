@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Poppins, Quicksand } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { CmsProvider } from '@/context/CmsContext';
 import { QueryProvider } from '@/context/QueryProvider';
+import { StorefrontShell } from '@/components/layout/StorefrontShell';
 import { Toaster } from 'react-hot-toast';
 
 const poppins = Poppins({
@@ -44,7 +46,7 @@ export default function RootLayout({
         <QueryProvider>
           <CmsProvider>
             <CartProvider>
-              {children}
+              <StorefrontShell>{children}</StorefrontShell>
             <Toaster
               position="top-center"
               toastOptions={{
@@ -74,6 +76,17 @@ export default function RootLayout({
           </CartProvider>
         </CmsProvider>
       </QueryProvider>
+      {process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY && (
+        <Script
+          src={
+            process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true'
+              ? 'https://app.midtrans.com/snap/snap.js'
+              : 'https://app.sandbox.midtrans.com/snap/snap.js'
+          }
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="afterInteractive"
+        />
+      )}
       </body>
     </html>
   );

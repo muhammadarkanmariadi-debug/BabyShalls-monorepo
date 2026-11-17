@@ -11,7 +11,16 @@ export interface ProductReviewDto {
   location?: string | null;
   rating: number;
   comment: string;
+  variantInfo?: string | null;
+  isVerifiedPurchase?: boolean;
   createdAt: string;
+}
+
+export interface ProductImageDto {
+  id: string;
+  url: string;
+  caption?: string | null;
+  sortOrder: number;
 }
 
 export interface ProductDto {
@@ -28,7 +37,8 @@ export interface ProductDto {
   category: string;
   subCategory: string | null;
   images: string[];
-  features?: string[] | unknown;
+  galleryImages?: ProductImageDto[];
+  features?: string[] | Record<string, unknown> | unknown;
   rating: number;
   reviewsCount: number;
   isFeatured: boolean;
@@ -62,14 +72,43 @@ export function mapProductDtoToProduct(dto: ProductDto): Product {
     dto.category.toLowerCase().includes('preloved') ||
     dto.name.toLowerCase().includes('[preloved]');
 
-  const images =
-    Array.isArray(dto.images) && dto.images.length > 0
-      ? dto.images
-      : ['/images/prod-boardbook.jpg'];
+  const baseImages = Array.isArray(dto.images)
+    ? dto.images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
+    : [];
+  const galleryUrls = Array.isArray(dto.galleryImages)
+    ? dto.galleryImages.map((g) => g.url).filter((url): url is string => typeof url === 'string' && url.trim().length > 0)
+    : [];
+  const mergedImages = Array.from(new Set([...baseImages, ...galleryUrls]));
+  const images = mergedImages.length > 0 ? mergedImages : ['/images/prod-boardbook.jpg'];
+
+  const featureMeta =
+    dto.features && typeof dto.features === 'object' && !Array.isArray(dto.features)
+      ? (dto.features as Record<string, unknown>)
+      : null;
 
   const features = Array.isArray(dto.features)
     ? dto.features.filter((f): f is string => typeof f === 'string')
-    : undefined;
+    : Array.isArray(featureMeta?.items)
+      ? featureMeta.items.filter((f): f is string => typeof f === 'string')
+      : undefined;
+
+  const price = Number(dto.price);
+  const originalPrice = dto.originalPrice !== null ? Number(dto.originalPrice) : undefined;
+  const discountPercent =
+    originalPrice && originalPrice > price
+      ? Math.round(((originalPrice - price) / originalPrice) * 100)
+      : undefined;
+
+  const badge = dto.isBestSeller
+    ? 'Bestseller'
+    : dto.isNewArrival
+      ? 'New'
+      : dto.isFeatured
+        ? 'Featured'
+        : undefined;
+
+  const readString = (key: string): string | undefined =>
+    featureMeta && typeof featureMeta[key] === 'string' ? (featureMeta[key] as string) : undefined;
 
   return {
     id: dto.id,
@@ -77,11 +116,13 @@ export function mapProductDtoToProduct(dto: ProductDto): Product {
     title: dto.name,
     author: dto.authorOrBrand || '',
     authorOrBrand: dto.authorOrBrand || undefined,
-    price: Number(dto.price),
-    originalPrice: dto.originalPrice !== null ? Number(dto.originalPrice) : undefined,
+    price,
+    originalPrice,
+    discountPercent,
     weightInGrams: dto.weight || 300,
     ageGroup: mapAgeGroup(dto.ageGroup),
     category: dto.category as ProductCategory,
+    subCategory: dto.subCategory || undefined,
     stock: dto.stock,
     inStock: dto.stock > 0,
     coverImage: images[0],
@@ -90,22 +131,48 @@ export function mapProductDtoToProduct(dto: ProductDto): Product {
     images,
     description: dto.description,
     features,
+    badge,
+    condition: isPreloved ? 'preloved' : 'baru',
+    featured: dto.isFeatured,
     isNewArrival: dto.isNewArrival,
     isBestSeller: dto.isBestSeller,
     isPreloved,
+    publisher: readString('publisher'),
+    publicationYear: readString('publicationYear'),
+    format: readString('format'),
+    pages: readString('pages'),
+    language: readString('language'),
+    isbn: readString('isbn'),
+    dimensions: readString('dimensions'),
+    staffNote: readString('staffNote'),
+    excerpt: readString('excerpt'),
   };
+}
+
+export interface ProductsMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export function useProducts(params?: {
   category?: string;
+  subCategory?: string;
   ageGroup?: string;
   search?: string;
   sort?: string;
+  page?: number;
+  limit?: number;
 }) {
   return useQuery<ProductDto[]>({
     queryKey: ['products', params],
     queryFn: async () => {
-      const res = await apiClient.get<{ success: boolean; data: ProductDto[] }>('/products', {
+      const res = await apiClient.get<{
+        success: boolean;
+        data: ProductDto[];
+        meta?: ProductsMeta;
+      }>('/products', {
         params,
       });
       return res.data.data;
@@ -118,7 +185,9 @@ export function useStorefrontProducts() {
     queryKey: ['storefront-products'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get<{ success: boolean; data: ProductDto[] }>('/products');
+        const res = await apiClient.get<{ success: boolean; data: ProductDto[] }>('/products', {
+          params: { limit: 100 },
+        });
         if (Array.isArray(res.data.data) && res.data.data.length > 0) {
           return res.data.data.map(mapProductDtoToProduct);
         }
@@ -136,14 +205,14 @@ export function useStorefrontProducts() {
   };
 }
 
-export function useProductBySlug(slug: string) {
+export function useProductBySlug(slugOrId: string) {
   return useQuery<{ product: Product; reviews: ProductReviewDto[] } | null>({
-    queryKey: ['product-detail', slug],
-    enabled: Boolean(slug),
+    queryKey: ['product-detail', slugOrId],
+    enabled: Boolean(slugOrId),
     queryFn: async () => {
       try {
         const res = await apiClient.get<{ success: boolean; data: ProductDto }>(
-          `/products/${encodeURIComponent(slug)}`
+          `/products/${encodeURIComponent(slugOrId)}`
         );
         if (res.data.data) {
           return {
@@ -152,7 +221,9 @@ export function useProductBySlug(slug: string) {
           };
         }
       } catch {
-        const fallback = PRODUCTS.find((p: Product) => p.slug === slug);
+        const fallback = PRODUCTS.find(
+          (p: Product) => p.slug === slugOrId || p.id === slugOrId
+        );
         if (fallback) {
           return { product: fallback, reviews: [] };
         }

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { mockProducts } from '@/data/mockProducts';
 import { WireProductCard } from '@/components/common/WireProductCard';
+import { useStorefrontProducts } from '@/hooks/useProducts';
 import { ArrowRight } from 'lucide-react';
 
 interface NewArrivalsSectionProps {
@@ -11,8 +11,9 @@ interface NewArrivalsSectionProps {
 }
 
 export const NewArrivalsSection: React.FC<NewArrivalsSectionProps> = () => {
-  // 8 realistic products matching Figma #130:115
-  const displayProducts = mockProducts.slice(0, 8);
+  const { products } = useStorefrontProducts();
+  const newArrivals = products.filter((p) => p.isNewArrival);
+  const displayProducts = (newArrivals.length > 0 ? newArrivals : products).slice(0, 8);
 
   return (
     <section id="catalog" className="pt-11 pb-20 bg-white w-full">

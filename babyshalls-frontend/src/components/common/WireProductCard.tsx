@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
-import { Plus } from 'lucide-react';
+import { Plus, Star } from 'lucide-react';
 
 interface WireProductCardProps {
   product: Product;
@@ -19,10 +19,12 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
   const { addToCart, showToast } = useCart();
   const hasDiscount = Boolean(product.discountPercent && product.discountPercent > 0);
   const isPreloved = product.category === 'Preloved Item' || product.condition === 'preloved';
+  const isOutOfStock = product.stock !== undefined ? product.stock <= 0 : product.inStock === false;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     addToCart(product, 1);
     showToast(`"${product.title}" berhasil ditambahkan ke keranjang!`);
   };
@@ -78,16 +80,27 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
           </div>
         )}
 
+        {/* Out of Stock Overlay Badge */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <span className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 text-white text-xs sm:text-sm font-medium flex items-center justify-center shadow-sm">
+              Habis
+            </span>
+          </div>
+        )}
+
         {/* Quick Add Button */}
-        <button
-          onClick={handleQuickAdd}
-          type="button"
-          aria-label={`Tambah ${product.title} ke keranjang`}
-          className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 z-10 bg-[#B05A26] hover:bg-[#8D441B] text-white p-1.5 sm:p-2.5 rounded-full shadow-md flex items-center justify-center transition-all duration-200 opacity-95 sm:opacity-0 group-hover:opacity-100 hover:scale-108 active:scale-95"
-          title="Tambah ke Keranjang"
-        >
-          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white stroke-[2.5]" />
-        </button>
+        {!isOutOfStock && (
+          <button
+            onClick={handleQuickAdd}
+            type="button"
+            aria-label={`Tambah ${product.title} ke keranjang`}
+            className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 z-10 bg-[#B05A26] hover:bg-[#8D441B] text-white p-1.5 sm:p-2.5 rounded-full shadow-md flex items-center justify-center transition-all duration-200 opacity-95 sm:opacity-0 group-hover:opacity-100 hover:scale-108 active:scale-95"
+            title="Tambah ke Keranjang"
+          >
+            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white stroke-[2.5]" />
+          </button>
+        )}
       </div>
 
       {/* Tags row: Age Badge + Preloved Condition */}
@@ -105,10 +118,26 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
 
       {/* Product Title */}
       <Link href={`/product/${product.id}`} className="group-hover:text-[#B05A26] transition-colors">
-        <h3 className="text-[14px] sm:text-[16px] font-medium text-[#4A2A1C] leading-[1.35] line-clamp-2 mb-1 sm:mb-1.5">
+        <h3 className="text-[14px] sm:text-[16px] font-medium text-[#4A2A1C] leading-[1.35] line-clamp-2 mb-1">
           {product.title}
         </h3>
       </Link>
+
+      {/* Star Rating */}
+      <div className="flex items-center gap-1 text-[11px] sm:text-[12px] text-[#7A5644] mb-1.5">
+        <div className="flex items-center text-[#E0A020]">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              className={`w-3 h-3 ${
+                i < Math.round(product.rating ?? 5) ? 'fill-current' : 'text-[#E6D2C0]'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="font-semibold text-[#4A2A1C]">{(product.rating ?? 5).toFixed(1)}</span>
+        <span>({product.reviewsCount ?? 0})</span>
+      </div>
 
       {/* Price row */}
       <div className="flex items-baseline gap-1.5 sm:gap-2 mt-auto">

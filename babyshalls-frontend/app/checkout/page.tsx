@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -16,10 +16,21 @@ import {
   ShieldCheck,
   MapPin,
   MessageCircle,
+  Loader2,
+  AlertCircle,
+  Search,
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { useCart } from '@/context/CartContext';
-import { formatIDR, mockProducts } from '@/data/mockProducts';
+import { mockProducts } from '@/data/mockProducts';
+import { formatIDR } from '@/lib/utils';
+import { CheckoutSummaryCard } from '@/features/checkout/components/CheckoutSummaryCard';
+import { RegionOption, useSearchRegions, useShippingRates } from '@/hooks/useShipping';
+import { useCreateOrder } from '@/hooks/useOrders';
+import { useValidateCoupon } from '@/hooks/useCoupons';
+import { useAccountProfile } from '@/hooks/useAccount';
+import { openMidtransSnap } from '@/lib/midtrans-snap';
+import { USER_TOKEN_STORAGE_KEY } from '@/lib/axios';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -34,16 +45,72 @@ export default function CheckoutPage() {
     clearCart,
   } = useCart();
 
-  // Form states
-  const [recipientName, setRecipientName] = useState('Dina Permata');
-  const [recipientPhone, setRecipientPhone] = useState('0812-3456-7890');
-  const [recipientEmail, setRecipientEmail] = useState('dina.permata@gmail.com');
-  const [addressLine, setAddressLine] = useState('Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun');
+  const [hasUserToken, setHasUserToken] = useState(false);
+  useEffect(() => {
+    try {
+      setHasUserToken(Boolean(window.localStorage.getItem(USER_TOKEN_STORAGE_KEY)));
+    } catch {
+      setHasUserToken(false);
+    }
+  }, []);
+
+  const { data: accountProfile } = useAccountProfile(hasUserToken);
+  const createOrderMutation = useCreateOrder();
+  const validateCouponMutation = useValidateCoupon();
+
+  // Form states (prefilled from real account when logged in)
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [addressLine, setAddressLine] = useState('');
   const [city, setCity] = useState('Kota Malang');
   const [postalCode, setPostalCode] = useState('65146');
 
-  // Shipping selection
-  const [selectedCourier, setSelectedCourier] = useState<string>('jne');
+  useEffect(() => {
+    if (accountProfile) {
+      setRecipientName((prev) => prev || accountProfile.name || '');
+      setRecipientPhone((prev) => prev || accountProfile.phone || '');
+      setRecipientEmail((prev) => prev || accountProfile.email || '');
+    }
+  }, [accountProfile]);
+
+  // Shipping region & live rates (Malang Origin)
+  const [regionQuery, setRegionQuery] = useState<string>('Malang');
+  const [selectedRegion, setSelectedRegion] = useState<RegionOption | null>(null);
+  const [isRegionDropdownOpen, setIsRegionDropdownOpen] = useState<boolean>(false);
+  const [selectedCourier, setSelectedCourier] = useState<string>('pickup');
+
+  const { data: regionOptions = [], isLoading: isRegionsLoading } = useSearchRegions(regionQuery);
+
+  useEffect(() => {
+    if (!selectedRegion && regionOptions.length > 0) {
+      const defaultRegion =
+        regionOptions.find((r) => r.searchLabel.toLowerCase().includes('malang')) || regionOptions[0];
+      setSelectedRegion(defaultRegion);
+      setRegionQuery(defaultRegion.searchLabel);
+      setCity(defaultRegion.cityName);
+      if (defaultRegion.postalCode) setPostalCode(defaultRegion.postalCode);
+    }
+  }, [regionOptions, selectedRegion]);
+
+  const totalWeightGrams = useMemo(() => {
+    const sum = items.reduce(
+      (acc, item) => acc + (item.product.weightInGrams || 300) * item.quantity,
+      0
+    );
+    return sum > 0 ? sum : 300;
+  }, [items]);
+
+  const {
+    data: shippingRatesData,
+    isLoading: isRatesLoading,
+    isError: isRatesError,
+    refetch: refetchRates,
+  } = useShippingRates(
+    selectedRegion?.rajaongkirId || '',
+    totalWeightGrams,
+    Boolean(selectedRegion?.rajaongkirId)
+  );
 
   // Gift options
   const [isGift, setIsGift] = useState<boolean>(true);
@@ -52,55 +119,80 @@ export default function CheckoutPage() {
   );
   const [orderNotes, setOrderNotes] = useState<string>('Mohon sertakan pembatas buku BabyShalls.');
 
-  // Payment method
+  // Coupon & Payment states
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [couponStatusMsg, setCouponStatusMsg] = useState<string>('');
+  const [couponErrorMsg, setCouponErrorMsg] = useState<string>('');
+
   const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bca' | 'mandiri' | 'cc'>('qris');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const courierOptions = [
-    {
-      id: 'jne',
-      name: 'JNE Reguler',
-      etd: '1–2 hari kerja',
-      price: 18000,
-      description: 'Pengiriman reguler ke seluruh Malang & Jawa Timur',
-    },
-    {
-      id: 'jnt',
-      name: 'J&T Express',
-      etd: '1–2 hari kerja',
-      price: 20000,
-      description: 'Cepat & terpercaya dengan resi otomatis',
-    },
-    {
-      id: 'sicepat',
-      name: 'SiCepat REG',
-      etd: '1–2 hari kerja',
-      price: 19000,
-      description: 'Layanan hemat dengan kurir terdekat',
-    },
-    {
-      id: 'gosend',
-      name: 'GoSend Instant / Same Day',
-      etd: 'Tiba hari ini (maks 3 jam)',
-      price: 25000,
-      description: 'Khusus alamat tujuan area Malang Raya',
-    },
-    {
-      id: 'pickup',
-      name: 'Ambil Sendiri di Toko (Self Pick-up)',
-      etd: 'Siap diambil dalam 1 jam',
-      price: 0,
-      description: 'Butik BabyShalls, Citraland Puncak Tidar Blok HH-26 Malang',
-    },
-  ];
+  const courierOptions = useMemo(() => {
+    const apiRates = (shippingRatesData?.rates || []).map((r) => ({
+      id: `${r.courierCode}-${r.service}`.toLowerCase().replace(/\s+/g, '-'),
+      courierCode: r.courierCode,
+      courierService: r.service,
+      name: `${r.courierName} (${r.service})`,
+      etd: r.etd || '1–3 hari kerja',
+      price: r.cost,
+      description:
+        r.description || `Dikirim dari ${shippingRatesData?.origin || 'Kota Malang'}`,
+    }));
+
+    return [
+      ...apiRates,
+      {
+        id: 'pickup',
+        courierCode: 'pickup',
+        courierService: 'SELF_PICKUP',
+        name: 'Ambil Sendiri di Toko (Self Pick-up)',
+        etd: 'Siap diambil dalam 1 jam',
+        price: 0,
+        description: 'Butik BabyShalls, Citraland Puncak Tidar Blok HH-26 Malang',
+      },
+    ];
+  }, [shippingRatesData]);
+
+  useEffect(() => {
+    if (courierOptions.length > 0 && !courierOptions.some((c) => c.id === selectedCourier)) {
+      setSelectedCourier(courierOptions[0].id);
+    }
+  }, [courierOptions, selectedCourier]);
 
   const currentCourier = courierOptions.find((c) => c.id === selectedCourier) || courierOptions[0];
-  const shippingFee = currentCourier.price;
+  const shippingFee = currentCourier ? currentCourier.price : 0;
   const giftFee = isGift ? 0 : 0; // Gratis kado
-  const calculatedGrandTotal = subtotal + shippingFee;
+  const calculatedGrandTotal = Math.max(0, subtotal + shippingFee - discountAmount);
 
-  const handlePayOrder = (e: React.FormEvent) => {
+  const handleApplyCoupon = async () => {
+    setCouponErrorMsg('');
+    setCouponStatusMsg('');
+    const code = couponInput.trim().toUpperCase();
+    if (!code) {
+      setCouponErrorMsg('Masukkan kode kupon terlebih dahulu.');
+      return;
+    }
+    try {
+      const res = await validateCouponMutation.mutateAsync({
+        code,
+        subtotal,
+        shippingCost: shippingFee,
+      });
+      setAppliedCouponCode(res.coupon.code);
+      setDiscountAmount(res.discountAmount);
+      setCouponStatusMsg(`Kupon ${res.coupon.code} diterapkan (-${formatIDR(res.discountAmount)}).`);
+    } catch (err: unknown) {
+      const anyErr = err as { response?: { data?: { error?: string } } };
+      setAppliedCouponCode(null);
+      setDiscountAmount(0);
+      setCouponErrorMsg(anyErr?.response?.data?.error || 'Kode kupon tidak valid.');
+    }
+  };
+
+  const handlePayOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -114,67 +206,111 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (selectedCourier !== 'pickup' && !addressLine.trim()) {
-      setErrorMsg('Mohon masukkan alamat lengkap pengiriman.');
+    if (selectedCourier !== 'pickup' && addressLine.trim().length < 5) {
+      setErrorMsg('Mohon masukkan alamat lengkap pengiriman (minimal 5 karakter).');
       return;
     }
 
     setIsSubmitting(true);
-    const orderId = `BS-${Math.floor(100000 + Math.random() * 900000)}`;
-
-    const newOrderData = {
-      orderId,
-      customerName: recipientName,
-      customerPhone: recipientPhone,
-      customerEmail: recipientEmail,
-      deliveryMethod: currentCourier.name,
-      deliveryAddress:
+    try {
+      const deliveryAddress =
         selectedCourier === 'pickup'
           ? 'Butik BabyShalls Citraland Puncak Tidar Blok HH-26 Malang'
-          : `${addressLine}, ${city} ${postalCode}`,
-      paymentMethod:
-        paymentMethod === 'qris'
-          ? 'QRIS Instan (BCA / GoPay / ShopeePay)'
-          : paymentMethod === 'bca'
-          ? 'BCA Virtual Account'
-          : paymentMethod === 'mandiri'
-          ? 'Mandiri Virtual Account'
-          : 'Kartu Kredit / Debit Online',
-      status: 'Menunggu Pembayaran',
-      shippingTrackingNumber: selectedCourier === 'pickup' ? '-' : `JP${Date.now().toString().slice(-8)}`,
-      courier: currentCourier.name,
-      items: items.map((i) => ({
-        productId: i.product.id,
-        title: i.product.title,
-        price: i.product.price,
-        quantity: i.quantity,
-        coverImage: i.product.coverImage,
-      })),
-      subtotal,
-      shippingFee,
-      giftFee,
-      totalAmount: calculatedGrandTotal,
-      notes: orderNotes,
-      giftMessage: isGift ? giftNote : '',
-      createdAt: new Date().toISOString(),
-    };
+          : `${addressLine.trim()}, ${city.trim()} ${postalCode.trim()}`.trim();
 
-    // Save order to localStorage
-    if (typeof window !== 'undefined') {
-      try {
-        const existing = localStorage.getItem('babyshalls_orders');
-        const parsed = existing ? JSON.parse(existing) : [];
-        parsed.unshift(newOrderData);
-        localStorage.setItem('babyshalls_orders', JSON.stringify(parsed));
-      } catch {
-        // pass
+      const idempotencyKey =
+        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? `order-${crypto.randomUUID()}`
+          : `order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+      const created = await createOrderMutation.mutateAsync({
+        items: items.map((i) => ({
+          productId: i.product.id,
+          title: i.product.title,
+          price: i.product.price,
+          quantity: i.quantity,
+        })),
+        shippingAddress: {
+          recipientName: recipientName.trim(),
+          phone: recipientPhone.trim(),
+          email: recipientEmail.trim() || undefined,
+          address: deliveryAddress,
+          city: city.trim() || 'Kota Malang',
+          postalCode: postalCode.trim() || undefined,
+        },
+        courierCode: currentCourier.courierCode,
+        courierService: currentCourier.courierService,
+        shippingCost: shippingFee,
+        couponCode: appliedCouponCode,
+        idempotencyKey,
+      });
+
+      const snapshotOrder = {
+        orderId: created.orderNumber,
+        customerName: recipientName.trim(),
+        customerPhone: recipientPhone.trim(),
+        customerEmail: recipientEmail.trim(),
+        deliveryMethod: currentCourier.name,
+        deliveryAddress,
+        paymentMethod: 'Midtrans Snap',
+        status: 'PENDING',
+        courier: currentCourier.name,
+        items: items.map((i) => ({
+          productId: i.product.id,
+          title: i.product.title,
+          price: i.product.price,
+          quantity: i.quantity,
+          coverImage: i.product.coverImage,
+        })),
+        subtotal,
+        shippingFee,
+        discountAmount,
+        totalAmount: created.grandTotal,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (typeof window !== 'undefined') {
+        try {
+          const existing = localStorage.getItem('babyshalls_orders');
+          const parsed = existing ? JSON.parse(existing) : [];
+          parsed.unshift(snapshotOrder);
+          localStorage.setItem('babyshalls_orders', JSON.stringify(parsed));
+        } catch {
+          // pass
+        }
       }
-    }
 
-    setTimeout(() => {
       clearCart();
-      router.push(`/order-success/${orderId}`);
-    }, 800);
+
+      const snapMode = openMidtransSnap(created.snapToken, created.redirectUrl, {
+        onSuccess: () => {
+          router.push(`/order-success/${encodeURIComponent(created.orderNumber)}?status=paid`);
+        },
+        onPending: () => {
+          router.push(`/order-success/${encodeURIComponent(created.orderNumber)}?status=pending`);
+        },
+        onClose: () => {
+          router.push(`/order-success/${encodeURIComponent(created.orderNumber)}?status=pending`);
+        },
+        onError: () => {
+          setErrorMsg('Pembayaran Midtrans gagal diproses. Pesanan tersimpan dengan status PENDING di Riwayat Pesanan.');
+        },
+      });
+
+      if (snapMode === 'dev' || snapMode === 'redirect' || snapMode === 'unavailable') {
+        router.push(`/order-success/${encodeURIComponent(created.orderNumber)}?status=pending`);
+      }
+    } catch (err: unknown) {
+      const anyErr = err as { response?: { data?: { error?: string; message?: string } }; message?: string };
+      setErrorMsg(
+        anyErr?.response?.data?.error ||
+          anyErr?.response?.data?.message ||
+          anyErr?.message ||
+          'Gagal membuat pesanan. Silakan periksa kembali data Anda.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -301,6 +437,71 @@ export default function CheckoutPage() {
                   />
                 </div>
 
+                <div className="mb-4">
+                  <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                    Email (Opsional, untuk notifikasi resi &amp; struk)
+                  </label>
+                  <input
+                    type="email"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    placeholder="email@anda.com"
+                    className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                  />
+                </div>
+
+                <div className="mb-4 relative">
+                  <label className="block text-xs text-[#7A5644] font-medium mb-1">
+                    Cari Kecamatan / Kota Tujuan (Untuk Cek Ongkir dari Kota Malang) *
+                  </label>
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-[#7A5644] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={regionQuery}
+                      onFocus={() => setIsRegionDropdownOpen(true)}
+                      onChange={(e) => {
+                        setRegionQuery(e.target.value);
+                        setIsRegionDropdownOpen(true);
+                      }}
+                      placeholder="Ketik kecamatan atau kota (misal: Sukun, Surabaya, Jakarta)..."
+                      className="w-full text-xs pl-8 pr-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                    />
+                  </div>
+                  {isRegionDropdownOpen && (
+                    <div className="absolute z-20 left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-[#E6D2C0] rounded-[2px] shadow-md">
+                      {isRegionsLoading ? (
+                        <div className="p-3 text-xs text-[#7A5644] flex items-center gap-2">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Mencari wilayah pengiriman...</span>
+                        </div>
+                      ) : regionOptions.length === 0 ? (
+                        <div className="p-3 text-xs text-[#7A5644]">
+                          Wilayah tidak ditemukan. Coba kata kunci kecamatan/kota lain.
+                        </div>
+                      ) : (
+                        regionOptions.map((reg) => (
+                          <button
+                            key={reg.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedRegion(reg);
+                              setRegionQuery(reg.searchLabel);
+                              setCity(reg.cityName);
+                              if (reg.postalCode) setPostalCode(reg.postalCode);
+                              setIsRegionDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs text-[#4A2A1C] hover:bg-[#FFF6EA] border-b border-[#F9EAE1] last:border-b-0 cursor-pointer"
+                          >
+                            <span className="font-medium">{reg.districtName}, {reg.cityName}</span>
+                            <span className="text-[#7A5644]"> · {reg.provinceName}</span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
@@ -327,14 +528,42 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* 2. Pilih Pengiriman (Figma #167:4690) */}
+              {/* 2. Pilih Pengiriman (Malang Origin Multi-Courier) */}
               <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
-                <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2 mb-5">
-                  <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
-                    2
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
+                  <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
+                      2
+                    </span>
+                    <span>Pilih Opsi Pengiriman</span>
+                  </h2>
+                  <span className="text-[11px] text-[#7A5644] bg-[#FFF6EA] border border-[#E6D2C0] px-2.5 py-1 rounded-[2px]">
+                    Asal: <strong>{shippingRatesData?.origin || 'Kota Malang'}</strong> · Berat: <strong>{totalWeightGrams}g</strong>
                   </span>
-                  <span>Pilih Opsi Pengiriman</span>
-                </h2>
+                </div>
+
+                {isRatesLoading && (
+                  <div className="mb-3 p-3 bg-[#FFFBF7] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644] flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#B05A26]" />
+                    <span>Menghitung tarif ongkir dari Kota Malang...</span>
+                  </div>
+                )}
+
+                {isRatesError && (
+                  <div className="mb-3 p-3 bg-[#FEECE8] border border-[#F5C2B8] rounded-[2px] text-xs text-[#C0392B] flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>Gagal memuat tarif kurir otomatis. Anda tetap bisa memilih Self Pick-up atau coba hitung ulang.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => refetchRates()}
+                      className="px-2.5 py-1 bg-white border border-[#C0392B] text-[#C0392B] font-semibold rounded-[2px] hover:bg-[#C0392B] hover:text-white transition-colors shrink-0 cursor-pointer"
+                    >
+                      Coba Lagi
+                    </button>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-3">
                   {courierOptions.map((courier) => {
@@ -565,106 +794,29 @@ export default function CheckoutPage() {
 
             </div>
 
-            {/* Right Column: Ringkasan Pesanan (Figma #167:4763, 400px width) */}
-            <aside className="w-full lg:w-[400px] shrink-0 sticky top-24">
-              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px] flex flex-col gap-5">
-                
-                <h3 className="text-lg font-medium text-[#4A2A1C]">
-                  Ringkasan Pesanan
-                </h3>
-
-                {/* Items Mini-list */}
-                <div className="flex flex-col gap-3.5 max-h-72 overflow-y-auto pr-1">
-                  {items.length > 0 ? (
-                    items.map((item) => (
-                      <div key={item.product.id} className="flex items-center gap-3">
-                        <div className="relative w-14 h-14 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0">
-                          <Image
-                            src={item.product.coverImage || item.product.images?.[0] || '/images/prod-boardbook.jpg'}
-                            alt={item.product.title}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-medium text-[#4A2A1C] truncate">
-                            {item.product.title}
-                          </h4>
-                          <span className="text-[11px] text-[#7A5644] block">
-                            {item.quantity} × {formatIDR(item.product.price)}
-                          </span>
-                        </div>
-                        <span className="text-xs font-semibold text-[#4A2A1C] shrink-0">
-                          {formatIDR(item.product.price * item.quantity)}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="py-4 text-center space-y-2.5 bg-[#FFFBF7] rounded-[2px] p-3 border border-[#F2E4D6]">
-                      <p className="text-xs text-[#7A5644]">Keranjang belanja masih kosong.</p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          addToCart(mockProducts[0], 1);
-                          addToCart(mockProducts[1], 1);
-                        }}
-                        className="w-full py-2 bg-[#FFF6EA] hover:bg-[#FBE6D8] border border-[#B05A26] text-[#B05A26] text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
-                      >
-                        + Muat 2 Buku Demo untuk Coba Checkout
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Price Breakdown */}
-                <div className="border-t border-[#F2E4D6] pt-4 flex flex-col gap-2.5 text-xs">
-                  <div className="flex items-center justify-between text-[#7A5644]">
-                    <span>Subtotal Produk</span>
-                    <span className="font-medium text-[#4A2A1C]">{formatIDR(subtotal)}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[#7A5644]">
-                    <span>Biaya Pengiriman ({currentCourier.name})</span>
-                    <span className="font-medium text-[#4A2A1C]">
-                      {shippingFee === 0 ? 'GRATIS' : formatIDR(shippingFee)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[#7A5644]">
-                    <span>Bungkus Kado & Kartu</span>
-                    <span className="font-medium text-[#2A6E37]">
-                      {isGift ? 'GRATIS (Promo)' : '-'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="border-t border-[#F2E4D6] pt-4 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[#4A2A1C]">Total Tagihan</span>
-                  <span className="text-xl font-bold text-[#B05A26]">
-                    {formatIDR(calculatedGrandTotal)}
-                  </span>
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="button"
-                  onClick={handlePayOrder}
-                  disabled={isSubmitting || items.length === 0}
-                  className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] disabled:bg-gray-300 text-white font-semibold text-sm rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-                >
-                  {isSubmitting ? (
-                    <span>Memproses Pesanan...</span>
-                  ) : (
-                    <span>Bayar Sekarang ({formatIDR(calculatedGrandTotal)})</span>
-                  )}
-                </button>
-
-                <p className="text-[11px] text-[#7A5644] text-center leading-relaxed">
-                  Dengan mengklik &quot;Bayar Sekarang&quot;, kamu menyetujui Ketentuan Layanan & Kebijakan Privasi Toko BabyShalls Malang.
-                </p>
-              </div>
-            </aside>
+            {/* Right Column: Ringkasan Pesanan */}
+            <CheckoutSummaryCard
+              items={items}
+              demoProducts={mockProducts.slice(0, 2)}
+              onLoadDemoItems={(prods) => {
+                prods.forEach((p) => addToCart(p, 1));
+              }}
+              couponInput={couponInput}
+              onCouponInputChange={setCouponInput}
+              onApplyCoupon={handleApplyCoupon}
+              isCouponPending={validateCouponMutation.isPending}
+              couponStatusMsg={couponStatusMsg}
+              couponErrorMsg={couponErrorMsg}
+              subtotal={subtotal}
+              courierName={currentCourier.name}
+              shippingFee={shippingFee}
+              discountAmount={discountAmount}
+              appliedCouponCode={appliedCouponCode}
+              isGift={isGift}
+              calculatedGrandTotal={calculatedGrandTotal}
+              isSubmitting={isSubmitting}
+              onPayOrder={handlePayOrder}
+            />
 
           </div>
         </div>

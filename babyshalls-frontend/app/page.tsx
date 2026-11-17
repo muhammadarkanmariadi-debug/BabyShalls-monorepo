@@ -1,60 +1,12 @@
-'use client';
+import type { Metadata } from 'next';
+import { HomeView } from '@/features/home/components/HomeView';
 
-import React, { useState } from 'react';
-import { Header } from '@/components/layout/Header';
-import { HeroSection } from '@/components/home/HeroSection';
-import { NewArrivalsSection } from '@/components/home/NewArrivalsSection';
-import { CampaignBanner } from '@/components/home/CampaignBanner';
-import { BannerHampers } from '@/components/home/BannerHampers';
-import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
-import { RequestAndVisitSection } from '@/components/home/RequestAndVisitSection';
-import { Footer } from '@/components/layout/Footer';
-import { OrderDrawer } from '@/components/OrderDrawer';
-import { FloatingWhatsApp } from '@/components/common/FloatingWhatsApp';
+export const metadata: Metadata = {
+  title: 'BabyShalls — Butik Buku Anak Kurasi & Mainan Kayu | Malang',
+  description:
+    'Butik toko buku anak kurasi & mainan kayu edukasi di Citraland Malang. Tersedia board books, picture books, hampers, preloved steril UV, dan workshop anak.',
+};
 
-export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    const catalogEl = document.getElementById('catalog');
-    if (catalogEl) {
-      catalogEl.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-white text-[#4A2A1C] flex flex-col justify-between selection:bg-[#B05A26]/15 selection:text-[#B05A26] w-full font-sans">
-      
-      {/* 01 · HEADER (Strip Info + Navbar + Mega Menu) */}
-      <Header onCategorySelect={handleCategorySelect} />
-
-      <main className="w-full flex-grow overflow-x-clip">
-        {/* 02 · HERO (Figma Node #130:109) */}
-        <HeroSection />
-
-        {/* 03 · PRODUK TERBARU (Figma Node #130:115 - 4x2 grid) */}
-        <NewArrivalsSection initialCategory={selectedCategory} />
-
-        {/* 04 · BANNER KAMPANYE (Figma Node #150:1316 - Terracotta #B05A26) */}
-        <CampaignBanner onShopAllClick={() => handleCategorySelect('All')} />
-
-        {/* 05 · BANNER HAMPERS (Figma Node #131:38954) */}
-        <BannerHampers />
-
-        {/* 06 · EVENT MENDATANG (Figma Node #130:263 - 3 Workshops) */}
-        <UpcomingEventsSection />
-
-        {/* 07 · REQUEST & KUNJUNGI (Figma Node #143:1238) */}
-        <RequestAndVisitSection />
-      </main>
-
-      {/* 08 · FOOTER (Figma Node #130:351) */}
-      <Footer />
-
-      {/* Side-drawers & Floating Contacts */}
-      <OrderDrawer />
-      <FloatingWhatsApp />
-    </div>
-  );
+export default function HomePage() {
+  return <HomeView />;
 }

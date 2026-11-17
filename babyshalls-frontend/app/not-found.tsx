@@ -1,13 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
 
       {/* Main 404 Container (Figma Node #169:6314) */}
       <main className="flex-1 py-20 sm:py-28 flex items-center justify-center px-4 bg-[#FFFDF9]">
@@ -51,7 +48,6 @@ export default function NotFound() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

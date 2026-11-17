@@ -54,7 +54,7 @@ export const HeroSection: React.FC = () => {
               </Link>
 
               <Link
-                href="/preloved"
+                href="/shop?category=Preloved"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors"
               >
                 {hero.heroSecondaryCtaText || 'Lihat Preloved'}
@@ -103,7 +103,7 @@ export const HeroSection: React.FC = () => {
               </Link>
 
               <Link
-                href="/preloved"
+                href="/shop?category=Preloved"
                 className="inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-white hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[16px] sm:text-[17px] font-medium rounded-[2.26px] transition-colors text-center"
               >
                 {hero.heroSecondaryCtaText || 'Lihat Preloved'}

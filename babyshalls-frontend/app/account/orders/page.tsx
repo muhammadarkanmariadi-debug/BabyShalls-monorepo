@@ -12,8 +12,6 @@ import {
   MapPin,
   Calendar,
 } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { formatIDR } from '@/data/mockProducts';
 
@@ -113,7 +111,6 @@ export default function CustomerOrdersHistoryPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/account" label="Kembali ke Akun Profil" />
 
       <main className="py-10 sm:py-14 flex-1 bg-[#FFFDF9]">
@@ -262,7 +259,6 @@ export default function CustomerOrdersHistoryPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

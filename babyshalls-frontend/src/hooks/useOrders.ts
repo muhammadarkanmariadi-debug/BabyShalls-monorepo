@@ -36,6 +36,7 @@ export interface CreateOrderPayload {
   shippingAddress: {
     recipientName: string;
     phone: string;
+    email?: string;
     address: string;
     city: string;
     postalCode?: string;

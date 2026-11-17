@@ -27,7 +27,11 @@ export function authenticateJWT(req: AuthRequest, res: Response, next: NextFunct
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ error: 'Sesi login tidak valid atau kadaluarsa.' });
+    return res.status(401).json({
+      success: false,
+      error: 'Sesi login tidak valid atau kadaluarsa.',
+      code: 'UNAUTHORIZED',
+    });
   }
 }
 

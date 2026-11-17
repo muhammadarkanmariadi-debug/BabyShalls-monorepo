@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import crypto from 'crypto';
-import { DiscountType, OrderStatus } from '@prisma/client';
+import { DiscountType, OrderStatus, Role } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
 import { snap } from '../lib/midtrans.js';
 import { sendOrderReceiptEmail } from '../lib/mailer.js';
-import { authenticateJWT } from '../middleware/auth.middleware.js';
+import { authenticateJWT, optionalAuthenticateJWT } from '../middleware/auth.middleware.js';
 import { idempotencyMiddleware } from '../middleware/idempotency.middleware.js';
 import { handleRouteError, indonesianPhoneSchema, optionalPostalCodeSchema, sendValidationError, } from '../lib/http-error.js';
 const router = Router();
@@ -21,6 +21,7 @@ const createOrderSchema = z.object({
     shippingAddress: z.object({
         recipientName: z.string().trim().min(2, 'Nama penerima minimal 2 karakter.').max(100, 'Nama penerima maksimal 100 karakter.'),
         phone: indonesianPhoneSchema,
+        email: z.string().trim().email('Format email tidak valid.').optional().or(z.literal('')),
         address: z.string().trim().min(5, 'Alamat lengkap minimal 5 karakter.').max(300, 'Alamat lengkap maksimal 300 karakter.'),
         city: z.string().trim().min(2, 'Kota/Kabupaten wajib diisi.').max(100, 'Kota maksimal 100 karakter.'),
         postalCode: optionalPostalCodeSchema,
@@ -32,9 +33,9 @@ const createOrderSchema = z.object({
 });
 /**
  * POST /api/orders
- * Create real Order + OrderItem in PostgreSQL and generate Midtrans Snap token.
+ * Create real Order + OrderItem in PostgreSQL (authenticated or guest checkout) and generate Midtrans Snap token.
  */
-router.post('/', authenticateJWT, idempotencyMiddleware({ required: false }), async (req, res) => {
+router.post('/', optionalAuthenticateJWT, idempotencyMiddleware({ required: false }), async (req, res) => {
     const parsed = createOrderSchema.safeParse(req.body);
     if (!parsed.success) {
         return sendValidationError(res, parsed.error, 'Data pesanan tidak valid.');
@@ -91,6 +92,28 @@ router.post('/', authenticateJWT, idempotencyMiddleware({ required: false }), as
                 appliedCode = coupon.code;
             }
         }
+        const resolvedEmail = req.user?.email ||
+            (shippingAddress.email ? shippingAddress.email.toLowerCase() : '') ||
+            `guest-${shippingAddress.phone.replace(/\D/g, '')}@guest.babyshalls.local`;
+        let orderUserId = req.user?.id;
+        if (!orderUserId) {
+            const existingGuest = await prisma.user.findUnique({ where: { email: resolvedEmail } });
+            if (existingGuest) {
+                orderUserId = existingGuest.id;
+            }
+            else {
+                const createdGuest = await prisma.user.create({
+                    data: {
+                        email: resolvedEmail,
+                        passwordHash: '',
+                        name: shippingAddress.recipientName,
+                        phone: shippingAddress.phone,
+                        role: Role.USER,
+                    },
+                });
+                orderUserId = createdGuest.id;
+            }
+        }
         const grandTotal = Math.max(0, totalAmount + shippingCost - discountAmount);
         let snapToken = null;
         let redirectUrl = null;
@@ -107,7 +130,7 @@ router.post('/', authenticateJWT, idempotencyMiddleware({ required: false }), as
                         transaction_details: { order_id: orderNumber, gross_amount: Math.round(grandTotal) },
                         customer_details: {
                             first_name: shippingAddress.recipientName,
-                            email: req.user?.email,
+                            email: resolvedEmail.endsWith('@guest.babyshalls.local') ? undefined : resolvedEmail,
                             phone: shippingAddress.phone,
                         },
                         expiry: {
@@ -127,7 +150,7 @@ router.post('/', authenticateJWT, idempotencyMiddleware({ required: false }), as
         const createdOrder = await prisma.order.create({
             data: {
                 orderNumber,
-                userId: req.user.id,
+                userId: orderUserId,
                 totalAmount,
                 discountAmount,
                 couponCode: appliedCode,
@@ -150,7 +173,7 @@ router.post('/', authenticateJWT, idempotencyMiddleware({ required: false }), as
         });
         // Hanya kirim email ORDER_CREATED jika tidak menggunakan Snap (misal grandTotal === 0)
         // Jika via Midtrans Snap, email resi dikirim 1x saat webhook PAYMENT_PAID diterima.
-        const customerEmail = req.user?.email;
+        const customerEmail = resolvedEmail.endsWith('@guest.babyshalls.local') ? undefined : resolvedEmail;
         if (customerEmail && !snapToken) {
             void sendOrderReceiptEmail({
                 to: customerEmail,

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { USER_TOKEN_STORAGE_KEY } from '@/lib/axios';
 import {
   User,
   Package,
@@ -22,39 +24,80 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { WireProductCard } from '@/components/common/WireProductCard';
 import { mockProducts, formatIDR } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
+import { useAccountProfile, useUpdateAccountProfile } from '@/hooks/useAccount';
 
 type TabKey = 'profil' | 'alamat' | 'pesanan' | 'tiket' | 'request' | 'wishlist';
 
 export default function AccountPage() {
+  const router = useRouter();
   const { addToCart } = useCart();
 
-  // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  // Authentication State (checked from real JWT in localStorage)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const token = window.localStorage.getItem(USER_TOKEN_STORAGE_KEY);
+      if (token) {
+        setIsAuthenticated(true);
+      } else {
+        router.replace('/login');
+      }
+    } catch {
+      router.replace('/login');
+    }
+  }, [router]);
+
+  const { data: profileData, isError: isProfileError } = useAccountProfile(isAuthenticated);
+  const updateProfileMutation = useUpdateAccountProfile();
+
+  useEffect(() => {
+    if (isProfileError) {
+      try {
+        window.localStorage.removeItem(USER_TOKEN_STORAGE_KEY);
+        window.dispatchEvent(new Event('babyshalls-auth-changed'));
+      } catch {
+        // ignore
+      }
+      setIsAuthenticated(false);
+      router.replace('/login');
+    }
+  }, [isProfileError, router]);
+
   const [authMode, setAuthMode] = useState<'masuk' | 'daftar'>('masuk');
 
   // Auth Inputs
-  const [authEmail, setAuthEmail] = useState('dina.permata@gmail.com');
-  const [authPassword, setAuthPassword] = useState('********');
-  const [authName, setAuthName] = useState('Dina Permata');
-  const [authPhone, setAuthPhone] = useState('0812-3456-7890');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
+  const [authPhone, setAuthPhone] = useState('');
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<TabKey>('profil');
 
-  // User Profile
+  // User Profile (synced from PostgreSQL /api/account/profile)
   const [userProfile, setUserProfile] = useState({
-    name: 'Dina Permata',
-    email: 'dina.permata@gmail.com',
-    phone: '0812-3456-7890',
+    name: '',
+    email: '',
+    phone: '',
     city: 'Kota Malang',
-    address: 'Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun, Kota Malang 65146',
+    address: '',
   });
+
+  useEffect(() => {
+    if (profileData) {
+      setUserProfile((prev) => ({
+        ...prev,
+        name: profileData.name || '',
+        email: profileData.email || '',
+        phone: profileData.phone || '',
+      }));
+    }
+  }, [profileData]);
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState('');
@@ -192,10 +235,18 @@ export default function AccountPage() {
     }
   }, []);
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 2500);
+    try {
+      await updateProfileMutation.mutateAsync({
+        name: userProfile.name,
+        phone: userProfile.phone || null,
+      });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 2500);
+    } catch {
+      // handled by mutation
+    }
   };
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -204,7 +255,14 @@ export default function AccountPage() {
   };
 
   const handleLogout = () => {
+    try {
+      window.localStorage.removeItem(USER_TOKEN_STORAGE_KEY);
+      window.dispatchEvent(new Event('babyshalls-auth-changed'));
+    } catch {
+      // ignore
+    }
     setIsAuthenticated(false);
+    router.push('/login');
   };
 
   // Wishlist products
@@ -439,7 +497,6 @@ export default function AccountPage() {
   // Dashboard View (Figma Node #169:6498)
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <Header />
       <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
       {/* Main Account Area (Figma Node #169:6501, 2 Columns) */}
@@ -1204,7 +1261,6 @@ export default function AccountPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

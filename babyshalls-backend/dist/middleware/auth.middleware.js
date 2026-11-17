@@ -12,7 +12,11 @@ export function authenticateJWT(req, res, next) {
         next();
     }
     catch (err) {
-        return res.status(403).json({ error: 'Sesi login tidak valid atau kadaluarsa.' });
+        return res.status(401).json({
+            success: false,
+            error: 'Sesi login tidak valid atau kadaluarsa.',
+            code: 'UNAUTHORIZED',
+        });
     }
 }
 export function optionalAuthenticateJWT(req, _res, next) {
