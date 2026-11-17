@@ -517,6 +517,18 @@ async function main() {
     create: { key: 'hero_slides_json', value: JSON.stringify(heroSlides) },
   });
 
+  await prisma.siteContent.upsert({
+    where: { key: 'hampers_image' },
+    update: { value: '/images/hampers-gift.jpg' },
+    create: { key: 'hampers_image', value: '/images/hampers-gift.jpg' },
+  });
+
+  await prisma.siteContent.upsert({
+    where: { key: 'about_block_1_image' },
+    update: { value: '/images/store-boutique.jpg' },
+    create: { key: 'about_block_1_image', value: '/images/store-boutique.jpg' },
+  });
+
   console.log('Seed completed: Admin, Demo User, 4 Coupons, 17 Products (Shopee BabyShalls + Kurasi), 2 Events, & 4 Hero Slides.');
 }
 

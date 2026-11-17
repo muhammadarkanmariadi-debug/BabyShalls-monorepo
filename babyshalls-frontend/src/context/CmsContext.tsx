@@ -114,7 +114,7 @@ export const initialCmsData: CmsData = {
     hampersBannerSubtitle:
       'Paket buku dan mainan siap kado, dipilih sesuai usia si kecil. Gratis bungkus dan kartu ucapan.',
     hampersBannerButtonText: 'LIHAT HAMPERS',
-    hampersBannerImage: '/images/products/banner-hampers.png',
+    hampersBannerImage: '/images/hampers-gift.jpg',
     hampersBannerBgColor: '#FFFBF5',
     requestCardTitle: 'Buku yang kamu\ncari belum ada?',
     requestCardSubtitle: 'Tulis judul atau penulisnya, kami bantu carikan dan kabari lewat WhatsApp.',
@@ -304,6 +304,7 @@ function mergeSiteContentToCmsData(base: CmsData, siteContent?: Record<string, s
         : {}),
       ...(siteContent.hampers_title ? { hampersBannerTitle: siteContent.hampers_title } : {}),
       ...(siteContent.hampers_description ? { hampersBannerSubtitle: siteContent.hampers_description } : {}),
+      ...(siteContent.hampers_image ? { hampersBannerImage: siteContent.hampers_image } : {}),
     },
     about: {
       ...nextBase.about,

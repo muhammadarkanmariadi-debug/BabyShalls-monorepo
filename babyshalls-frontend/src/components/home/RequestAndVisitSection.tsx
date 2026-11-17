@@ -83,7 +83,7 @@ export const RequestAndVisitSection: React.FC = () => {
             {/* Gambar Toko Tampak Depan (288x280) */}
             <div className="relative w-full sm:w-[288px] h-[220px] sm:h-auto shrink-0 bg-[#FFF6EA]">
               <Image
-                src="/images/products/toko-tampak-depan.png"
+                src="/images/store/toko-tampak-depan.png"
                 alt="Toko BabyShalls Citraland Malang"
                 fill
                 className="object-cover object-center"

@@ -45,23 +45,24 @@ export function createIdempotencyStore(options) {
     }
     return {
         async acquire(key, requestHash, ttlSeconds) {
-            if (useRedis()) {
+            if (useRedis() && client) {
                 try {
                     const initialRecord = {
                         status: 'IN_PROGRESS',
                         requestHash,
                         expiresAt: Date.now() + ttlSeconds * 1000,
                     };
-                    const result = await client.set(key, JSON.stringify(initialRecord), 'EX', ttlSeconds, 'NX');
+                    const result = await client.set(key, initialRecord, { ex: ttlSeconds, nx: true });
                     if (result === 'OK') {
                         return { acquired: true };
                     }
-                    const raw = await client.get(key);
-                    if (raw) {
-                        return { acquired: false, record: JSON.parse(raw) };
+                    const existing = await client.get(key);
+                    if (existing) {
+                        const parsed = typeof existing === 'string' ? JSON.parse(existing) : existing;
+                        return { acquired: false, record: parsed };
                     }
                     // Key expired between SET NX and GET: retry once atomically
-                    const retryResult = await client.set(key, JSON.stringify(initialRecord), 'EX', ttlSeconds, 'NX');
+                    const retryResult = await client.set(key, initialRecord, { ex: ttlSeconds, nx: true });
                     if (retryResult === 'OK') {
                         return { acquired: true };
                     }
@@ -82,14 +83,14 @@ export function createIdempotencyStore(options) {
                 body,
                 expiresAt: now + ttlSeconds * 1000,
             };
-            if (useRedis()) {
+            if (useRedis() && client) {
                 try {
-                    const raw = await client.get(key);
-                    if (raw) {
-                        const parsed = JSON.parse(raw);
+                    const existing = await client.get(key);
+                    if (existing) {
+                        const parsed = typeof existing === 'string' ? JSON.parse(existing) : existing;
                         record.requestHash = parsed.requestHash;
                     }
-                    await client.setex(key, ttlSeconds, JSON.stringify(record));
+                    await client.set(key, record, { ex: ttlSeconds });
                     return;
                 }
                 catch (err) {
@@ -100,7 +101,7 @@ export function createIdempotencyStore(options) {
         },
         async release(key) {
             memoryStore.delete(key);
-            if (useRedis()) {
+            if (useRedis() && client) {
                 try {
                     await client.del(key);
                 }

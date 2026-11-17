@@ -22,15 +22,15 @@ export const BannerHampers: React.FC = () => {
       {/* Background Hampers Image */}
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src={hampers.hampersBannerImage || '/images/products/banner-hampers.png'}
+          src={hampers.hampersBannerImage || '/images/hampers-gift.jpg'}
           alt="Hampers BabyShalls"
           fill
           priority
           className="object-cover object-right lg:object-center"
           sizes="100vw"
         />
-        {/* Soft gradient fade on left for readable text on mobile/tablets */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFBF5]/95 via-[#FFFBF5]/85 to-[#FFFBF5]/30 lg:from-transparent" />
+        {/* Soft gradient fade on left for readable text */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFBF5]/95 via-[#FFFBF5]/85 to-[#FFFBF5]/30 lg:via-[#FFFBF5]/80 lg:to-[#FFFBF5]/20" />
       </div>
 
       {/* Teks Overlay on Left (Figma #131:38956 width: 761px, padding: 0 106px 0 76px) */}

@@ -1,4 +1,4 @@
-import type { Redis } from 'ioredis';
+import type { Redis } from '@upstash/redis';
 import { isRedisReady, redis } from './redis.js';
 
 export type IdempotencyStatus = 'IN_PROGRESS' | 'COMPLETED';
@@ -23,7 +23,7 @@ export interface IdempotencyStore {
 
 export interface IdempotencyStoreOptions {
   useRedis?: () => boolean;
-  redisClient?: Redis;
+  redisClient?: Redis | null;
 }
 
 const MAX_MEMORY_ENTRIES = 5000;
@@ -75,23 +75,24 @@ export function createIdempotencyStore(options?: IdempotencyStoreOptions): Idemp
 
   return {
     async acquire(key: string, requestHash: string, ttlSeconds: number): Promise<AcquireResult> {
-      if (useRedis()) {
+      if (useRedis() && client) {
         try {
           const initialRecord: IdempotencyRecord = {
             status: 'IN_PROGRESS',
             requestHash,
             expiresAt: Date.now() + ttlSeconds * 1000,
           };
-          const result = await client.set(key, JSON.stringify(initialRecord), 'EX', ttlSeconds, 'NX');
+          const result = await client.set(key, initialRecord, { ex: ttlSeconds, nx: true });
           if (result === 'OK') {
             return { acquired: true };
           }
-          const raw = await client.get(key);
-          if (raw) {
-            return { acquired: false, record: JSON.parse(raw) as IdempotencyRecord };
+          const existing = await client.get<IdempotencyRecord | string>(key);
+          if (existing) {
+            const parsed = typeof existing === 'string' ? (JSON.parse(existing) as IdempotencyRecord) : existing;
+            return { acquired: false, record: parsed };
           }
           // Key expired between SET NX and GET: retry once atomically
-          const retryResult = await client.set(key, JSON.stringify(initialRecord), 'EX', ttlSeconds, 'NX');
+          const retryResult = await client.set(key, initialRecord, { ex: ttlSeconds, nx: true });
           if (retryResult === 'OK') {
             return { acquired: true };
           }
@@ -113,14 +114,14 @@ export function createIdempotencyStore(options?: IdempotencyStoreOptions): Idemp
         expiresAt: now + ttlSeconds * 1000,
       };
 
-      if (useRedis()) {
+      if (useRedis() && client) {
         try {
-          const raw = await client.get(key);
-          if (raw) {
-            const parsed = JSON.parse(raw) as IdempotencyRecord;
+          const existing = await client.get<IdempotencyRecord | string>(key);
+          if (existing) {
+            const parsed = typeof existing === 'string' ? (JSON.parse(existing) as IdempotencyRecord) : existing;
             record.requestHash = parsed.requestHash;
           }
-          await client.setex(key, ttlSeconds, JSON.stringify(record));
+          await client.set(key, record, { ex: ttlSeconds });
           return;
         } catch (err) {
           console.warn('⚠️ Redis idempotency complete gagal, fallback ke memory store:', err);
@@ -131,7 +132,7 @@ export function createIdempotencyStore(options?: IdempotencyStoreOptions): Idemp
 
     async release(key: string): Promise<void> {
       memoryStore.delete(key);
-      if (useRedis()) {
+      if (useRedis() && client) {
         try {
           await client.del(key);
         } catch (err) {

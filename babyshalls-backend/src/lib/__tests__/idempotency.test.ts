@@ -1,13 +1,8 @@
-import test, { after } from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { NextFunction, Request, Response } from 'express';
-import { redis } from '../redis.js';
 import { createIdempotencyStore } from '../idempotency-store.js';
 import { idempotencyMiddleware } from '../../middleware/idempotency.middleware.js';
-
-after(() => {
-  redis.disconnect();
-});
 
 function createMockReq(overrides: Partial<Request> & { user?: { id: string } } = {}): Request {
   const headers: Record<string, string> = {};

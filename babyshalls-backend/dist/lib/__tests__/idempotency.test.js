@@ -1,11 +1,7 @@
-import test, { after } from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
-import { redis } from '../redis.js';
 import { createIdempotencyStore } from '../idempotency-store.js';
 import { idempotencyMiddleware } from '../../middleware/idempotency.middleware.js';
-after(() => {
-    redis.disconnect();
-});
 function createMockReq(overrides = {}) {
     const headers = {};
     if (overrides.headers) {
