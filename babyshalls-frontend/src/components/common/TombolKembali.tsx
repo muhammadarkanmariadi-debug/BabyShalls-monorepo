@@ -35,3 +35,5 @@ export function TombolKembali({ fallbackUrl = '/', label = 'Kembali', className 
   );
 }
 
+export default TombolKembali;
+
