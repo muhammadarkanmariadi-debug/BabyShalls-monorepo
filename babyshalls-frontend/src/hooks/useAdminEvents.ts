@@ -3,6 +3,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/axios';
 
+export interface EventAgendaItem {
+  time: string;
+  activity: string;
+}
+
 export interface AdminEventDto {
   id: string;
   title: string;
@@ -18,6 +23,8 @@ export interface AdminEventDto {
   location: string;
   price: number;
   quota: number;
+  agenda?: EventAgendaItem[] | null;
+  isDraft?: boolean;
   isActive: boolean;
   registrationsCount: number;
   createdAt: string;
@@ -35,6 +42,8 @@ export interface AdminEventPayload {
   location?: string;
   price?: number;
   quota?: number;
+  agenda?: EventAgendaItem[] | null;
+  isDraft?: boolean;
   shortCode?: string | null;
   isActive?: boolean;
   broadcastEmail?: boolean;
@@ -61,6 +70,17 @@ export function useAdminEvents(enabled: boolean) {
     enabled,
     queryFn: async () => {
       const res = await apiClient.get<{ success: boolean; data: AdminEventDto[] }>('/admin/events');
+      return res.data.data;
+    },
+  });
+}
+
+export function useAdminEvent(id: string | null) {
+  return useQuery<AdminEventDto>({
+    queryKey: ['admin-event', id],
+    enabled: Boolean(id),
+    queryFn: async () => {
+      const res = await apiClient.get<{ success: boolean; data: AdminEventDto }>(`/admin/events/${id}`);
       return res.data.data;
     },
   });

@@ -16,6 +16,7 @@ import adminAnalyticsRoutes from './routes/admin-analytics.routes.js';
 import productRoutes from './routes/product.routes.js';
 import accountRoutes from './routes/account.routes.js';
 import shippingRoutes from './modules/shipping/shipping.routes.js';
+import { adminShortlinkRouter, publicShortlinkRouter } from './routes/shortlink.routes.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -68,7 +69,9 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/admin/coupons', adminCouponRoutes);
 app.use('/api/admin/events', adminEventsRoutes);
 app.use('/api/admin/analytics', adminAnalyticsRoutes);
+app.use('/api/admin/shortlinks', adminShortlinkRouter);
 app.use('/api/admin', adminDashboardRoutes);
+app.use('/api/shortlinks', publicShortlinkRouter);
 // Public Semi-CMS content endpoint
 app.get('/api/cms', async (_req, res) => {
     try {

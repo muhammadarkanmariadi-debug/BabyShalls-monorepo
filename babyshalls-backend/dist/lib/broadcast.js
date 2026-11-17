@@ -74,7 +74,7 @@ export function triggerCouponBroadcastAsync(coupon) {
         messageBody: `<p>${coupon.description || `Gunakan kode voucher spesial berikut untuk belanja buku anak kurasi & mainan kayu edukasi${minOrderText}.`}</p>`,
         highlightCode: coupon.code,
         ctaLabel: 'Belanja Sekarang',
-        ctaUrl: `${FRONTEND_URL}/catalog`,
+        ctaUrl: `${FRONTEND_URL}/shop`,
     }).catch((err) => {
         console.warn('⚠️ Gagal menjalankan auto-broadcast kupon:', err?.message || err);
     });
@@ -104,7 +104,7 @@ export function triggerEventBroadcastAsync(event) {
       </p>
     `,
         ctaLabel: 'Daftar Event Sekarang',
-        ctaUrl: `${FRONTEND_URL}/events/register?event=${encodeURIComponent(event.slug)}`,
+        ctaUrl: `${FRONTEND_URL}/events/${encodeURIComponent(event.id)}/register`,
     }).catch((err) => {
         console.warn('⚠️ Gagal menjalankan auto-broadcast event:', err?.message || err);
     });

@@ -16,6 +16,10 @@ function toSlug(input) {
 function generateShortCode() {
     return crypto.randomBytes(3).toString('hex').toUpperCase();
 }
+const agendaItemSchema = z.object({
+    time: z.string().trim().min(1).max(30),
+    activity: z.string().trim().min(1).max(200),
+});
 const eventSchema = z.object({
     title: z.string().trim().min(3, 'Judul workshop minimal 3 karakter.').max(150),
     category: z.string().trim().min(2).max(80).default('Storytelling & Art'),
@@ -28,6 +32,8 @@ const eventSchema = z.object({
     location: z.string().trim().min(2).default('Butik BabyShalls, Jl. Cempaka No. 12, Malang'),
     price: z.number().nonnegative('Harga tiket tidak boleh negatif.').default(0),
     quota: z.number().int().positive('Kuota minimal 1 peserta.').default(20),
+    agenda: z.array(agendaItemSchema).optional().nullable(),
+    isDraft: z.boolean().optional().default(false),
     shortCode: z
         .string()
         .trim()
@@ -131,7 +137,9 @@ router.post('/', async (req, res) => {
                 location: parsed.data.location,
                 price: parsed.data.price,
                 quota: parsed.data.quota,
-                isActive: parsed.data.isActive ?? true,
+                ...(parsed.data.agenda ? { agenda: parsed.data.agenda } : {}),
+                isDraft: parsed.data.isDraft ?? false,
+                isActive: parsed.data.isDraft ? false : (parsed.data.isActive ?? true),
             },
         });
         if (parsed.data.broadcastEmail) {
@@ -148,6 +156,32 @@ router.post('/', async (req, res) => {
     }
 });
 /**
+ * GET /api/admin/events/:id
+ */
+router.get('/:id', async (req, res) => {
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    try {
+        const ev = await prisma.event.findUnique({
+            where: { id },
+            include: { _count: { select: { registrations: true } } },
+        });
+        if (!ev) {
+            return res.status(404).json({ success: false, error: 'Workshop tidak ditemukan.', code: 'NOT_FOUND' });
+        }
+        return res.json({
+            success: true,
+            data: {
+                ...ev,
+                price: Number(ev.price),
+                registrationsCount: ev._count.registrations,
+            },
+        });
+    }
+    catch (err) {
+        return handleRouteError(res, err, 'Gagal memuat detail workshop.');
+    }
+});
+/**
  * PATCH /api/admin/events/:id
  */
 router.patch('/:id', async (req, res) => {
@@ -157,7 +191,7 @@ router.patch('/:id', async (req, res) => {
         return sendValidationError(res, parsed.error, 'Data pembaruan workshop tidak valid.');
     }
     try {
-        const { broadcastEmail: _bc, eventDate, shortCode, ...rest } = parsed.data;
+        const { broadcastEmail: _bc, eventDate, shortCode, agenda, ...rest } = parsed.data;
         let normalizedShortCode;
         if (shortCode) {
             normalizedShortCode = shortCode.trim().toLowerCase();
@@ -179,6 +213,7 @@ router.patch('/:id', async (req, res) => {
             where: { id },
             data: {
                 ...rest,
+                ...(agenda !== undefined ? { agenda: agenda === null ? undefined : agenda } : {}),
                 ...(eventDate ? { eventDate: new Date(eventDate) } : {}),
                 ...(normalizedShortCode ? { shortCode: normalizedShortCode } : {}),
             },

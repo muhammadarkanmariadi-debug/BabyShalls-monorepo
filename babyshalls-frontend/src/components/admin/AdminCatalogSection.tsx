@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Edit2, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -12,7 +13,9 @@ import {
 import { formatIDR } from '../../lib/utils';
 import { extractApiError } from '../../lib/axios';
 import { DataTableToolbar } from './DataTableToolbar';
-import { ProductFormModal } from './ProductFormModal';
+import { AdminConfirmDialog } from './ui/AdminConfirmDialog';
+import { CsvExportButton } from './ui/CsvExportButton';
+import { CsvImportPreviewModal } from './ui/CsvImportPreviewModal';
 
 const CATEGORY_OPTIONS = [
   'Board Books',
@@ -32,8 +35,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [sortBy, setSortBy] = useState('newest');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<AdminProduct | null>(null);
 
   const filteredProducts = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -96,16 +98,19 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
           { label: 'Stok Terkecil', value: 'stock_asc' },
         ]}
         rightAction={
-          <button
-            type="button"
-            onClick={() => {
-              setEditingProduct(null);
-              setModalOpen(true);
-            }}
-            className="h-[38px] px-4 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" /> Tambah Produk
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <CsvImportPreviewModal />
+            <CsvExportButton
+              endpoint="/admin/import-export/products/export"
+              filename="babyshalls-products.csv"
+            />
+            <Link
+              href="/admin/products/new"
+              className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" /> Tambah Produk
+            </Link>
+          </div>
         }
       />
 
@@ -180,27 +185,17 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
                     </td>
                     <td className="py-3 px-3 text-right">
                       <div className="inline-flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingProduct(p);
-                            setModalOpen(true);
-                          }}
-                          className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#502E1E] hover:bg-[#FCF6EC] cursor-pointer"
+                        <Link
+                          href={`/admin/products/${p.id}/edit`}
+                          className="p-1.5 rounded-[4px] border border-[#E6D2C0] text-[#4A2A1C] hover:bg-[#FFF6EA]"
                           title="Edit Produk"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
-                        </button>
+                        </Link>
                         <button
                           type="button"
-                          onClick={() => {
-                            if (!window.confirm(`Hapus produk "${p.name}"?`)) return;
-                            deleteMutation.mutate(p.id, {
-                              onSuccess: () => toast.success(`Produk "${p.name}" dihapus.`),
-                              onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus produk.')),
-                            });
-                          }}
-                          className="p-1.5 rounded-lg border border-[#EBDCCB] text-[#6B7280] hover:text-red-600 cursor-pointer"
+                          onClick={() => setDeletingProduct(p)}
+                          className="p-1.5 rounded-[4px] border border-[#E6D2C0] text-[#7A5644] hover:text-red-600 cursor-pointer"
                           title="Hapus Produk"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -215,10 +210,23 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
         </div>
       )}
 
-      <ProductFormModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        editingProduct={editingProduct}
+      <AdminConfirmDialog
+        isOpen={Boolean(deletingProduct)}
+        onClose={() => setDeletingProduct(null)}
+        title="Hapus produk ini?"
+        description={`Produk "${deletingProduct?.name || ''}" akan dihapus permanen dari katalog BabyShalls. Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        isLoading={deleteMutation.isPending}
+        onConfirm={() => {
+          if (!deletingProduct) return;
+          deleteMutation.mutate(deletingProduct.id, {
+            onSuccess: () => {
+              toast.success(`Produk "${deletingProduct.name}" dihapus.`);
+              setDeletingProduct(null);
+            },
+            onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus produk.')),
+          });
+        }}
       />
     </div>
   );

@@ -16,7 +16,8 @@ import {
 import { formatIDR } from '../../lib/utils';
 import { extractApiError } from '../../lib/axios';
 import { DataTableToolbar } from './DataTableToolbar';
-import { AdminModal } from './AdminModal';
+import { AdminDrawer } from './ui/AdminDrawer';
+import { CsvExportButton } from './ui/CsvExportButton';
 
 const ORDER_STATUS_OPTIONS: { label: string; value: AdminOrder['status'] }[] = [
   { label: 'Menunggu Pembayaran', value: 'PENDING_PAYMENT' },
@@ -166,6 +167,30 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
         </div>
       </div>
 
+      {/* Quick Status Tabs (Figma Admin – Pesanan) */}
+      <div className="flex flex-wrap gap-1.5 border-b border-[#E6D2C0] pb-3">
+        {[
+          { label: 'Semua', value: 'ALL' },
+          ...ORDER_STATUS_OPTIONS,
+        ].map((tab) => {
+          const active = statusFilter === tab.value;
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setStatusFilter(tab.value)}
+              className={`px-3 py-1.5 rounded-[4px] text-xs font-medium transition-colors cursor-pointer ${
+                active
+                  ? 'bg-[#FBE6D8] text-[#B05A26] font-semibold'
+                  : 'text-[#7A5644] hover:bg-[#FFF6EA]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
@@ -182,6 +207,12 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
           { label: 'Total Terbesar', value: 'total_desc' },
           { label: 'Total Terkecil', value: 'total_asc' },
         ]}
+        rightAction={
+          <CsvExportButton
+            endpoint="/admin/import-export/orders/export"
+            filename="babyshalls-orders.csv"
+          />
+        }
       />
 
       {isLoading ? (
@@ -273,13 +304,13 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
         </div>
       )}
 
-      {/* Modal Input Resi Manual */}
-      <AdminModal
+      {/* Drawer Input Resi Manual */}
+      <AdminDrawer
         isOpen={Boolean(waybillModalOrder)}
         onClose={() => setWaybillModalOrder(null)}
         title={`Input Resi Pengiriman ${waybillModalOrder?.orderNumber || ''}`}
         subtitle="Simpan nomor resi dari gerai kurir (Wahana Express wajib min. 8 karakter alfanumerik)."
-        size="md"
+        width="md"
       >
         {waybillModalOrder && (
           <form onSubmit={handleSaveWaybill} className="space-y-4 text-xs">
@@ -341,15 +372,15 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
             </div>
           </form>
         )}
-      </AdminModal>
+      </AdminDrawer>
 
-      {/* Modal Lacak Resi Universal (BinderByte + Cache) */}
-      <AdminModal
+      {/* Drawer Lacak Resi Universal (BinderByte + Cache) */}
+      <AdminDrawer
         isOpen={Boolean(trackingTarget)}
         onClose={() => setTrackingTarget(null)}
         title={`Lacak Resi ${trackingTarget?.waybill || ''}`}
         subtitle={`Kurir: ${(trackingTarget?.courier || '').toUpperCase()}`}
-        size="md"
+        width="md"
       >
         {trackingLoading ? (
           <p className="text-xs text-[#6B7280] py-6 text-center">Mengambil status pengiriman...</p>
@@ -408,15 +439,15 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
             </div>
           </div>
         ) : null}
-      </AdminModal>
+      </AdminDrawer>
 
-      {/* Modal Detail Order */}
-      <AdminModal
+      {/* Drawer Detail & Input Resi Order (Figma 640px) */}
+      <AdminDrawer
         isOpen={Boolean(selectedOrder)}
         onClose={() => setSelectedOrder(null)}
         title={`Detail Pesanan ${selectedOrder?.orderNumber || ''}`}
         subtitle={selectedOrder ? new Date(selectedOrder.createdAt).toLocaleString('id-ID') : ''}
-        size="lg"
+        width="lg"
       >
         {selectedOrder && (
           <div className="space-y-4 text-xs">
@@ -516,7 +547,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
             </form>
           </div>
         )}
-      </AdminModal>
+      </AdminDrawer>
     </div>
   );
 }

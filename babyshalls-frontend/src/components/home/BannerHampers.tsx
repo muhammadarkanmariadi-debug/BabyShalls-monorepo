@@ -15,11 +15,14 @@ export const BannerHampers: React.FC = () => {
   )}`;
 
   return (
-    <section className="relative w-full h-[460px] sm:h-[500px] lg:h-[520px] bg-[#FFFBF5] overflow-hidden">
+    <section
+      className="relative w-full h-[460px] sm:h-[500px] lg:h-[520px] overflow-hidden"
+      style={{ backgroundColor: hampers.hampersBannerBgColor || '#FFFBF5' }}
+    >
       {/* Background Hampers Image */}
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src="/images/products/banner-hampers.png"
+          src={hampers.hampersBannerImage || '/images/products/banner-hampers.png'}
           alt="Hampers BabyShalls"
           fill
           priority

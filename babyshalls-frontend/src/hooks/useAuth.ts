@@ -63,10 +63,12 @@ function persistAuthSession(data: AuthResponse) {
   if (typeof window === 'undefined') return;
   if (data.user.role === 'ADMIN') {
     window.localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, data.token);
+    window.localStorage.setItem('babyshalls_admin_user', JSON.stringify(data.user));
     window.localStorage.removeItem(USER_TOKEN_STORAGE_KEY);
   } else {
     window.localStorage.setItem(USER_TOKEN_STORAGE_KEY, data.token);
     window.localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+    window.localStorage.removeItem('babyshalls_admin_user');
   }
   window.dispatchEvent(new Event('babyshalls-auth-changed'));
 }

@@ -111,17 +111,40 @@ export interface AdminOrder {
 }
 
 export type PrismaAgeGroup = 'NEWBORN_PLUS' | 'AGES_1_3' | 'AGES_3_PLUS' | 'AGES_6_PLUS' | 'ALL_AGES';
+export type ProductCondition = 'NEW' | 'PRELOVED';
+
+export interface ProductVariant {
+  name: string;
+  price: number;
+  stock: number;
+  weight: number;
+}
+
+export interface ProductDimensions {
+  lengthCm?: number | null;
+  widthCm?: number | null;
+  heightCm?: number | null;
+}
 
 export interface AdminProduct {
   id: string;
   name: string;
   slug: string;
+  sku?: string | null;
   description: string;
   price: number;
   originalPrice?: number | null;
   authorOrBrand?: string | null;
+  condition?: ProductCondition;
+  prelovedGrade?: string | null;
+  conditionNote?: string | null;
   stock: number;
   weight: number;
+  dimensions?: ProductDimensions | null;
+  variants?: ProductVariant[] | null;
+  publisher?: string | null;
+  isbn?: string | null;
+  pages?: number | null;
   ageGroup: PrismaAgeGroup;
   category: string;
   subCategory?: string | null;
@@ -135,12 +158,21 @@ export interface AdminProduct {
 
 export type AdminProductPayload = {
   name: string;
+  sku?: string | null;
   description?: string;
   price: number;
   originalPrice?: number | null;
   authorOrBrand?: string | null;
+  condition?: ProductCondition;
+  prelovedGrade?: string | null;
+  conditionNote?: string | null;
   stock: number;
   weight?: number;
+  dimensions?: ProductDimensions | null;
+  variants?: ProductVariant[] | null;
+  publisher?: string | null;
+  isbn?: string | null;
+  pages?: number | null;
   ageGroup?: PrismaAgeGroup;
   category: string;
   subCategory?: string | null;
@@ -246,6 +278,17 @@ export function useAdminProducts(enabled: boolean) {
     enabled,
     queryFn: async () => {
       const res = await apiClient.get<{ success: boolean; data: AdminProduct[] }>('/admin/products');
+      return res.data.data;
+    },
+  });
+}
+
+export function useAdminProduct(id: string | null) {
+  return useQuery<AdminProduct>({
+    queryKey: ['admin-product', id],
+    enabled: Boolean(id),
+    queryFn: async () => {
+      const res = await apiClient.get<{ success: boolean; data: AdminProduct }>(`/admin/products/${id}`);
       return res.data.data;
     },
   });

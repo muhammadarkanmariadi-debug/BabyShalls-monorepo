@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { DEFAULT_HERO_SLIDES, HeroSlideCms, parseHeroSlides, usePublicCms } from '@/hooks/useCms';
 
 export interface CmsPillar {
   title: string;
@@ -28,12 +29,19 @@ export interface CmsData {
     heroSubtitle: string;
     heroPrimaryCtaText: string;
     heroSecondaryCtaText: string;
+    heroImage?: string;
+    heroBgColor?: string;
+    heroSlides?: HeroSlideCms[];
     ageBannerTitle: string;
     ageBannerSubtitle: string;
     ageBannerButtonText: string;
+    ageBannerBgColor?: string;
+    ageBannerImage?: string;
     hampersBannerTitle: string;
     hampersBannerSubtitle: string;
     hampersBannerButtonText: string;
+    hampersBannerImage?: string;
+    hampersBannerBgColor?: string;
     requestCardTitle: string;
     requestCardSubtitle: string;
     requestCardButtonText: string;
@@ -44,6 +52,8 @@ export interface CmsData {
   about: {
     badge: string;
     title: string;
+    heroImage?: string;
+    heroBgColor?: string;
     storyParagraph1: string;
     storyParagraph2: string;
     storyParagraph3: string;
@@ -76,6 +86,8 @@ export interface CmsData {
     whatsappCommunityUrl: string;
     instagramHandle: string;
     instagramUrl: string;
+    youtubeUrl?: string;
+    tiktokUrl?: string;
     googleMapsUrl: string;
     phone?: string;
     email?: string;
@@ -90,13 +102,20 @@ export const initialCmsData: CmsData = {
       'Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.',
     heroPrimaryCtaText: 'Belanja Sekarang',
     heroSecondaryCtaText: 'Lihat Preloved',
+    heroImage: '/images/hero/slide-1.jpg',
+    heroBgColor: '#FFF6EA',
+    heroSlides: DEFAULT_HERO_SLIDES,
     ageBannerTitle: 'Cari buku sesuai usia si kecil',
     ageBannerSubtitle: 'Dari newborn sampai 6+ tahun, pilih buku dan mainan yang pas.',
     ageBannerButtonText: 'BELANJA PER USIA',
+    ageBannerBgColor: '#B05A26',
+    ageBannerImage: '',
     hampersBannerTitle: 'HAMPERS UNTUK SETIAP MOMEN',
     hampersBannerSubtitle:
       'Paket buku dan mainan siap kado, dipilih sesuai usia si kecil. Gratis bungkus dan kartu ucapan.',
     hampersBannerButtonText: 'LIHAT HAMPERS',
+    hampersBannerImage: '/images/products/banner-hampers.png',
+    hampersBannerBgColor: '#FFFBF5',
     requestCardTitle: 'Buku yang kamu\ncari belum ada?',
     requestCardSubtitle: 'Tulis judul atau penulisnya, kami bantu carikan dan kabari lewat WhatsApp.',
     requestCardButtonText: 'Request Buku',
@@ -227,6 +246,8 @@ export const initialCmsData: CmsData = {
       'https://wa.me/6281234567890?text=Halo%20BabyShalls,%20saya%20ingin%20bergabung%20ke%20grup%20komunitas%20katalog%20dan%20event.',
     instagramHandle: '@babyshalls',
     instagramUrl: 'https://instagram.com/babyshalls',
+    youtubeUrl: 'https://youtube.com/@babyshalls',
+    tiktokUrl: 'https://tiktok.com/@babyshalls',
     googleMapsUrl: 'https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang',
   },
 };
@@ -242,9 +263,72 @@ interface CmsContextType {
 
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
+function mergeSiteContentToCmsData(base: CmsData, siteContent?: Record<string, string>): CmsData {
+  if (!siteContent || Object.keys(siteContent).length === 0) return base;
+
+  let nextBase = base;
+  if (siteContent.cms_data_json) {
+    try {
+      const parsed = JSON.parse(siteContent.cms_data_json) as Partial<CmsData>;
+      nextBase = {
+        ...base,
+        ...parsed,
+        home: { ...base.home, ...(parsed.home || {}) },
+        about: { ...base.about, ...(parsed.about || {}) },
+        preloved: { ...base.preloved, ...(parsed.preloved || {}) },
+        store: { ...base.store, ...(parsed.store || {}) },
+        faq: Array.isArray(parsed.faq) ? parsed.faq : base.faq,
+      };
+    } catch {
+      // ignore invalid json
+    }
+  }
+
+  const slides = siteContent.hero_slides_json ? parseHeroSlides(siteContent.hero_slides_json) : null;
+  const firstSlide = slides?.[0];
+  const waMatch = siteContent.announcement_wa_url?.match(/wa\.me\/(\d+)/);
+
+  return {
+    ...nextBase,
+    home: {
+      ...nextBase.home,
+      ...(slides ? { heroSlides: slides } : {}),
+      ...(firstSlide
+        ? {
+            heroTag: firstSlide.badge || nextBase.home.heroTag,
+            heroTitle: firstSlide.title || nextBase.home.heroTitle,
+            heroSubtitle: firstSlide.subtitle || nextBase.home.heroSubtitle,
+            heroPrimaryCtaText: firstSlide.ctaLabel || nextBase.home.heroPrimaryCtaText,
+            heroImage: firstSlide.image || nextBase.home.heroImage,
+          }
+        : {}),
+      ...(siteContent.hampers_title ? { hampersBannerTitle: siteContent.hampers_title } : {}),
+      ...(siteContent.hampers_description ? { hampersBannerSubtitle: siteContent.hampers_description } : {}),
+    },
+    about: {
+      ...nextBase.about,
+      ...(siteContent.about_banner_title ? { title: siteContent.about_banner_title } : {}),
+      ...(siteContent.about_intro_1 ? { storyParagraph1: siteContent.about_intro_1 } : {}),
+      ...(siteContent.about_intro_2 ? { description: siteContent.about_intro_2 } : {}),
+      ...(siteContent.about_block_1_p1 ? { storyParagraph2: siteContent.about_block_1_p1 } : {}),
+      ...(siteContent.about_block_2_p1 ? { storyParagraph3: siteContent.about_block_2_p1 } : {}),
+    },
+    store: {
+      ...nextBase.store,
+      ...(siteContent.about_visit_address ? { address: siteContent.about_visit_address } : {}),
+      ...(siteContent.about_hours_weekday
+        ? { operatingHours: siteContent.about_hours_weekday, openingHours: siteContent.about_hours_weekday }
+        : {}),
+      ...(siteContent.about_block_3_email ? { email: siteContent.about_block_3_email } : {}),
+      ...(waMatch?.[1] ? { whatsappNumber: waMatch[1] } : {}),
+    },
+  };
+}
+
 export const CmsProvider = ({ children }: { children: ReactNode }) => {
   const [cms, setCms] = useState<CmsData>(initialCmsData);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { data: publicSiteContent } = usePublicCms();
 
   // Load from localStorage on client mount
   useEffect(() => {
@@ -329,10 +413,15 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const mergedCms = useMemo(
+    () => mergeSiteContentToCmsData(cms, publicSiteContent),
+    [cms, publicSiteContent]
+  );
+
   return (
     <CmsContext.Provider
       value={{
-        cms,
+        cms: mergedCms,
         updateCms,
         resetCmsToDefault,
         addFaqItem,

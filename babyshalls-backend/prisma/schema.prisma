@@ -20,6 +20,11 @@ enum AgeGroup {
   ALL_AGES
 }
 
+enum ProductCondition {
+  NEW
+  PRELOVED
+}
+
 enum OrderStatus {
   PENDING_PAYMENT
   PAID
@@ -122,15 +127,24 @@ model SubCategory {
 }
 
 model Product {
-  id            String         @id @default(uuid())
+  id            String           @id @default(uuid())
   name          String
-  slug          String         @unique
-  description   String         @db.Text
-  price         Decimal        @db.Decimal(12, 2)
-  originalPrice Decimal?       @db.Decimal(12, 2) // Diskon / harga coret
+  slug          String           @unique
+  sku           String?          @unique
+  description   String           @db.Text
+  price         Decimal          @db.Decimal(12, 2)
+  originalPrice Decimal?         @db.Decimal(12, 2) // Diskon / harga coret
   authorOrBrand String? // e.g. "Board Book Kurasi", "Melissa & Doug"
-  stock         Int            @default(0)
-  weight        Int            @default(300) // Berat gram untuk kalkulasi ongkir KiriminAja
+  condition     ProductCondition @default(NEW)
+  prelovedGrade String? // Seperti Baru | Sangat Baik | Baik
+  conditionNote String?          @db.Text
+  stock         Int              @default(0)
+  weight        Int              @default(300) // Berat gram untuk kalkulasi ongkir KiriminAja
+  dimensions    Json? // { lengthCm, widthCm, heightCm }
+  variants      Json? // Array<{ name, price, stock, weight }>
+  publisher     String?
+  isbn          String?
+  pages         Int?
   ageGroup      AgeGroup       @default(ALL_AGES)
   category      String // e.g. "Books", "Wooden Toys", "Gift Hampers"
   subCategory   String? // e.g. "Board Books", "Sensory Book", "Balok Kayu"
@@ -284,6 +298,8 @@ model Event {
   location          String // "Toko BabyShalls Malang"
   price             Decimal             @default(0) @db.Decimal(12, 2)
   quota             Int                 @default(20)
+  agenda            Json? // Array<{ time, activity }>
+  isDraft           Boolean             @default(false)
   isActive          Boolean             @default(true)
   registrations     EventRegistration[]
   createdAt         DateTime            @default(now())
@@ -401,4 +417,15 @@ model LogisticsApiUsageLog {
   updatedAt   DateTime          @updatedAt
 
   @@unique([dateKey, provider, keyAlias], name: "usage_date_provider_key")
+}
+
+model ShortLink {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  targetUrl String   @db.Text
+  title     String?
+  clicks    Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -63,7 +63,7 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
           className="absolute inset-0 cursor-pointer"
         >
           <Image
-            src={product.coverImage || '/images/products/p-1-little-bear.png'}
+            src={product.coverImage || '/images/products/shopee-britannica-150-words.jpg'}
             alt={product.title}
             fill
             className="object-cover object-center group-hover:scale-103 transition-transform duration-300"

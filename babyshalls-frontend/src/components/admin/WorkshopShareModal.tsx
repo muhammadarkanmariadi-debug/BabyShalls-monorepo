@@ -20,7 +20,7 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://babyshalls.id';
   const shortUrl = event.shortCode
     ? `${origin}/w/${event.shortCode}`
-    : `${origin}/events/register?event=${event.slug}`;
+    : `${origin}/events/${event.id}/register`;
 
   const handleCopy = async () => {
     try {

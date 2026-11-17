@@ -18,36 +18,51 @@ export interface HeroSlideCms {
 export const DEFAULT_HERO_SLIDES: HeroSlideCms[] = [
   {
     id: 1,
-    badge: 'PROMO MINGGU INI • 01 / 03',
-    label: '01 Promo Board Book',
-    title: 'Diskon 15% Board Book & Mainan Kayu',
-    subtitle: 'Gratis bungkus kado & kartu ucapan personal dari BabyShalls Malang. Gunakan kupon BABY15 saat checkout.',
-    ctaLabel: 'Lihat Promo →',
-    ctaHref: '/catalog',
-    image: '/hero-child-reading.jpg',
-    imageAlt: 'Anak membaca buku cerita kurasi BabyShalls Malang',
+    badge: 'KOLEKSI TERBARU • 01 / 04',
+    label: '01 Buku & Mainan Kurasi',
+    title: 'Buku & mainan\npilihan untuk si kecil',
+    subtitle:
+      'Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.',
+    ctaLabel: 'Belanja Sekarang',
+    ctaHref: '/shop',
+    image: '/images/hero/slide-1.jpg',
+    imageAlt: 'Koleksi buku dan mainan pilihan BabyShalls Malang',
   },
   {
     id: 2,
-    badge: 'HAMPERS KURASI • 02 / 03',
+    badge: 'HAMPERS KURASI • 02 / 04',
     label: '02 Gift Hampers Baru',
     title: 'Gift Hampers Lahiran & Ulang Tahun',
-    subtitle: 'Kemasan kotak kain cantik, pita satin, dan kartu ucapan tulis tangan gratis. Siap kirim ke seluruh Indonesia.',
-    ctaLabel: 'Pilih Hampers →',
-    ctaHref: '/catalog?category=Gift+Hampers',
-    image: '/images/hampers-gift.jpg',
+    subtitle:
+      'Kemasan kotak kain cantik, pita satin, dan kartu ucapan tulis tangan gratis. Siap kirim ke seluruh Indonesia.',
+    ctaLabel: 'Pilih Hampers',
+    ctaHref: '/hampers',
+    image: '/images/hero/slide-2.jpg',
     imageAlt: 'Koleksi Gift Hampers BabyShalls Malang',
   },
   {
     id: 3,
-    badge: 'WORKSHOP MALANG • 03 / 03',
+    badge: 'WORKSHOP MALANG • 03 / 04',
     label: '03 Workshop Akhir Pekan',
     title: 'Little Explorers: Nature Craft & Storytime',
-    subtitle: 'Sesi bermain & bercerita akhir pekan di Jl. Cempaka No. 12, Malang. Kuota terbatas 12 anak per sesi.',
-    ctaLabel: 'Beli Tiket Event →',
+    subtitle:
+      'Sesi bermain & bercerita akhir pekan di Citraland Puncak Tidar Blok HH-26, Malang. Kuota terbatas per sesi.',
+    ctaLabel: 'Lihat Event',
     ctaHref: '/events',
-    image: '/images/event-craft.jpg',
+    image: '/images/hero/slide-3.jpg',
     imageAlt: 'Workshop seni dan cerita anak di BabyShalls Malang',
+  },
+  {
+    id: 4,
+    badge: 'PRELOVED STERIL UV • 04 / 04',
+    label: '04 Preloved Berkualitas',
+    title: 'Buku Preloved Bersih & Steril UV-C',
+    subtitle:
+      'Kurasi buku anak impor kondisi 90–98% seperti baru, sudah disterilisasi sinar UV-C dan siap menemani waktu baca.',
+    ctaLabel: 'Lihat Preloved',
+    ctaHref: '/preloved',
+    image: '/images/hero/slide-4.jpg',
+    imageAlt: 'Koleksi buku preloved steril UV-C di BabyShalls Malang',
   },
 ];
 
@@ -56,18 +71,18 @@ export const DEFAULT_CMS_VALUES: Record<string, string> = {
   announcement_text_2: 'Pengiriman Terverifikasi Kota Malang (KiriminAja)',
   announcement_wa_url: 'https://wa.me/6281234567890',
   announcement_wa_label: 'WhatsApp CS',
-  hampers_title: 'Gift Hampers',
+  hampers_title: 'HAMPERS UNTUK SETIAP MOMEN',
   hampers_description:
-    'Kado kelahiran, ulang tahun, atau acara spesial anak — dirangkai rapi dengan pita katun dan kartu ucapan personal.',
+    'Paket buku dan mainan siap kado, dipilih sesuai usia si kecil. Gratis bungkus dan kartu ucapan.',
   hampers_image: '/images/hampers-gift.jpg',
-  about_banner_title: 'Welcome to BabyShalls!',
+  about_banner_title: 'Toko Buku Anak & Mainan Edukasi di Malang Sejak 2020',
   about_intro_1:
-    'BabyShalls adalah butik kurasi buku anak berbahasa Inggris & Indonesia serta mainan kayu edukasi Montessori yang berlokasi di jantung Kota Malang. Kami menyediakan koleksi baru, preloved higienis bersanitasi UV, hingga paket hampers untuk segala usia anak.',
+    'BabyShalls bermula dari kecintaan seorang ibu di Malang yang kesulitan menemukan buku anak berkualitas, ramah sensori, dan kurasi bermakna untuk tumbuh kembang buah hatinya. Didirikan pada tahun 2020 di Citraland Puncak Tidar, BabyShalls hadir sebagai butik buku independen dan ruang belajar hangat bagi keluarga.',
   about_intro_2:
-    'Sedang mencari kado kelahiran atau ulang tahun? Ingin menambah koleksi buku cerita keluarga? Mampir ke butik kami atau jelajahi katalog online untuk menemukan harta karun bacaan si kecil.',
+    'BabyShalls adalah butik toko buku anak dan mainan edukatif di Malang. Didirikan dengan misi menghadirkan buku cerita bergambar berkualitas internasional dan mainan sensorik ramah anak yang dapat dinikmati bersama keluarga tercinta.',
   about_block_1_title: 'The Shop:',
   about_block_1_p1:
-    'Berada di kawasan rindang Jl. Cempaka No. 12, Kota Malang, butik BabyShalls dirancang hangat, terang, dan ramah anak. Sementara orang tua memilih buku dan kado, anak-anak bebas menggambar, bermain balok kayu, dan membaca di pojok baca kami.',
+    'Berada di kawasan Citraland Puncak Tidar Blok HH-26, Kota Malang, butik BabyShalls dirancang hangat, terang, dan ramah anak. Sementara orang tua memilih buku dan kado, anak-anak bebas menggambar, bermain balok kayu, dan membaca di pojok baca kami.',
   about_block_1_p2: 'Keluarga juga dapat duduk santai bersama mencoba board book sebelum dibawa pulang.',
   about_block_1_image: '/images/store-boutique.jpg',
   about_block_2_title: 'The Books & Toys:',
@@ -80,12 +95,12 @@ export const DEFAULT_CMS_VALUES: Record<string, string> = {
   about_block_3_p1:
     'BabyShalls lebih dari sekadar toko buku. Kami rutin mengadakan sesi storytime akhir pekan, workshop prakarya alam, dan diskusi read-aloud bersama orang tua di Malang.',
   about_block_3_p2: 'Ingin berkolaborasi atau mengadakan kunjungan sekolah? Hubungi kami melalui',
-  about_block_3_email: 'hello@babyshalls.id',
+  about_block_3_email: 'halo@babyshalls.com',
   about_block_3_image: '/images/event-craft.jpg',
   about_visit_title: 'Visit us at BabyShalls Malang',
-  about_visit_address: 'Jl. Cempaka No. 12, Lowokwaru, Kota Malang, Jawa Timur 65141',
-  about_hours_weekday: 'Senin – Jumat: 09:00 – 17:00 WIB',
-  about_hours_weekend: 'Sabtu – Minggu: 09:00 – 18:00 WIB',
+  about_visit_address: 'Citraland Puncak Tidar Blok HH-26, Kota Malang, Jawa Timur 65146',
+  about_hours_weekday: 'Setiap hari 10.00 – 17.00 WIB',
+  about_hours_weekend: 'Setiap hari 10.00 – 17.00 WIB',
 };
 
 export function usePublicCms() {

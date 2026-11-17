@@ -62,11 +62,11 @@ export default function LoginPage() {
 
     try {
       if (authMode === 'masuk') {
-        await loginMutation.mutateAsync({
+        const res = await loginMutation.mutateAsync({
           email: authEmail.trim(),
           password: authPassword,
         });
-        router.push('/account');
+        router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
         return;
       }
 
@@ -85,11 +85,11 @@ export default function LoginPage() {
       }
 
       if (authMode === 'otp') {
-        await verifyOtpMutation.mutateAsync({
+        const res = await verifyOtpMutation.mutateAsync({
           email: authEmail.trim(),
           otp: otpCode.trim(),
         });
-        router.push('/account');
+        router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
         return;
       }
 
@@ -131,35 +131,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 font-sans">
-      {/* Top Floating Back Link */}
-      <div className="w-full max-w-4xl mb-4 flex items-center justify-between">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors group"
-        >
-          <span className="text-[#B05A26] transition-transform group-hover:-translate-x-1">&larr;</span>
-          <span>Kembali ke Butik</span>
-        </Link>
+    <div className="min-h-screen w-full bg-white flex flex-col md:flex-row font-sans">
+      {/* Left Split Panel — Full Height Warm Peach */}
+      <div className="w-full md:w-1/2 bg-[#FBE6D8] md:min-h-screen p-6 sm:p-10 lg:p-14 flex flex-col justify-between relative overflow-hidden border-b md:border-b-0 md:border-r border-[#E6D2C0]">
+        {/* Top Back Link */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors group"
+          >
+            <span className="text-[#B05A26] transition-transform group-hover:-translate-x-1">&larr;</span>
+            <span>Kembali ke Butik</span>
+          </Link>
 
-        <Link href="/" className="inline-block relative">
-          <div className="relative w-28 h-9">
-            <Image
-              src="/BabyShallsLogo 1.PNG"
-              alt="Baby Shall's"
-              fill
-              sizes="112px"
-              className="object-contain"
-            />
-          </div>
-        </Link>
-      </div>
+          <Link href="/" className="inline-block relative md:hidden">
+            <div className="relative w-28 h-9">
+              <Image
+                src="/BabyShallsLogo 1.PNG"
+                alt="Baby Shall's"
+                fill
+                sizes="112px"
+                className="object-contain"
+              />
+            </div>
+          </Link>
+        </div>
 
-      {/* Card Container (Figma Node #169:6204) */}
-      <div className="w-full max-w-4xl bg-white border border-[#E6D2C0] rounded-[6px] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[560px]">
-        {/* Left Panel */}
-        <div className="w-full md:w-5/12 bg-[#FBE6D8] p-8 sm:p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
-          <div className="relative w-48 h-48 sm:w-56 sm:h-56 my-2 shrink-0">
+        {/* Center Mascot & Welcome Copy */}
+        <div className="flex flex-col items-center justify-center text-center my-8 md:my-0">
+          <div className="relative w-48 h-48 sm:w-60 sm:h-60 lg:w-64 lg:h-64 mb-4 shrink-0">
             <Image
               src="/images/mascot/maskot-melambai.png"
               alt="Maskot BabyShalls"
@@ -169,17 +169,39 @@ export default function LoginPage() {
             />
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-[#4A2A1C] mb-2 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#4A2A1C] mb-3 tracking-tight">
             Halo, selamat datang!
           </h2>
 
-          <p className="text-xs text-[#7A5644] max-w-xs leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#7A5644] max-w-sm leading-relaxed">
             Masuk untuk melacak pesanan buku anak, menyimpan wishlist kurasi, dan mengakses tiket QR workshop si kecil.
           </p>
         </div>
 
-        {/* Right Panel */}
-        <div className="w-full md:w-7/12 p-6 sm:p-10 flex flex-col justify-center">
+        {/* Subtle Bottom Spacer / Brand Note */}
+        <div className="hidden md:block text-center text-[11px] text-[#7A5644]/80">
+          BabyShalls &bull; Butik Buku Anak &amp; Mainan Edukasi Malang
+        </div>
+      </div>
+
+      {/* Right Split Panel — Full Height Form */}
+      <div className="w-full md:w-1/2 bg-white md:min-h-screen p-6 sm:p-10 lg:p-16 flex flex-col justify-center items-center">
+        <div className="w-full max-w-md">
+          {/* Desktop Logo */}
+          <div className="hidden md:flex justify-center mb-6">
+            <Link href="/" className="inline-block relative">
+              <div className="relative w-32 h-10">
+                <Image
+                  src="/BabyShallsLogo 1.PNG"
+                  alt="Baby Shall's"
+                  fill
+                  sizes="128px"
+                  className="object-contain"
+                />
+              </div>
+            </Link>
+          </div>
+
           {/* Tab Selector (Masuk / Daftar) */}
           {(authMode === 'masuk' || authMode === 'daftar') && (
             <div className="flex bg-[#F2E4D6] p-1 rounded-[4px] mb-6">
@@ -418,10 +440,10 @@ export default function LoginPage() {
                       return;
                     }
                     try {
-                      await googleAuthMutation.mutateAsync({
+                      const res = await googleAuthMutation.mutateAsync({
                         credential: credentialResponse.credential,
                       });
-                      router.push('/account');
+                      router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
                     } catch (err: unknown) {
                       setErrorMsg(extractApiError(err, 'Gagal login dengan Google.'));
                     }

@@ -82,3 +82,22 @@ export async function delCache(key: string): Promise<void> {
     // Fail silently
   }
 }
+
+/**
+ * Safe Delete Cache By Pattern: Invalidates matching keys using SCAN without blocking Redis.
+ */
+export async function delCacheByPattern(pattern: string): Promise<void> {
+  if (!isRedisAvailable) return;
+  try {
+    let cursor = '0';
+    do {
+      const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+      cursor = nextCursor;
+      if (keys.length > 0) {
+        await redis.del(...keys);
+      }
+    } while (cursor !== '0');
+  } catch {
+    // Fail silently to preserve graceful degradation
+  }
+}

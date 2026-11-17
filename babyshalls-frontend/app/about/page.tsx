@@ -36,7 +36,10 @@ export default function AboutPage() {
       <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
 
       {/* Hero Section with Mascot & Story (Figma Pastel Terracotta & Cream) */}
-      <section className="bg-gradient-to-b from-[#FFF6EA] via-[#FFFBF7] to-white py-12 sm:py-16 border-b border-[#F2E4D6] relative overflow-hidden">
+      <section
+        className="py-12 sm:py-16 border-b border-[#F2E4D6] relative overflow-hidden"
+        style={{ backgroundColor: about.heroBgColor || '#FFF6EA' }}
+      >
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 sm:gap-12">
             
@@ -74,7 +77,7 @@ export default function AboutPage() {
             {/* Mascot Illustration Hero */}
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 shrink-0">
               <Image
-                src="/images/mascot/maskot-peluk-hati.png"
+                src={about.heroImage || '/images/mascot/maskot-peluk-hati.png'}
                 alt="Maskot BabyShalls Penuh Kasih"
                 fill
                 priority

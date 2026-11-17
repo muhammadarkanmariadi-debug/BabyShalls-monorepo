@@ -51,14 +51,14 @@ export function HampersView() {
       title: 'Hardbox Pastel Keepsake',
       desc: 'Kotak kokoh warna pastel sage/peach dengan cetak logo emas, ideal sebagai wadah kenangan bayi.',
       price: 85000,
-      image: '/images/products/p-6-buku-kain.png',
+      image: '/images/hampers-gift.jpg',
     },
     {
       id: 'rotan',
       title: 'Keranjang Anyaman Rotan',
       desc: 'Keranjang rotan handmade pengrajin lokal dengan kain pelapis linen lembut, multifungsi di kamar bayi.',
       price: 145000,
-      image: '/images/products/p-7-rainbow-stacker.png',
+      image: '/images/products/shopee-pastel-pegdol-set.jpg',
     },
   ];
 

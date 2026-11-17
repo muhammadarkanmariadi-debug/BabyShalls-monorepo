@@ -1,7 +1,8 @@
 import { Router, Response } from 'express';
-import { AgeGroup, OrderStatus } from '@prisma/client';
+import { AgeGroup, OrderStatus, Prisma, ProductCondition } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma.js';
+import { delCacheByPattern } from '../lib/redis.js';
 import { sendOrderReceiptEmail } from '../lib/mailer.js';
 import { shippingService } from '../modules/shipping/shipping.service.js';
 import { runEmailBroadcast, triggerEventBroadcastAsync } from '../lib/broadcast.js';
@@ -16,10 +17,24 @@ const updateOrderStatusSchema = z.object({
   waybillNumber: z.string().trim().max(100, 'Nomor resi maksimal 100 karakter.').optional().nullable(),
 });
 
+const productVariantSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  price: z.number().nonnegative(),
+  stock: z.number().int().nonnegative(),
+  weight: z.number().int().positive(),
+});
+
+const productDimensionsSchema = z.object({
+  lengthCm: z.number().nonnegative().optional().nullable(),
+  widthCm: z.number().nonnegative().optional().nullable(),
+  heightCm: z.number().nonnegative().optional().nullable(),
+});
+
 const createProductSchema = z.object({
   name: z.string().trim().min(2, 'Nama produk minimal 2 karakter.').max(150, 'Nama produk maksimal 150 karakter.'),
   slug: z.string().trim().min(2).max(150).optional(),
-  description: z.string().trim().min(2, 'Deskripsi minimal 2 karakter.').max(2000).default('Buku/mainan kurasi BabyShalls Malang.'),
+  sku: z.string().trim().max(64).optional().nullable(),
+  description: z.string().trim().min(2, 'Deskripsi minimal 2 karakter.').max(4000).default('Buku/mainan kurasi BabyShalls Malang.'),
   price: z
     .number()
     .positive('Harga produk harus lebih dari 0.')
@@ -31,6 +46,9 @@ const createProductSchema = z.object({
     .optional()
     .nullable(),
   authorOrBrand: z.string().trim().max(100).optional().nullable(),
+  condition: z.nativeEnum(ProductCondition).optional().default(ProductCondition.NEW),
+  prelovedGrade: z.string().trim().max(40).optional().nullable(),
+  conditionNote: z.string().trim().max(1000).optional().nullable(),
   stock: z
     .number()
     .int('Stok harus berupa bilangan bulat.')
@@ -43,6 +61,11 @@ const createProductSchema = z.object({
     .positive('Berat harus lebih dari 0 gram.')
     .max(1_000_000, 'Berat maksimal 1.000.000 gram.')
     .default(300),
+  dimensions: productDimensionsSchema.optional().nullable(),
+  variants: z.array(productVariantSchema).optional().nullable(),
+  publisher: z.string().trim().max(120).optional().nullable(),
+  isbn: z.string().trim().max(40).optional().nullable(),
+  pages: z.number().int().positive().optional().nullable(),
   ageGroup: z.nativeEnum(AgeGroup).default(AgeGroup.ALL_AGES),
   category: z.string().trim().min(2, 'Kategori minimal 2 karakter.').max(60).default('Books'),
   subCategory: z.string().trim().max(60).optional().nullable(),
@@ -67,6 +90,31 @@ function toSlug(input: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+}
+
+function formatAdminProduct(p: {
+  price: Prisma.Decimal;
+  originalPrice: Prisma.Decimal | null;
+  rating: Prisma.Decimal;
+  images: Prisma.JsonValue;
+  galleryImages?: Array<{ id: string; url: string; caption: string | null; sortOrder: number }>;
+  [key: string]: unknown;
+}) {
+  const baseImages = Array.isArray(p.images)
+    ? p.images.filter((img): img is string => typeof img === 'string' && img.trim().length > 0)
+    : [];
+  const galleryUrls = Array.isArray(p.galleryImages)
+    ? p.galleryImages.map((g) => g.url).filter((url) => typeof url === 'string' && url.trim().length > 0)
+    : [];
+  const mergedImages = baseImages.length > 0 ? baseImages : galleryUrls;
+
+  return {
+    ...p,
+    images: mergedImages,
+    price: Number(p.price),
+    originalPrice: p.originalPrice !== null ? Number(p.originalPrice) : null,
+    rating: Number(p.rating),
+  };
 }
 
 /**
@@ -97,7 +145,7 @@ router.get('/stats', async (_req: AuthRequest, res: Response) => {
       },
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
   }
 });
 
@@ -125,7 +173,7 @@ router.get('/orders', async (_req: AuthRequest, res: Response) => {
       })),
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
   }
 });
 
@@ -169,10 +217,28 @@ router.patch('/orders/:id/status', async (req: AuthRequest, res: Response) => {
   }
 
   try {
+    const existing = await prisma.order.findUnique({
+      where: { id },
+      select: { trackingHistory: true },
+    });
+    const currentHistory = Array.isArray(existing?.trackingHistory)
+      ? (existing.trackingHistory as Array<Record<string, unknown>>)
+      : [];
+    const nextHistory = [
+      ...currentHistory,
+      {
+        status: parsed.data.status,
+        ...(parsed.data.waybillNumber ? { waybillNumber: parsed.data.waybillNumber } : {}),
+        updatedAt: new Date().toISOString(),
+        source: 'ADMIN',
+      },
+    ];
+
     const updated = await prisma.order.update({
       where: { id },
       data: {
         status: parsed.data.status,
+        trackingHistory: nextHistory as Prisma.InputJsonValue,
         ...(parsed.data.waybillNumber !== undefined ? { waybillNumber: parsed.data.waybillNumber } : {}),
       },
       include: {
@@ -211,7 +277,7 @@ router.patch('/orders/:id/status', async (req: AuthRequest, res: Response) => {
 
     return res.json({ success: true, data: updated });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memperbarui status pesanan.');
   }
 });
 
@@ -220,18 +286,35 @@ router.patch('/orders/:id/status', async (req: AuthRequest, res: Response) => {
  */
 router.get('/products', async (_req: AuthRequest, res: Response) => {
   try {
-    const products = await prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
+    const products = await prisma.product.findMany({
+      include: { galleryImages: { orderBy: { sortOrder: 'asc' } } },
+      orderBy: { createdAt: 'desc' },
+    });
     return res.json({
       success: true,
-      data: products.map((p) => ({
-        ...p,
-        price: Number(p.price),
-        originalPrice: p.originalPrice !== null ? Number(p.originalPrice) : null,
-        rating: Number(p.rating),
-      })),
+      data: products.map((p) => formatAdminProduct(p)),
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat daftar produk.');
+  }
+});
+
+/**
+ * GET /api/admin/products/:id
+ */
+router.get('/products/:id', async (req: AuthRequest, res: Response) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { galleryImages: { orderBy: { sortOrder: 'asc' } } },
+    });
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Produk tidak ditemukan.', code: 'NOT_FOUND' });
+    }
+    return res.json({ success: true, data: formatAdminProduct(product) });
+  } catch (err: unknown) {
+    return handleRouteError(res, err, 'Gagal memuat detail produk.');
   }
 });
 
@@ -247,15 +330,26 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
   const slug = parsed.data.slug || `${toSlug(parsed.data.name)}-${Date.now().toString().slice(-4)}`;
 
   try {
+    const { dimensions, variants, ...rest } = parsed.data;
     const created = await prisma.product.create({
       data: {
-        ...parsed.data,
+        ...rest,
         slug,
+        ...(dimensions !== undefined ? { dimensions: dimensions === null ? Prisma.JsonNull : (dimensions as Prisma.InputJsonValue) } : {}),
+        ...(variants !== undefined ? { variants: variants === null ? Prisma.JsonNull : (variants as Prisma.InputJsonValue) } : {}),
+        galleryImages: {
+          create: parsed.data.images.map((url, idx) => ({
+            url,
+            sortOrder: idx,
+          })),
+        },
       },
+      include: { galleryImages: { orderBy: { sortOrder: 'asc' } } },
     });
+    await delCacheByPattern('products:*');
     return res.status(201).json({
       success: true,
-      data: { ...created, price: Number(created.price) },
+      data: formatAdminProduct(created),
       message: `Produk ${created.name} berhasil ditambahkan.`,
     });
   } catch (err: unknown) {
@@ -274,17 +368,39 @@ router.patch('/products/:id', async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    const updated = await prisma.product.update({
-      where: { id },
-      data: parsed.data,
+    const { dimensions, variants, ...rest } = parsed.data;
+    const updated = await prisma.$transaction(async (tx) => {
+      if (parsed.data.images !== undefined) {
+        await tx.productImage.deleteMany({ where: { productId: id } });
+      }
+      return tx.product.update({
+        where: { id },
+        data: {
+          ...rest,
+          ...(dimensions !== undefined ? { dimensions: dimensions === null ? Prisma.JsonNull : (dimensions as Prisma.InputJsonValue) } : {}),
+          ...(variants !== undefined ? { variants: variants === null ? Prisma.JsonNull : (variants as Prisma.InputJsonValue) } : {}),
+          ...(parsed.data.images !== undefined
+            ? {
+                galleryImages: {
+                  create: parsed.data.images.map((url, idx) => ({
+                    url,
+                    sortOrder: idx,
+                  })),
+                },
+              }
+            : {}),
+        },
+        include: { galleryImages: { orderBy: { sortOrder: 'asc' } } },
+      });
     });
+    await delCacheByPattern('products:*');
     return res.json({
       success: true,
-      data: { ...updated, price: Number(updated.price) },
+      data: formatAdminProduct(updated),
       message: `Produk ${updated.name} berhasil diperbarui.`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memperbarui produk.');
   }
 });
 
@@ -295,9 +411,10 @@ router.delete('/products/:id', async (req: AuthRequest, res: Response) => {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   try {
     await prisma.product.delete({ where: { id } });
+    await delCacheByPattern('products:*');
     return res.json({ success: true, data: { id }, message: 'Produk berhasil dihapus.' });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal menghapus produk.');
   }
 });
 
@@ -309,7 +426,7 @@ router.get('/book-requests', async (_req: AuthRequest, res: Response) => {
     const list = await prisma.bookRequest.findMany({ orderBy: { createdAt: 'desc' } });
     return res.json({ success: true, data: list });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat daftar Book Request.');
   }
 });
 
@@ -333,7 +450,7 @@ router.patch('/book-requests/:id', async (req: AuthRequest, res: Response) => {
     });
     return res.json({ success: true, data: updated });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memperbarui Book Request.');
   }
 });
 
@@ -346,7 +463,7 @@ router.get('/cms', async (_req: AuthRequest, res: Response) => {
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
     return res.json({ success: true, data: map });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat konten CMS.');
   }
 });
 
@@ -372,7 +489,7 @@ router.put('/cms', async (req: AuthRequest, res: Response) => {
     );
     return res.json({ success: true, message: 'Konten halaman utama berhasil diperbarui.' });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal menyimpan konten CMS.');
   }
 });
 
@@ -424,7 +541,7 @@ router.post('/events', async (req: AuthRequest, res: Response) => {
       message: `Event "${created.title}" berhasil dibuat.`,
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat statistik admin.');
   }
 });
 
@@ -450,7 +567,7 @@ router.get('/broadcasts', async (_req: AuthRequest, res: Response) => {
     });
     return res.json({ success: true, data: logs });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memuat riwayat broadcast.');
   }
 });
 
@@ -490,7 +607,7 @@ router.post('/broadcast', async (req: AuthRequest, res: Response) => {
   try {
     const cleanHtml = sanitizeBroadcastHtml(parsed.data.messageBody);
 
-    const result = await runEmailBroadcast({
+    void runEmailBroadcast({
       type: parsed.data.type,
       subject: parsed.data.subject,
       badgeText: parsed.data.badgeText,
@@ -499,15 +616,16 @@ router.post('/broadcast', async (req: AuthRequest, res: Response) => {
       highlightCode: parsed.data.highlightCode || undefined,
       ctaLabel: parsed.data.ctaLabel,
       ctaUrl: parsed.data.ctaUrl,
+    }).catch((err) => {
+      console.warn('⚠️ Gagal menjalankan email broadcast:', err?.message || err);
     });
 
-    return res.json({
+    return res.status(202).json({
       success: true,
-      data: result,
-      message: `Broadcast diproses untuk ${result.recipientCount} pelanggan (${result.sentCount} terkirim).`,
+      message: 'Broadcast email sedang diproses di latar belakang.',
     });
   } catch (err: unknown) {
-    return handleRouteError(res, err, 'Gagal menambahkan produk.');
+    return handleRouteError(res, err, 'Gagal memicu email broadcast.');
   }
 });
 

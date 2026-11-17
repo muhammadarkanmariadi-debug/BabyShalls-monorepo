@@ -41,8 +41,8 @@ export const RequestAndVisitSection: React.FC = () => {
             {/* Gambar Maskot Menulis Surat (288x280) */}
             <div className="relative w-full sm:w-[288px] h-[220px] sm:h-auto shrink-0 bg-[#FFF6EA]">
               <Image
-                src="/images/products/maskot-menulis-surat.png"
-                alt="Maskot BabyShalls Menulis Surat"
+                src="/images/prod-storybook.jpg"
+                alt="Rak Buku Kurasi BabyShalls Malang"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 640px) 100vw, 288px"

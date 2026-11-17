@@ -6,7 +6,8 @@ import toast from 'react-hot-toast';
 import { AdminBookRequest, useAdminBookRequests, useUpdateBookRequest } from '../../hooks/useAdminDashboard';
 import { extractApiError } from '../../lib/axios';
 import { DataTableToolbar } from './DataTableToolbar';
-import { AdminModal } from './AdminModal';
+import { AdminDrawer } from './ui/AdminDrawer';
+import { CsvExportButton } from './ui/CsvExportButton';
 
 const STATUS_OPTIONS: { label: string; value: AdminBookRequest['status'] }[] = [
   { label: 'PENDING', value: 'PENDING' },
@@ -90,6 +91,12 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
           { label: 'Terbaru', value: 'newest' },
           { label: 'Terlama', value: 'oldest' },
         ]}
+        rightAction={
+          <CsvExportButton
+            endpoint="/admin/import-export/book-requests/export"
+            filename="babyshalls-book-requests.csv"
+          />
+        }
       />
 
       {isLoading ? (
@@ -138,12 +145,12 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
         </div>
       )}
 
-      <AdminModal
+      <AdminDrawer
         isOpen={Boolean(selected)}
         onClose={() => setSelected(null)}
-        title={`Detail Request: ${selected?.title || ''}`}
+        title={`Tinjau Request: ${selected?.title || ''}`}
         subtitle={`Pemohon: ${selected?.customerName || 'Pelanggan'} (${selected?.whatsappNumber || ''})`}
-        size="md"
+        width="md"
       >
         {selected && (
           <form onSubmit={handleSave} className="space-y-3.5 text-xs">
@@ -187,25 +194,35 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
                 className="w-full p-3 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
             </div>
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#EBDCCB]">
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="h-[40px] px-4 rounded-xl border border-[#EBDCCB] font-bold text-[#6B3F2A] cursor-pointer"
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E6D2C0]">
+              <a
+                href={`https://wa.me/${selected.whatsappNumber.replace(/[^0-9]/g, '')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="h-[40px] px-4 rounded-[4px] bg-[#E9F3E4] text-[#1E543B] font-semibold inline-flex items-center gap-1.5"
               >
-                Batal
-              </button>
-              <button
-                type="submit"
-                disabled={updateMutation.isPending}
-                className="h-[40px] px-5 rounded-xl bg-[#D9744A] text-white font-bold cursor-pointer"
-              >
-                {updateMutation.isPending ? 'Menyimpan...' : 'Simpan Update'}
-              </button>
+                <MessageCircle className="w-4 h-4" /> Balas via WhatsApp
+              </a>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelected(null)}
+                  className="h-[40px] px-4 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#7A5644] cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={updateMutation.isPending}
+                  className="h-[40px] px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold cursor-pointer"
+                >
+                  {updateMutation.isPending ? 'Menyimpan...' : 'Simpan Update'}
+                </button>
+              </div>
             </div>
           </form>
         )}
-      </AdminModal>
+      </AdminDrawer>
     </div>
   );
 }

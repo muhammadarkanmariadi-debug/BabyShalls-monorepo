@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { MessageCircle } from 'lucide-react';
+import { useCms } from '@/context/CmsContext';
 import { useStorefrontProducts } from '@/hooks/useProducts';
 import { MAIN_CATEGORIES, resolveProductTaxonomy } from '@/lib/catalog-categories';
 
@@ -21,7 +23,15 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
   onMouseLeave,
 }) => {
   const { products } = useStorefrontProducts();
+  const { cms } = useCms();
   const [showAllSubcategories, setShowAllSubcategories] = useState(false);
+
+  const waNumber = cms.store.whatsappNumber || '6281234567890';
+  const waCommunityUrl =
+    cms.store.whatsappCommunityUrl ||
+    `https://wa.me/${waNumber}?text=${encodeURIComponent(
+      'Halo BabyShalls, saya ingin bergabung ke grup komunitas katalog dan event.'
+    )}`;
 
   const ageGroups = [
     { label: 'Newborn (0–12 bln)', href: '/shop?age=0%E2%80%931+th' },
@@ -148,30 +158,30 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             </ul>
           </div>
 
-          {/* Column 4: Promo Menu */}
+          {/* Column 4: Join Grup Komunitas */}
           <div className="space-y-3.5 bg-[#FFF6EA] border border-[#E6D2C0] p-5 rounded-2xl flex flex-col justify-between">
-            <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#F2E4D6]">
-              <img
-                src="/images/products/produk-picture-book-hutan.png"
-                alt="Koleksi Pilihan Bulan Ini"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-white/95 text-[#4A2A1C]">
-                Curated
+            <div className="space-y-2.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#E9F3E4] text-[#1E543B] text-[10px] font-bold uppercase tracking-wider">
+                <MessageCircle className="w-3 h-3" /> Komunitas BabyShalls
               </span>
+              <h4 className="text-sm font-bold text-[#4A2A1C] leading-snug">
+                Join Grup Komunitas
+              </h4>
+              <p className="text-xs text-[#7A5644] leading-relaxed">
+                Dapatkan update buku kurasi terbaru, preloved steril UV, dan jadwal workshop anak di Malang lebih awal.
+              </p>
             </div>
 
-
-
-            <Link
-              href="/shop"
+            <a
+              href={waCommunityUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => handleLinkClick()}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#B05A26] hover:text-[#8E431A] transition-colors pt-1"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#1E543B] hover:bg-[#163F2C] text-white text-xs font-semibold transition-colors"
             >
-              <span>Lihat Koleksi</span>
-              <img src="/images/icons/icon-arrow-right.svg" alt="" className="w-3.5 h-3.5" />
-            </Link>
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>Gabung Grup WhatsApp</span>
+            </a>
           </div>
 
         </div>
