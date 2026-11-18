@@ -1,20 +1,14 @@
 {
-  "name": "babyshalls-monorepo",
-  "version": "1.0.0",
+  "name": "babyshalls-monolith",
+  "version": "2.0.0",
   "private": true,
-  "description": "BabyShalls E-Commerce Platform (Next.js 16 + Express API + Prisma + Redis)",
+  "description": "BabyShalls E-Commerce Monolith (Next.js 16 + Hono API + Prisma 7 + PostgreSQL + Redis)",
   "scripts": {
-    "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"magenta,cyan\" \"npm run dev --prefix babyshalls-frontend\" \"npm run dev --prefix babyshalls-backend\"",
-    "dev:frontend": "npm run dev --prefix babyshalls-frontend",
-    "dev:backend": "npm run dev --prefix babyshalls-backend",
-    "build": "npm run build --prefix babyshalls-backend && npm run build --prefix babyshalls-frontend",
-    "build:frontend": "npm run build --prefix babyshalls-frontend",
-    "build:backend": "npm run build --prefix babyshalls-backend",
-    "prisma:generate": "npm run prisma:generate --prefix babyshalls-backend",
-    "prisma:push": "npm run prisma:push --prefix babyshalls-backend"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
+    "dev": "npm run dev --prefix apps",
+    "build": "npm run build --prefix apps",
+    "start": "npm run start --prefix apps",
+    "prisma:generate": "npm run prisma:generate --prefix apps",
+    "prisma:push": "npm run prisma:push --prefix apps",
+    "prisma:seed": "npm run prisma:seed --prefix apps"
   }
 }
-

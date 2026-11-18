@@ -2,17 +2,32 @@ server {
     listen 80;
     server_name babyshalls.com www.babyshalls.com;
 
-    location /api/ {
-        proxy_pass http://127.0.0.1:5000/api/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 20M;
+
+    # 1. Uploaded product/event images stored locally on VPS (served directly by Nginx)
+    location /uploads/ {
+        alias /var/www/babyshalls/apps/public/uploads/;
+        expires 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;
     }
 
+    # 2. Static images & Next.js hashed assets
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        expires 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;
+    }
+
+    location /images/ {
+        alias /var/www/babyshalls/apps/public/images/;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+        access_log off;
+    }
+
+    # 3. Single Monolith Upstream (Next.js 16 + Hono /api/*)
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -20,6 +35,8 @@ server {
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-

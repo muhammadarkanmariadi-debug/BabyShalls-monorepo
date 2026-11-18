@@ -37,29 +37,26 @@ Setiap kali Anda menerima tugas atau instruksi baru, **baca dokumen acuan terkai
 1. **NO MULTI-TENANCY**: Dilarang memasukkan konsep `Tenant`, `TenantStaff`, `Store`, atau multi-seller marketplace. BabyShalls adalah toko tunggal milik sendiri.
 2. **NO HEAVY AI MICROSERVICE DI FASE 1**: Dilarang menambahkan FastAPI, LangChain, ChromaDB, Ollama, atau voice assistant. Layanan interaktif menggunakan WhatsApp direct CTA.
 3. **LOGISTICS ORIGIN TERKUNCI DI KOTA MALANG**: Perhitungan ongkir KiriminAja harus selalu menggunakan titik asal Kota Malang (Jl. Cempaka No. 12, Malang).
-4. **REDIS GRACEFUL FALLBACK**: Integrasi Redis di backend (`backend/src/lib/redis.ts`) wajib memiliki mode fallback jika Redis belum berjalan secara lokal.
+4. **REDIS GRACEFUL FALLBACK**: Integrasi Redis di monolith API (`apps/server/lib/redis.ts`) wajib memiliki mode fallback jika Redis belum berjalan secara lokal.
 5. **CLEAN MODULAR CODE**: Komponen UI tidak boleh monolitik (pecah ke `components/`), tipe TypeScript harus lengkap tanpa `any` yang tidak perlu.
 
 ---
 
 ## 4. Perintah Operasional Cepat (*CLI Commands*)
 
-Semua perintah dapat dijalankan langsung dari root direktori proyek:
+Arsitektur BabyShalls berjalan sebagai **Monolith** di `apps/` (Next.js 16 Storefront + Hono REST API `/api/*` + Prisma 7 PostgreSQL + Redis). Semua perintah dapat dijalankan langsung dari root direktori proyek:
 ```bash
-# Menjalankan Frontend (Next.js :3000) dan Backend (Express API :5000) bersamaan:
+# Menjalankan Monolith (Storefront & API di http://localhost:3000):
 npm run dev
 # Atau di Windows PowerShell / CMD:
 .\dev.bat
 
-# Menjalankan satuan:
-npm run dev:frontend   # Next.js 16 Storefront
-npm run dev:backend    # Express.js REST API
-
 # Build & Validasi TypeScript:
-npm run build          # Memverifikasi backend dan frontend dengan 0 error
+npm run build          # Memverifikasi monolith dengan 0 error
 
-# Database Prisma:
+# Database Prisma 7 (prisma.config.ts):
 npm run prisma:generate
 npm run prisma:push
+npm run prisma:seed
 ```
 

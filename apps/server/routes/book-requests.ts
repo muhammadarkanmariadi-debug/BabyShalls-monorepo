@@ -1,0 +1,76 @@
+import { Hono } from 'hono';
+import { z } from 'zod';
+import { prisma } from '../lib/prisma';
+import { verifyTurnstileToken } from '@/src/lib/turnstile';
+
+const bookRequestsRouter = new Hono();
+
+const createBookRequestSchema = z.object({
+  title: z.string().trim().min(2, 'Judul buku minimal 2 karakter.').max(200),
+  authorPublisher: z.string().trim().max(150).optional().nullable(),
+  customerName: z.string().trim().min(2, 'Nama lengkap minimal 2 karakter.').max(100).optional().nullable(),
+  email: z
+    .union([z.string().trim().email('Format email tidak valid.'), z.literal(''), z.null(), z.undefined()])
+    .transform((v) => (v ? v : null)),
+  whatsappNumber: z.string().trim().min(8, 'Nomor WhatsApp tidak valid.').max(20),
+  notes: z.string().trim().max(1000).optional().nullable(),
+  referenceImageUrl: z
+    .union([z.string().trim().url('URL gambar referensi tidak valid.'), z.literal(''), z.null(), z.undefined()])
+    .transform((v) => (v ? v : null)),
+  turnstileToken: z.string().optional(),
+});
+
+bookRequestsRouter.post('/', async (c) => {
+  try {
+    const body = await c.req.json();
+    const parsed = createBookRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json(
+        {
+          success: false,
+          error: parsed.error.issues[0]?.message || 'Data permintaan buku tidak valid.',
+          code: 'VALIDATION_ERROR',
+        },
+        400
+      );
+    }
+
+    const remoteIp = c.req.header('cf-connecting-ip') || undefined;
+    const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken, remoteIp);
+    if (!turnstile.success) {
+      return c.json({ success: false, error: turnstile.error, code: 'TURNSTILE_FAILED' }, 403);
+    }
+
+    const created = await prisma.bookRequest.create({
+      data: {
+        title: parsed.data.title,
+        authorPublisher: parsed.data.authorPublisher ?? null,
+        customerName: parsed.data.customerName ?? null,
+        email: parsed.data.email ?? null,
+        whatsappNumber: parsed.data.whatsappNumber,
+        notes: parsed.data.notes ?? null,
+        referenceImageUrl: parsed.data.referenceImageUrl ?? null,
+        status: 'PENDING',
+      },
+    });
+
+    return c.json(
+      {
+        success: true,
+        data: {
+          requestId: created.id,
+          title: created.title,
+          status: created.status,
+        },
+        message: `Permintaan buku "${created.title}" telah diterima tim kurator BabyShalls Malang.`,
+      },
+      201
+    );
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal menyimpan permintaan buku.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
+export default bookRequestsRouter;
+

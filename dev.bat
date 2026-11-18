@@ -1,9 +1,7 @@
 @echo off
 echo ========================================================
-echo   Starting BabyShalls E-Commerce (Frontend + Backend)
+echo   Starting BabyShalls E-Commerce Monolith
 echo ========================================================
-echo   Frontend : http://localhost:3000 (Next.js 16)
-echo   Backend  : http://localhost:5000 (Express API)
+echo   App & API : http://localhost:3000 (Next.js 16 + Hono)
 echo ========================================================
 npm run dev
-
