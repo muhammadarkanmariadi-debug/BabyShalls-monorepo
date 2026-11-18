@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -31,6 +31,7 @@ import { useValidateCoupon } from '@/hooks/useCoupons';
 import { useAccountProfile } from '@/hooks/useAccount';
 import { openMidtransSnap } from '@/lib/midtrans-snap';
 import { USER_TOKEN_STORAGE_KEY } from '@/lib/axios';
+import { generateIdempotencyKey } from '@/lib/idempotency';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -46,13 +47,20 @@ export default function CheckoutPage() {
   } = useCart();
 
   const [hasUserToken, setHasUserToken] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   useEffect(() => {
     try {
-      setHasUserToken(Boolean(window.localStorage.getItem(USER_TOKEN_STORAGE_KEY)));
+      const token = window.localStorage.getItem(USER_TOKEN_STORAGE_KEY);
+      if (!token) {
+        router.replace('/login?redirect=/checkout');
+        return;
+      }
+      setHasUserToken(true);
+      setIsAuthChecked(true);
     } catch {
-      setHasUserToken(false);
+      router.replace('/login?redirect=/checkout');
     }
-  }, []);
+  }, [router]);
 
   const { data: accountProfile } = useAccountProfile(hasUserToken);
   const createOrderMutation = useCreateOrder();
@@ -126,7 +134,6 @@ export default function CheckoutPage() {
   const [couponStatusMsg, setCouponStatusMsg] = useState<string>('');
   const [couponErrorMsg, setCouponErrorMsg] = useState<string>('');
 
-  const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bca' | 'mandiri' | 'cc'>('qris');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -192,8 +199,11 @@ export default function CheckoutPage() {
     }
   };
 
+  const orderIdemKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+
   const handlePayOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthChecked || isSubmitting || createOrderMutation.isPending) return;
     setErrorMsg('');
 
     if (items.length === 0) {
@@ -218,12 +228,7 @@ export default function CheckoutPage() {
           ? 'Butik BabyShalls Citraland Puncak Tidar Blok HH-26 Malang'
           : `${addressLine.trim()}, ${city.trim()} ${postalCode.trim()}`.trim();
 
-      const idempotencyKey =
-        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-          ? `order-${crypto.randomUUID()}`
-          : `order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-      const created = await createOrderMutation.mutateAsync({
+      const orderPayload = {
         items: items.map((i) => ({
           productId: i.product.id,
           title: i.product.title,
@@ -242,8 +247,18 @@ export default function CheckoutPage() {
         courierService: currentCourier.courierService,
         shippingCost: shippingFee,
         couponCode: appliedCouponCode,
+      };
+      const fingerprint = JSON.stringify(orderPayload);
+      if (!orderIdemKeyRef.current || orderIdemKeyRef.current.fingerprint !== fingerprint) {
+        orderIdemKeyRef.current = { fingerprint, key: generateIdempotencyKey('order') };
+      }
+      const idempotencyKey = orderIdemKeyRef.current.key;
+
+      const created = await createOrderMutation.mutateAsync({
+        ...orderPayload,
         idempotencyKey,
       });
+      orderIdemKeyRef.current = null;
 
       const snapshotOrder = {
         orderId: created.orderNumber,
@@ -312,6 +327,17 @@ export default function CheckoutPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (!isAuthChecked) {
+    return (
+      <div className="min-h-screen bg-[#FFFDF9] flex items-center justify-center font-sans">
+        <div className="flex items-center gap-2 text-xs text-[#7A5644]">
+          <Loader2 className="w-4 h-4 animate-spin text-[#B05A26]" />
+          <span>Memeriksa sesi akun...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FFFDF9] flex flex-col font-sans">
@@ -671,127 +697,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* 4. Metode Pembayaran (Figma #167:4747) */}
-              <div className="bg-white p-6 sm:p-7 border border-[#F2E4D6] rounded-[2px]">
-                <h2 className="text-lg font-medium text-[#4A2A1C] flex items-center gap-2 mb-3">
-                  <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
-                    4
-                  </span>
-                  <span>Metode Pembayaran</span>
-                </h2>
-
-                <p className="text-xs text-[#7A5644] mb-4">
-                  Pembayaran diproses secara instan & aman dengan konfirmasi otomatis via <strong>Midtrans Payment Gateway</strong>.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                  {/* QRIS */}
-                  <label
-                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'qris'
-                        ? 'border-[#B05A26] bg-[#FFFBF7]'
-                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment_choice"
-                      checked={paymentMethod === 'qris'}
-                      onChange={() => setPaymentMethod('qris')}
-                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
-                    />
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-[#4A2A1C] block">
-                        QRIS Instan
-                      </span>
-                      <span className="text-[11px] text-[#7A5644]">
-                        BCA, GoPay, ShopeePay, OVO
-                      </span>
-                    </div>
-                  </label>
-
-                  {/* BCA VA */}
-                  <label
-                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'bca'
-                        ? 'border-[#B05A26] bg-[#FFFBF7]'
-                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment_choice"
-                      checked={paymentMethod === 'bca'}
-                      onChange={() => setPaymentMethod('bca')}
-                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
-                    />
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-[#4A2A1C] block">
-                        BCA Virtual Account
-                      </span>
-                      <span className="text-[11px] text-[#7A5644]">
-                        Verifikasi otomatis 24 jam
-                      </span>
-                    </div>
-                  </label>
-
-                  {/* Mandiri VA */}
-                  <label
-                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'mandiri'
-                        ? 'border-[#B05A26] bg-[#FFFBF7]'
-                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment_choice"
-                      checked={paymentMethod === 'mandiri'}
-                      onChange={() => setPaymentMethod('mandiri')}
-                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
-                    />
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-[#4A2A1C] block">
-                        Mandiri Virtual Account
-                      </span>
-                      <span className="text-[11px] text-[#7A5644]">
-                        Konfirmasi instan
-                      </span>
-                    </div>
-                  </label>
-
-                  {/* Kartu Kredit */}
-                  <label
-                    className={`p-3 border rounded-[2px] flex items-center gap-3 cursor-pointer transition-all ${
-                      paymentMethod === 'cc'
-                        ? 'border-[#B05A26] bg-[#FFFBF7]'
-                        : 'border-[#E6D2C0] hover:border-[#B05A26]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment_choice"
-                      checked={paymentMethod === 'cc'}
-                      onChange={() => setPaymentMethod('cc')}
-                      className="w-4 h-4 text-[#B05A26] border-[#C9B3A5] focus:ring-[#B05A26]"
-                    />
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-[#4A2A1C] block">
-                        Kartu Kredit / Debit
-                      </span>
-                      <span className="text-[11px] text-[#7A5644]">
-                        Visa, Mastercard, JCB
-                      </span>
-                    </div>
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs text-[#2A6E37] bg-[#DDF1E5] p-3 rounded-[2px]">
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span>Transaksi dienkripsi 256-bit SSL dan diproses langsung oleh payment gateway terverifikasi Bank Indonesia.</span>
-                </div>
-              </div>
-
             </div>
 
             {/* Right Column: Ringkasan Pesanan */}
@@ -814,7 +719,7 @@ export default function CheckoutPage() {
               appliedCouponCode={appliedCouponCode}
               isGift={isGift}
               calculatedGrandTotal={calculatedGrandTotal}
-              isSubmitting={isSubmitting}
+              isSubmitting={isSubmitting || createOrderMutation.isPending}
               onPayOrder={handlePayOrder}
             />
 

@@ -86,11 +86,12 @@ export function usePublicEvents() {
 }
 
 export function useRegisterEvent() {
-  return useMutation<RegisterEventResult, unknown, RegisterEventPayload>({
-    mutationFn: async (payload) => {
+  return useMutation<RegisterEventResult, unknown, RegisterEventPayload & { idempotencyKey?: string }>({
+    mutationFn: async ({ idempotencyKey, ...payload }) => {
       const response = await apiClient.post<{ success: boolean; data: RegisterEventResult }>(
         '/events/register',
-        payload
+        payload,
+        idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : undefined
       );
       return response.data.data;
     },

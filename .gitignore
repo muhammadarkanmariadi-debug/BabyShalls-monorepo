@@ -12,27 +12,29 @@ node_modules/
 .next/
 out/
 build/
-frontend/.next/
-frontend/out/
-frontend/build/
-frontend/next-env.d.ts
+apps/.next/
+apps/out/
+apps/build/
+apps/next-env.d.ts
 *.tsbuildinfo
 
-# Backend build output
-backend/dist/
+# Prisma generated client
+apps/server/generated/
+
+# Uploaded runtime media (VPS local storage)
+apps/public/uploads/*
+!apps/public/uploads/.gitkeep
 
 # Test coverage
 coverage/
 
 # Environment variables
 .env
-.env*.local
-.env.production
-.env.staging
-frontend/.env
-frontend/.env.local
-backend/.env
-backend/.env.local
+.env*
+!.env.example
+apps/.env
+apps/.env*
+!apps/.env.example
 
 # Logs
 logs/
@@ -42,9 +44,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Database & Persistent Volumes
-postgres_data/
-redis_data/
+# Graphify temporary sidecars
+graphify-out/.graphify_*
 
 # OS and Editor artifacts
 .DS_Store
@@ -59,4 +60,3 @@ Thumbs.db
 
 # Personal Developer Sprint Playbook (Local Only)
 docs/DEV1_ARKAN_SPRINT_PLAYBOOK.md
-

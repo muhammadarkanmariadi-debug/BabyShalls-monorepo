@@ -70,11 +70,12 @@ export function useCreateOrder() {
 }
 
 export function useCreateSnapToken() {
-  return useMutation<CreateSnapTokenResult, unknown, CreateSnapTokenPayload>({
-    mutationFn: async (payload) => {
+  return useMutation<CreateSnapTokenResult, unknown, CreateSnapTokenPayload & { idempotencyKey?: string }>({
+    mutationFn: async ({ idempotencyKey, ...payload }) => {
       const response = await apiClient.post<{ success: boolean; data: CreateSnapTokenResult }>(
         '/orders/create-snap-token',
-        payload
+        payload,
+        idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : undefined
       );
       return response.data.data;
     },

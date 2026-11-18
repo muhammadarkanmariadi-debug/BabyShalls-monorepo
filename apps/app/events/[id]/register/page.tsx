@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { getEventById } from '@/data/eventsData';
+import { useRegisterEvent } from '@/hooks/useEvents';
+import { generateIdempotencyKey } from '@/lib/idempotency';
 
 interface ChildData {
   id: number;
@@ -71,11 +73,41 @@ export default function EventRegistrationPage() {
 
   const totalPrice = childrenList.length * eventData.price;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const registerEventMutation = useRegisterEvent();
+  const eventIdemKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting || registerEventMutation.isPending) return;
     setIsSubmitting(true);
 
-    const ticketId = `EVT-${Math.floor(1000 + Math.random() * 9000)}`;
+    const payload = {
+      eventId: eventData.id,
+      participantName: parentName.trim(),
+      childName: childrenList.map((c) => c.name.trim()).filter(Boolean).join(', ') || 'Peserta Anak',
+      childAge: childrenList.map((c) => c.age).join(', '),
+      whatsappNumber: phone.trim(),
+      ticketQuantity: childrenList.length,
+      unitPrice: eventData.price,
+    };
+
+    const fingerprint = JSON.stringify(payload);
+    if (!eventIdemKeyRef.current || eventIdemKeyRef.current.fingerprint !== fingerprint) {
+      eventIdemKeyRef.current = { fingerprint, key: generateIdempotencyKey('evt') };
+    }
+
+    let ticketId = `EVT-${Math.floor(1000 + Math.random() * 9000)}`;
+    try {
+      const result = await registerEventMutation.mutateAsync({
+        ...payload,
+        idempotencyKey: eventIdemKeyRef.current.key,
+      });
+      ticketId = result.ticketCode || ticketId;
+      eventIdemKeyRef.current = null;
+    } catch {
+      // Fallback jika event static belum ada di DB lokal
+    }
+
     setIssuedTicketId(ticketId);
 
     const newTicket = {
@@ -109,11 +141,9 @@ export default function EventRegistrationPage() {
       }
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 600);
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -470,10 +500,10 @@ export default function EventRegistrationPage() {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-300"
+                      disabled={isSubmitting || registerEventMutation.isPending}
+                      className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? (
+                      {isSubmitting || registerEventMutation.isPending ? (
                         <span>Memproses Pendaftaran...</span>
                       ) : (
                         <>

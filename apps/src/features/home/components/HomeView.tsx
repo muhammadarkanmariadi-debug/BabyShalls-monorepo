@@ -7,7 +7,6 @@ import { CampaignBanner } from '@/components/home/CampaignBanner';
 import { BannerHampers } from '@/components/home/BannerHampers';
 import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
 import { RequestAndVisitSection } from '@/components/home/RequestAndVisitSection';
-import { OrderDrawer } from '@/components/OrderDrawer';
 import { FloatingWhatsApp } from '@/components/common/FloatingWhatsApp';
 
 export function HomeView() {
@@ -48,8 +47,7 @@ export function HomeView() {
 
       {/* 08 · FOOTER (Figma Node #130:351) */}
 
-      {/* Side-drawers & Floating Contacts */}
-      <OrderDrawer />
+      {/* Floating Contacts */}
       <FloatingWhatsApp />
     </div>
   );

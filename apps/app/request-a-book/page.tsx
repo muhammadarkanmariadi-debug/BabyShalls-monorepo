@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Check, UploadCloud, ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
+import { useCreateBookRequest } from '@/hooks/useBookRequests';
+import { generateIdempotencyKey } from '@/lib/idempotency';
 
 function RequestABookContent() {
   const searchParams = useSearchParams();
@@ -32,11 +34,41 @@ function RequestABookContent() {
     if (authorParam) setAuthor(authorParam);
   }, [searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const createBookRequestMutation = useCreateBookRequest();
+  const bookReqIdemKeyRef = useRef<{ fingerprint: string; key: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting || createBookRequestMutation.isPending) return;
     setIsSubmitting(true);
 
-    const ref = `REQ-${Math.floor(1000 + Math.random() * 9000)}`;
+    const payload = {
+      title: bookTitle.trim(),
+      authorPublisher: author.trim() || undefined,
+      customerName: customerName.trim() || undefined,
+      email: email.trim() || undefined,
+      whatsappNumber: whatsapp.trim(),
+      notes: [isbn ? `ISBN: ${isbn}` : '', `Format: ${format}`, `Kondisi: ${conditionPreference}`, notes.trim()]
+        .filter(Boolean)
+        .join(' | '),
+    };
+
+    const fingerprint = JSON.stringify(payload);
+    if (!bookReqIdemKeyRef.current || bookReqIdemKeyRef.current.fingerprint !== fingerprint) {
+      bookReqIdemKeyRef.current = { fingerprint, key: generateIdempotencyKey('bookreq') };
+    }
+
+    let ref = `REQ-${Math.floor(1000 + Math.random() * 9000)}`;
+    try {
+      const res = await createBookRequestMutation.mutateAsync({
+        ...payload,
+        idempotencyKey: bookReqIdemKeyRef.current.key,
+      });
+      ref = res.requestId || ref;
+      bookReqIdemKeyRef.current = null;
+    } catch {
+      // Fallback jika API belum siap
+    }
 
     const newEntry = {
       id: ref,
@@ -64,11 +96,9 @@ function RequestABookContent() {
       }
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setRequestRef(ref);
-    }, 700);
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    setRequestRef(ref);
   };
 
   const handleReset = () => {
@@ -328,10 +358,10 @@ function RequestABookContent() {
                   <div>
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm"
+                      disabled={isSubmitting || createBookRequestMutation.isPending}
+                      className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? 'Mengirim Request...' : 'Kirim Request Buku'}
+                      {isSubmitting || createBookRequestMutation.isPending ? 'Mengirim Request...' : 'Kirim Request Buku'}
                     </button>
                     <p className="text-[11px] text-[#7A5644] text-center mt-2.5">
                       Sudah punya akun? Status request bisa dipantau di <strong>Akun → Request Buku Saya</strong>.

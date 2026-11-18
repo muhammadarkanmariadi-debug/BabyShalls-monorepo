@@ -33,7 +33,7 @@ const createOrderSchema = z.object({
   couponCode: z.string().trim().max(50).optional().nullable(),
 });
 
-ordersRouter.post('/', async (c) => {
+ordersRouter.post('/', requireAuth, async (c) => {
   const rawBody = await c.req.text();
   return runWithIdempotency(c, rawBody, async () => {
     let jsonBody: unknown;
@@ -55,11 +55,7 @@ ordersRouter.post('/', async (c) => {
       };
     }
 
-    const authHeader = c.req.header('authorization');
-    const authUser =
-      authHeader && authHeader.startsWith('Bearer ')
-        ? await verifyJwt(authHeader.slice(7).trim())
-        : null;
+    const authUser = c.get('user');
 
     const { items, shippingAddress, courierCode, courierService, shippingCost, couponCode } = parsed.data;
     const randomSuffix = (crypto.getRandomValues(new Uint32Array(1))[0] % 900) + 100;
@@ -118,29 +114,8 @@ ordersRouter.post('/', async (c) => {
       }
     }
 
-    const resolvedEmail =
-      authUser?.email ||
-      (shippingAddress.email ? shippingAddress.email.toLowerCase() : '') ||
-      `guest-${shippingAddress.phone.replace(/\D/g, '')}@guest.babyshalls.local`;
-
-    let orderUserId = authUser?.id;
-    if (!orderUserId) {
-      const existingGuest = await prisma.user.findUnique({ where: { email: resolvedEmail } });
-      if (existingGuest) {
-        orderUserId = existingGuest.id;
-      } else {
-        const createdGuest = await prisma.user.create({
-          data: {
-            email: resolvedEmail,
-            passwordHash: '',
-            name: shippingAddress.recipientName,
-            phone: shippingAddress.phone,
-            role: Role.USER,
-          },
-        });
-        orderUserId = createdGuest.id;
-      }
-    }
+    const resolvedEmail = authUser.email;
+    const orderUserId = authUser.id;
 
     const grandTotal = Math.max(0, totalAmount + shippingCost - discountAmount);
     let snapToken: string | null = null;

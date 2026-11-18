@@ -20,11 +20,12 @@ export interface CreateBookRequestResult {
 }
 
 export function useCreateBookRequest() {
-  return useMutation<CreateBookRequestResult, unknown, CreateBookRequestPayload>({
-    mutationFn: async (payload) => {
+  return useMutation<CreateBookRequestResult, unknown, CreateBookRequestPayload & { idempotencyKey?: string }>({
+    mutationFn: async ({ idempotencyKey, ...payload }) => {
       const response = await apiClient.post<{ success: boolean; data: CreateBookRequestResult }>(
         '/book-requests',
-        payload
+        payload,
+        idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : undefined
       );
       return response.data.data;
     },

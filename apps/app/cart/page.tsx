@@ -9,6 +9,7 @@ import { TombolKembali } from '@/components/common/TombolKembali';
 import { BannerHampers } from '@/components/home/BannerHampers';
 import { useCart } from '@/context/CartContext';
 import { formatIDR } from '@/lib/utils';
+import { USER_TOKEN_STORAGE_KEY } from '@/lib/axios';
 
 export default function CartPage() {
   const router = useRouter();
@@ -46,6 +47,12 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
+    const token =
+      typeof window !== 'undefined' ? window.localStorage.getItem(USER_TOKEN_STORAGE_KEY) : null;
+    if (!token) {
+      router.push('/login?redirect=/checkout');
+      return;
+    }
     router.push('/checkout');
   };
 
@@ -53,12 +60,12 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <TombolKembali fallbackUrl="/shop" label="Lanjut Belanja" />
+
 
       {/* Main Cart Area (Figma Node #137:1087) */}
       <main className="py-6 sm:py-10 flex-1 bg-[#FFFDF9]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
-          
+
           {/* Page Heading (Figma #137:1123) */}
           <div className="flex items-baseline gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#F2E4D6]">
             <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
@@ -71,10 +78,10 @@ export default function CartPage() {
 
           {items.length > 0 ? (
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-              
+
               {/* Left Column: Cart Items List (Figma #137:1127, 720px width) */}
               <div className="flex-1 w-full bg-white border border-[#F2E4D6] rounded-[2px] p-5 sm:p-7 shadow-xs">
-                
+
                 {/* Table Header (Figma #137:1128) */}
                 <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#F2E4D6] text-xs">
                   <span className="font-semibold text-[#4A2A1C]">Barang ({totalCount})</span>
@@ -121,7 +128,7 @@ export default function CartPage() {
                           >
                             {item.product.title}
                           </Link>
-                          
+
                           <span className="text-xs text-[#7A5644] block mt-0.5">
                             {item.product.authorOrBrand ? `Oleh ${item.product.authorOrBrand}` : 'Format: Board Book'}
                           </span>
@@ -262,7 +269,7 @@ export default function CartPage() {
             </div>
           ) : (
             /* Empty State (Figma Node #137:1290) */
-            <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-10 sm:p-16 text-center max-w-xl mx-auto flex flex-col items-center">
+            <div className=" rounded-[2px] p-10 sm:p-16 text-center max-w-xl mx-auto flex flex-col items-center">
               <div className="relative w-44 h-44 mb-4">
                 <Image
                   src="/images/mascot/maskot-keranjang-kosong.png"

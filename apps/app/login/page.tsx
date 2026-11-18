@@ -37,6 +37,19 @@ export default function LoginPage() {
   const [newPassword, setNewPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [infoMsg, setInfoMsg] = useState('');
+  const [redirectTo, setRedirectTo] = useState<string>('/account');
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const rawRedirect = params.get('redirect');
+    if (rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')) {
+      setRedirectTo(rawRedirect);
+      if (rawRedirect === '/checkout') {
+        setInfoMsg('Silakan masuk atau daftar akun terlebih dahulu untuk melanjutkan checkout.');
+      }
+    }
+  }, []);
 
   const loginMutation = useLogin();
   const registerMutation = useRegister();
@@ -66,7 +79,7 @@ export default function LoginPage() {
           email: authEmail.trim(),
           password: authPassword,
         });
-        router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
+        router.push(res.user?.role === 'ADMIN' ? '/admin' : redirectTo);
         return;
       }
 
@@ -89,7 +102,7 @@ export default function LoginPage() {
           email: authEmail.trim(),
           otp: otpCode.trim(),
         });
-        router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
+        router.push(res.user?.role === 'ADMIN' ? '/admin' : redirectTo);
         return;
       }
 
@@ -442,7 +455,7 @@ export default function LoginPage() {
                       const res = await googleAuthMutation.mutateAsync({
                         credential: credentialResponse.credential,
                       });
-                      router.push(res.user?.role === 'ADMIN' ? '/admin' : '/account');
+                      router.push(res.user?.role === 'ADMIN' ? '/admin' : redirectTo);
                     } catch (err: unknown) {
                       setErrorMsg(extractApiError(err, 'Gagal login dengan Google.'));
                     }
@@ -455,7 +468,7 @@ export default function LoginPage() {
             )}
 
             <p className="text-[11px] text-[#7A5644] text-center pt-2 leading-relaxed">
-              Belanja tanpa akun? Kamu tetap bisa checkout langsung sebagai tamu di keranjang belanja.
+              Belum punya akun? Pilih tab <strong>Daftar</strong> di atas untuk membuat akun dan melanjutkan checkout.
             </p>
           </form>
         </div>

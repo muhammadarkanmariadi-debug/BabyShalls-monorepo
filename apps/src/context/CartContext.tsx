@@ -59,7 +59,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [giftWrapping, setGiftWrapping] = useState<GiftWrappingState>(initialGiftWrapping);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const openCart = () => setIsCartOpen(true);
+  const openCart = () => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/cart';
+    }
+  };
   const dismissToast = () => setToastMessage(null);
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -107,7 +111,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prev, { product, quantity }];
     });
-    setIsCartOpen(true);
+    showToast(`${product.title} ditambahkan ke keranjang.`);
   };
 
   const removeFromCart = (productId: string) => {

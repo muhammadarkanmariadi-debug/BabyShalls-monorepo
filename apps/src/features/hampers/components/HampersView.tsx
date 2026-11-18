@@ -130,7 +130,6 @@ export function HampersView() {
     setIsOrdered(true);
     setTimeout(() => {
       setIsOrdered(false);
-      setIsCartOpen(true);
     }, 600);
   };
 
@@ -308,7 +307,6 @@ export function HampersView() {
                         onClick={() => {
                           if (isOutOfStock) return;
                           addToCart(hamp, 1);
-                          setIsCartOpen(true);
                         }}
                         className="w-full py-2.5 bg-[#FFF6EA] border border-[#B05A26] text-[#B05A26] hover:bg-[#B05A26] hover:text-white disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                       >

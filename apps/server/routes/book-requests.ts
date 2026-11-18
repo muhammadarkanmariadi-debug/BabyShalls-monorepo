@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { verifyTurnstileToken } from '@/src/lib/turnstile';
+import { runWithIdempotency } from '../middleware/idempotency';
 
 const bookRequestsRouter = new Hono();
 
@@ -21,24 +22,31 @@ const createBookRequestSchema = z.object({
 });
 
 bookRequestsRouter.post('/', async (c) => {
-  try {
-    const body = await c.req.json();
+  const rawBody = await c.req.text();
+  return runWithIdempotency(c, rawBody, async () => {
+    let body: unknown;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return { status: 400, body: { success: false, error: 'Payload JSON tidak valid.' } };
+    }
+
     const parsed = createBookRequestSchema.safeParse(body);
     if (!parsed.success) {
-      return c.json(
-        {
+      return {
+        status: 400,
+        body: {
           success: false,
           error: parsed.error.issues[0]?.message || 'Data permintaan buku tidak valid.',
           code: 'VALIDATION_ERROR',
         },
-        400
-      );
+      };
     }
 
     const remoteIp = c.req.header('cf-connecting-ip') || undefined;
     const turnstile = await verifyTurnstileToken(parsed.data.turnstileToken, remoteIp);
     if (!turnstile.success) {
-      return c.json({ success: false, error: turnstile.error, code: 'TURNSTILE_FAILED' }, 403);
+      return { status: 403, body: { success: false, error: turnstile.error, code: 'TURNSTILE_FAILED' } };
     }
 
     const created = await prisma.bookRequest.create({
@@ -54,8 +62,9 @@ bookRequestsRouter.post('/', async (c) => {
       },
     });
 
-    return c.json(
-      {
+    return {
+      status: 201,
+      body: {
         success: true,
         data: {
           requestId: created.id,
@@ -64,12 +73,8 @@ bookRequestsRouter.post('/', async (c) => {
         },
         message: `Permintaan buku "${created.title}" telah diterima tim kurator BabyShalls Malang.`,
       },
-      201
-    );
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Gagal menyimpan permintaan buku.';
-    return c.json({ success: false, error: message }, 500);
-  }
+    };
+  });
 });
 
 export default bookRequestsRouter;

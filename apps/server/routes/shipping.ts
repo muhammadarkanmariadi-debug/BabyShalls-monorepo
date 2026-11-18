@@ -64,22 +64,33 @@ shippingRouter.post('/calculate', async (c) => {
       parsed.data.destinationId ||
       (parsed.data.destinationSubdistrictId ? String(parsed.data.destinationSubdistrictId) : '444');
     const weight = parsed.data.weightInGrams;
-    const cacheKey = `shipping:rates:v2:${ORIGIN_SUBDISTRICT_ID}:${destId}:${weight}:${parsed.data.courier}`;
+    const cacheKey = `shipping:rates:v3:${ORIGIN_SUBDISTRICT_ID}:${destId}:${weight}:${parsed.data.courier}`;
 
     const cached = await getCache<Record<string, unknown>>(cacheKey);
     if (cached) {
       return c.json({ success: true, cached: true, ...cached });
     }
 
-    let rates: Array<{ courier: string; service: string; cost: number; etd: string }>;
+    const ALLOWED_COURIERS: Record<string, string> = {
+      lion: 'Lion Parcel',
+      wahana: 'Wahana',
+      jne: 'JNE',
+    };
+
+    let rates: Array<{
+      courierCode: string;
+      courierName: string;
+      service: string;
+      cost: number;
+      etd: string;
+    }>;
 
     if (!KIRIMINAJA_API_KEY) {
       const baseKg = Math.max(1, Math.ceil(weight / 1000));
       rates = [
-        { courier: 'J&T Express', service: 'EZ (Reguler)', cost: 17000 * baseKg, etd: '1-2 Hari' },
-        { courier: 'SiCepat', service: 'SIUNTUNG', cost: 16000 * baseKg, etd: '1-2 Hari' },
-        { courier: 'JNE', service: 'REG', cost: 18000 * baseKg, etd: '2-3 Hari' },
-        { courier: 'Pos Indonesia', service: 'Kilat Khusus', cost: 15000 * baseKg, etd: '2-3 Hari' },
+        { courierCode: 'lion', courierName: 'Lion Parcel', service: 'REGPACK', cost: 16000 * baseKg, etd: '2-3 Hari' },
+        { courierCode: 'wahana', courierName: 'Wahana', service: 'Ekonomis', cost: 13000 * baseKg, etd: '3-4 Hari' },
+        { courierCode: 'jne', courierName: 'JNE', service: 'REG', cost: 18000 * baseKg, etd: '2-3 Hari' },
       ];
     } else {
       const res = await fetch(`${KIRIMINAJA_BASE_URL}/api/v3/shipping_rate`, {
@@ -92,16 +103,38 @@ shippingRouter.post('/calculate', async (c) => {
           origin: ORIGIN_SUBDISTRICT_ID,
           destination: Number(destId) || destId,
           weight,
-          couriers: ['jne', 'jnt', 'sicepat', 'pos'],
+          couriers: ['lion', 'wahana', 'jne'],
         }),
       });
       if (!res.ok) {
         throw new Error(`KiriminAja HTTP ${res.status}`);
       }
       const data = (await res.json()) as {
-        data?: Array<{ courier: string; service: string; cost: number; etd: string }>;
+        data?: Array<{
+          courier?: string;
+          courierCode?: string;
+          courierName?: string;
+          service: string;
+          cost: number;
+          etd: string;
+        }>;
       };
-      rates = data?.data || [];
+      rates = (data?.data || [])
+        .map((item) => {
+          const rawCode = (item.courierCode || item.courier || '').toLowerCase();
+          const matchedKey = Object.keys(ALLOWED_COURIERS).find(
+            (k) => rawCode === k || rawCode.includes(k)
+          );
+          if (!matchedKey) return null;
+          return {
+            courierCode: matchedKey,
+            courierName: item.courierName || ALLOWED_COURIERS[matchedKey],
+            service: item.service,
+            cost: Number(item.cost),
+            etd: item.etd || '2-3 Hari',
+          };
+        })
+        .filter((x): x is NonNullable<typeof x> => x !== null);
     }
 
     const resultPayload = {

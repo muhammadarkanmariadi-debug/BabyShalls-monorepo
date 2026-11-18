@@ -354,22 +354,20 @@ export default function AccountPage() {
               <button
                 type="button"
                 onClick={() => setAuthMode("masuk")}
-                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
-                  authMode === "masuk"
+                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${authMode === "masuk"
                     ? "bg-white text-[#4A2A1C] shadow-xs"
                     : "text-[#7A5644] hover:text-[#4A2A1C]"
-                }`}
+                  }`}
               >
                 Masuk
               </button>
               <button
                 type="button"
                 onClick={() => setAuthMode("daftar")}
-                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${
-                  authMode === "daftar"
+                className={`flex-1 py-2 text-xs font-semibold rounded-[2px] transition-colors cursor-pointer ${authMode === "daftar"
                     ? "bg-white text-[#4A2A1C] shadow-xs"
                     : "text-[#7A5644] hover:text-[#4A2A1C]"
-                }`}
+                  }`}
               >
                 Daftar Akun Baru
               </button>
@@ -527,7 +525,7 @@ export default function AccountPage() {
   // Dashboard View (Figma Node #169:6498)
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
+
 
       {/* Main Account Area (Figma Node #169:6501, 2 Columns) */}
       <main className="py-10 sm:py-14 flex-1 bg-[#FFFDF9]">
@@ -555,11 +553,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("profil")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "profil"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "profil"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <User className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Profil & Keamanan</span>
@@ -568,11 +565,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("alamat")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "alamat"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "alamat"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <MapPin className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Daftar Alamat</span>
@@ -581,11 +577,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("pesanan")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "pesanan"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "pesanan"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <div className="flex items-center gap-2 lg:flex-1 lg:justify-between">
@@ -601,11 +596,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("tiket")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "tiket"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "tiket"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <Calendar className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Tiket Workshop</span>
@@ -614,11 +608,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("request")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "request"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "request"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <BookOpen className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Request Buku</span>
@@ -627,11 +620,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("wishlist")}
-                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${
-                    activeTab === "wishlist"
+                  className={`py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left transition-colors cursor-pointer shrink-0 lg:w-full whitespace-nowrap ${activeTab === "wishlist"
                       ? "bg-[#FBE6D8] text-[#4A2A1C] font-semibold"
                       : "text-[#7A5644] hover:bg-[#FFF6EA] hover:text-[#4A2A1C] bg-[#FFFBF7] lg:bg-transparent"
-                  }`}
+                    }`}
                 >
                   <Heart className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>Wishlist Favorit</span>
@@ -847,11 +839,10 @@ export default function AccountPage() {
                     {addresses.map((addr) => (
                       <div
                         key={addr.id}
-                        className={`p-5 rounded-[2px] relative transition-all border ${
-                          addr.isPrimary
+                        className={`p-5 rounded-[2px] relative transition-all border ${addr.isPrimary
                             ? "border-[#B05A26] bg-[#FFFBF7]"
                             : "border-[#E6D2C0] bg-white hover:border-[#B05A26]/50"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -1079,11 +1070,10 @@ export default function AccountPage() {
                           <button
                             key={filterKey}
                             onClick={() => setOrderFilter(filterKey)}
-                            className={`px-3 py-1 rounded-[2px] capitalize transition-colors ${
-                              orderFilter === filterKey
+                            className={`px-3 py-1 rounded-[2px] capitalize transition-colors ${orderFilter === filterKey
                                 ? "bg-[#B05A26] text-white font-medium"
                                 : "bg-white border border-[#E6D2C0] text-[#7A5644] hover:border-[#B05A26]"
-                            }`}
+                              }`}
                           >
                             {filterKey}
                           </button>
@@ -1118,13 +1108,12 @@ export default function AccountPage() {
                           </div>
 
                           <span
-                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-[2px] ${
-                              ord.status === "Selesai"
+                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-[2px] ${ord.status === "Selesai"
                                 ? "bg-[#DDF1E5] text-[#2A6E37]"
                                 : ord.status === "Sedang Dikirim"
                                   ? "bg-[#E3EDF9] text-[#2C5282]"
                                   : "bg-[#FFF6EA] text-[#B05A26]"
-                            }`}
+                              }`}
                           >
                             {ord.status}
                           </span>
