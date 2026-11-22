@@ -27,6 +27,18 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
   const requestMutation = useRequestEmailChange();
   const verifyMutation = useVerifyEmailChange();
 
+  // Dynamic progress calculation based on user input
+  const progressPercent = (() => {
+    if (step === 'verify') {
+      return otpCode.trim().length >= 6 ? 100 : otpCode.trim().length > 0 ? 75 : 50;
+    }
+    const hasValidEmail = newEmail.trim().length > 0 && newEmail.includes('@');
+    const hasPassword = currentPassword.length > 0;
+    if (hasValidEmail && hasPassword) return 50;
+    if (hasValidEmail || hasPassword) return 25;
+    return 0;
+  })();
+
   if (!isOpen) return null;
 
   const handleClose = () => {
@@ -119,13 +131,17 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
         {/* Step indicator */}
         <div className="mb-4">
           <div className="flex items-center justify-between text-[11px] font-semibold text-[#7A5644] mb-1.5">
-            <span>{step === 'request' ? 'Langkah 1 dari 2: Konfirmasi Data' : 'Langkah 2 dari 2: Verifikasi OTP'}</span>
-            <span className="text-[#B05A26]">{step === 'request' ? '50%' : '100%'}</span>
+            <span>
+              {step === 'request'
+                ? 'Langkah 1 dari 2: Masukkan Email Baru & Sandi'
+                : 'Langkah 2 dari 2: Verifikasi Kode OTP'}
+            </span>
+            <span className="text-[#B05A26] font-mono font-bold">{progressPercent}%</span>
           </div>
           <div className="w-full h-1.5 bg-[#F2E4D6] rounded-full overflow-hidden">
             <div
               className="h-full bg-[#B05A26] transition-all duration-300"
-              style={{ width: step === 'request' ? '50%' : '100%' }}
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
