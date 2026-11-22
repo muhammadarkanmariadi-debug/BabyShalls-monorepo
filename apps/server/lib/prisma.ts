@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@/server/generated/prisma/client';
+import { PrismaClient } from '../generated/prisma/client';
 
 function createPrismaClient(): PrismaClient {
   const connectionString =

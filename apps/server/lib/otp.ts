@@ -129,6 +129,104 @@ export async function verifyLoginOtp(
   return { valid: true, userId: dbOtp.userId };
 }
 
+export async function issueEmailChangeOtp(
+  userId: string,
+  newEmail: string
+): Promise<{ code: string; expiresInSeconds: number }> {
+  const normalizedEmail = newEmail.toLowerCase().trim();
+  const code = generateSixDigitCode();
+  const codeHash = await hashOtp(normalizedEmail, code);
+  const expiresAt = new Date(Date.now() + OTP_TTL_SECONDS * 1000);
+
+  await prisma.otpCode.updateMany({
+    where: { userId, email: normalizedEmail, usedAt: null },
+    data: { usedAt: new Date() },
+  });
+
+  const record = await prisma.otpCode.create({
+    data: {
+      userId,
+      email: normalizedEmail,
+      codeHash,
+      expiresAt,
+    },
+  });
+
+  await setCache(
+    `otp:email-change:${userId}:${normalizedEmail}`,
+    { id: record.id, codeHash, attempts: 0, expiresAt: expiresAt.toISOString() },
+    OTP_TTL_SECONDS
+  );
+
+  return { code, expiresInSeconds: OTP_TTL_SECONDS };
+}
+
+export async function verifyEmailChangeOtp(
+  userId: string,
+  newEmail: string,
+  code: string
+): Promise<{ valid: boolean; reason?: string }> {
+  const normalizedEmail = newEmail.toLowerCase().trim();
+  const submittedHash = await hashOtp(normalizedEmail, code.trim());
+
+  const cacheKey = `otp:email-change:${userId}:${normalizedEmail}`;
+  const cached = await getCache<{
+    id: string;
+    codeHash: string;
+    attempts: number;
+    expiresAt: string;
+  }>(cacheKey);
+
+  const dbOtp = await prisma.otpCode.findFirst({
+    where: { userId, email: normalizedEmail, usedAt: null },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  if (!dbOtp) {
+    return { valid: false, reason: 'Kode OTP tidak ditemukan atau sudah digunakan. Silakan minta kode baru.' };
+  }
+
+  if (dbOtp.expiresAt.getTime() < Date.now()) {
+    await prisma.otpCode.update({
+      where: { id: dbOtp.id },
+      data: { usedAt: new Date() },
+    });
+    await delCache(cacheKey);
+    return { valid: false, reason: 'Kode OTP sudah kedaluwarsa. Silakan kirim ulang kode baru.' };
+  }
+
+  if (dbOtp.attempts >= MAX_OTP_ATTEMPTS || (cached && cached.attempts >= MAX_OTP_ATTEMPTS)) {
+    return { valid: false, reason: 'Terlalu banyak percobaan OTP salah. Silakan kirim ulang kode OTP baru.' };
+  }
+
+  if (dbOtp.codeHash !== submittedHash) {
+    const nextAttempts = dbOtp.attempts + 1;
+    await prisma.otpCode.update({
+      where: { id: dbOtp.id },
+      data: { attempts: nextAttempts },
+    });
+    if (cached) {
+      await setCache(
+        cacheKey,
+        { ...cached, attempts: nextAttempts },
+        OTP_TTL_SECONDS
+      );
+    }
+    return {
+      valid: false,
+      reason: `Kode OTP salah. Sisa percobaan: ${Math.max(0, MAX_OTP_ATTEMPTS - nextAttempts)}.`,
+    };
+  }
+
+  await prisma.otpCode.update({
+    where: { id: dbOtp.id },
+    data: { usedAt: new Date() },
+  });
+  await delCache(cacheKey);
+
+  return { valid: true };
+}
+
 export async function generateMagicLinkToken(email: string, otpCode: string): Promise<string> {
   return new SignJWT({
     email: email.toLowerCase().trim(),

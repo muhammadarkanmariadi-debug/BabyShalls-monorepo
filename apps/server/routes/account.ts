@@ -2,6 +2,10 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { hashPassword, verifyPassword } from '../lib/password';
+import { signJwt } from '../lib/jwt';
+import { issueEmailChangeOtp, verifyEmailChangeOtp } from '../lib/otp';
+import { sendOtpEmail } from '../lib/mailer';
+import { delCache } from '../lib/redis';
 import { requireAuth, type AuthVariables } from '../middleware/auth';
 
 const accountRouter = new Hono<{ Variables: AuthVariables }>();
@@ -16,6 +20,16 @@ const updateProfileSchema = z.object({
   emailOptIn: z.boolean().optional(),
 });
 
+const requestEmailChangeSchema = z.object({
+  newEmail: z.string().trim().email('Format email baru tidak valid.'),
+  currentPassword: z.string().min(1, 'Password saat ini wajib diisi.'),
+});
+
+const verifyEmailChangeSchema = z.object({
+  newEmail: z.string().trim().email('Format email tidak valid.'),
+  otp: z.string().trim().min(4, 'Kode OTP minimal 4 digit.').max(10),
+});
+
 const addressSchema = z.object({
   label: z.string().trim().min(2).max(60).default('Rumah'),
   receiverName: z.string().trim().min(2).max(100),
@@ -25,6 +39,15 @@ const addressSchema = z.object({
   subdistrict: z.string().trim().min(2).max(100).default('Malang'),
   postalCode: z.string().trim().min(4).max(10),
   isDefault: z.boolean().optional().default(false),
+});
+
+const updateAddressSchema = addressSchema.partial();
+
+const reviewSchema = z.object({
+  orderItemId: z.string().min(1, 'ID item pesanan wajib diisi.'),
+  rating: z.number().int().min(1, 'Rating minimal 1 bintang.').max(5, 'Rating maksimal 5 bintang.'),
+  comment: z.string().trim().min(3, 'Ulasan minimal 3 karakter.').max(2000, 'Ulasan maksimal 2000 karakter.'),
+  variantInfo: z.string().trim().max(100).optional().nullable(),
 });
 
 accountRouter.get('/profile', async (c) => {
@@ -111,11 +134,121 @@ accountRouter.patch('/password', async (c) => {
   }
 });
 
+accountRouter.post('/email/request-change', async (c) => {
+  try {
+    const currentUser = c.get('user');
+    const body = await c.req.json();
+    const parsed = requestEmailChangeSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ success: false, error: parsed.error.issues[0]?.message || 'Data tidak valid.' }, 400);
+    }
+
+    const { newEmail, currentPassword } = parsed.data;
+    const normalizedNewEmail = newEmail.toLowerCase().trim();
+
+    const user = await prisma.user.findUnique({ where: { id: currentUser.id } });
+    if (!user) return c.json({ success: false, error: 'Akun tidak ditemukan.' }, 404);
+
+    const isMatch = await verifyPassword(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return c.json({ success: false, error: 'Password saat ini tidak sesuai.' }, 400);
+    }
+
+    if (user.email.toLowerCase() === normalizedNewEmail) {
+      return c.json({ success: false, error: 'Email baru tidak boleh sama dengan email saat ini.' }, 400);
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedNewEmail } });
+    if (existingUser) {
+      return c.json({ success: false, error: 'Email baru tersebut sudah terdaftar pada akun lain.' }, 400);
+    }
+
+    const { code, expiresInSeconds } = await issueEmailChangeOtp(user.id, normalizedNewEmail);
+
+    await sendOtpEmail({
+      to: normalizedNewEmail,
+      name: user.name || 'Pelanggan BabyShalls',
+      otpCode: code,
+      expiresInMinutes: Math.round(expiresInSeconds / 60),
+    });
+
+    return c.json({
+      success: true,
+      data: {
+        newEmail: normalizedNewEmail,
+        expiresInSeconds,
+        previewOtp: process.env.NODE_ENV !== 'production' ? code : undefined,
+      },
+      message: `Kode OTP verifikasi telah dikirim ke ${normalizedNewEmail}.`,
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal memproses permintaan ganti email.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
+accountRouter.post('/email/verify-change', async (c) => {
+  try {
+    const currentUser = c.get('user');
+    const body = await c.req.json();
+    const parsed = verifyEmailChangeSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ success: false, error: parsed.error.issues[0]?.message || 'Data tidak valid.' }, 400);
+    }
+
+    const { newEmail, otp } = parsed.data;
+    const normalizedNewEmail = newEmail.toLowerCase().trim();
+
+    const otpResult = await verifyEmailChangeOtp(currentUser.id, normalizedNewEmail, otp);
+    if (!otpResult.valid) {
+      return c.json({ success: false, error: otpResult.reason || 'Kode OTP tidak valid atau kedaluwarsa.' }, 400);
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email: normalizedNewEmail } });
+    if (existing && existing.id !== currentUser.id) {
+      return c.json({ success: false, error: 'Email sudah digunakan oleh akun lain.' }, 400);
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: currentUser.id },
+      data: { email: normalizedNewEmail },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatarUrl: true,
+        phone: true,
+        parentName: true,
+        childName: true,
+        childAge: true,
+        emailOptIn: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    const token = await signJwt({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+    });
+
+    return c.json({
+      success: true,
+      data: { token, user: updated },
+      message: 'Email akun berhasil diperbarui.',
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal memverifikasi pergantian email.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
 accountRouter.get('/addresses', async (c) => {
   const currentUser = c.get('user');
   const addresses = await prisma.address.findMany({
     where: { userId: currentUser.id },
-    orderBy: [{ isDefault: 'desc' }],
+    orderBy: [{ isDefault: 'desc' }, { id: 'asc' }],
   });
   return c.json({ success: true, data: addresses });
 });
@@ -129,15 +262,23 @@ accountRouter.post('/addresses', async (c) => {
       return c.json({ success: false, error: 'Data alamat tidak valid.' }, 400);
     }
 
+    const count = await prisma.address.count({ where: { userId: currentUser.id } });
+    const isFirst = count === 0;
+    const shouldBeDefault = parsed.data.isDefault || isFirst;
+
     const created = await prisma.$transaction(async (tx) => {
-      if (parsed.data.isDefault) {
+      if (shouldBeDefault) {
         await tx.address.updateMany({
           where: { userId: currentUser.id },
           data: { isDefault: false },
         });
       }
       return tx.address.create({
-        data: { ...parsed.data, userId: currentUser.id },
+        data: {
+          ...parsed.data,
+          isDefault: shouldBeDefault,
+          userId: currentUser.id,
+        },
       });
     });
 
@@ -148,11 +289,78 @@ accountRouter.post('/addresses', async (c) => {
   }
 });
 
+accountRouter.patch('/addresses/:id', async (c) => {
+  try {
+    const currentUser = c.get('user');
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    const parsed = updateAddressSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ success: false, error: 'Data alamat tidak valid.' }, 400);
+    }
+
+    const existing = await prisma.address.findUnique({ where: { id } });
+    if (!existing) {
+      return c.json({ success: false, error: 'Alamat tidak ditemukan.' }, 404);
+    }
+    if (existing.userId !== currentUser.id) {
+      return c.json({ success: false, error: 'Anda tidak memiliki akses ke alamat ini.' }, 403);
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (parsed.data.isDefault) {
+        await tx.address.updateMany({
+          where: { userId: currentUser.id },
+          data: { isDefault: false },
+        });
+      }
+      return tx.address.update({
+        where: { id },
+        data: parsed.data,
+      });
+    });
+
+    return c.json({ success: true, data: updated, message: 'Alamat berhasil diperbarui.' });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal memperbarui alamat.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
 accountRouter.delete('/addresses/:id', async (c) => {
-  const currentUser = c.get('user');
-  const id = c.req.param('id');
-  await prisma.address.deleteMany({ where: { id, userId: currentUser.id } });
-  return c.json({ success: true, message: 'Alamat berhasil dihapus.' });
+  try {
+    const currentUser = c.get('user');
+    const id = c.req.param('id');
+
+    const existing = await prisma.address.findUnique({ where: { id } });
+    if (!existing) {
+      return c.json({ success: false, error: 'Alamat tidak ditemukan.' }, 404);
+    }
+    if (existing.userId !== currentUser.id) {
+      return c.json({ success: false, error: 'Anda tidak memiliki akses ke alamat ini.' }, 403);
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.address.delete({ where: { id } });
+      if (existing.isDefault) {
+        const nextAddr = await tx.address.findFirst({
+          where: { userId: currentUser.id },
+          orderBy: { id: 'asc' },
+        });
+        if (nextAddr) {
+          await tx.address.update({
+            where: { id: nextAddr.id },
+            data: { isDefault: true },
+          });
+        }
+      }
+    });
+
+    return c.json({ success: true, message: 'Alamat berhasil dihapus.' });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal menghapus alamat.';
+    return c.json({ success: false, error: message }, 500);
+  }
 });
 
 accountRouter.get('/orders', async (c) => {
@@ -164,6 +372,9 @@ accountRouter.get('/orders', async (c) => {
         include: {
           product: {
             select: { id: true, name: true, slug: true, images: true },
+          },
+          review: {
+            select: { id: true, rating: true, comment: true },
           },
         },
       },
@@ -177,10 +388,198 @@ accountRouter.get('/orders', async (c) => {
     discountAmount: Number(o.discountAmount),
     shippingCost: Number(o.shippingCost),
     grandTotal: Number(o.grandTotal),
-    items: o.items.map((it) => ({ ...it, price: Number(it.price) })),
+    items: o.items.map((it) => ({
+      ...it,
+      price: Number(it.price),
+    })),
   }));
 
   return c.json({ success: true, data: formatted });
+});
+
+accountRouter.get('/orders/:orderNumber/tracking', async (c) => {
+  try {
+    const currentUser = c.get('user');
+    const orderNumber = c.req.param('orderNumber');
+
+    const order = await prisma.order.findUnique({
+      where: { orderNumber },
+    });
+    if (!order) {
+      return c.json({ success: false, error: 'Pesanan tidak ditemukan.' }, 404);
+    }
+    if (order.userId !== currentUser.id && currentUser.role !== 'ADMIN') {
+      return c.json({ success: false, error: 'Anda tidak memiliki akses ke pelacakan pesanan ini.' }, 403);
+    }
+
+    const courier = (order.courierCode || 'jne').toLowerCase();
+
+    let trackingRecord = order.waybillNumber
+      ? await prisma.waybillTrackingCache.findUnique({
+          where: {
+            waybill_courier_key: {
+              courier,
+              waybillNumber: order.waybillNumber,
+            },
+          },
+        })
+      : null;
+
+    if (!trackingRecord && order.waybillNumber) {
+      const isDelivered = order.status === 'COMPLETED';
+      const history = (order.trackingHistory as any[]) || [
+        {
+          timestamp: order.createdAt.toISOString(),
+          status: 'PICKUP_REQUESTED',
+          message: 'Paket siap diambil oleh kurir di Toko BabyShalls Malang.',
+          location: 'Kota Malang',
+        },
+      ];
+      if (order.status === 'SHIPPED' || order.status === 'COMPLETED') {
+        history.push({
+          timestamp: new Date().toISOString(),
+          status: order.status === 'COMPLETED' ? 'DELIVERED' : 'IN_TRANSIT',
+          message:
+            order.status === 'COMPLETED'
+              ? 'Paket telah berhasil diterima oleh pemesan.'
+              : 'Paket sedang dalam perjalanan menuju kota tujuan.',
+          location: 'Kota Malang / Gateway',
+        });
+      }
+
+      trackingRecord = await prisma.waybillTrackingCache.upsert({
+        where: {
+          waybill_courier_key: {
+            courier,
+            waybillNumber: order.waybillNumber,
+          },
+        },
+        create: {
+          courier,
+          waybillNumber: order.waybillNumber,
+          status: isDelivered ? 'DELIVERED' : 'IN_TRANSIT',
+          isDelivered,
+          summaryJson: {
+            courier,
+            waybillNumber: order.waybillNumber,
+            service: order.courierService || 'REG',
+          },
+          historyJson: history,
+          nextCheckAfter: new Date(Date.now() + 3600 * 1000),
+        },
+        update: {},
+      });
+    }
+
+    return c.json({
+      success: true,
+      data: {
+        orderNumber: order.orderNumber,
+        courier: order.courierCode || 'Kurir KiriminAja Malang',
+        courierService: order.courierService || 'Reguler',
+        waybillNumber: order.waybillNumber || null,
+        orderStatus: order.status,
+        isDelivered: trackingRecord?.isDelivered ?? (order.status === 'COMPLETED'),
+        history: trackingRecord ? trackingRecord.historyJson : (order.trackingHistory || []),
+        lastCheckedAt: trackingRecord?.lastCheckedAt || new Date().toISOString(),
+      },
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal melacak resi pengiriman.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
+accountRouter.post('/reviews', async (c) => {
+  try {
+    const currentUser = c.get('user');
+    const body = await c.req.json();
+    const parsed = reviewSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json({ success: false, error: parsed.error.issues[0]?.message || 'Data ulasan tidak valid.' }, 400);
+    }
+
+    const { orderItemId, rating, comment, variantInfo } = parsed.data;
+
+    const orderItem = await prisma.orderItem.findUnique({
+      where: { id: orderItemId },
+      include: {
+        order: true,
+        product: true,
+        review: true,
+      },
+    });
+
+    if (!orderItem) {
+      return c.json({ success: false, error: 'Item pesanan tidak ditemukan.' }, 404);
+    }
+
+    if (orderItem.order.userId !== currentUser.id) {
+      return c.json({ success: false, error: 'Anda tidak memiliki akses untuk mengulas item pesanan ini.' }, 403);
+    }
+
+    if (orderItem.order.status !== 'SHIPPED' && orderItem.order.status !== 'COMPLETED') {
+      return c.json({
+        success: false,
+        error: 'Ulasan hanya dapat diberikan jika pesanan telah dikirim atau selesai.',
+      }, 400);
+    }
+
+    if (orderItem.review) {
+      return c.json({
+        success: false,
+        error: 'Ulasan untuk item pesanan ini sudah pernah dikirim.',
+      }, 400);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: currentUser.id },
+      include: { addresses: { where: { isDefault: true }, take: 1 } },
+    });
+    const location = user?.addresses[0]?.city ? `${user.addresses[0].city}` : 'Kota Malang';
+
+    const review = await prisma.review.create({
+      data: {
+        productId: orderItem.productId,
+        orderItemId: orderItem.id,
+        userId: currentUser.id,
+        userName: user?.name || 'Pelanggan BabyShalls',
+        location,
+        rating,
+        comment,
+        variantInfo: variantInfo || undefined,
+        isVerifiedPurchase: true,
+      },
+    });
+
+    const allReviews = await prisma.review.findMany({
+      where: { productId: orderItem.productId },
+      select: { rating: true },
+    });
+    const totalScore = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    const avgScore = allReviews.length > 0 ? Number((totalScore / allReviews.length).toFixed(1)) : 5.0;
+
+    await prisma.product.update({
+      where: { id: orderItem.productId },
+      data: {
+        rating: avgScore,
+        reviewsCount: allReviews.length,
+      },
+    });
+
+    await delCache(`products:detail:${orderItem.product.slug}`);
+    await delCache(`products:detail:${orderItem.productId}`);
+    await delCache('products:list:*');
+
+    return c.json({
+      success: true,
+      data: review,
+      message: 'Terima kasih! Ulasan Anda berhasil dikirim dan terverifikasi.',
+    }, 201);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal mengirim ulasan.';
+    return c.json({ success: false, error: message }, 500);
+  }
 });
 
 accountRouter.get('/tickets', async (c) => {

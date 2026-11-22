@@ -15,7 +15,8 @@ export function isEmailConfigured(): boolean {
       SMTP_USER &&
       SMTP_PASS &&
       !SMTP_PASS.includes('your-smtp') &&
-      !SMTP_PASS.includes('xxxx')
+      !SMTP_PASS.includes('xxxx') &&
+      !SMTP_PASS.includes('app-password')
   );
 }
 
@@ -111,7 +112,8 @@ export async function sendEmail(options: {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.warn(`⚠️ [SMTP Error] Gagal kirim email ke ${options.to}:`, message);
-    return { sent: false, previewLogged: false };
+    console.info(`📧 [SMTP Fallback Preview] To: ${options.to} | Subject: ${options.subject}`);
+    return { sent: false, previewLogged: true };
   }
 }
 
@@ -123,6 +125,7 @@ export async function sendOtpEmail(params: {
   expiresInMinutes?: number;
 }) {
   const ttlMinutes = params.expiresInMinutes ?? 5;
+  console.info(`\n========================================\n🔑 [OTP CODE] To: ${params.to} | Kode OTP: ${params.otpCode}\n========================================\n`);
   const magicLinkSection = params.magicLinkUrl
     ? `<div style="margin:20px 0;text-align:center;">
          <a href="${params.magicLinkUrl}" style="display:inline-block;padding:13px 28px;background-color:#D9744A;color:#FFFFFF;text-decoration:none;border-radius:999px;font-size:14px;font-weight:700;">

@@ -57,6 +57,107 @@ async function main() {
     });
   }
 
+  // Ensure demo user has demo orders for Sprint 2 testing
+  const existingOrders = await prisma.order.findMany({ where: { userId: demoUser.id } });
+  if (existingOrders.length === 0) {
+    const products = await prisma.product.findMany({ take: 3 });
+    if (products.length > 0) {
+      await prisma.order.create({
+        data: {
+          orderNumber: 'BS-2026-0881',
+          userId: demoUser.id,
+          totalAmount: products[0].price,
+          shippingCost: 15000,
+          grandTotal: Number(products[0].price) + 15000,
+          status: 'SHIPPED',
+          courierCode: 'jne',
+          courierService: 'REG',
+          waybillNumber: 'JNE88291039401ID',
+          shippingAddress: {
+            receiverName: 'Bunda Rania Putri',
+            receiverPhone: '081234567899',
+            streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
+            city: 'Kota Malang',
+          },
+          trackingHistory: [
+            {
+              timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+              status: 'PICKUP_REQUESTED',
+              message: 'Paket siap dijemput kurir di Toko BabyShalls Malang.',
+              location: 'Kota Malang',
+            },
+            {
+              timestamp: new Date(Date.now() - 86400000).toISOString(),
+              status: 'IN_TRANSIT',
+              message: 'Paket sedang dalam perjalanan menuju kota tujuan.',
+              location: 'Malang Gateway Hub',
+            },
+          ],
+          items: {
+            create: [
+              {
+                productId: products[0].id,
+                price: products[0].price,
+                quantity: 1,
+              },
+            ],
+          },
+        },
+      });
+
+      if (products.length > 1) {
+        await prisma.order.create({
+          data: {
+            orderNumber: 'BS-2026-0842',
+            userId: demoUser.id,
+            totalAmount: products[1].price,
+            shippingCost: 12000,
+            grandTotal: Number(products[1].price) + 12000,
+            status: 'COMPLETED',
+            courierCode: 'jnt',
+            courierService: 'EZ',
+            waybillNumber: 'JNT991827364ID',
+            shippingAddress: {
+              receiverName: 'Bunda Rania Putri',
+              receiverPhone: '081234567899',
+              streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
+              city: 'Kota Malang',
+            },
+            trackingHistory: [
+              {
+                timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
+                status: 'PICKUP_REQUESTED',
+                message: 'Paket siap dijemput kurir.',
+                location: 'Kota Malang',
+              },
+              {
+                timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+                status: 'IN_TRANSIT',
+                message: 'Paket tiba di gerai transit Malang.',
+                location: 'Kota Malang',
+              },
+              {
+                timestamp: new Date(Date.now() - 86400000).toISOString(),
+                status: 'DELIVERED',
+                message: 'Paket telah berhasil diterima oleh pemesan.',
+                location: 'Kota Malang',
+              },
+            ],
+            items: {
+              create: [
+                {
+                  productId: products[1].id,
+                  price: products[1].price,
+                  quantity: 1,
+                },
+              ],
+            },
+          },
+        });
+      }
+    }
+  }
+
   // 2. Seed initial coupons
   const initialCoupons = [
     {

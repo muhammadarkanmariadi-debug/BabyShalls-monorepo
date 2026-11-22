@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -17,18 +17,38 @@ import {
   QrCode,
   Truck,
   Clock,
+  ChevronLeft,
   ChevronRight,
   ShieldCheck,
   Plus,
   Edit2,
   Trash2,
   X,
+  Star,
+  Loader2,
+  ExternalLink,
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { WireProductCard } from '@/components/common/WireProductCard';
 import { mockProducts, formatIDR } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
-import { useAccountProfile, useUpdateAccountProfile } from '@/hooks/useAccount';
+import {
+  useAccountProfile,
+  useUpdateAccountProfile,
+  useAccountAddresses,
+  useUpdateAccountAddress,
+  useDeleteAccountAddress,
+  useAccountOrders,
+  type AccountAddress,
+  type AccountOrder,
+  type AccountOrderItem,
+} from '@/hooks/useAccount';
+import { EmailChangeModal } from '@/features/account/components/EmailChangeModal';
+import { AddressFormModal } from '@/features/account/components/AddressFormModal';
+import { OrderTrackingModal } from '@/features/account/components/OrderTrackingModal';
+import { ToastNotification, type ToastState } from '@/features/account/components/ToastNotification';
+import { DeleteAddressModal } from '@/features/account/components/DeleteAddressModal';
+import { LogoutConfirmModal } from '@/features/account/components/LogoutConfirmModal';
 
 type TabKey =
   | "profil"
@@ -109,38 +129,22 @@ export default function AccountPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState("");
 
-  // Addresses State
-  const [addresses, setAddresses] = useState([
-    {
-      id: "addr-1",
-      label: "Rumah",
-      recipientName: "Dina Permata",
-      phone: "0812-3456-7890",
-      fullAddress:
-        "Jl. Puncak Tidar No. 18, RT 02 / RW 04, Karangbesuki, Sukun, Kota Malang 65146",
-      isPrimary: true,
-    },
-    {
-      id: "addr-2",
-      label: "Kantor",
-      recipientName: "Dina Permata (Baby Room)",
-      phone: "0812-3456-7890",
-      fullAddress:
-        "Jl. Besar Ijen No. 45, Oro-oro Dowo, Klojen, Kota Malang 65115",
-      isPrimary: false,
-    },
-  ]);
+  // Modals & Feedback state
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const [addressForm, setAddressForm] = useState({
-    id: "",
-    label: "Rumah",
-    recipientName: "",
-    phone: "",
-    fullAddress: "",
-  });
+  const [addressToEdit, setAddressToEdit] = useState<AccountAddress | null>(null);
+  const [addressToDelete, setAddressToDelete] = useState<AccountAddress | null>(null);
+  const [selectedTrackingOrder, setSelectedTrackingOrder] = useState<string | null>(null);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [toast, setToast] = useState<ToastState | null>(null);
 
-  // Orders State
-  const [orders, setOrders] = useState<any[]>([]);
+  // Addresses State from PostgreSQL
+  const { data: dbAddresses = [], isLoading: isAddressesLoading } = useAccountAddresses(isAuthenticated);
+  const updateAddressMutation = useUpdateAccountAddress();
+  const deleteAddressMutation = useDeleteAccountAddress();
+
+  // Orders State from PostgreSQL
+  const { data: dbOrders = [], isLoading: isOrdersLoading } = useAccountOrders(isAuthenticated);
   const [orderFilter, setOrderFilter] = useState<string>("semua");
 
   // Event Tickets State
@@ -149,62 +153,10 @@ export default function AccountPage() {
   // Book Requests State
   const [bookRequests, setBookRequests] = useState<any[]>([]);
 
-  // Load localStorage data
+  // Load localStorage data for tickets & requests
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const savedOrders = JSON.parse(
-          localStorage.getItem("babyshalls_orders") || "[]",
-        );
-        if (savedOrders.length > 0) {
-          setOrders(savedOrders);
-        } else {
-          // Default demo orders matching Figma
-          setOrders([
-            {
-              orderId: "BS-2026-0881",
-              createdAt: "2026-11-14T10:30:00Z",
-              status: "Sedang Dikirim",
-              deliveryMethod: "JNE Reguler",
-              shippingTrackingNumber: "JNE88291039401ID",
-              totalAmount: 183000,
-              items: [
-                {
-                  productId: "p-1",
-                  title: "Little Bear & The Whispering Woods",
-                  price: 165000,
-                  quantity: 1,
-                  coverImage: "/images/products/p-1-little-bear.png",
-                },
-              ],
-            },
-            {
-              orderId: "BS-2026-0842",
-              createdAt: "2026-11-02T14:15:00Z",
-              status: "Selesai",
-              deliveryMethod: "Ambil di Toko Citraland Malang",
-              shippingTrackingNumber: "-",
-              totalAmount: 245000,
-              items: [
-                {
-                  productId: "p-2",
-                  title: "Petualangan Si Kancil & Buaya Cerdik",
-                  price: 125000,
-                  quantity: 1,
-                  coverImage: "/images/products/p-2-kancil.png",
-                },
-                {
-                  productId: "p-6",
-                  title: "Buku Kain Lembut: Suara Hewan Ternak",
-                  price: 120000,
-                  quantity: 1,
-                  coverImage: "/images/products/p-6-buku-kain.png",
-                },
-              ],
-            },
-          ]);
-        }
-
         const savedTickets = JSON.parse(
           localStorage.getItem("babyshalls_event_tickets") || "[]",
         );
@@ -259,9 +211,10 @@ export default function AccountPage() {
         phone: userProfile.phone || null,
       });
       setSavedSuccess(true);
+      setToast({ type: 'success', message: 'Data profil berhasil diperbarui!' });
       setTimeout(() => setSavedSuccess(false), 2500);
     } catch {
-      // handled by mutation
+      setToast({ type: 'error', message: 'Gagal memperbarui data profil' });
     }
   };
 
@@ -284,15 +237,28 @@ export default function AccountPage() {
   // Wishlist products
   const wishlistProducts = mockProducts.slice(0, 4);
 
-  // Filtered orders
-  const filteredOrders = orders.filter((o) => {
+  // Filtered orders with pagination (Max 5 per page)
+  const filteredOrders = dbOrders.filter((o) => {
     if (orderFilter === "semua") return true;
-    if (orderFilter === "dikirim" && o.status.includes("Dikirim")) return true;
-    if (orderFilter === "selesai" && o.status.includes("Selesai")) return true;
-    if (orderFilter === "menunggu" && o.status.includes("Menunggu"))
-      return true;
+    if (orderFilter === "dikirim") return o.status === "SHIPPED";
+    if (orderFilter === "selesai") return o.status === "COMPLETED";
+    if (orderFilter === "menunggu")
+      return o.status === "PENDING_PAYMENT" || o.status === "PAID" || o.status === "PROCESSING";
     return true;
   });
+
+  const ORDERS_PER_PAGE = 5;
+  const [orderPage, setOrderPage] = useState<number>(1);
+
+  useEffect(() => {
+    setOrderPage(1);
+  }, [orderFilter]);
+
+  const totalOrderPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE) || 1;
+  const paginatedOrders = useMemo(() => {
+    const start = (orderPage - 1) * ORDERS_PER_PAGE;
+    return filteredOrders.slice(start, start + ORDERS_PER_PAGE);
+  }, [filteredOrders, orderPage]);
 
   // If user is not authenticated, render dedicated Figma Auth Screen (#169:6204 & #169:6241 - NO Navbar & NO Footer)
   if (!isAuthenticated) {
@@ -585,9 +551,9 @@ export default function AccountPage() {
                   <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <div className="flex items-center gap-2 lg:flex-1 lg:justify-between">
                     <span>Pesanan Saya</span>
-                    {orders.length > 0 && (
+                    {dbOrders.length > 0 && (
                       <span className="bg-[#B05A26] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
-                        {orders.length}
+                        {dbOrders.length}
                       </span>
                     )}
                   </div>
@@ -632,7 +598,7 @@ export default function AccountPage() {
                 <div className="pt-0 lg:pt-3 lg:mt-3 border-t-0 lg:border-t border-[#F2E4D6] shrink-0 flex items-center">
                   <button
                     type="button"
-                    onClick={handleLogout}
+                    onClick={() => setIsLogoutModalOpen(true)}
                     className="py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left text-[#C0392B] hover:bg-[#FEECE8] transition-colors cursor-pointer font-medium whitespace-nowrap lg:w-full"
                   >
                     <LogOut className="w-4 h-4" />
@@ -701,19 +667,23 @@ export default function AccountPage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[#7A5644] font-medium mb-1">
-                            Alamat Email
-                          </label>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-[#7A5644] font-medium">
+                              Alamat Email
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => setIsEmailModalOpen(true)}
+                              className="text-[11px] text-[#B05A26] font-semibold hover:underline cursor-pointer"
+                            >
+                              Ganti Email (OTP)
+                            </button>
+                          </div>
                           <input
                             type="email"
+                            readOnly
                             value={userProfile.email}
-                            onChange={(e) =>
-                              setUserProfile({
-                                ...userProfile,
-                                email: e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
+                            className="w-full px-3 py-2 border border-[#E6D2C0] bg-[#FFFBF7] rounded-[2px] text-[#4A2A1C] cursor-not-allowed select-none"
                           />
                         </div>
                         <div>
@@ -764,6 +734,10 @@ export default function AccountPage() {
                         setPasswordMsg(
                           "Kata sandi berhasil diperbarui dengan aman!",
                         );
+                        setToast({
+                          type: 'success',
+                          message: 'Kata sandi berhasil diperbarui dengan aman!',
+                        });
                         setTimeout(() => setPasswordMsg(""), 3000);
                       }}
                       className="space-y-4"
@@ -806,7 +780,7 @@ export default function AccountPage() {
               {/* TAB 2: DAFTAR ALAMAT */}
               {activeTab === "alamat" && (
                 <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 sm:p-7 shadow-xs">
-                  <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#F2E4D6]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-2 border-b border-[#F2E4D6]">
                     <div>
                       <h2 className="text-lg font-medium text-[#4A2A1C]">
                         Daftar Alamat Pengiriman
@@ -818,238 +792,105 @@ export default function AccountPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setAddressForm({
-                          id: "",
-                          label: "Rumah",
-                          recipientName: userProfile.name,
-                          phone: userProfile.phone,
-                          fullAddress: "",
-                        });
+                        setAddressToEdit(null);
                         setIsAddressModalOpen(true);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs self-start sm:self-auto"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Tambah Alamat Baru</span>
                     </button>
                   </div>
 
-                  {/* List of Addresses */}
-                  <div className="grid grid-cols-1 gap-4">
-                    {addresses.map((addr) => (
-                      <div
-                        key={addr.id}
-                        className={`p-5 rounded-[2px] relative transition-all border ${addr.isPrimary
-                            ? "border-[#B05A26] bg-[#FFFBF7]"
-                            : "border-[#E6D2C0] bg-white hover:border-[#B05A26]/50"
+                  {/* List of Addresses from PostgreSQL */}
+                  {isAddressesLoading ? (
+                    <div className="py-10 flex flex-col items-center justify-center gap-2 text-xs text-[#7A5644]">
+                      <Loader2 className="w-6 h-6 text-[#B05A26] animate-spin" />
+                      <span>Memuat daftar alamat tersimpan...</span>
+                    </div>
+                  ) : dbAddresses.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4">
+                      {dbAddresses.map((addr) => (
+                        <div
+                          key={addr.id}
+                          className={`p-5 rounded-[2px] relative transition-all border ${
+                            addr.isDefault
+                              ? "border-[#B05A26] bg-[#FFFBF7]"
+                              : "border-[#E6D2C0] bg-white hover:border-[#B05A26]/50"
                           }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-[#4A2A1C]">
-                              {addr.recipientName} ({addr.label})
-                            </span>
-                            {addr.isPrimary && (
-                              <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
-                                Utama
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-sm text-[#4A2A1C]">
+                                {addr.receiverName} ({addr.label})
                               </span>
-                            )}
+                              {addr.isDefault && (
+                                <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
+                                  Utama
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2 text-xs">
+                              {!addr.isDefault && (
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    try {
+                                      await updateAddressMutation.mutateAsync({ id: addr.id, isDefault: true });
+                                      setToast({
+                                        type: 'success',
+                                        message: `Alamat "${addr.label}" berhasil dijadikan alamat utama!`,
+                                      });
+                                    } catch {
+                                      setToast({
+                                        type: 'error',
+                                        message: 'Gagal mengubah alamat utama',
+                                      });
+                                    }
+                                  }}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#7A5644] hover:text-[#2A6E37] bg-[#FFFBF7] hover:bg-[#F2FAF4] border border-[#E6D2C0] hover:border-[#A7DBB8] rounded-[2px] transition-colors cursor-pointer"
+                                >
+                                  <Check className="w-3 h-3 text-[#2A6E37]" />
+                                  <span>Jadikan Utama</span>
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setAddressToEdit(addr);
+                                  setIsAddressModalOpen(true);
+                                }}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#B05A26] hover:bg-[#FFF6EA] border border-[#E6D2C0] hover:border-[#B05A26] rounded-[2px] font-medium transition-colors cursor-pointer"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
+                                <span>Ubah</span>
+                              </button>
+                              {dbAddresses.length > 1 && !addr.isDefault && (
+                                <button
+                                  type="button"
+                                  onClick={() => setAddressToDelete(addr)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#C0392B] hover:bg-[#FDF0ED] border border-[#E6D2C0] hover:border-[#F5C2B8] rounded-[2px] font-medium transition-colors cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span>Hapus</span>
+                                </button>
+                              )}
+                            </div>
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs">
-                            {!addr.isPrimary && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAddresses((prev) =>
-                                    prev.map((a) => ({
-                                      ...a,
-                                      isPrimary: a.id === addr.id,
-                                    })),
-                                  );
-                                }}
-                                className="text-xs text-[#7A5644] hover:text-[#B05A26] underline cursor-pointer"
-                              >
-                                Jadikan Utama
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAddressForm(addr);
-                                setIsAddressModalOpen(true);
-                              }}
-                              className="text-[#B05A26] font-medium hover:underline flex items-center gap-1 cursor-pointer"
-                            >
-                              <Edit2 className="w-3.5 h-3.5" />
-                              <span>Ubah</span>
-                            </button>
-                            {addresses.length > 1 && !addr.isPrimary && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAddresses((prev) =>
-                                    prev.filter((a) => a.id !== addr.id),
-                                  );
-                                }}
-                                className="text-[#C0392B] font-medium hover:underline cursor-pointer"
-                              >
-                                Hapus
-                              </button>
-                            )}
-                          </div>
+                          <p className="text-xs text-[#7A5644] mb-1">
+                            {addr.receiverPhone}
+                          </p>
+                          <p className="text-xs text-[#4A2A1C] max-w-2xl leading-relaxed">
+                            {addr.streetAddress}, {addr.subdistrict}, {addr.city} {addr.postalCode}
+                          </p>
                         </div>
-
-                        <p className="text-xs text-[#7A5644] mb-1">
-                          {addr.phone}
-                        </p>
-                        <p className="text-xs text-[#4A2A1C] max-w-2xl leading-relaxed">
-                          {addr.fullAddress}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Add / Edit Address Modal */}
-                  {isAddressModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-                      <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-6 sm:p-7 max-w-lg w-full shadow-2xl relative text-left">
-                        <button
-                          type="button"
-                          onClick={() => setIsAddressModalOpen(false)}
-                          className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
-
-                        <h3 className="text-base font-semibold text-[#4A2A1C] mb-4">
-                          {addressForm.id
-                            ? "Ubah Alamat Pengiriman"
-                            : "Tambah Alamat Pengiriman Baru"}
-                        </h3>
-
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            if (
-                              !addressForm.recipientName ||
-                              !addressForm.fullAddress
-                            )
-                              return;
-                            if (addressForm.id) {
-                              setAddresses((prev) =>
-                                prev.map((a) =>
-                                  a.id === addressForm.id
-                                    ? { ...a, ...addressForm }
-                                    : a,
-                                ),
-                              );
-                            } else {
-                              const newAddr = {
-                                id: `addr-${Date.now()}`,
-                                label: addressForm.label || "Rumah",
-                                recipientName: addressForm.recipientName,
-                                phone: addressForm.phone || userProfile.phone,
-                                fullAddress: addressForm.fullAddress,
-                                isPrimary: addresses.length === 0,
-                              };
-                              setAddresses((prev) => [...prev, newAddr]);
-                            }
-                            setIsAddressModalOpen(false);
-                          }}
-                          className="space-y-3.5 text-xs"
-                        >
-                          <div>
-                            <label className="block text-[#7A5644] font-medium mb-1">
-                              Label Alamat (Contoh: Rumah, Kantor, Rumah Nenek)
-                            </label>
-                            <input
-                              type="text"
-                              required
-                              value={addressForm.label}
-                              onChange={(e) =>
-                                setAddressForm({
-                                  ...addressForm,
-                                  label: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                              <label className="block text-[#7A5644] font-medium mb-1">
-                                Nama Penerima
-                              </label>
-                              <input
-                                type="text"
-                                required
-                                value={addressForm.recipientName}
-                                onChange={(e) =>
-                                  setAddressForm({
-                                    ...addressForm,
-                                    recipientName: e.target.value,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[#7A5644] font-medium mb-1">
-                                Nomor WhatsApp / HP
-                              </label>
-                              <input
-                                type="text"
-                                required
-                                value={addressForm.phone}
-                                onChange={(e) =>
-                                  setAddressForm({
-                                    ...addressForm,
-                                    phone: e.target.value,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                              />
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="block text-[#7A5644] font-medium mb-1">
-                              Alamat Lengkap &amp; Kode Pos
-                            </label>
-                            <textarea
-                              rows={3}
-                              required
-                              placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, kode pos"
-                              value={addressForm.fullAddress}
-                              onChange={(e) =>
-                                setAddressForm({
-                                  ...addressForm,
-                                  fullAddress: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
-                            />
-                          </div>
-
-                          <div className="pt-2 flex justify-end gap-2.5">
-                            <button
-                              type="button"
-                              onClick={() => setIsAddressModalOpen(false)}
-                              className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] rounded-[2px] hover:bg-[#FFFBF7] cursor-pointer"
-                            >
-                              Batal
-                            </button>
-                            <button
-                              type="submit"
-                              className="px-5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium rounded-[2px] cursor-pointer shadow-xs"
-                            >
-                              Simpan Alamat
-                            </button>
-                          </div>
-                        </form>
-                      </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 border border-dashed border-[#E6D2C0] rounded-[2px] text-center text-xs text-[#7A5644]">
+                      Belum ada alamat pengiriman tersimpan. Silakan klik tombol &quot;Tambah Alamat Baru&quot;.
                     </div>
                   )}
                 </div>
@@ -1058,126 +899,250 @@ export default function AccountPage() {
               {/* TAB 3: PESANAN SAYA (Figma Node #169:7140) */}
               {activeTab === "pesanan" && (
                 <div className="space-y-5">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#F2E4D6]">
-                    <h2 className="text-lg font-medium text-[#4A2A1C]">
-                      Riwayat Pesanan ({orders.length})
-                    </h2>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F2E4D6]">
+                    <div>
+                      <h2 className="text-lg font-medium text-[#4A2A1C]">
+                        Riwayat Pesanan ({filteredOrders.length})
+                      </h2>
+                      <p className="text-xs text-[#7A5644] mt-0.5">
+                        Pantau status pesanan dan pelacakan resi pengiriman buku Anda
+                      </p>
+                    </div>
 
                     {/* Filter pills */}
-                    <div className="flex items-center gap-1 text-xs">
-                      {["semua", "menunggu", "dikirim", "selesai"].map(
-                        (filterKey) => (
-                          <button
-                            key={filterKey}
-                            onClick={() => setOrderFilter(filterKey)}
-                            className={`px-3 py-1 rounded-[2px] capitalize transition-colors ${orderFilter === filterKey
-                                ? "bg-[#B05A26] text-white font-medium"
-                                : "bg-white border border-[#E6D2C0] text-[#7A5644] hover:border-[#B05A26]"
-                              }`}
-                          >
-                            {filterKey}
-                          </button>
-                        ),
-                      )}
+                    <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1 scrollbar-none">
+                      {[
+                        { key: "semua", label: "Semua" },
+                        { key: "menunggu", label: "Menunggu" },
+                        { key: "dikirim", label: "Dikirim" },
+                        { key: "selesai", label: "Selesai" },
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          onClick={() => setOrderFilter(tab.key)}
+                          className={`px-3 py-1 rounded-[2px] transition-colors cursor-pointer ${
+                            orderFilter === tab.key
+                              ? "bg-[#B05A26] text-white font-medium"
+                              : "bg-white border border-[#E6D2C0] text-[#7A5644] hover:border-[#B05A26]"
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
                   {/* Orders List Cards */}
-                  {filteredOrders.length > 0 ? (
-                    filteredOrders.map((ord) => (
-                      <div
-                        key={ord.orderId}
-                        className="bg-white border border-[#F2E4D6] rounded-[2px] p-5 sm:p-6 shadow-xs flex flex-col gap-4"
-                      >
-                        {/* Header card */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2E4D6] text-xs">
-                          <div className="flex items-center gap-3">
-                            <span className="font-semibold text-[#4A2A1C]">
-                              No. Pesanan: {ord.orderId}
-                            </span>
-                            <span className="text-[#7A5644]">
-                              {new Date(ord.createdAt).toLocaleDateString(
-                                "id-ID",
-                                {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )}
-                            </span>
-                          </div>
+                  {isOrdersLoading ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-2 text-xs text-[#7A5644]">
+                      <Loader2 className="w-6 h-6 text-[#B05A26] animate-spin" />
+                      <span>Memuat riwayat pesanan...</span>
+                    </div>
+                  ) : filteredOrders.length > 0 ? (
+                    <>
+                      {paginatedOrders.map((ord) => {
+                      const statusBadge = (() => {
+                        switch (ord.status) {
+                          case 'COMPLETED':
+                            return { label: 'Selesai', className: 'bg-[#DDF1E5] text-[#2A6E37]' };
+                          case 'SHIPPED':
+                            return { label: 'Sedang Dikirim', className: 'bg-[#E3EDF9] text-[#2C5282]' };
+                          case 'PROCESSING':
+                            return { label: 'Sedang Disiapkan', className: 'bg-[#FFF6EA] text-[#B05A26]' };
+                          case 'PAID':
+                            return { label: 'Sudah Dibayar', className: 'bg-[#EBF8FF] text-[#2B6CB0]' };
+                          case 'PENDING_PAYMENT':
+                            return { label: 'Menunggu Pembayaran', className: 'bg-[#FFF6EA] text-[#B05A26]' };
+                          case 'CANCELLED':
+                            return { label: 'Dibatalkan', className: 'bg-[#FDF0ED] text-[#C0392B]' };
+                          default:
+                            return { label: ord.status, className: 'bg-[#FFF6EA] text-[#B05A26]' };
+                        }
+                      })();
 
-                          <span
-                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-[2px] ${ord.status === "Selesai"
-                                ? "bg-[#DDF1E5] text-[#2A6E37]"
-                                : ord.status === "Sedang Dikirim"
-                                  ? "bg-[#E3EDF9] text-[#2C5282]"
-                                  : "bg-[#FFF6EA] text-[#B05A26]"
-                              }`}
-                          >
-                            {ord.status}
-                          </span>
-                        </div>
-
-                        {/* Items list */}
-                        <div className="flex flex-col gap-3">
-                          {ord.items?.map((item: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className="flex items-center gap-3.5"
-                            >
-                              <div className="relative w-14 h-14 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0">
-                                <Image
-                                  src={
-                                    item.coverImage ||
-                                    "/images/products/p-1-little-bear.png"
-                                  }
-                                  alt={item.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-xs font-semibold text-[#4A2A1C] truncate">
-                                  {item.title}
-                                </h4>
-                                <span className="text-[11px] text-[#7A5644] block">
-                                  {item.quantity} × {formatIDR(item.price)}
-                                </span>
-                              </div>
+                      return (
+                        <div
+                          key={ord.id || ord.orderNumber}
+                          className="bg-white border border-[#F2E4D6] rounded-[2px] p-5 sm:p-6 shadow-xs flex flex-col gap-4"
+                        >
+                          {/* Header card */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2E4D6] text-xs">
+                            <div className="flex items-center gap-3">
+                              <span className="font-semibold text-[#4A2A1C]">
+                                No. Pesanan: {ord.orderNumber}
+                              </span>
+                              <span className="text-[#7A5644]">
+                                {new Date(ord.createdAt).toLocaleDateString(
+                                  "id-ID",
+                                  {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )}
+                              </span>
                             </div>
-                          ))}
-                        </div>
 
-                        {/* Total & Action */}
-                        <div className="pt-3 border-t border-[#F2E4D6] flex flex-wrap items-center justify-between gap-3 text-xs">
-                          <div>
-                            <span className="text-[#7A5644] block text-[11px]">
-                              Total Tagihan:
-                            </span>
-                            <span className="font-bold text-[#B05A26] text-sm">
-                              {formatIDR(ord.totalAmount)}
+                            <span
+                              className={`text-[11px] font-semibold px-2.5 py-1 rounded-[2px] ${statusBadge.className}`}
+                            >
+                              {statusBadge.label}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            {ord.shippingTrackingNumber &&
-                              ord.shippingTrackingNumber !== "-" && (
-                                <span className="text-[11px] text-[#7A5644] bg-[#FFF6EA] px-2.5 py-1 rounded-[2px] border border-[#E6D2C0]">
-                                  Resi: {ord.shippingTrackingNumber}
+                          {/* Items list */}
+                          <div className="flex flex-col gap-3">
+                            {ord.items?.map((item: any, idx: number) => {
+                              const images = Array.isArray(item.product?.images)
+                                ? (item.product.images as string[])
+                                : [];
+                              const cover = images[0] || "/images/products/p-1-little-bear.png";
+                              const canReview = ord.status === 'SHIPPED' || ord.status === 'COMPLETED';
+
+                              return (
+                                <div
+                                  key={item.id || idx}
+                                  className="p-3 bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                                >
+                                  <div className="flex items-center gap-3.5">
+                                    <div className="relative w-14 h-14 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0 border border-[#E6D2C0]">
+                                      <Image
+                                        src={cover}
+                                        alt={item.product?.name || "Buku BabyShalls"}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-xs font-semibold text-[#4A2A1C] truncate">
+                                        {item.product?.name || "Buku Edukasi"}
+                                      </h4>
+                                      <span className="text-[11px] text-[#7A5644] block">
+                                        {item.quantity} × {formatIDR(item.price)}
+                                      </span>
+                                      {item.review && (
+                                        <span className="inline-flex items-center gap-1 text-[11px] text-[#2A6E37] font-semibold mt-1">
+                                          <ShieldCheck className="w-3.5 h-3.5" />
+                                          Ulasan Terkirim: ⭐ {item.review.rating}/5
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {ord.status === 'COMPLETED' && (
+                                    <a
+                                      href="https://maps.google.com/?q=BabyShalls+Malang"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="self-start sm:self-center inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFBF7] border border-[#E6D2C0] hover:border-[#B05A26] text-[#B05A26] text-xs font-semibold rounded-[2px] transition-colors"
+                                      title="Beri ulasan dan rating untuk BabyShalls di Google Maps"
+                                    >
+                                      <Star className="w-3.5 h-3.5 fill-[#E5A83B] text-[#E5A83B]" />
+                                      <span>Ulas di Google Maps</span>
+                                      <ExternalLink className="w-3 h-3 text-[#A89080]" />
+                                    </a>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Delivery info & actions */}
+                          <div className="pt-3 border-t border-[#F2E4D6] flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#7A5644] text-[11px]">
+                                Kurir: <strong>{ord.courierCode || 'KiriminAja Malang'}</strong>
+                              </span>
+                              {ord.waybillNumber && (
+                                <span className="text-[11px] font-mono text-[#B05A26] bg-[#FFF6EA] px-2 py-0.5 rounded-[2px] border border-[#E6D2C0]">
+                                  Resi: {ord.waybillNumber}
                                 </span>
                               )}
-                            <Link
-                              href="/shop"
-                              className="px-4 py-2 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors"
-                            >
-                              Beli Lagi
-                            </Link>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <span className="text-[#7A5644] text-[11px] mr-1.5">Total:</span>
+                                <span className="font-bold text-[#B05A26] text-sm">
+                                  {formatIDR(ord.grandTotal || ord.totalAmount)}
+                                </span>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedTrackingOrder(ord.orderNumber)}
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FFF6EA] border border-[#B05A26] text-[#B05A26] hover:bg-[#B05A26] hover:text-white font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
+                              >
+                                <Truck className="w-3.5 h-3.5" />
+                                <span>Lacak Resi</span>
+                              </button>
+
+                              <Link
+                                href="/shop"
+                                className="px-4 py-1.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors"
+                              >
+                                Beli Lagi
+                              </Link>
+                            </div>
                           </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Pagination (Max 5 items per page) */}
+                    {totalOrderPages > 1 && (
+                      <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#7A5644]">
+                        <span>
+                          Menampilkan{' '}
+                          <strong>
+                            {(orderPage - 1) * ORDERS_PER_PAGE + 1} -{' '}
+                            {Math.min(orderPage * ORDERS_PER_PAGE, filteredOrders.length)}
+                          </strong>{' '}
+                          dari <strong>{filteredOrders.length}</strong> pesanan
+                        </span>
+
+                        <div className="flex items-center gap-1 self-center sm:self-auto">
+                          <button
+                            type="button"
+                            onClick={() => setOrderPage((p) => Math.max(p - 1, 1))}
+                            disabled={orderPage === 1}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-[#E6D2C0] rounded-[2px] hover:bg-[#FFF6EA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                            <span>Sebelumnya</span>
+                          </button>
+
+                          <div className="flex items-center gap-1 px-1">
+                            {Array.from({ length: totalOrderPages }, (_, i) => i + 1).map((p) => (
+                              <button
+                                key={p}
+                                type="button"
+                                onClick={() => setOrderPage(p)}
+                                className={`w-7 h-7 rounded-[2px] text-xs font-semibold flex items-center justify-center transition-colors cursor-pointer ${
+                                  orderPage === p
+                                    ? 'bg-[#B05A26] text-white'
+                                    : 'bg-white border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA]'
+                                }`}
+                              >
+                                {p}
+                              </button>
+                            ))}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setOrderPage((p) => Math.min(p + 1, totalOrderPages))}
+                            disabled={orderPage === totalOrderPages}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-[#E6D2C0] rounded-[2px] hover:bg-[#FFF6EA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                          >
+                            <span>Selanjutnya</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
-                    ))
-                  ) : (
+                    )}
+                  </>
+                ) : (
                     <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-12 text-center">
                       <div className="relative w-32 h-32 mx-auto mb-3">
                         <Image
@@ -1364,6 +1329,71 @@ export default function AccountPage() {
         </div>
       </main>
 
+      {/* Toast Notification */}
+      <ToastNotification toast={toast} onClose={() => setToast(null)} />
+
+      {/* Modals for Sprint Task #2 */}
+      <EmailChangeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        currentEmail={userProfile.email}
+        onSuccess={(newEmail) => {
+          setUserProfile((p) => ({ ...p, email: newEmail }));
+          setSavedSuccess(true);
+          setToast({ type: 'success', message: `Email akun berhasil diperbarui ke ${newEmail}` });
+          setTimeout(() => setSavedSuccess(false), 3000);
+        }}
+      />
+
+      <AddressFormModal
+        isOpen={isAddressModalOpen}
+        onClose={() => {
+          setIsAddressModalOpen(false);
+          setAddressToEdit(null);
+        }}
+        addressToEdit={addressToEdit}
+        defaultReceiverName={userProfile.name}
+        defaultPhone={userProfile.phone}
+        onSuccess={(msg) => setToast({ type: 'success', message: msg })}
+      />
+
+      <DeleteAddressModal
+        isOpen={Boolean(addressToDelete)}
+        onClose={() => setAddressToDelete(null)}
+        address={addressToDelete}
+        isDeleting={deleteAddressMutation.isPending}
+        onConfirm={async () => {
+          if (!addressToDelete) return;
+          try {
+            await deleteAddressMutation.mutateAsync(addressToDelete.id);
+            setToast({
+              type: 'success',
+              message: `Alamat "${addressToDelete.label}" berhasil dihapus!`,
+            });
+            setAddressToDelete(null);
+          } catch {
+            setToast({
+              type: 'error',
+              message: 'Gagal menghapus alamat pengiriman',
+            });
+          }
+        }}
+      />
+
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          handleLogout();
+        }}
+      />
+
+      <OrderTrackingModal
+        isOpen={Boolean(selectedTrackingOrder)}
+        onClose={() => setSelectedTrackingOrder(null)}
+        orderNumber={selectedTrackingOrder}
+      />
     </div>
   );
 }

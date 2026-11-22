@@ -132,11 +132,15 @@ export function useChangeAccountPassword() {
 }
 
 export function useRequestEmailChange() {
-  return useMutation<{ newEmail: string; expiresInSeconds: number }, unknown, { newEmail: string; currentPassword: string }>({
+  return useMutation<
+    { newEmail: string; expiresInSeconds: number; previewOtp?: string },
+    unknown,
+    { newEmail: string; currentPassword: string }
+  >({
     mutationFn: async (payload) => {
       const res = await apiClient.post<{
         success: boolean;
-        data: { newEmail: string; expiresInSeconds: number };
+        data: { newEmail: string; expiresInSeconds: number; previewOtp?: string };
       }>('/account/email/request-change', payload);
       return res.data.data;
     },
@@ -187,6 +191,26 @@ export function useCreateAccountAddress() {
   });
 }
 
+export function useUpdateAccountAddress() {
+  const qc = useQueryClient();
+  return useMutation<
+    AccountAddress,
+    unknown,
+    { id: string } & Partial<Omit<AccountAddress, 'id'>>
+  >({
+    mutationFn: async ({ id, ...payload }) => {
+      const res = await apiClient.patch<{ success: boolean; data: AccountAddress }>(
+        `/account/addresses/${id}`,
+        payload
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['account-addresses'] });
+    },
+  });
+}
+
 export function useDeleteAccountAddress() {
   const qc = useQueryClient();
   return useMutation<void, unknown, string>({
@@ -195,6 +219,37 @@ export function useDeleteAccountAddress() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['account-addresses'] });
+    },
+  });
+}
+
+export interface OrderTrackingHistoryItem {
+  timestamp: string;
+  status: string;
+  message: string;
+  location?: string;
+}
+
+export interface OrderTrackingData {
+  orderNumber: string;
+  courier: string;
+  courierService: string;
+  waybillNumber: string | null;
+  orderStatus: string;
+  isDelivered: boolean;
+  history: OrderTrackingHistoryItem[];
+  lastCheckedAt?: string;
+}
+
+export function useOrderTracking(orderNumber: string | null, enabled = true) {
+  return useQuery<OrderTrackingData>({
+    queryKey: ['order-tracking', orderNumber],
+    enabled: Boolean(orderNumber) && enabled,
+    queryFn: async () => {
+      const res = await apiClient.get<{ success: boolean; data: OrderTrackingData }>(
+        `/account/orders/${encodeURIComponent(orderNumber!)}/tracking`
+      );
+      return res.data.data;
     },
   });
 }
