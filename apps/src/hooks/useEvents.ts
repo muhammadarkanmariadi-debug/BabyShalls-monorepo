@@ -2,8 +2,7 @@
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiClient } from '../lib/axios';
-import { EVENTS } from '../data/events';
-import { WorkshopEvent } from '../types';
+import { ALL_EVENTS, getEventById } from '../data/eventsData';
 
 export interface PublicEventDto {
   id: string;
@@ -50,21 +49,21 @@ export interface RegisterEventResult {
 }
 
 function mapStaticFallback(): PublicEventDto[] {
-  return EVENTS.map((ev: WorkshopEvent) => ({
+  return ALL_EVENTS.map((ev) => ({
     id: ev.id,
-    slug: ev.slug || ev.id,
+    slug: ev.id,
     shortCode: null,
     title: ev.title,
-    category: ev.category || 'Storytelling & Art',
-    speaker: ev.speaker,
-    ageRecommendation: ev.ageRecommendation,
+    category: ev.category || 'Workshop',
+    speaker: ev.companion || null,
+    ageRecommendation: ev.age,
     description: ev.description || '',
-    bannerImage: ev.image || '/images/event-craft.jpg',
+    bannerImage: ev.image || '/images/events/event-workshop-alam.png',
     eventDate: ev.date,
     timeString: ev.time,
     location: ev.location,
     price: ev.price,
-    quota: ev.remainingQuota ?? ev.quota ?? 20,
+    quota: ev.seatsLeft ?? 20,
   }));
 }
 
@@ -82,6 +81,44 @@ export function usePublicEvents() {
       }
       return mapStaticFallback();
     },
+  });
+}
+
+export function usePublicEvent(idOrSlug: string) {
+  return useQuery<PublicEventDto>({
+    queryKey: ['event', idOrSlug],
+    queryFn: async () => {
+      try {
+        const res = await apiClient.get<{ success: boolean; data: PublicEventDto }>(
+          `/events/${encodeURIComponent(idOrSlug)}`
+        );
+        if (res.data?.data) {
+          return res.data.data;
+        }
+      } catch {
+        // fallback to static
+      }
+      const staticEvent =
+        ALL_EVENTS.find((e) => e.id === idOrSlug || e.id === idOrSlug.toLowerCase()) ||
+        getEventById(idOrSlug);
+      return {
+        id: staticEvent.id,
+        slug: staticEvent.id,
+        shortCode: null,
+        title: staticEvent.title,
+        category: staticEvent.category || 'Workshop',
+        speaker: staticEvent.companion || null,
+        ageRecommendation: staticEvent.age,
+        description: staticEvent.description || '',
+        bannerImage: staticEvent.image || '/images/events/event-workshop-alam.png',
+        eventDate: staticEvent.date,
+        timeString: staticEvent.time,
+        location: staticEvent.location,
+        price: staticEvent.price,
+        quota: staticEvent.seatsLeft ?? 20,
+      };
+    },
+    enabled: Boolean(idOrSlug),
   });
 }
 

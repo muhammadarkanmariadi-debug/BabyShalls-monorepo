@@ -15,11 +15,14 @@ import {
   ShieldCheck,
   QrCode,
   ArrowRight,
+  AlertCircle,
+  X,
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { getEventById } from '@/data/eventsData';
-import { useRegisterEvent } from '@/hooks/useEvents';
+import { useRegisterEvent, usePublicEvent } from '@/hooks/useEvents';
 import { generateIdempotencyKey } from '@/lib/idempotency';
+import { openMidtransSnap } from '@/lib/midtrans-snap';
 
 interface ChildData {
   id: number;
@@ -32,8 +35,22 @@ export default function EventRegistrationPage() {
   const router = useRouter();
   const rawId = typeof params?.id === 'string' ? params.id : 'nature-craft';
 
-  // Dynamic Event Data from single source of truth
-  const eventData = getEventById(rawId);
+  // Dynamic Event Data with DB priority & static fallback
+  const fallbackEvent = getEventById(rawId);
+  const { data: dbEvent } = usePublicEvent(rawId);
+
+  const eventData = dbEvent
+    ? {
+        ...fallbackEvent,
+        id: dbEvent.id,
+        title: dbEvent.title || fallbackEvent.title,
+        price: dbEvent.price !== undefined ? dbEvent.price : fallbackEvent.price,
+        isFree: dbEvent.price === 0,
+        quotaTotal: fallbackEvent.quotaTotal || 20,
+        seatsLeft: dbEvent.quota !== undefined ? dbEvent.quota : fallbackEvent.seatsLeft,
+      }
+    : fallbackEvent;
+
   const isFree = eventData.isFree || eventData.price === 0;
 
   // Form states (Figma Node #169:5461)
@@ -51,6 +68,7 @@ export default function EventRegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [issuedTicketId, setIssuedTicketId] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleAddChild = () => {
     if (childrenList.length >= 4) return;
@@ -97,58 +115,106 @@ export default function EventRegistrationPage() {
     }
 
     let ticketId = `EVT-${Math.floor(1000 + Math.random() * 9000)}`;
+    let snapToken: string | null = null;
+    let redirectUrl: string | null = null;
+
     try {
+      setErrorMessage('');
       const result = await registerEventMutation.mutateAsync({
         ...payload,
         idempotencyKey: eventIdemKeyRef.current.key,
       });
       ticketId = result.ticketCode || ticketId;
+      snapToken = result.snapToken || null;
+      redirectUrl = result.redirectUrl || null;
       eventIdemKeyRef.current = null;
-    } catch {
-      // Fallback jika event static belum ada di DB lokal
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || err?.message || 'Gagal mendaftar workshop.';
+      setErrorMessage(msg);
+      setIsSubmitting(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    setIssuedTicketId(ticketId);
+    const completeRegistration = () => {
+      setIssuedTicketId(ticketId);
 
-    const newTicket = {
-      ticketId,
-      eventId: eventData.id,
-      eventTitle: eventData.title,
-      eventDate: eventData.date,
-      eventTime: eventData.time,
-      location: eventData.location,
-      parentName,
-      phone,
-      email,
-      children: childrenList,
-      totalPaid: totalPrice,
-      isFree,
-      registeredAt: new Date().toISOString(),
+      const newTicket = {
+        ticketId,
+        eventId: eventData.id,
+        eventTitle: eventData.title,
+        eventDate: eventData.date,
+        eventTime: eventData.time,
+        location: eventData.location,
+        parentName,
+        phone,
+        email,
+        children: childrenList,
+        totalPaid: totalPrice,
+        isFree,
+        registeredAt: new Date().toISOString(),
+      };
+
+      if (typeof window !== 'undefined') {
+        try {
+          const existing = JSON.parse(
+            localStorage.getItem('babyshalls_event_tickets') || '[]'
+          );
+          existing.unshift(newTicket);
+          localStorage.setItem(
+            'babyshalls_event_tickets',
+            JSON.stringify(existing)
+          );
+        } catch {
+          // pass
+        }
+      }
+
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    if (typeof window !== 'undefined') {
-      try {
-        const existing = JSON.parse(
-          localStorage.getItem('babyshalls_event_tickets') || '[]'
-        );
-        existing.unshift(newTicket);
-        localStorage.setItem(
-          'babyshalls_event_tickets',
-          JSON.stringify(existing)
-        );
-      } catch {
-        // pass
+    if (!isFree && snapToken) {
+      const snapMode = openMidtransSnap(snapToken, redirectUrl, {
+        onSuccess: () => completeRegistration(),
+        onPending: () => completeRegistration(),
+        onError: () => {
+          alert('Pembayaran Midtrans tidak berhasil. Silakan coba lagi.');
+          setIsSubmitting(false);
+        },
+        onClose: () => completeRegistration(),
+      });
+      if (snapMode === 'dev' || snapMode === 'redirect' || snapMode === 'unavailable') {
+        completeRegistration();
       }
+    } else {
+      completeRegistration();
     }
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col font-sans">
-      <TombolKembali fallbackUrl={`/events/${eventData.id}`} label="Kembali ke Detail Event" />
+      <TombolKembali fallbackUrl={`/events/${rawId}`} label="Kembali ke Detail Event" />
+
+      {/* Breadcrumb Navigation */}
+      <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-8 pt-4 pb-1">
+        <nav className="flex items-center gap-2 text-xs text-[#7A5644] flex-wrap">
+          <Link href="/" className="hover:text-[#B05A26] transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <Link href="/events" className="hover:text-[#B05A26] transition-colors">
+            Event &amp; Workshop
+          </Link>
+          <span>/</span>
+          <Link href={`/events/${rawId}`} className="hover:text-[#B05A26] transition-colors line-clamp-1 max-w-[200px] sm:max-w-none">
+            {eventData.title}
+          </Link>
+          <span>/</span>
+          <span className="text-[#4A2A1C] font-semibold">Formulir Pendaftaran</span>
+        </nav>
+      </div>
 
       {/* SUCCESS STATE - Figma Node #169:5717 */}
       {isSuccess ? (
@@ -246,11 +312,11 @@ export default function EventRegistrationPage() {
         </main>
       ) : (
         /* REGISTRATION FORM - Figma Node #169:5461 */
-        <main className="flex-1 py-8 sm:py-12">
+        <main className="flex-1 py-6 sm:py-10">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
             
             {/* Header Section (Figma Node #169:5464) */}
-            <div className="mb-8">
+            <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#7E4A84] block">
                   FORMULIR PENDAFTARAN
@@ -265,7 +331,7 @@ export default function EventRegistrationPage() {
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-[40px] font-medium text-[#4A2A1C] leading-tight mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-medium text-[#4A2A1C] leading-tight mb-2">
                 Daftar: {eventData.title}
               </h1>
               <p className="text-sm sm:text-base text-[#7A5644]">
@@ -273,16 +339,37 @@ export default function EventRegistrationPage() {
               </p>
             </div>
 
+            {/* Error Notification Banner */}
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-[#FDF2F2] border border-[#F8B4B4] rounded-[2px] flex items-start justify-between gap-3 text-sm text-[#9B1C1C] animate-in fade-in duration-200">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-[#E02424] mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-xs sm:text-sm">Pendaftaran belum dapat diproses</p>
+                    <p className="text-xs text-[#9B1C1C]/90 mt-0.5">{errorMessage}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setErrorMessage('')}
+                  className="text-[#9B1C1C] hover:text-black p-0.5 cursor-pointer"
+                  aria-label="Tutup pesan error"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {/* Content: Form + Summary Grid (Figma Node #169:5467) */}
             <form onSubmit={handleSubmit}>
-              <div className="flex flex-col lg:flex-row gap-8 items-start">
+              <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-start">
                 
                 {/* Left Form Column (Figma Node #169:5468) */}
-                <div className="flex-1 w-full space-y-6">
+                <div className="flex-1 w-full space-y-4">
                   
                   {/* Card 1: Data Orang Tua / Pendamping (Figma #169:5469) */}
-                  <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-6 sm:p-7 shadow-xs">
-                    <h2 className="text-lg font-medium text-[#4A2A1C] mb-5">
+                  <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-5 sm:p-6 shadow-xs">
+                    <h2 className="text-base sm:text-lg font-medium text-[#4A2A1C] mb-4">
                       Data orang tua / pendamping
                     </h2>
 
@@ -334,9 +421,9 @@ export default function EventRegistrationPage() {
                   </div>
 
                   {/* Card 2: Data Anak (Figma Node #169:5484) */}
-                  <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-6 sm:p-7 shadow-xs">
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="text-lg font-medium text-[#4A2A1C]">
+                  <div className="bg-white border border-[#E6D2C0] rounded-[2px] p-5 sm:p-6 shadow-xs">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-base sm:text-lg font-medium text-[#4A2A1C]">
                         Data anak
                       </h2>
                       <span className="text-xs text-[#7A5644]">
@@ -416,12 +503,12 @@ export default function EventRegistrationPage() {
                           className="w-full py-2.5 border border-dashed border-[#B05A26] text-[#B05A26] bg-[#FFF8F3] hover:bg-[#FCEEE3] text-xs font-semibold rounded-[2px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          Tambah Anak
+                          + Daftarkan Anak Tambahan (Tiket Tambahan)
                         </button>
                       )}
 
                       {/* Catatan Khusus (Figma Node #169:5517) */}
-                      <div className="pt-2">
+                      <div className="pt-1">
                         <label className="block text-xs font-semibold text-[#4A2A1C] mb-1.5">
                           Catatan (alergi, kebutuhan khusus)
                         </label>

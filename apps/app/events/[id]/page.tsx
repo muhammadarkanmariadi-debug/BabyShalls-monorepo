@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { getEventById } from '@/data/eventsData';
+import { usePublicEvent } from '@/hooks/useEvents';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -26,8 +27,27 @@ export default function EventDetailPage() {
   const [childrenCount, setChildrenCount] = useState(1);
   const [copiedShare, setCopiedShare] = useState(false);
 
-  // Dynamic Event Data from single source of truth
-  const eventData = getEventById(rawId);
+  // Dynamic Event Data from DB with single source of truth fallback
+  const fallbackEvent = getEventById(rawId);
+  const { data: dbEvent } = usePublicEvent(rawId);
+
+  const eventData = dbEvent
+    ? {
+        ...fallbackEvent,
+        title: dbEvent.title || fallbackEvent.title,
+        price: dbEvent.price !== undefined ? dbEvent.price : fallbackEvent.price,
+        isFree: dbEvent.price === 0,
+        quotaTotal: fallbackEvent.quotaTotal || 20,
+        seatsLeft: dbEvent.quota !== undefined ? dbEvent.quota : fallbackEvent.seatsLeft,
+        quotaFilled: Math.max(0, (fallbackEvent.quotaTotal || 20) - (dbEvent.quota ?? fallbackEvent.seatsLeft)),
+        status:
+          (dbEvent.quota ?? fallbackEvent.seatsLeft) <= 0
+            ? ('Penuh' as const)
+            : (dbEvent.quota ?? fallbackEvent.seatsLeft) <= 5
+            ? ('Sisa Sedikit' as const)
+            : ('Tersedia' as const),
+      }
+    : fallbackEvent;
 
   const isFree = eventData.isFree || eventData.price === 0;
   const totalPrice = childrenCount * eventData.price;
@@ -46,23 +66,30 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <TombolKembali fallbackUrl="/events" label="Kembali ke Daftar Event" />
+      {/* Top Header / Breadcrumbs & Navigation */}
+      <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-8 pt-5 pb-2">
+        <div className="flex items-center gap-2 text-xs text-[#7A5644] mb-3">
+          <Link href="/" className="hover:text-[#B05A26] transition-colors">
+            Beranda
+          </Link>
+          <span>/</span>
+          <Link href="/events" className="hover:text-[#B05A26] transition-colors">
+            Event &amp; Workshop
+          </Link>
+          <span>/</span>
+          <span className="text-[#4A2A1C] font-semibold truncate max-w-[240px] sm:max-w-none">
+            {eventData.title}
+          </span>
+        </div>
+        <TombolKembali fallbackUrl="/events" label="Kembali ke Daftar Event" className="!px-0 !pt-0 !pb-1" />
+      </div>
 
       <main className="flex-1">
         {/* Hero Section (Figma Frame #169:5198) */}
-        <section className="pt-2 pb-6">
+        <section className="pt-1 pb-6">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
-            {/* Breadcrumb (Figma #169:5199) */}
-            <div className="text-[13px] text-[#7A5644] mb-4">
-              <Link href="/events" className="hover:text-[#B05A26] transition-colors">
-                Event
-              </Link>
-              <span className="mx-2">/</span>
-              <span className="text-[#4A2A1C] font-medium">{eventData.title}</span>
-            </div>
-
             {/* Banner Image 16:9 (Figma #169:5460) */}
-            <div className="relative w-full h-[260px] sm:h-[340px] md:h-[400px] bg-[#F2E4D6] rounded-[2px] overflow-hidden">
+            <div className="relative w-full h-[260px] sm:h-[340px] md:h-[400px] bg-[#F2E4D6] rounded-[2px] overflow-hidden shadow-xs">
               <Image
                 src={eventData.image}
                 alt={eventData.title}

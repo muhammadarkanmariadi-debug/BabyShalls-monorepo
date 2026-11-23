@@ -11,12 +11,22 @@ const createBookRequestSchema = z.object({
   authorPublisher: z.string().trim().max(150).optional().nullable(),
   customerName: z.string().trim().min(2, 'Nama lengkap minimal 2 karakter.').max(100).optional().nullable(),
   email: z
-    .union([z.string().trim().email('Format email tidak valid.'), z.literal(''), z.null(), z.undefined()])
+    .string()
+    .trim()
+    .email('Format email tidak valid.')
+    .optional()
+    .nullable()
+    .or(z.literal(''))
     .transform((v) => (v ? v : null)),
   whatsappNumber: z.string().trim().min(8, 'Nomor WhatsApp tidak valid.').max(20),
   notes: z.string().trim().max(1000).optional().nullable(),
   referenceImageUrl: z
-    .union([z.string().trim().url('URL gambar referensi tidak valid.'), z.literal(''), z.null(), z.undefined()])
+    .string()
+    .trim()
+    .url('URL gambar referensi tidak valid.')
+    .optional()
+    .nullable()
+    .or(z.literal(''))
     .transform((v) => (v ? v : null)),
   turnstileToken: z.string().optional(),
 });

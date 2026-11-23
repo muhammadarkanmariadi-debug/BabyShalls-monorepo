@@ -58,104 +58,103 @@ async function main() {
   }
 
   // Ensure demo user has demo orders for Sprint 2 testing
-  const existingOrders = await prisma.order.findMany({ where: { userId: demoUser.id } });
-  if (existingOrders.length === 0) {
-    const products = await prisma.product.findMany({ take: 3 });
-    if (products.length > 0) {
-      await prisma.order.create({
-        data: {
-          orderNumber: 'BS-2026-0881',
-          userId: demoUser.id,
-          totalAmount: products[0].price,
-          shippingCost: 15000,
-          grandTotal: Number(products[0].price) + 15000,
-          status: 'SHIPPED',
-          courierCode: 'jne',
-          courierService: 'REG',
-          waybillNumber: 'JNE88291039401ID',
-          shippingAddress: {
-            receiverName: 'Bunda Rania Putri',
-            receiverPhone: '081234567899',
-            streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
-            city: 'Kota Malang',
+  const products = await prisma.product.findMany({ take: 3 });
+  const existingOrder1 = await prisma.order.findUnique({ where: { orderNumber: 'BS-2026-0881' } });
+  if (!existingOrder1 && products.length > 0) {
+    await prisma.order.create({
+      data: {
+        orderNumber: 'BS-2026-0881',
+        userId: demoUser.id,
+        totalAmount: products[0].price,
+        shippingCost: 15000,
+        grandTotal: Number(products[0].price) + 15000,
+        status: 'SHIPPED',
+        courierCode: 'jne',
+        courierService: 'REG',
+        waybillNumber: 'JNE88291039401ID',
+        shippingAddress: {
+          receiverName: 'Bunda Rania Putri',
+          receiverPhone: '081234567899',
+          streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
+          city: 'Kota Malang',
+        },
+        trackingHistory: [
+          {
+            timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+            status: 'PICKUP_REQUESTED',
+            message: 'Paket siap dijemput kurir di Toko BabyShalls Malang.',
+            location: 'Kota Malang',
           },
-          trackingHistory: [
+          {
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
+            status: 'IN_TRANSIT',
+            message: 'Paket sedang dalam perjalanan menuju kota tujuan.',
+            location: 'Malang Gateway Hub',
+          },
+        ],
+        items: {
+          create: [
             {
-              timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
-              status: 'PICKUP_REQUESTED',
-              message: 'Paket siap dijemput kurir di Toko BabyShalls Malang.',
-              location: 'Kota Malang',
-            },
-            {
-              timestamp: new Date(Date.now() - 86400000).toISOString(),
-              status: 'IN_TRANSIT',
-              message: 'Paket sedang dalam perjalanan menuju kota tujuan.',
-              location: 'Malang Gateway Hub',
+              productId: products[0].id,
+              price: products[0].price,
+              quantity: 1,
             },
           ],
-          items: {
-            create: [
-              {
-                productId: products[0].id,
-                price: products[0].price,
-                quantity: 1,
-              },
-            ],
-          },
         },
-      });
+      },
+    });
+  }
 
-      if (products.length > 1) {
-        await prisma.order.create({
-          data: {
-            orderNumber: 'BS-2026-0842',
-            userId: demoUser.id,
-            totalAmount: products[1].price,
-            shippingCost: 12000,
-            grandTotal: Number(products[1].price) + 12000,
-            status: 'COMPLETED',
-            courierCode: 'jnt',
-            courierService: 'EZ',
-            waybillNumber: 'JNT991827364ID',
-            shippingAddress: {
-              receiverName: 'Bunda Rania Putri',
-              receiverPhone: '081234567899',
-              streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
-              city: 'Kota Malang',
-            },
-            trackingHistory: [
-              {
-                timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
-                status: 'PICKUP_REQUESTED',
-                message: 'Paket siap dijemput kurir.',
-                location: 'Kota Malang',
-              },
-              {
-                timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
-                status: 'IN_TRANSIT',
-                message: 'Paket tiba di gerai transit Malang.',
-                location: 'Kota Malang',
-              },
-              {
-                timestamp: new Date(Date.now() - 86400000).toISOString(),
-                status: 'DELIVERED',
-                message: 'Paket telah berhasil diterima oleh pemesan.',
-                location: 'Kota Malang',
-              },
-            ],
-            items: {
-              create: [
-                {
-                  productId: products[1].id,
-                  price: products[1].price,
-                  quantity: 1,
-                },
-              ],
-            },
+  const existingOrder2 = await prisma.order.findUnique({ where: { orderNumber: 'BS-2026-0842' } });
+  if (!existingOrder2 && products.length > 1) {
+    await prisma.order.create({
+      data: {
+        orderNumber: 'BS-2026-0842',
+        userId: demoUser.id,
+        totalAmount: products[1].price,
+        shippingCost: 12000,
+        grandTotal: Number(products[1].price) + 12000,
+        status: 'COMPLETED',
+        courierCode: 'jnt',
+        courierService: 'EZ',
+        waybillNumber: 'JNT991827364ID',
+        shippingAddress: {
+          receiverName: 'Bunda Rania Putri',
+          receiverPhone: '081234567899',
+          streetAddress: 'Jl. Soekarno Hatta No. 45, Lowokwaru',
+          city: 'Kota Malang',
+        },
+        trackingHistory: [
+          {
+            timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
+            status: 'PICKUP_REQUESTED',
+            message: 'Paket siap dijemput kurir.',
+            location: 'Kota Malang',
           },
-        });
-      }
-    }
+          {
+            timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+            status: 'IN_TRANSIT',
+            message: 'Paket tiba di gerai transit Malang.',
+            location: 'Kota Malang',
+          },
+          {
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
+            status: 'DELIVERED',
+            message: 'Paket telah berhasil diterima oleh pemesan.',
+            location: 'Kota Malang',
+          },
+        ],
+        items: {
+          create: [
+            {
+              productId: products[1].id,
+              price: products[1].price,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+    });
   }
 
   // 2. Seed initial coupons
@@ -530,11 +529,60 @@ async function main() {
     });
   }
 
-  // 4. Seed Workshop Events
+  // 4. Seed Workshop Events (Matching ALL_EVENTS single source of truth)
   const initialEvents = [
+    {
+      title: 'Little Explorers: Nature Craft Workshop',
+      slug: 'nature-craft',
+      category: 'Workshop',
+      description: 'Anak-anak membuat kolase dari daun dan bunga kering sambil mendengarkan cerita tentang hutan. Semua bahan dan perlengkapan disediakan oleh BabyShalls.',
+      bannerImage: '/images/events/event-workshop-alam.png',
+      eventDate: new Date('2026-12-06T03:00:00.000Z'),
+      timeString: '10.00–12.00 WIB',
+      location: 'BabyShalls, Citraland Puncak Tidar HH-26, Malang',
+      price: 75000,
+      quota: 20,
+    },
+    {
+      title: 'Weekend Story Time: Petualangan Si Kancil & Hutan Ajaib',
+      slug: 'story-time-dongeng',
+      category: 'Story Time',
+      description: 'Sesi mendongeng interaktif gratis dengan boneka tangan bersama Kak Nisa, dilanjutkan membaca buku pop-up dan bernyanyi bersama si kecil di area karpet empuk toko.',
+      bannerImage: '/images/events/event-story-time.png',
+      eventDate: new Date('2026-11-29T08:30:00.000Z'),
+      timeString: '15.30–17.00 WIB',
+      location: 'Area Karpet Baca Butik BabyShalls Malang',
+      price: 0,
+      quota: 20,
+    },
+    {
+      title: 'Montessori & Sensory Play: Menjelajah Tekstur dan Warna',
+      slug: 'montessori-sensory',
+      category: 'Workshop',
+      description: 'Sensory bin bertema kebun binatang mini dan mengenal aneka tekstur biji-bijian, air, dan pasir kinetik aman.',
+      bannerImage: '/images/events/event-montessori.png',
+      eventDate: new Date('2026-12-13T02:00:00.000Z'),
+      timeString: '09.00–11.00 WIB',
+      location: 'Area Workshop Butik BabyShalls Malang',
+      price: 95000,
+      quota: 15,
+    },
+    {
+      title: 'Fun Water Play: Sensory & Motorik Halus Akhir Pekan',
+      slug: 'water-play-sensory',
+      category: 'Workshop',
+      description: 'Bermain air bertema kehidupan bawah laut dengan mainan kayu tahan air dan spons warna-warni.',
+      bannerImage: '/images/events/event-water-play.png',
+      eventDate: new Date('2026-12-20T08:00:00.000Z'),
+      timeString: '15.00–16.30 WIB',
+      location: 'Halaman Terbuka Butik BabyShalls Malang',
+      price: 0,
+      quota: 25,
+    },
     {
       title: 'Read-Aloud & Sensory Play untuk Balita (1-3 Tahun)',
       slug: 'read-aloud-sensory-play-malang',
+      category: 'Story Time',
       description: 'Sesi membaca nyaring interaktif bersama Kakak Kurator BabyShalls dan bermain sensory bin aman.',
       bannerImage: '/images/events/read-aloud-malang.jpg',
       eventDate: new Date('2026-12-05T03:00:00.000Z'),
@@ -542,17 +590,6 @@ async function main() {
       location: 'Butik BabyShalls, Jl. Cempaka No. 12, Kota Malang',
       price: 0,
       quota: 20,
-    },
-    {
-      title: 'Montessori Wooden Toy Workshop & Parenting Talk',
-      slug: 'montessori-wooden-toy-workshop',
-      description: 'Belajar memilih mainan edukasi sesuai fase sensitif anak bersama praktisi Montessori Malang.',
-      bannerImage: '/images/events/montessori-workshop.jpg',
-      eventDate: new Date('2026-12-12T03:00:00.000Z'),
-      timeString: '09:30 - 12:00 WIB',
-      location: 'Butik BabyShalls, Jl. Cempaka No. 12, Kota Malang',
-      price: 75000,
-      quota: 15,
     },
   ];
 

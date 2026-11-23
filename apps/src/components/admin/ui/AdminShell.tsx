@@ -86,7 +86,7 @@ const BADGE_THEMES: Record<string, string> = {
 const GROUP_DOTS: Record<string, string> = {
   'UTAMA': 'bg-[#B05A26]',
   'TOKO & KATALOG': 'bg-[#3F5FA0]',
-  'KEGIATAN & JASTIP': 'bg-[#7E4A84]',
+  'KEGIATAN & REQUEST BUKU': 'bg-[#7E4A84]',
   'PENGATURAN': 'bg-[#2A6E37]',
 };
 

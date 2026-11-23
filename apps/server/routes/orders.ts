@@ -325,11 +325,22 @@ ordersRouter.post('/midtrans-webhook', async (c) => {
     await prisma.$transaction(async (tx) => {
       if (orderId.startsWith('BS-EVT-PAY-')) {
         const evtReg = await tx.eventRegistration.findFirst({ where: { midtransOrderId: orderId } });
-        if (evtReg && isPaid && evtReg.paymentStatus !== 'PAID') {
-          await tx.eventRegistration.update({
-            where: { id: evtReg.id },
-            data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
-          });
+        if (evtReg) {
+          if (isPaid && evtReg.paymentStatus !== 'PAID') {
+            await tx.eventRegistration.update({
+              where: { id: evtReg.id },
+              data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
+            });
+          } else if (isCancelledOrExpired && evtReg.status === 'PENDING_PAYMENT') {
+            await tx.eventRegistration.update({
+              where: { id: evtReg.id },
+              data: { paymentStatus: 'FAILED', status: 'CANCELLED' },
+            });
+            await tx.event.update({
+              where: { id: evtReg.eventId },
+              data: { quota: { increment: evtReg.ticketQuantity } },
+            });
+          }
         }
         return;
       }

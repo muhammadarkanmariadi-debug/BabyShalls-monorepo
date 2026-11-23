@@ -79,9 +79,9 @@ export function AdminBookRequestsSection({ enabled }: { enabled: boolean }) {
     <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
         <h2 className="text-base font-bold text-[#4A2A1C]">
-          Book Request Jastip ({filtered.length}/{requests.length})
+          Request Pengadaan Buku ({filtered.length}/{requests.length})
         </h2>
-        <p className="text-xs text-[#7A5644]">Kelola permintaan buku impor &amp; konfirmasi harga via WhatsApp ke bunda.</p>
+        <p className="text-xs text-[#7A5644]">Kelola permintaan pengadaan buku kurasi &amp; konfirmasi harga via WhatsApp ke bunda.</p>
       </div>
 
       <DataTableToolbar

@@ -11,6 +11,7 @@ export interface CreateBookRequestPayload {
   whatsappNumber: string;
   notes?: string;
   referenceImageUrl?: string;
+  turnstileToken?: string;
 }
 
 export interface CreateBookRequestResult {

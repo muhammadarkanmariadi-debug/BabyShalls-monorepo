@@ -8,6 +8,7 @@ import { Check, UploadCloud, ArrowRight, MessageCircle, Sparkles } from 'lucide-
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { useCreateBookRequest } from '@/hooks/useBookRequests';
 import { generateIdempotencyKey } from '@/lib/idempotency';
+import { TurnstileWidget } from '@/components/ui/TurnstileWidget';
 
 function RequestABookContent() {
   const searchParams = useSearchParams();
@@ -22,6 +23,7 @@ function RequestABookContent() {
   const [whatsapp, setWhatsapp] = useState('');
   const [email, setEmail] = useState('');
   const [uploadedCover, setUploadedCover] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -48,6 +50,7 @@ function RequestABookContent() {
       customerName: customerName.trim() || undefined,
       email: email.trim() || undefined,
       whatsappNumber: whatsapp.trim(),
+      turnstileToken: turnstileToken || undefined,
       notes: [isbn ? `ISBN: ${isbn}` : '', `Format: ${format}`, `Kondisi: ${conditionPreference}`, notes.trim()]
         .filter(Boolean)
         .join(' | '),
@@ -352,6 +355,14 @@ function RequestABookContent() {
                         />
                       </div>
                     </div>
+                  </div>
+
+                  {/* Cloudflare Turnstile */}
+                  <div className="py-1">
+                    <TurnstileWidget
+                      onVerify={(t) => setTurnstileToken(t)}
+                      onExpire={() => setTurnstileToken('')}
+                    />
                   </div>
 
                   {/* Submit Button */}

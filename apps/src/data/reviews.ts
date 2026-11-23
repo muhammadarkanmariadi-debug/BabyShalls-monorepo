@@ -27,7 +27,7 @@ export const REVIEWS: CustomerReview[] = [
     location: 'Surabaya',
     childAgeInfo: 'Tante dari bayi 8 bulan',
     rating: 5,
-    comment: 'Pesan jastip buku impor via Book Request BabyShalls, prosesnya cepat dan packing-nya rapi banget dengan pita manis tanpa biaya tambahan. Rekomendasi buat cari buku langka!',
+    comment: 'Pesan request pengadaan buku impor via Book Request BabyShalls, prosesnya cepat dan packing-nya rapi banget dengan pita manis tanpa biaya tambahan. Rekomendasi buat cari buku langka!',
     date: '2 minggu yang lalu',
     productPurchased: 'Book Request Impor Usborne'
   }

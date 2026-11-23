@@ -5,6 +5,7 @@ import { prisma } from '../lib/prisma';
 import { verifyJwt } from '../lib/jwt';
 import { createMidtransSnapTransaction } from '../lib/midtrans';
 import { runWithIdempotency } from '../middleware/idempotency';
+import { ALL_EVENTS } from '@/src/data/eventsData';
 
 const eventsRouter = new Hono();
 
@@ -75,6 +76,63 @@ eventsRouter.get('/short/:code', async (c) => {
   }
 });
 
+eventsRouter.get('/:idOrSlug', async (c) => {
+  const idOrSlug = (c.req.param('idOrSlug') || '').trim();
+  try {
+    let event = await prisma.event.findFirst({
+      where: {
+        OR: [
+          { id: idOrSlug },
+          { slug: { equals: idOrSlug, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    if (!event) {
+      const staticEvent = ALL_EVENTS.find((e) => e.id === idOrSlug || e.id === idOrSlug.toLowerCase());
+      if (staticEvent) {
+        event = await prisma.event.create({
+          data: {
+            title: staticEvent.title,
+            slug: staticEvent.id,
+            category: staticEvent.category || 'Workshop',
+            description: staticEvent.description || 'Workshop edukatif anak BabyShalls Malang.',
+            eventDate: new Date('2026-12-06T03:00:00.000Z'),
+            timeString: staticEvent.time || '10.00 - 12.00 WIB',
+            location: staticEvent.location || 'BabyShalls Malang',
+            bannerImage: staticEvent.image || '/images/events/event-workshop-alam.png',
+            price: staticEvent.price || 0,
+            quota: staticEvent.quotaTotal || 20,
+            isActive: true,
+          },
+        });
+      }
+    }
+
+    if (!event) {
+      return c.json(
+        { success: false, error: 'Event workshop tidak ditemukan.', code: 'NOT_FOUND' },
+        404
+      );
+    }
+
+    let shortCode = event.shortCode;
+    if (!shortCode) {
+      shortCode = randomHex3Bytes();
+      await prisma.event.update({ where: { id: event.id }, data: { shortCode } }).catch(() => null);
+    }
+
+    return c.json(
+      { success: true, data: { ...event, shortCode, price: Number(event.price) } },
+      200,
+      { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
+    );
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Gagal memuat detail workshop.';
+    return c.json({ success: false, error: message }, 500);
+  }
+});
+
 eventsRouter.post('/register', async (c) => {
   const rawBody = await c.req.text();
   return runWithIdempotency(c, rawBody, async () => {
@@ -108,9 +166,30 @@ eventsRouter.post('/register', async (c) => {
     const ticketCode = `BS-EVT-${Date.now().toString().slice(-6)}-${randomSuffix}`;
     const midtransOrderId = `BS-EVT-PAY-${Date.now()}`;
 
-    const event = await prisma.event.findFirst({
+    let event = await prisma.event.findFirst({
       where: { OR: [{ id: eventId }, { slug: eventId }] },
     });
+
+    if (!event) {
+      const staticEvent = ALL_EVENTS.find((e) => e.id === eventId || e.id === eventId.toLowerCase());
+      if (staticEvent) {
+        event = await prisma.event.create({
+          data: {
+            title: staticEvent.title,
+            slug: staticEvent.id,
+            category: staticEvent.category || 'Workshop',
+            description: staticEvent.description || 'Workshop edukatif anak BabyShalls Malang.',
+            eventDate: new Date('2026-12-06T03:00:00.000Z'),
+            timeString: staticEvent.time || '10.00 - 12.00 WIB',
+            location: staticEvent.location || 'BabyShalls Malang',
+            bannerImage: staticEvent.image || '/images/events/event-workshop-alam.png',
+            price: staticEvent.price || 0,
+            quota: staticEvent.quotaTotal || 20,
+            isActive: true,
+          },
+        });
+      }
+    }
 
     if (!event) {
       return { status: 404, body: { success: false, error: 'Event tidak ditemukan.', code: 'NOT_FOUND' } };

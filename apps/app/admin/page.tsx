@@ -59,7 +59,7 @@ const TAB_TITLES: Record<AdminTab, string> = {
   vouchers: 'Voucher & Kupon',
   broadcast: 'Email Broadcast',
   shortlinks: 'Shortlink & QR',
-  requests: 'Book Request Jastip',
+  requests: 'Book Request Pengadaan Buku',
   cms: 'Konten (CMS)',
   users: 'Pengguna Staf',
 };
@@ -159,7 +159,7 @@ export default function AdminDashboardPage() {
       id: 'workshops',
       label: 'Event & Check-in',
       icon: CalendarCheck,
-      group: 'KEGIATAN & JASTIP',
+      group: 'KEGIATAN & REQUEST BUKU',
       theme: 'purple',
     },
     {
@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
       label: 'Book Request',
       icon: BookOpen,
       badge: stats?.totalBookRequests,
-      group: 'KEGIATAN & JASTIP',
+      group: 'KEGIATAN & REQUEST BUKU',
       theme: 'teal',
       badgeTheme: 'teal',
     },
@@ -175,14 +175,14 @@ export default function AdminDashboardPage() {
       id: 'broadcast',
       label: 'Email Broadcast',
       icon: Mail,
-      group: 'KEGIATAN & JASTIP',
+      group: 'KEGIATAN & REQUEST BUKU',
       theme: 'blue',
     },
     {
       id: 'shortlinks',
       label: 'Shortlink & QR',
       icon: Link2,
-      group: 'KEGIATAN & JASTIP',
+      group: 'KEGIATAN & REQUEST BUKU',
       theme: 'green',
     },
     {
@@ -232,7 +232,7 @@ export default function AdminDashboardPage() {
           <p className="text-xs sm:text-sm text-[#7A5644] leading-relaxed">
             Ada <strong className="text-[#3F5FA0] font-semibold">{pendingOrdersCount} pesanan</strong> perlu diproses,{' '}
             <strong className="text-[#7E4A84] font-semibold">{stats?.totalEventRegistrations ?? 0} pendaftar workshop</strong>, dan{' '}
-            <strong className="text-[#1F6B76] font-semibold">{stats?.totalBookRequests ?? 0} request buku</strong> jastip Malang.
+            <strong className="text-[#1F6B76] font-semibold">{stats?.totalBookRequests ?? 0} request pengadaan buku</strong> pelanggan.
           </p>
 
           {/* Quick Action Shortcuts with Colorful Tokens */}
@@ -327,10 +327,10 @@ export default function AdminDashboardPage() {
         <KpiCard
           label="Request buku"
           value={String(stats?.totalBookRequests ?? 0)}
-          hint="Permintaan jastip"
+          hint="Pengadaan buku"
           icon={BookOpen}
           theme="teal"
-          trend="Concierge Impor"
+          trend="Concierge Kurasi"
         />
       </div>
 

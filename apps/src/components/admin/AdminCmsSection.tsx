@@ -30,7 +30,7 @@ const HOME_SECTIONS: Array<{ id: HomeSectionId; title: string; subtitle: string 
   { id: 'hero', title: 'Hero', subtitle: 'Tag, judul utama, deskripsi, foto & warna latar' },
   { id: 'age_banner', title: 'Banner Kampanye / Usia', subtitle: 'Judul, deskripsi, gambar & warna latar' },
   { id: 'hampers_banner', title: 'Banner Gift Hampers', subtitle: 'Judul, deskripsi, gambar banner & warna latar' },
-  { id: 'request_visit', title: 'Request Buku & Kunjungi Toko', subtitle: 'Kartu jastip buku & info lokasi Malang' },
+  { id: 'request_visit', title: 'Request Buku & Kunjungi Toko', subtitle: 'Kartu request pengadaan buku & info lokasi Malang' },
 ];
 
 const BG_SWATCHES = ['#FFF6EA', '#FFFDF9', '#FFFBF5', '#FBE6D8', '#B05A26', '#DCE6C6'];
