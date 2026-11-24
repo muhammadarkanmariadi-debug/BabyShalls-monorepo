@@ -8,6 +8,7 @@
     "build": "npm run build --prefix apps",
     "test:sprint2": "npm run test:sprint2 --prefix apps",
     "test:sprint2:events": "npm run test:sprint2:events --prefix apps",
+    "test:sprint2:info": "npm run test:sprint2:info --prefix apps",
     "start": "npm run start --prefix apps",
     "prisma:generate": "npm run prisma:generate --prefix apps",
     "prisma:push": "npm run prisma:push --prefix apps",

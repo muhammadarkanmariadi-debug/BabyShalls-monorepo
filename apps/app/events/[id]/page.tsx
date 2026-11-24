@@ -273,7 +273,7 @@ export default function EventDetailPage() {
                     <div className="w-full h-2 bg-[#F2E4D6] rounded-[2px] overflow-hidden">
                       <div
                         className={`h-full rounded-[2px] transition-all duration-300 ${
-                          eventData.status === 'Penuh'
+                          eventData.status === 'Penuh' || eventData.status === 'Sold Out' || eventData.seatsLeft <= 0
                             ? 'bg-gray-400'
                             : isFree
                             ? 'bg-[#2A6E37]'
@@ -298,7 +298,7 @@ export default function EventDetailPage() {
                       <select
                         value={childrenCount}
                         onChange={(e) => setChildrenCount(Number(e.target.value))}
-                        disabled={eventData.status === 'Penuh'}
+                        disabled={eventData.status === 'Penuh' || eventData.status === 'Sold Out' || eventData.seatsLeft <= 0}
                         className="w-full appearance-none px-4 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-base text-[#4A2A1C] focus:outline-hidden focus:border-[#B05A26] cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
                       >
                         <option value={1}>1 child</option>
@@ -323,7 +323,7 @@ export default function EventDetailPage() {
                   </div>
 
                   {/* Tombol / Daftar Sekarang (Figma Frame #169:5265) */}
-                  {eventData.status === 'Penuh' ? (
+                  {eventData.status === 'Penuh' || eventData.status === 'Sold Out' || eventData.seatsLeft <= 0 ? (
                     <button
                       type="button"
                       disabled

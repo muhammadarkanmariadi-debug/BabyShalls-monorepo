@@ -43,7 +43,7 @@ export default function WorkshopShortlinkRedirectPage() {
 
   return (
     <div className="min-h-screen bg-[#FFF8EF] flex items-center justify-center p-6 text-sm font-bold text-[#6B3F2A]">
-      Membuka halaman pendaftaran workshop...
+      Opening workshop registration page...
     </div>
   );
 }

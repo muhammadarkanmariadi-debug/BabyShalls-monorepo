@@ -125,7 +125,7 @@ export default function CheckoutPage() {
   const [giftNote, setGiftNote] = useState<string>(
     'Selamat ulang tahun yang ke-3 adik Kenzo! Semoga tumbuh jadi anak yang sholeh, cerdas, dan gemar membaca. Peluk hangat dari Tante Dina.'
   );
-  const [orderNotes, setOrderNotes] = useState<string>('Mohon sertakan pembatas buku BabyShalls.');
+  const [orderNotes, setOrderNotes] = useState<string>('Please include a BabyShalls bookmark.');
 
   // Coupon & Payment states
   const [couponInput, setCouponInput] = useState('');

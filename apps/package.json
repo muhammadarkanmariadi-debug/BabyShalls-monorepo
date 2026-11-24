@@ -10,6 +10,7 @@
     "test:idempotency": "tsx --test server/lib/__tests__/idempotency.test.ts",
     "test:sprint2": "tsx --test server/lib/__tests__/account-sprint2.test.ts",
     "test:sprint2:events": "tsx --test server/lib/__tests__/events-bookrequests-sprint2.test.ts",
+    "test:sprint2:info": "tsx --test server/lib/__tests__/storefront-info-sprint2.test.ts",
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "opennextjs-cloudflare preview",
     "cf:deploy": "opennextjs-cloudflare deploy",

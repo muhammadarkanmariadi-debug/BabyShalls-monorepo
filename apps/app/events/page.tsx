@@ -103,7 +103,7 @@ export default function EventsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
               {filteredEvents.map((ev) => {
-                const isFull = ev.status === 'Penuh';
+                const isFull = ev.status === 'Penuh' || ev.status === 'Sold Out' || ev.seatsLeft <= 0;
                 return (
                   /* ENTIRE CARD IS A CLICKABLE LINK TO /events/[id] */
                   <Link
@@ -140,17 +140,17 @@ export default function EventsPage() {
 
                       {/* Status pill on right */}
                       <div className="absolute top-3 right-3 z-10">
-                        {ev.status === 'Sisa Sedikit' && (
+                        {(ev.status === 'Sisa Sedikit' || ev.status === 'Limited Seats') && (
                           <span className="bg-[#C0392B] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
                             {ev.seatsLeft} seats left
                           </span>
                         )}
-                        {ev.status === 'Penuh' && (
+                        {(ev.status === 'Penuh' || ev.status === 'Sold Out') && (
                           <span className="bg-[#7A5644] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
                             Fully Booked
                           </span>
                         )}
-                        {ev.status === 'Tersedia' && (
+                        {(ev.status === 'Tersedia' || ev.status === 'Available') && (
                           <span className="bg-[#2A6E37] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
                             Available
                           </span>

@@ -167,7 +167,7 @@ export const HeroSection: React.FC = () => {
                 <div className="absolute inset-0 w-full h-full pointer-events-none">
                   <Image
                     src={slide.image}
-                    alt={slide.imageAlt || 'Buku & mainan pilihan untuk si kecil'}
+                    alt={slide.imageAlt || 'Curated books & toys for your little ones'}
                     fill
                     priority={slideIdx === 0}
                     draggable={false}
@@ -191,19 +191,19 @@ export const HeroSection: React.FC = () => {
                       : 'grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center'
                   }
                 >
-                  {/* Kolom Kiri: Teks Hero + CTAs + Dots */}
+                  {/* Left Column: Hero Text + CTAs + Dots */}
                   <div
                     className={`${
                       hasBgBanner ? '' : 'lg:col-span-7'
                     } flex flex-col justify-center space-y-6 lg:space-y-7`}
                   >
                     <h1 className="text-[34px] sm:text-[48px] lg:text-[58px] xl:text-[63px] font-medium text-[#4A2A1C] leading-[1.18] tracking-[-0.015em] whitespace-pre-line">
-                      {slide.title || 'Buku & mainan\npilihan untuk si kecil'}
+                      {slide.title || 'Curated books & toys\nfor your little ones'}
                     </h1>
 
                     <p className="text-[16px] sm:text-[18px] lg:text-[20px] text-[#7A5644] font-normal leading-[1.5] max-w-[540px]">
                       {slide.subtitle ||
-                        'Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.'}
+                        'From newborn to 6+ years, curated by our team in Malang. Shipped nationwide or available for in-store pickup.'}
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
@@ -212,7 +212,7 @@ export const HeroSection: React.FC = () => {
                         tabIndex={slideIdx === safeIndex ? 0 : -1}
                         className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors shadow-xs"
                       >
-                        <span>{slide.ctaLabel || 'Belanja Sekarang'}</span>
+                        <span>{slide.ctaLabel || 'Shop Now'}</span>
                         <ArrowRight className="w-5 h-5 shrink-0" />
                       </Link>
 
@@ -221,7 +221,7 @@ export const HeroSection: React.FC = () => {
                         tabIndex={slideIdx === safeIndex ? 0 : -1}
                         className="inline-flex items-center justify-center px-8 py-4 bg-white/95 hover:bg-[#FFFBF5] text-[#4A2A1C] border border-[#C9B3A5] hover:border-[#B05A26] text-[17px] lg:text-[18px] font-medium rounded-[2.26px] transition-colors"
                       >
-                        {hero.heroSecondaryCtaText || 'Lihat Preloved'}
+                        {hero.heroSecondaryCtaText || 'Explore Preloved'}
                       </Link>
                     </div>
 
@@ -244,13 +244,13 @@ export const HeroSection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Kolom Kanan: Asset Anak Kecil (otomatis di-hide jika ada bg banner) */}
+                  {/* Right Column: Mascot Asset */}
                   {!hasBgBanner && (
                     <div className="lg:col-span-5 flex flex-col justify-center items-center lg:items-end">
                       <div className="relative w-full max-w-[340px] sm:max-w-[460px] lg:max-w-[530px] h-[340px] sm:h-[460px] lg:h-[560px]">
                         <Image
                           src="/images/products/hero-mascot.png"
-                          alt="Buku & mainan pilihan untuk si kecil"
+                          alt="Curated books & toys for your little ones"
                           fill
                           priority={slideIdx === 0}
                           draggable={false}

@@ -246,7 +246,7 @@ adminDashboardRouter.put('/cms', async (c) => {
       })
     )
   );
-  return c.json({ success: true, message: 'Konten CMS berhasil diperbarui.' });
+  return c.json({ success: true, message: 'CMS content updated successfully.' });
 });
 
 adminDashboardRouter.get('/broadcasts', async (c) => {

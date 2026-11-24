@@ -46,7 +46,7 @@ export const BannerHampers: React.FC = () => {
 
           <div className="pt-2">
             <Link
-              href="/hampers"
+              href="/shop?category=Hampers"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
             >
               <span>{hampers.hampersBannerButtonText || 'EXPLORE HAMPERS'}</span>

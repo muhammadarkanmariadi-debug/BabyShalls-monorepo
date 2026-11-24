@@ -190,10 +190,10 @@ export default function AccountPage() {
               author: "Emily Winfield Martin",
               isbn: "978-0385376716",
               format: "Board Book",
-              status: "Sedang Dicari",
+              status: "Searching",
               createdAt: "2026-11-12T09:00:00Z",
               curatorNote:
-                "Sedang dicek ke distributor buku impor di Singapura. Kami kabari via WA maks esok.",
+                "Currently checking with our imported book distributor in Singapore. We will update you via WhatsApp by tomorrow.",
             },
           ]);
         }

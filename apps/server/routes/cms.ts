@@ -13,7 +13,7 @@ cmsRouter.get('/', async (c) => {
       { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
     );
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Gagal memuat konten halaman utama.';
+    const message = err instanceof Error ? err.message : 'Failed to load site content.';
     return c.json({ success: false, error: message }, 500);
   }
 });
