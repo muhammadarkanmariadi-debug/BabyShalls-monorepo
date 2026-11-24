@@ -997,7 +997,6 @@ export default function AccountPage() {
                                 ? (item.product.images as string[])
                                 : [];
                               const cover = images[0] || "/images/products/p-1-little-bear.png";
-                              const canReview = ord.status === 'SHIPPED' || ord.status === 'COMPLETED';
 
                               return (
                                 <div
@@ -1020,12 +1019,6 @@ export default function AccountPage() {
                                       <span className="text-[11px] text-[#7A5644] block">
                                         {item.quantity} × {formatIDR(item.price)}
                                       </span>
-                                      {item.review && (
-                                        <span className="inline-flex items-center gap-1 text-[11px] text-[#2A6E37] font-semibold mt-1">
-                                          <ShieldCheck className="w-3.5 h-3.5" />
-                                          Ulasan Terkirim: ⭐ {item.review.rating}/5
-                                        </span>
-                                      )}
                                     </div>
                                   </div>
 

@@ -10,7 +10,6 @@ import {
   Package,
   Gift,
   Store,
-  Star,
   ChevronDown,
   ChevronUp,
   ChevronLeft,
@@ -24,7 +23,6 @@ import { TombolKembali } from '@/components/common/TombolKembali';
 import { WireProductCard } from '@/components/common/WireProductCard';
 import { BannerHampers } from '@/components/home/BannerHampers';
 import { ProductGallery } from '@/features/catalog/components/ProductGallery';
-import { ProductReviewsSection } from '@/features/catalog/components/ProductReviewsSection';
 import { formatIDR } from '@/lib/utils';
 import { useProductBySlug, useStorefrontProducts } from '@/hooks/useProducts';
 import { useCart } from '@/context/CartContext';
@@ -222,25 +220,8 @@ export function ProductDetailView() {
               </p>
             )}
 
-            {/* Star Rating & Reviews Count */}
+            {/* Stock Info */}
             <div className="flex items-center gap-2 text-xs text-[#7A5644] mb-5">
-              <div className="flex items-center text-[#E0A020]">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-3.5 h-3.5 ${
-                      i < Math.round(product.rating || 5) ? 'fill-current' : 'text-[#E6D2C0]'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="font-semibold text-[#4A2A1C]">
-                {(product.rating ?? 5).toFixed(1)}
-              </span>
-              <span>
-                ({product.reviewsCount ?? detailData?.reviews?.length ?? 0} ulasan pembaca)
-              </span>
-              <span>•</span>
               <span>Stok: {product.stock ?? (product.inStock ? 'Tersedia' : 'Habis')}</span>
             </div>
 
@@ -542,13 +523,6 @@ export function ProductDetailView() {
           </div>
         </div>
       </section>
-
-      {/* Komentar & Ulasan Pembeli (Verified Reviews dari PostgreSQL) */}
-      <ProductReviewsSection
-        reviews={detailData?.reviews}
-        rating={product.rating}
-        reviewsCount={product.reviewsCount}
-      />
 
       {/* Rekomendasi Section (Figma #135:1031) */}
       <section className="bg-[#FFFBF7] py-14 border-t border-[#F2E4D6]">

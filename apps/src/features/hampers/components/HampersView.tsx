@@ -14,7 +14,6 @@ import {
   Truck,
   MessageCircle,
   Search,
-  Star,
 } from 'lucide-react';
 import { TombolKembali } from '@/components/common/TombolKembali';
 import { BannerHampers } from '@/components/home/BannerHampers';
@@ -273,11 +272,9 @@ export function HampersView() {
                       <div className="p-5">
                         <div className="flex items-center justify-between gap-2 text-[11px] text-[#7A5644] mb-1.5">
                           <span>{hamp.subCategory || hamp.category}</span>
-                          <span className="inline-flex items-center gap-1">
-                            <Star className="w-3 h-3 text-[#E0A020] fill-current" />
-                            <span>{(hamp.rating ?? 5).toFixed(1)}</span>
-                            {typeof hamp.stock === 'number' && <span>· Stok {hamp.stock}</span>}
-                          </span>
+                          {typeof hamp.stock === 'number' && (
+                            <span>Stok {hamp.stock}</span>
+                          )}
                         </div>
                         <Link href={`/product/${hamp.id}`} className="block group-hover:text-[#B05A26] transition-colors">
                           <h3 className="text-base font-semibold text-[#4A2A1C] mb-1 line-clamp-2">

@@ -48,7 +48,6 @@ model User {
   role         Role                @default(USER)
   addresses    Address[]
   orders       Order[]
-  reviews      Review[]
   eventRegs    EventRegistration[]
   bookRequests BookRequest[]
   cartItems    CartItem[]
@@ -150,8 +149,6 @@ model Product {
   subCategory   String? // e.g. "Board Books", "Sensory Book", "Balok Kayu"
   images        Json // Fallback JSON array URL foto produk
   galleryImages ProductImage[] // Relasi galeri multi-image detail produk
-  rating        Decimal        @default(5.0) @db.Decimal(3, 1)
-  reviewsCount  Int            @default(0)
   isFeatured    Boolean        @default(false)
   isNewArrival  Boolean        @default(false)
   isBestSeller  Boolean        @default(false)
@@ -163,7 +160,6 @@ model Product {
   subCategoryId  String?
   subCategoryRel SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
 
-  reviews    Review[]
   cartItems  CartItem[]
   wishlists  Wishlist[]
   orderItems OrderItem[]
@@ -179,24 +175,6 @@ model ProductImage {
   caption   String?
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
-}
-
-model Review {
-  id                 String     @id @default(uuid())
-  productId          String
-  product            Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItemId        String?    @unique
-  orderItem          OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
-  userId             String?
-  user               User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-  userName           String
-  location           String?    // e.g. "Malang, Jawa Timur"
-  rating             Int        @default(5)
-  comment            String     @db.Text
-  variantInfo        String?    // e.g. "Variasi: Board Book (Edisi Spesial)"
-  isVerifiedPurchase Boolean    @default(true) // Komentar hanya dari detail pesanan
-  helpfulCount       Int        @default(0)
-  createdAt          DateTime   @default(now())
 }
 
 model CartItem {
@@ -280,7 +258,6 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   price     Decimal @db.Decimal(12, 2)
   quantity  Int     @default(1)
-  review    Review?
 }
 
 model Event {

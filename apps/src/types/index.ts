@@ -49,8 +49,6 @@ export interface Product {
   description: string;
   inStock?: boolean;
   stock?: number;
-  rating?: number;
-  reviewsCount?: number;
   weightInGrams?: number;
   featured?: boolean;
   badge?: string; // e.g. "New", "Bestseller", "Staff Pick"
@@ -115,17 +113,6 @@ export interface WorkshopEvent {
   category?: string;
   includes?: string[];
   status?: string;
-}
-
-export interface CustomerReview {
-  id: string;
-  author: string;
-  location: string;
-  childAgeInfo: string;
-  rating: number;
-  comment: string;
-  date: string;
-  productPurchased?: string;
 }
 
 export interface SavedAddress {

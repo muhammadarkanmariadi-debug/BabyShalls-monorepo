@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
-import { Plus, Star } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 interface WireProductCardProps {
   product: Product;
@@ -118,26 +118,10 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
 
       {/* Product Title */}
       <Link href={`/product/${product.id}`} className="group-hover:text-[#B05A26] transition-colors">
-        <h3 className="text-[14px] sm:text-[16px] font-medium text-[#4A2A1C] leading-[1.35] line-clamp-2 mb-1">
+        <h3 className="text-[14px] sm:text-[16px] font-medium text-[#4A2A1C] leading-[1.35] line-clamp-2 mb-1.5">
           {product.title}
         </h3>
       </Link>
-
-      {/* Star Rating */}
-      <div className="flex items-center gap-1 text-[11px] sm:text-[12px] text-[#7A5644] mb-1.5">
-        <div className="flex items-center text-[#E0A020]">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-3 h-3 ${
-                i < Math.round(product.rating ?? 5) ? 'fill-current' : 'text-[#E6D2C0]'
-              }`}
-            />
-          ))}
-        </div>
-        <span className="font-semibold text-[#4A2A1C]">{(product.rating ?? 5).toFixed(1)}</span>
-        <span>({product.reviewsCount ?? 0})</span>
-      </div>
 
       {/* Price row */}
       <div className="flex items-baseline gap-1.5 sm:gap-2 mt-auto">

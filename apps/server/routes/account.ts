@@ -5,7 +5,6 @@ import { hashPassword, verifyPassword } from '../lib/password';
 import { signJwt } from '../lib/jwt';
 import { issueEmailChangeOtp, verifyEmailChangeOtp } from '../lib/otp';
 import { sendOtpEmail } from '../lib/mailer';
-import { delCache } from '../lib/redis';
 import { requireAuth, type AuthVariables } from '../middleware/auth';
 
 const accountRouter = new Hono<{ Variables: AuthVariables }>();
@@ -42,13 +41,6 @@ const addressSchema = z.object({
 });
 
 const updateAddressSchema = addressSchema.partial();
-
-const reviewSchema = z.object({
-  orderItemId: z.string().min(1, 'ID item pesanan wajib diisi.'),
-  rating: z.number().int().min(1, 'Rating minimal 1 bintang.').max(5, 'Rating maksimal 5 bintang.'),
-  comment: z.string().trim().min(3, 'Ulasan minimal 3 karakter.').max(2000, 'Ulasan maksimal 2000 karakter.'),
-  variantInfo: z.string().trim().max(100).optional().nullable(),
-});
 
 accountRouter.get('/profile', async (c) => {
   try {
@@ -373,9 +365,6 @@ accountRouter.get('/orders', async (c) => {
           product: {
             select: { id: true, name: true, slug: true, images: true },
           },
-          review: {
-            select: { id: true, rating: true, comment: true },
-          },
         },
       },
     },
@@ -490,98 +479,6 @@ accountRouter.get('/orders/:orderNumber/tracking', async (c) => {
   }
 });
 
-accountRouter.post('/reviews', async (c) => {
-  try {
-    const currentUser = c.get('user');
-    const body = await c.req.json();
-    const parsed = reviewSchema.safeParse(body);
-    if (!parsed.success) {
-      return c.json({ success: false, error: parsed.error.issues[0]?.message || 'Data ulasan tidak valid.' }, 400);
-    }
-
-    const { orderItemId, rating, comment, variantInfo } = parsed.data;
-
-    const orderItem = await prisma.orderItem.findUnique({
-      where: { id: orderItemId },
-      include: {
-        order: true,
-        product: true,
-        review: true,
-      },
-    });
-
-    if (!orderItem) {
-      return c.json({ success: false, error: 'Item pesanan tidak ditemukan.' }, 404);
-    }
-
-    if (orderItem.order.userId !== currentUser.id) {
-      return c.json({ success: false, error: 'Anda tidak memiliki akses untuk mengulas item pesanan ini.' }, 403);
-    }
-
-    if (orderItem.order.status !== 'SHIPPED' && orderItem.order.status !== 'COMPLETED') {
-      return c.json({
-        success: false,
-        error: 'Ulasan hanya dapat diberikan jika pesanan telah dikirim atau selesai.',
-      }, 400);
-    }
-
-    if (orderItem.review) {
-      return c.json({
-        success: false,
-        error: 'Ulasan untuk item pesanan ini sudah pernah dikirim.',
-      }, 400);
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: currentUser.id },
-      include: { addresses: { where: { isDefault: true }, take: 1 } },
-    });
-    const location = user?.addresses[0]?.city ? `${user.addresses[0].city}` : 'Kota Malang';
-
-    const review = await prisma.review.create({
-      data: {
-        productId: orderItem.productId,
-        orderItemId: orderItem.id,
-        userId: currentUser.id,
-        userName: user?.name || 'Pelanggan BabyShalls',
-        location,
-        rating,
-        comment,
-        variantInfo: variantInfo || undefined,
-        isVerifiedPurchase: true,
-      },
-    });
-
-    const allReviews = await prisma.review.findMany({
-      where: { productId: orderItem.productId },
-      select: { rating: true },
-    });
-    const totalScore = allReviews.reduce((sum, r) => sum + r.rating, 0);
-    const avgScore = allReviews.length > 0 ? Number((totalScore / allReviews.length).toFixed(1)) : 5.0;
-
-    await prisma.product.update({
-      where: { id: orderItem.productId },
-      data: {
-        rating: avgScore,
-        reviewsCount: allReviews.length,
-      },
-    });
-
-    await delCache(`products:detail:${orderItem.product.slug}`);
-    await delCache(`products:detail:${orderItem.productId}`);
-    await delCache('products:list:*');
-
-    return c.json({
-      success: true,
-      data: review,
-      message: 'Terima kasih! Ulasan Anda berhasil dikirim dan terverifikasi.',
-    }, 201);
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Gagal mengirim ulasan.';
-    return c.json({ success: false, error: message }, 500);
-  }
-});
-
 accountRouter.get('/tickets', async (c) => {
   const currentUser = c.get('user');
   const tickets = await prisma.eventRegistration.findMany({
@@ -631,8 +528,6 @@ accountRouter.get('/cart', async (c) => {
           ageGroup: p.ageGroup === 'ALL_AGES' ? 'Ages 1-3' : p.ageGroup,
           category: p.category,
           stock: p.stock,
-          rating: Number(p.rating) || 4.9,
-          reviewsCount: p.reviewsCount || 0,
           images,
           description: p.description,
           isNewArrival: p.isNewArrival,

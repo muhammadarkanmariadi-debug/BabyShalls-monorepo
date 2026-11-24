@@ -64,9 +64,9 @@ flowchart TD
 - **Framework**: Next.js 16.4+ (App Router, Turbopack, React 19).
 - **Styling**: Tailwind CSS v4 dengan Design Tokens BabyShalls (*Plus Jakarta Sans*, Pure White Minimalist + Editorial Accents — `DESIGN.md` v4.0).
 - **Komponen & Halaman Modular**:
-  - `app/`: `/` (Beranda), `/catalog` (Filter Kategori, Subkategori, Usia & Rentang Harga), `/product/[slug]`, `/wishlist`, `/checkout`, `/account` (Shopee-style Account, Detail Pesanan, Cetak Resi PDF & Ulasan Terverifikasi), `/events`, `/events/register`, `/request-book`, `/about`, `/faq`, `/admin`.
+  - `app/`: `/` (Beranda), `/catalog` (Filter Kategori, Subkategori, Usia & Rentang Harga), `/product/[slug]`, `/wishlist`, `/checkout`, `/account` (Shopee-style Account, Detail Pesanan & Cetak Resi PDF), `/events`, `/events/register`, `/request-book`, `/about`, `/faq`, `/admin`.
   - `components/layout`: Header (dynamic state per kategori), Navbar, Footer, MobileDrawer, AnnouncementBar, WhatsAppFloating.
-  - `components/home`: Hero, ShopByAge, NewArrivals, Hampers, Events, Reviews.
+  - `components/home`: Hero, ShopByAge, NewArrivals, Hampers, Events.
   - `components/product`: ProductCard (konsisten di Home, Catalog & Wishlist), AgeBadge, ProductGrid.
   - `components/cart`: CartDrawer (slide-out interaktif dengan kalkulasi berat gram otomatis).
 - **State Management**:

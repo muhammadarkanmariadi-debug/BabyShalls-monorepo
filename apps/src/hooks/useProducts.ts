@@ -5,17 +5,6 @@ import { apiClient } from '../lib/axios';
 import { AgeGroup, Product, ProductCategory } from '../types';
 import { PRODUCTS } from '../data/products';
 
-export interface ProductReviewDto {
-  id: string;
-  userName: string;
-  location?: string | null;
-  rating: number;
-  comment: string;
-  variantInfo?: string | null;
-  isVerifiedPurchase?: boolean;
-  createdAt: string;
-}
-
 export interface ProductImageDto {
   id: string;
   url: string;
@@ -39,12 +28,9 @@ export interface ProductDto {
   images: string[];
   galleryImages?: ProductImageDto[];
   features?: string[] | Record<string, unknown> | unknown;
-  rating: number;
-  reviewsCount: number;
   isFeatured: boolean;
   isNewArrival: boolean;
   isBestSeller?: boolean;
-  reviews?: ProductReviewDto[];
 }
 
 function mapAgeGroup(age: string): AgeGroup {
@@ -126,8 +112,6 @@ export function mapProductDtoToProduct(dto: ProductDto): Product {
     stock: dto.stock,
     inStock: dto.stock > 0,
     coverImage: images[0],
-    rating: Number(dto.rating) || 5,
-    reviewsCount: dto.reviewsCount || 0,
     images,
     description: dto.description,
     features,
@@ -206,7 +190,7 @@ export function useStorefrontProducts() {
 }
 
 export function useProductBySlug(slugOrId: string) {
-  return useQuery<{ product: Product; reviews: ProductReviewDto[] } | null>({
+  return useQuery<{ product: Product } | null>({
     queryKey: ['product-detail', slugOrId],
     enabled: Boolean(slugOrId),
     queryFn: async () => {
@@ -217,7 +201,6 @@ export function useProductBySlug(slugOrId: string) {
         if (res.data.data) {
           return {
             product: mapProductDtoToProduct(res.data.data),
-            reviews: res.data.data.reviews || [],
           };
         }
       } catch {
@@ -225,7 +208,7 @@ export function useProductBySlug(slugOrId: string) {
           (p: Product) => p.slug === slugOrId || p.id === slugOrId
         );
         if (fallback) {
-          return { product: fallback, reviews: [] };
+          return { product: fallback };
         }
       }
       return null;

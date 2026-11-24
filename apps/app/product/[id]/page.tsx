@@ -4,7 +4,7 @@ import { ProductDetailView } from '@/features/catalog/components/ProductDetailVi
 export const metadata: Metadata = {
   title: 'Detail Produk | BabyShalls Malang',
   description:
-    'Informasi lengkap produk, spesifikasi, galeri foto, stok toko Malang, dan ulasan terverifikasi pembeli BabyShalls.',
+    'Informasi lengkap produk, spesifikasi, galeri foto, dan stok toko BabyShalls Malang.',
 };
 
 export default function ProductDetailPage() {

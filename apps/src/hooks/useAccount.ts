@@ -40,11 +40,6 @@ export interface AccountOrderItem {
     slug: string;
     images: string[] | unknown;
   };
-  review: {
-    id: string;
-    rating: number;
-    comment: string;
-  } | null;
 }
 
 export interface AccountOrder {
@@ -272,19 +267,6 @@ export function useAccountTickets(enabled: boolean) {
     queryFn: async () => {
       const res = await apiClient.get<{ success: boolean; data: AccountTicket[] }>('/account/tickets');
       return res.data.data;
-    },
-  });
-}
-
-export function useSubmitReview() {
-  const qc = useQueryClient();
-  return useMutation<unknown, unknown, { orderItemId: string; rating: number; comment: string }>({
-    mutationFn: async (payload) => {
-      const res = await apiClient.post('/account/reviews', payload);
-      return res.data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['account-orders'] });
     },
   });
 }

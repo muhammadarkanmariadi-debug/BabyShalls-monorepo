@@ -132,7 +132,6 @@ adminDashboardRouter.get('/products', async (c) => {
       ...p,
       price: Number(p.price),
       originalPrice: p.originalPrice !== null ? Number(p.originalPrice) : null,
-      rating: Number(p.rating),
     })),
   });
 });
@@ -150,7 +149,6 @@ adminDashboardRouter.get('/products/:id', async (c) => {
       ...product,
       price: Number(product.price),
       originalPrice: product.originalPrice !== null ? Number(product.originalPrice) : null,
-      rating: Number(product.rating),
     },
   });
 });

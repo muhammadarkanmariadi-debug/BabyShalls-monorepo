@@ -405,7 +405,6 @@ export const ModelName = {
   SubCategory: 'SubCategory',
   Product: 'Product',
   ProductImage: 'ProductImage',
-  Review: 'Review',
   CartItem: 'CartItem',
   Wishlist: 'Wishlist',
   Coupon: 'Coupon',
@@ -435,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "otpCode" | "broadcastLog" | "address" | "category" | "subCategory" | "product" | "productImage" | "review" | "cartItem" | "wishlist" | "coupon" | "order" | "orderItem" | "event" | "eventRegistration" | "bookRequest" | "siteContent" | "shippingRegion" | "shippingRateCache" | "waybillTrackingCache" | "logisticsApiUsageLog" | "shortLink"
+    modelProps: "user" | "otpCode" | "broadcastLog" | "address" | "category" | "subCategory" | "product" | "productImage" | "cartItem" | "wishlist" | "coupon" | "order" | "orderItem" | "event" | "eventRegistration" | "bookRequest" | "siteContent" | "shippingRegion" | "shippingRateCache" | "waybillTrackingCache" | "logisticsApiUsageLog" | "shortLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1028,80 +1027,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductImageCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductImageCountAggregateOutputType> | number
-        }
-      }
-    }
-    Review: {
-      payload: Prisma.$ReviewPayload<ExtArgs>
-      fields: Prisma.ReviewFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ReviewFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ReviewFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        findFirst: {
-          args: Prisma.ReviewFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ReviewFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        findMany: {
-          args: Prisma.ReviewFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
-        }
-        create: {
-          args: Prisma.ReviewCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        createMany: {
-          args: Prisma.ReviewCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ReviewCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
-        }
-        delete: {
-          args: Prisma.ReviewDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        update: {
-          args: Prisma.ReviewUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        deleteMany: {
-          args: Prisma.ReviewDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ReviewUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ReviewUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
-        }
-        upsert: {
-          args: Prisma.ReviewUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        aggregate: {
-          args: Prisma.ReviewAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateReview>
-        }
-        groupBy: {
-          args: Prisma.ReviewGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ReviewGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ReviewCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ReviewCountAggregateOutputType> | number
         }
       }
     }
@@ -2295,8 +2220,6 @@ export const ProductScalarFieldEnum = {
   category: 'category',
   subCategory: 'subCategory',
   images: 'images',
-  rating: 'rating',
-  reviewsCount: 'reviewsCount',
   isFeatured: 'isFeatured',
   isNewArrival: 'isNewArrival',
   isBestSeller: 'isBestSeller',
@@ -2320,24 +2243,6 @@ export const ProductImageScalarFieldEnum = {
 } as const
 
 export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
-
-
-export const ReviewScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  orderItemId: 'orderItemId',
-  userId: 'userId',
-  userName: 'userName',
-  location: 'location',
-  rating: 'rating',
-  comment: 'comment',
-  variantInfo: 'variantInfo',
-  isVerifiedPurchase: 'isVerifiedPurchase',
-  helpfulCount: 'helpfulCount',
-  createdAt: 'createdAt'
-} as const
-
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
 export const CartItemScalarFieldEnum = {
@@ -2962,7 +2867,6 @@ export type GlobalOmitConfig = {
   subCategory?: Prisma.SubCategoryOmit
   product?: Prisma.ProductOmit
   productImage?: Prisma.ProductImageOmit
-  review?: Prisma.ReviewOmit
   cartItem?: Prisma.CartItemOmit
   wishlist?: Prisma.WishlistOmit
   coupon?: Prisma.CouponOmit

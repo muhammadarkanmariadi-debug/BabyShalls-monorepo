@@ -59,7 +59,6 @@ export const ModelName = {
   SubCategory: 'SubCategory',
   Product: 'Product',
   ProductImage: 'ProductImage',
-  Review: 'Review',
   CartItem: 'CartItem',
   Wishlist: 'Wishlist',
   Coupon: 'Coupon',
@@ -207,8 +206,6 @@ export const ProductScalarFieldEnum = {
   category: 'category',
   subCategory: 'subCategory',
   images: 'images',
-  rating: 'rating',
-  reviewsCount: 'reviewsCount',
   isFeatured: 'isFeatured',
   isNewArrival: 'isNewArrival',
   isBestSeller: 'isBestSeller',
@@ -232,24 +229,6 @@ export const ProductImageScalarFieldEnum = {
 } as const
 
 export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
-
-
-export const ReviewScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  orderItemId: 'orderItemId',
-  userId: 'userId',
-  userName: 'userName',
-  location: 'location',
-  rating: 'rating',
-  comment: 'comment',
-  variantInfo: 'variantInfo',
-  isVerifiedPurchase: 'isVerifiedPurchase',
-  helpfulCount: 'helpfulCount',
-  createdAt: 'createdAt'
-} as const
-
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
 export const CartItemScalarFieldEnum = {

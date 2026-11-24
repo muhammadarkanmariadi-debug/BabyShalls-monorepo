@@ -12,7 +12,6 @@ const EDGE_CACHE_HEADERS = {
 function formatProduct(p: {
   price: Prisma.Decimal;
   originalPrice: Prisma.Decimal | null;
-  rating: Prisma.Decimal;
   images: Prisma.JsonValue;
   galleryImages?: Array<{ id: string; url: string; caption: string | null; sortOrder: number }>;
   [key: string]: unknown;
@@ -30,7 +29,6 @@ function formatProduct(p: {
     images: mergedImages,
     price: Number(p.price),
     originalPrice: p.originalPrice !== null ? Number(p.originalPrice) : null,
-    rating: Number(p.rating),
   };
 }
 
@@ -160,7 +158,6 @@ productsRouter.get('/:slug', async (c) => {
       where: { OR: [{ slug }, { id: slug }] },
       include: {
         galleryImages: { orderBy: { sortOrder: 'asc' } },
-        reviews: { orderBy: { createdAt: 'desc' } },
       },
     });
 

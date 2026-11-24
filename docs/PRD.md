@@ -48,7 +48,7 @@ Website E-Commerce BabyShalls dibangun sebagai platform terpadu satu pintu (*sin
 ### 3.1 In-Scope (Fase 1)
 - **Modul M1: Toko & Pembayaran**
   - Katalog buku dan mainan kayu bergaya Shopee/Tokopedia dengan filter usia (*Newborn+*, *1-3*, *3+*, *6+*), kategori, subkategori dinamis, rentang harga, pencarian teks, dan pengurutan harga/terbaru.
-  - Halaman detail produk (galeri multi-foto, badge usia, berat gram, deskripsi, stok real-time, ulasan terverifikasi *read-only*, produk terkait).
+  - Halaman detail produk (galeri multi-foto, badge usia, berat gram, deskripsi, stok real-time, produk terkait).
   - Halaman **Wishlist** (`/wishlist`) terintegrasi pada header dan kartu produk.
   - Keranjang belanja (slide-out cart drawer) dengan state persistensi lokal/server.
   - Multi-address per user, input **Kupon / Voucher Promo**, dan integrasi Midtrans Snap (QRIS, Kartu Kredit, Debit Online) dengan webhook otomatis.
@@ -58,7 +58,7 @@ Website E-Commerce BabyShalls dibangun sebagai platform terpadu satu pintu (*sin
   - Pembuatan pickup request dari Admin, **cetak resi pengiriman format PDF resmi**, dan pelacakan lokasi/status resi di detail pesanan pelanggan.
 - **Modul M3: Manajemen Akun & Pengguna**
   - Sistem peran 2 level: `USER` (Pelanggan) dan `ADMIN` (BabyShalls) — tanpa sistem grosir/reseller (fokus B2C retail & gift).
-  - Layout pengelolaan akun bergaya Shopee (`/account`): Profil Saya, Buku Alamat, Riwayat & Detail Pesanan (lacak lokasi paket, cetak resi PDF, dan **kirim komentar/ulasan produk hanya dari detail pesanan**), Tiket Event & QR Check-in, serta Voucher Saya.
+  - Layout pengelolaan akun bergaya Shopee (`/account`): Profil Saya, Buku Alamat, Riwayat & Detail Pesanan (lacak lokasi paket dan cetak resi PDF), Tiket Event & QR Check-in, serta Voucher Saya.
 - **Modul M4: Event & Workshop**
   - Daftar workshop, detail acara (tanggal, lokasi, kuota, instruktur).
   - Formulir pendaftaran peserta, dukungan tiket berbayar Midtrans, dan E-Ticket QR Check-in.
@@ -160,18 +160,18 @@ frontend/
 │   │   ├── layout.tsx                # Master Layout (Header, AnnouncementBar, Footer, CartDrawer)
 │   │   ├── page.tsx                  # Beranda
 │   │   ├── catalog/                  # Katalog Shopee/Tokped-style (Usia, Subkategori, Harga)
-│   │   ├── product/[slug]/           # Detail Produk & Ulasan Terverifikasi (Read-Only)
+│   │   ├── product/[slug]/           # Detail Produk, Galeri & Spesifikasi
 │   │   ├── wishlist/                 # Halaman Wishlist Pelanggan
 │   │   ├── checkout/                 # Checkout, Multi-Address, Kupon & KiriminAja
 │   │   ├── events/                   # Workshop & Events (+ /events/register)
 │   │   ├── request-book/             # Form Book Request Minimalis
 │   │   ├── about/                    # Tentang BabyShalls (Editorial Clean)
 │   │   ├── faq/                      # FAQ Pelanggan
-│   │   ├── account/                  # Akun Shopee-style, Detail Pesanan, Resi PDF & Ulasan
+│   │   ├── account/                  # Akun Shopee-style, Detail Pesanan & Resi PDF
 │   │   └── admin/                    # Dashboard Admin, Kupon & Semi-CMS
 │   ├── components/                   # Modular Components
 │   │   ├── layout/                   # Header, AnnouncementBar, Footer, MobileDrawer
-│   │   ├── home/                     # Hero, ShopByAge, NewArrivals, Hampers, Events, Reviews
+│   │   ├── home/                     # Hero, ShopByAge, NewArrivals, Hampers, Events
 │   │   ├── ui/                       # Reusable Atomic UI
 │   │   ├── product/                  # ProductCard (konsisten), ProductGrid
 │   │   └── cart/                     # CartDrawer

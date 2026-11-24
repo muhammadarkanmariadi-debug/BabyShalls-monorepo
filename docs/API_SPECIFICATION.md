@@ -173,20 +173,7 @@
 - **Method & Path:** `GET /wishlist`, `POST /wishlist` (`{ "productId": "..." }`), `DELETE /wishlist/:productId`
 - **Header Wajib:** `Authorization: Bearer <JWT_USER_TOKEN>`
 
-### 2.8 Ulasan Produk Terverifikasi (Hanya dari Detail Pesanan)
-- **Method & Path:** `POST /orders/:orderId/reviews`
-- **Header Wajib:** `Authorization: Bearer <JWT_USER_TOKEN>`
-- **Aturan:** Hanya dapat dipanggil untuk `orderItemId` milik user dengan status pesanan `COMPLETED` / `SHIPPED`. Tidak ada endpoint publik untuk submit komentar di halaman detail produk.
-- **Request:**
-  ```json
-  {
-    "orderItemId": "item-uuid",
-    "rating": 5,
-    "comment": "Kertas board book tebal, anak suka sekali!"
-  }
-  ```
-
-### 2.6 Daftar & Validasi Kupon Voucher
+### 2.8 Daftar & Validasi Kupon Voucher
 - **Method & Path:** `GET /coupons/active`
 - **Method & Path:** `POST /coupons/validate`
 - **Request:**
