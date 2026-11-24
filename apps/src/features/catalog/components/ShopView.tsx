@@ -21,10 +21,10 @@ function ShopContent() {
   const { products: catalogItems } = useStorefrontProducts();
 
   // State Filters
-  const [activeSubcategory, setActiveSubcategory] = useState<string>('Semua');
-  const [activeCategory, setActiveCategory] = useState<string>(initialCategoryParam || 'Semua Kategori');
-  const [selectedAge, setSelectedAge] = useState<string>(initialAgeParam || 'Semua');
-  const [selectedCondition, setSelectedCondition] = useState<string>('Semua');
+  const [activeSubcategory, setActiveSubcategory] = useState<string>('All');
+  const [activeCategory, setActiveCategory] = useState<string>(initialCategoryParam || 'All Categories');
+  const [selectedAge, setSelectedAge] = useState<string>(initialAgeParam || 'All');
+  const [selectedCondition, setSelectedCondition] = useState<string>('All');
   const [onlyInStock, setOnlyInStock] = useState<boolean>(false);
   const [onlyDiscount, setOnlyDiscount] = useState<boolean>(false);
   const [minPrice, setMinPrice] = useState<string>('');
@@ -42,26 +42,38 @@ function ShopContent() {
     const cond = searchParams.get('condition');
     const age = searchParams.get('age');
     const q = searchParams.get('q');
-    setActiveCategory(cat || 'Semua Kategori');
-    setActiveSubcategory(subCat || 'Semua');
-    setSelectedCondition(cond || 'Semua');
+    
+    // Normalize Indonesian query params if present
+    const normalizedCat =
+      cat === 'Buku' ? 'Books' : cat === 'Mainan' ? 'Toys' : cat || 'All Categories';
+    setActiveCategory(normalizedCat);
+    setActiveSubcategory(subCat || 'All');
+    setSelectedCondition(cond === 'Baru' ? 'New' : cond || 'All');
     if (age) {
       const normalizedAge =
-        age === '0-12m' ? '0–1 th' : age === '1-3y' ? '1–3 th' : age === '3-5y' ? '3+ th' : age === '6y' ? '6+ th' : age;
+        age === '0-12m' || age === '0–1 th'
+          ? '0–1 yrs'
+          : age === '1-3y' || age === '1–3 th'
+            ? '1–3 yrs'
+            : age === '3-5y' || age === '3+ th'
+              ? '3+ yrs'
+              : age === '6y' || age === '6+ th'
+                ? '6+ yrs'
+                : age;
       setSelectedAge(normalizedAge);
     } else {
-      setSelectedAge('Semua');
+      setSelectedAge('All');
     }
     if (q !== null) setSearchQuery(q);
   }, [searchParams]);
 
-  // Top-level categories: strictly 4 product types (Buku, Mainan, Hampers, Preloved)
-  const categoryOptions = useMemo(() => ['Semua Kategori', ...MAIN_CATEGORIES], []);
+  // Top-level categories: strictly 4 product types (Books, Toys, Hampers, Preloved)
+  const categoryOptions = useMemo(() => ['All Categories', ...MAIN_CATEGORIES], []);
 
   // Subcategories scoped strictly to the selected main category
   const subCategories = useMemo(() => {
-    if (activeCategory === 'Semua Kategori') {
-      return ['Semua'];
+    if (activeCategory === 'All Categories') {
+      return ['All'];
     }
     const set = new Set<string>();
     catalogItems.forEach((p) => {
@@ -70,21 +82,21 @@ function ShopContent() {
         set.add(subCategory);
       }
     });
-    return ['Semua', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+    return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
   }, [catalogItems, activeCategory]);
 
   // Age options matching DB AgeGroup
-  const ageOptions = ['Semua', '0–1 th', '1–3 th', '3+ th', '6+ th'];
+  const ageOptions = ['All', '0–1 yrs', '1–3 yrs', '3+ yrs', '6+ yrs'];
 
   // Condition options
-  const conditionOptions = ['Semua', 'Baru', 'Preloved'];
+  const conditionOptions = ['All', 'New', 'Preloved'];
 
   // Reset all filters
   const resetFilters = () => {
-    setActiveSubcategory('Semua');
-    setActiveCategory('Semua Kategori');
-    setSelectedAge('Semua');
-    setSelectedCondition('Semua');
+    setActiveSubcategory('All');
+    setActiveCategory('All Categories');
+    setSelectedAge('All');
+    setSelectedCondition('All');
     setOnlyInStock(false);
     setOnlyDiscount(false);
     setMinPrice('');
@@ -95,10 +107,10 @@ function ShopContent() {
 
   // Check if any filter is active
   const hasActiveFilters =
-    activeSubcategory !== 'Semua' ||
-    activeCategory !== 'Semua Kategori' ||
-    selectedAge !== 'Semua' ||
-    selectedCondition !== 'Semua' ||
+    activeSubcategory !== 'All' ||
+    activeCategory !== 'All Categories' ||
+    selectedAge !== 'All' ||
+    selectedCondition !== 'All' ||
     onlyInStock ||
     onlyDiscount ||
     minPrice !== '' ||
@@ -116,9 +128,9 @@ function ShopContent() {
 
       const { mainCategory, subCategory } = resolveProductTaxonomy(product);
 
-      // Category filter (4 main types: Buku, Mainan, Hampers, Preloved)
+      // Category filter (4 main types: Books, Toys, Hampers, Preloved)
       if (
-        activeCategory !== 'Semua Kategori' &&
+        activeCategory !== 'All Categories' &&
         mainCategory.toLowerCase() !== activeCategory.toLowerCase()
       ) {
         return false;
@@ -126,30 +138,30 @@ function ShopContent() {
 
       // Subcategory filter (scoped under main category)
       if (
-        activeSubcategory !== 'Semua' &&
+        activeSubcategory !== 'All' &&
         (subCategory || '').toLowerCase() !== activeSubcategory.toLowerCase()
       ) {
         return false;
       }
 
       // Age filter
-      if (selectedAge !== 'Semua') {
+      if (selectedAge !== 'All') {
         const pAge = product.ageGroup || '';
-        if (selectedAge === '0–1 th' && !pAge.includes('0–1') && !pAge.includes('0–2') && !pAge.toLowerCase().includes('newborn')) return false;
-        if (selectedAge === '1–3 th' && !pAge.includes('1–3') && !pAge.includes('1-3')) return false;
-        if (selectedAge === '3+ th' && !pAge.includes('3–5') && !pAge.includes('3+')) return false;
-        if (selectedAge === '6+ th' && !pAge.includes('6+')) return false;
+        if (selectedAge === '0–1 yrs' && !pAge.includes('0–1') && !pAge.includes('0–2') && !pAge.toLowerCase().includes('newborn')) return false;
+        if (selectedAge === '1–3 yrs' && !pAge.includes('1–3') && !pAge.includes('1-3')) return false;
+        if (selectedAge === '3+ yrs' && !pAge.includes('3–5') && !pAge.includes('3+')) return false;
+        if (selectedAge === '6+ yrs' && !pAge.includes('6+')) return false;
       }
 
       // Condition filter
-      if (selectedCondition !== 'Semua') {
+      if (selectedCondition !== 'All') {
         const isPre = Boolean(
           product.isPreloved ||
             product.condition === 'preloved' ||
             product.category.toLowerCase().includes('preloved') ||
             product.title.toLowerCase().includes('[preloved]')
         );
-        if (selectedCondition === 'Baru' && isPre) return false;
+        if (selectedCondition === 'New' && isPre) return false;
         if (selectedCondition === 'Preloved' && !isPre) return false;
       }
 
@@ -213,28 +225,28 @@ function ShopContent() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
           {/* Breadcrumbs */}
           <div className="text-[13px] text-[#7A5644] mb-3">
-            <Link href="/" className="hover:underline">Beranda</Link>
+            <Link href="/" className="hover:underline">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/shop" className="hover:underline">Belanja</Link>
+            <Link href="/shop" className="hover:underline">Shop</Link>
             <span className="mx-2">/</span>
             <span className="font-semibold text-[#4A2A1C]">
-              {activeCategory === 'Semua Kategori' ? 'Buku & Koleksi' : activeCategory}
+              {activeCategory === 'All Categories' ? 'Books & Collection' : activeCategory}
             </span>
           </div>
 
           {/* Title & Count */}
           <div className="flex flex-wrap items-baseline gap-3 mb-2">
             <h1 className="text-3xl sm:text-4xl font-medium text-[#4A2A1C] tracking-tight">
-              {activeCategory === 'Semua Kategori' ? 'Buku & Koleksi' : activeCategory}
+              {activeCategory === 'All Categories' ? 'Books & Collection' : activeCategory}
             </h1>
             <span className="text-[16px] text-[#7A5644]">
-              {filteredProducts.length} produk
+              {filteredProducts.length} items
             </span>
           </div>
 
           {/* Description */}
           <p className="text-[15px] sm:text-[16px] text-[#7A5644] max-w-3xl mb-6 leading-relaxed">
-            Board book, picture book, sampai chapter book. Impor dan lokal pilihan yang ramah anak untuk tiap tahap tumbuh kembang si kecil.
+            Board books, picture books, and early readers. Thoughtfully curated local and imported titles to support each step of your child's growth.
           </p>
 
           {/* Sub-category Chips (dinamis dari subCategory DB) */}
@@ -274,11 +286,11 @@ function ShopContent() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFF6EA] text-[#B05A26] border border-[#E6D2C0] text-sm font-medium rounded-[2px]"
               >
                 <SlidersHorizontal className="w-4 h-4" />
-                <span>Filter & Kategori</span>
+                <span>Filters & Categories</span>
               </button>
 
               <span className="text-xs text-[#7A5644]">
-                Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+                Showing {displayedProducts.length} of {filteredProducts.length} items
               </span>
             </div>
 
@@ -295,7 +307,7 @@ function ShopContent() {
               activeCategory={activeCategory}
               onSelectCategory={(cat) => {
                 setActiveCategory(cat);
-                setActiveSubcategory('Semua');
+                setActiveSubcategory('All');
                 setShowAllSubcategories(false);
               }}
               subCategories={subCategories}
@@ -326,40 +338,40 @@ function ShopContent() {
                 {/* Active filter pills */}
                 <div className="flex items-center gap-2 flex-wrap">
                   {hasActiveFilters && (
-                    <span className="text-xs text-[#7A5644] font-medium">Filter aktif:</span>
+                    <span className="text-xs text-[#7A5644] font-medium">Active filters:</span>
                   )}
 
-                  {activeCategory !== 'Semua Kategori' && (
+                  {activeCategory !== 'All Categories' && (
                     <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
                       {activeCategory}
-                      <button onClick={() => setActiveCategory('Semua Kategori')} className="hover:text-black">
+                      <button onClick={() => setActiveCategory('All Categories')} className="hover:text-black">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
 
-                  {selectedAge !== 'Semua' && (
+                  {selectedAge !== 'All' && (
                     <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
                       {selectedAge}
-                      <button onClick={() => setSelectedAge('Semua')} className="hover:text-black">
+                      <button onClick={() => setSelectedAge('All')} className="hover:text-black">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
 
-                  {activeSubcategory !== 'Semua' && (
+                  {activeSubcategory !== 'All' && (
                     <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
                       {activeSubcategory}
-                      <button onClick={() => setActiveSubcategory('Semua')} className="hover:text-black">
+                      <button onClick={() => setActiveSubcategory('All')} className="hover:text-black">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
 
-                  {selectedCondition !== 'Semua' && (
+                  {selectedCondition !== 'All' && (
                     <span className="inline-flex items-center gap-1 bg-[#FFF6EA] border border-[#E6D2C0] text-[#B05A26] text-xs px-2.5 py-1 rounded-[2px]">
                       {selectedCondition}
-                      <button onClick={() => setSelectedCondition('Semua')} className="hover:text-black">
+                      <button onClick={() => setSelectedCondition('All')} className="hover:text-black">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
@@ -370,7 +382,7 @@ function ShopContent() {
                       onClick={resetFilters}
                       className="text-xs text-[#C0392B] hover:underline ml-1"
                     >
-                      Hapus Semua
+                      Clear All
                     </button>
                   )}
                 </div>
@@ -383,10 +395,10 @@ function ShopContent() {
                       onChange={(e) => setSortBy(e.target.value as any)}
                       className="appearance-none bg-white border border-[#E6D2C0] text-[#4A2A1C] text-xs font-medium pl-3 pr-8 py-2 rounded-[2px] focus:outline-none focus:border-[#B05A26] cursor-pointer"
                     >
-                      <option value="terbaru">Urutkan: Terbaru</option>
-                      <option value="harga-rendah">Harga: Rendah ke Tinggi</option>
-                      <option value="harga-tinggi">Harga: Tinggi ke Rendah</option>
-                      <option value="nama">Nama: A - Z</option>
+                      <option value="terbaru">Sort: Newest</option>
+                      <option value="harga-rendah">Price: Low to High</option>
+                      <option value="harga-tinggi">Price: High to Low</option>
+                      <option value="nama">Name: A - Z</option>
                     </select>
                     <ChevronDown className="w-3.5 h-3.5 text-[#7A5644] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
@@ -395,7 +407,7 @@ function ShopContent() {
 
               {/* Counter Text */}
               <div className="text-xs text-[#7A5644] mb-6">
-                Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+                Showing {displayedProducts.length} of {filteredProducts.length} items
               </div>
 
               {/* Products 3-Column Grid (Figma #133:485) */}
@@ -411,31 +423,31 @@ function ShopContent() {
                   <div className="relative w-32 h-32 mb-4">
                     <Image
                       src="/images/mascot/maskot-kaca-pembesar.png"
-                      alt="Tidak ditemukan"
+                      alt="Not found"
                       fill
                       className="object-contain"
                     />
                   </div>
                   <h3 className="text-lg font-medium text-[#4A2A1C] mb-1">
-                    Produk Tidak Ditemukan
+                    No Products Found
                   </h3>
                   <p className="text-sm text-[#7A5644] max-w-sm mb-6 leading-relaxed">
-                    Kami tidak menemukan produk yang cocok dengan kombinasi filter atau kata kunci pencarianmu.
+                    We couldn't find any products matching your current filter combination or search query.
                   </p>
                   <button
                     onClick={resetFilters}
                     className="px-6 py-2.5 bg-[#B05A26] text-white text-sm font-medium rounded-[2px] hover:bg-[#964B1F] transition-colors"
                   >
-                    Atur Ulang Filter
+                    Reset Filters
                   </button>
                 </div>
               )}
 
-              {/* Muat Lebih Banyak (Figma #133:581) */}
+              {/* Load More */}
               {displayedProducts.length < filteredProducts.length && (
                 <div className="flex flex-col items-center gap-3 mt-12 pt-8 border-t border-[#F2E4D6]">
                   <span className="text-xs text-[#7A5644]">
-                    Menampilkan {displayedProducts.length} dari {filteredProducts.length} produk
+                    Showing {displayedProducts.length} of {filteredProducts.length} items
                   </span>
                   <div className="w-48 h-1 bg-[#F2E4D6] rounded-full overflow-hidden">
                     <div
@@ -449,7 +461,7 @@ function ShopContent() {
                     onClick={() => setVisibleCount((prev) => prev + 9)}
                     className="px-8 py-2.5 border border-[#C9B3A5] text-[#4A2A1C] text-sm font-medium rounded-[2px] hover:border-[#B05A26] hover:text-[#B05A26] transition-colors cursor-pointer mt-1"
                   >
-                    Muat Lebih Banyak
+                    Load More
                   </button>
                 </div>
               )}

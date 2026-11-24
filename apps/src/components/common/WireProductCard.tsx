@@ -26,7 +26,7 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
     e.stopPropagation();
     if (isOutOfStock) return;
     addToCart(product, 1);
-    showToast(`"${product.title}" berhasil ditambahkan ke keranjang!`);
+    showToast(`"${product.title}" added to shopping bag!`);
   };
 
   // Format currency
@@ -36,18 +36,18 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
 
   // Age label mapping
   const getAgeBadge = (age?: string) => {
-    if (!age || age === 'All' || age === 'All Ages') return { label: 'Semua usia', bg: 'bg-[#FFF0E0]', text: 'text-[#B05A26]' };
+    if (!age || age === 'All' || age === 'All Ages') return { label: 'All ages', bg: 'bg-[#FFF0E0]', text: 'text-[#B05A26]' };
     if (age.includes('0–1') || age.includes('0–2') || age.toLowerCase().includes('newborn')) {
       return { label: 'Newborn', bg: 'bg-[#FEECE8]', text: 'text-[#C0392B]' };
     }
     if (age.includes('1–3') || age.includes('1-3')) {
-      return { label: '1–3 tahun', bg: 'bg-[#FFF3D6]', text: 'text-[#9A6500]' };
+      return { label: '1–3 yrs', bg: 'bg-[#FFF3D6]', text: 'text-[#9A6500]' };
     }
     if (age.includes('3–5') || age.includes('3+')) {
-      return { label: '3+ tahun', bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
+      return { label: '3+ yrs', bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
     }
     if (age.includes('6+')) {
-      return { label: '6+ tahun', bg: 'bg-[#E3EDF9]', text: 'text-[#2C5282]' };
+      return { label: '6+ yrs', bg: 'bg-[#E3EDF9]', text: 'text-[#2C5282]' };
     }
     return { label: age, bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
   };
@@ -84,7 +84,7 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
         {isOutOfStock && (
           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             <span className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 text-white text-xs sm:text-sm font-medium flex items-center justify-center shadow-sm">
-              Habis
+              Sold Out
             </span>
           </div>
         )}
@@ -94,9 +94,9 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
           <button
             onClick={handleQuickAdd}
             type="button"
-            aria-label={`Tambah ${product.title} ke keranjang`}
+            aria-label={`Add ${product.title} to shopping bag`}
             className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 z-10 bg-[#B05A26] hover:bg-[#8D441B] text-white p-1.5 sm:p-2.5 rounded-full shadow-md flex items-center justify-center transition-all duration-200 opacity-95 sm:opacity-0 group-hover:opacity-100 hover:scale-108 active:scale-95"
-            title="Tambah ke Keranjang"
+            title="Add to Shopping Bag"
           >
             <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white stroke-[2.5]" />
           </button>
@@ -111,7 +111,7 @@ export const WireProductCard: React.FC<WireProductCardProps> = ({
 
         {isPreloved && (
           <span className="border border-[#2A6E37] text-[#2A6E37] text-[11px] sm:text-[13px] font-normal px-1.5 sm:px-2 py-0.5 rounded-[2px]">
-            Sangat Baik
+            Like New
           </span>
         )}
       </div>

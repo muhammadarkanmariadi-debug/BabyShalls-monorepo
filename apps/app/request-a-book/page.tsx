@@ -118,7 +118,7 @@ function RequestABookContent() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <TombolKembali fallbackUrl="/" label="Kembali ke Beranda" />
+      <TombolKembali fallbackUrl="/" label="Back to Home" />
 
       {/* Main Section (Figma Node #169:5909, 2 Columns) */}
       <main className="py-12 sm:py-16 flex-1 bg-[#FFFDF9]">
@@ -130,13 +130,13 @@ function RequestABookContent() {
               
               <div>
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26] block mb-2">
-                  LAYANAN KURASI KHUSUS
+                  BESPOKE CURATION SERVICE
                 </span>
                 <h1 className="text-3xl sm:text-4xl font-medium text-[#4A2A1C] tracking-tight leading-tight mb-3">
-                  Cari buku impor tertentu? Kami bantu carikan.
+                  Looking for a specific book? We&apos;ll find it for you.
                 </h1>
                 <p className="text-sm sm:text-base text-[#7A5644] leading-relaxed">
-                  Kirim judul atau foto buku yang kamu impikan untuk si kecil. Tim BabyShalls akan memeriksa distributor lokal maupun penerbit luar negeri dan mengabari harga lewat WhatsApp.
+                  Send us the title, author, or a photo of the book you dream of for your little one. The BabyShalls team will check local distributors and overseas publishers, then confirm pricing directly via WhatsApp.
                 </p>
               </div>
 
@@ -144,7 +144,7 @@ function RequestABookContent() {
               <div className="relative w-full h-56 bg-[#FFF6EA] border border-[#F2E4D6] rounded-[2px] p-4 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/images/mascot/maskot-menulis-surat.png"
-                  alt="Maskot Request Buku"
+                  alt="BabyShalls Book Request Mascot"
                   fill
                   className="object-contain p-2"
                 />
@@ -153,7 +153,7 @@ function RequestABookContent() {
               {/* Cara Kerja (3 Langkah Mudah) */}
               <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-5 flex flex-col gap-3.5">
                 <h3 className="text-xs font-semibold text-[#4A2A1C] uppercase tracking-wider">
-                  Cara Kerja Request Buku:
+                  How Book Requests Work:
                 </h3>
                 
                 <div className="flex items-start gap-3">
@@ -161,7 +161,7 @@ function RequestABookContent() {
                     1
                   </span>
                   <p className="text-xs text-[#7A5644] leading-relaxed">
-                    Tulis judul buku, penulis, atau sertakan foto cover buku yang dicari.
+                    Submit the book title, author, or cover photo you are searching for.
                   </p>
                 </div>
 
@@ -170,7 +170,7 @@ function RequestABookContent() {
                     2
                   </span>
                   <p className="text-xs text-[#7A5644] leading-relaxed">
-                    Tim BabyShalls mengecek stok distributor dan menghitung estimasi harga (maks 1x24 jam).
+                    BabyShalls checks distributor stocks and calculates estimated pricing (within 24 hours).
                   </p>
                 </div>
 
@@ -179,7 +179,7 @@ function RequestABookContent() {
                     3
                   </span>
                   <p className="text-xs text-[#7A5644] leading-relaxed">
-                    Kami mengirimkan penawaran lewat WhatsApp. Jika cocok, buku langsung dipesan untukmu.
+                    We share an offer via WhatsApp. If you love it, we reserve and order the book for you.
                   </p>
                 </div>
               </div>
@@ -195,20 +195,20 @@ function RequestABookContent() {
                   {/* Bagian 1: Detail Buku */}
                   <div>
                     <h2 className="text-lg font-medium text-[#4A2A1C] pb-3 border-b border-[#F2E4D6] mb-4">
-                      1. Detail Buku yang Dicari
+                      1. Details of the Book You Need
                     </h2>
 
                     <div className="space-y-4 text-xs">
                       <div>
                         <label className="block text-[#7A5644] font-medium mb-1">
-                          Judul Buku *
+                          Book Title *
                         </label>
                         <input
                           type="text"
                           required
                           value={bookTitle}
                           onChange={(e) => setBookTitle(e.target.value)}
-                          placeholder="Contoh: The Wonderful Things You Will Be"
+                          placeholder="e.g. The Wonderful Things You Will Be"
                           className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                         />
                       </div>
@@ -216,26 +216,26 @@ function RequestABookContent() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Penulis / Ilustrator (Opsional)
+                            Author / Illustrator (Optional)
                           </label>
                           <input
                             type="text"
                             value={author}
                             onChange={(e) => setAuthor(e.target.value)}
-                            placeholder="Contoh: Emily Winfield Martin"
+                            placeholder="e.g. Emily Winfield Martin"
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                           />
                         </div>
 
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Penerbit / Nomor ISBN (Opsional)
+                            Publisher / ISBN (Optional)
                           </label>
                           <input
                             type="text"
                             value={isbn}
                             onChange={(e) => setIsbn(e.target.value)}
-                            placeholder="Contoh: 978-0385376716"
+                            placeholder="e.g. 978-0385376716"
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                           />
                         </div>
@@ -244,32 +244,32 @@ function RequestABookContent() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Format yang Diinginkan
+                            Preferred Format
                           </label>
                           <select
                             value={format}
                             onChange={(e) => setFormat(e.target.value)}
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] bg-white focus:outline-none focus:border-[#B05A26]"
                           >
-                            <option value="Board Book">Board Book (Tebal)</option>
+                            <option value="Board Book">Board Book (Sturdy)</option>
                             <option value="Hardcover">Hardcover</option>
                             <option value="Paperback">Paperback</option>
-                            <option value="Apa Saja">Apa Saja yang Tersedia</option>
+                            <option value="Any Available">Any Available Format</option>
                           </select>
                         </div>
 
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Preferensi Kondisi
+                            Condition Preference
                           </label>
                           <select
                             value={conditionPreference}
                             onChange={(e) => setConditionPreference(e.target.value)}
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] bg-white focus:outline-none focus:border-[#B05A26]"
                           >
-                            <option value="Baru Saja">Buku Baru Saja</option>
-                            <option value="Preloved Boleh">Boleh Preloved (Bila Bagus)</option>
-                            <option value="Apa Saja">Bebas (Baru / Preloved)</option>
+                            <option value="Brand New Only">Brand New Only</option>
+                            <option value="Preloved Welcome">Preloved Welcome (Good Condition)</option>
+                            <option value="Any Condition">Any (Brand New / Preloved)</option>
                           </select>
                         </div>
                       </div>
@@ -277,28 +277,28 @@ function RequestABookContent() {
                       {/* Dropzone Upload Foto Sampul */}
                       <div>
                         <label className="block text-[#7A5644] font-medium mb-1">
-                          Foto Sampul Buku (Opsional)
+                          Book Cover Photo (Optional)
                         </label>
                         <div className="border border-dashed border-[#C9B3A5] bg-[#FFFBF7] p-5 rounded-[2px] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#B05A26] transition-colors">
                           <UploadCloud className="w-6 h-6 text-[#B05A26] mb-1" />
                           <span className="text-xs text-[#4A2A1C] font-medium">
-                            Klik atau seret foto cover buku ke sini
+                            Click or drag book cover image here
                           </span>
                           <span className="text-[11px] text-[#7A5644]">
-                            Format JPG, PNG (Maks 5 MB)
+                            JPG, PNG format (Max 5 MB)
                           </span>
                         </div>
                       </div>
 
                       <div>
                         <label className="block text-[#7A5644] font-medium mb-1">
-                          Catatan Tambahan
+                          Special Instructions / Notes
                         </label>
                         <textarea
                           rows={2}
                           value={notes}
                           onChange={(e) => setNotes(e.target.value)}
-                          placeholder="Misal: Perlu sebelum tanggal 10 Desember untuk kado anak."
+                          placeholder="e.g. Needed before December 10 for a birthday gift."
                           className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                         />
                       </div>
@@ -308,28 +308,28 @@ function RequestABookContent() {
                   {/* Bagian 2: Kontak */}
                   <div>
                     <h2 className="text-lg font-medium text-[#4A2A1C] pb-3 border-b border-[#F2E4D6] mb-4">
-                      2. Data Kontak Pemesan
+                      2. Customer Contact Information
                     </h2>
 
                     <div className="space-y-4 text-xs">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Nama Lengkap *
+                            Full Name *
                           </label>
                           <input
                             type="text"
                             required
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
-                            placeholder="Contoh: Dina Permata"
+                            placeholder="e.g. Dina Permata"
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                           />
                         </div>
 
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Nomor WhatsApp *
+                            WhatsApp Number *
                           </label>
                           <input
                             type="tel"
@@ -344,13 +344,13 @@ function RequestABookContent() {
 
                       <div>
                         <label className="block text-[#7A5644] font-medium mb-1">
-                          Email (Opsional)
+                          Email (Optional)
                         </label>
                         <input
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="email@anda.com"
+                          placeholder="name@example.com"
                           className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                         />
                       </div>
@@ -372,10 +372,10 @@ function RequestABookContent() {
                       disabled={isSubmitting || createBookRequestMutation.isPending}
                       className="w-full py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting || createBookRequestMutation.isPending ? 'Mengirim Request...' : 'Kirim Request Buku'}
+                      {isSubmitting || createBookRequestMutation.isPending ? 'Submitting Request...' : 'Submit Book Request'}
                     </button>
                     <p className="text-[11px] text-[#7A5644] text-center mt-2.5">
-                      Sudah punya akun? Status request bisa dipantau di <strong>Akun → Request Buku Saya</strong>.
+                      Already have an account? Track your request status in <strong>Account → My Book Requests</strong>.
                     </p>
                   </div>
 
@@ -386,7 +386,7 @@ function RequestABookContent() {
                   <div className="relative w-36 h-36 mb-3">
                     <Image
                       src="/images/mascot/maskot-peluk-hati.png"
-                      alt="Request Diterima"
+                      alt="Request Received"
                       fill
                       className="object-contain"
                     />
@@ -394,15 +394,15 @@ function RequestABookContent() {
 
                   <div className="inline-flex items-center gap-1.5 bg-[#DDF1E5] text-[#2A6E37] text-xs font-semibold px-3 py-1 rounded-[2px] mb-3">
                     <Check className="w-3.5 h-3.5" />
-                    <span>Request Berhasil Dikirim (Ref: {requestRef})</span>
+                    <span>Request Submitted Successfully (Ref: {requestRef})</span>
                   </div>
 
                   <h3 className="text-2xl font-medium text-[#4A2A1C] mb-2">
-                    Terima Kasih, {customerName}!
+                    Thank you, {customerName}!
                   </h3>
 
                   <p className="text-xs text-[#7A5644] max-w-md mx-auto mb-6 leading-relaxed">
-                    Permintaan buku <strong>&ldquo;{bookTitle}&rdquo;</strong> telah dicatat oleh kurator BabyShalls. Kami akan segera menghubungi nomor WhatsApp <strong>{whatsapp}</strong> dalam waktu maks 1x24 jam.
+                    Your request for <strong>&ldquo;{bookTitle}&rdquo;</strong> has been logged by BabyShalls curators. We will contact your WhatsApp number <strong>{whatsapp}</strong> within 24 hours.
                   </p>
 
                   <div className="flex gap-3 w-full max-w-xs">
@@ -410,13 +410,13 @@ function RequestABookContent() {
                       onClick={handleReset}
                       className="flex-1 py-2.5 border border-[#4A2A1C] text-[#4A2A1C] text-xs font-semibold rounded-[2px] hover:bg-[#FFF6EA] transition-colors"
                     >
-                      Request Buku Lain
+                      Request Another Book
                     </button>
                     <Link
                       href="/account"
                       className="flex-1 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors flex items-center justify-center"
                     >
-                      Lihat di Profil
+                      View in Profile
                     </Link>
                   </div>
                 </div>

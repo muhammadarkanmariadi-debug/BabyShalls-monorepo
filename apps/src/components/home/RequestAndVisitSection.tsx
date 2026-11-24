@@ -10,7 +10,7 @@ export const RequestAndVisitSection: React.FC = () => {
   const home = cms.home;
   const store = cms.store;
   const waVisitUrl = `https://wa.me/${store.whatsappNumber || '6281234567890'}?text=${encodeURIComponent(
-    'Halo BabyShalls, saya ingin berkunjung dan konsultasi buku di toko.'
+    'Hello BabyShalls, I would like to visit the store and get book recommendations.'
   )}`;
 
   return (
@@ -18,22 +18,22 @@ export const RequestAndVisitSection: React.FC = () => {
       <div className="max-w-[1240px] mx-auto px-6 sm:px-10 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* Card 1: Request Buku (Figma #143:1239 - height: 280px) */}
+          {/* Card 1: Request a Book (Figma #143:1239 - height: 280px) */}
           <div className="flex flex-col sm:flex-row bg-white border border-[#E6D2C0] rounded-[2px] overflow-hidden min-h-[280px]">
             {/* Teks Kiri */}
             <div className="flex-1 p-7 sm:p-8 flex flex-col justify-center space-y-3.5">
               <h3 className="text-[22px] sm:text-[24px] font-medium text-[#4A2A1C] leading-[1.25] whitespace-pre-line">
-                {home.requestCardTitle || 'Buku yang kamu\ncari belum ada?'}
+                {home.requestCardTitle || 'Looking for a book\nnot in our catalog?'}
               </h3>
               <p className="text-[14px] text-[#7A5644] font-normal leading-[1.5]">
-                {home.requestCardSubtitle || 'Tulis judul atau penulisnya, kami bantu carikan dan kabari lewat WhatsApp.'}
+                {home.requestCardSubtitle || 'Tell us the title or author, and our curation team will help source it for you.'}
               </p>
               <div className="pt-1">
                 <Link
                   href="/request-a-book"
                   className="inline-flex items-center justify-center px-7 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
                 >
-                  {home.requestCardButtonText || 'Request Buku'}
+                  {home.requestCardButtonText || 'Request a Book'}
                 </Link>
               </div>
             </div>
@@ -42,7 +42,7 @@ export const RequestAndVisitSection: React.FC = () => {
             <div className="relative w-full sm:w-[288px] h-[220px] sm:h-auto shrink-0 bg-[#FFF6EA]">
               <Image
                 src="/images/prod-storybook.jpg"
-                alt="Rak Buku Kurasi BabyShalls Malang"
+                alt="BabyShalls Curated Bookshelf Malang"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 640px) 100vw, 288px"
@@ -55,10 +55,10 @@ export const RequestAndVisitSection: React.FC = () => {
             {/* Teks Kiri */}
             <div className="flex-1 p-7 sm:p-8 flex flex-col justify-center space-y-3.5">
               <h3 className="text-[22px] sm:text-[24px] font-medium text-[#4A2A1C] leading-[1.25]">
-                {home.storeVisitTitle || 'Kunjungi toko kami'}
+                {home.storeVisitTitle || 'Visit our boutique'}
               </h3>
               <p className="text-[14px] text-[#7A5644] font-normal leading-[1.5]">
-                {home.storeVisitSubtitle || 'Citraland Puncak Tidar HH-26, Malang. Ada area bermain gratis untuk si kecil.'}
+                {home.storeVisitSubtitle || 'Citraland Puncak Tidar HH-26, Malang. Complimentary indoor play area for your little one.'}
               </p>
               <div className="pt-1 flex flex-col sm:flex-row gap-2.5">
                 <a
@@ -67,7 +67,7 @@ export const RequestAndVisitSection: React.FC = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center px-6 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[16px] font-medium rounded-[2px] transition-colors shadow-xs"
                 >
-                  {home.storeVisitButtonText || 'Petunjuk Arah'}
+                  {home.storeVisitButtonText || 'Get Directions'}
                 </a>
                 <a
                   href={waVisitUrl}
@@ -84,7 +84,7 @@ export const RequestAndVisitSection: React.FC = () => {
             <div className="relative w-full sm:w-[288px] h-[220px] sm:h-auto shrink-0 bg-[#FFF6EA]">
               <Image
                 src="/images/store/toko-tampak-depan.png"
-                alt="Toko BabyShalls Citraland Malang"
+                alt="BabyShalls Boutique Store Citraland Malang"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 640px) 100vw, 288px"

@@ -26,7 +26,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer transition-colors"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -34,37 +34,37 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
         <div className="flex items-center gap-2 mb-2">
           <Truck className="w-5 h-5 text-[#B05A26]" />
           <h3 className="text-base font-semibold text-[#4A2A1C]">
-            Pelacakan Resi Pengiriman
+            Courier Delivery Tracking
           </h3>
         </div>
         <p className="text-xs text-[#7A5644] mb-4">
-          Nomor Pesanan: <strong className="font-mono text-[#4A2A1C]">{orderNumber}</strong>
+          Order Number: <strong className="font-mono text-[#4A2A1C]">{orderNumber}</strong>
         </p>
 
         {isLoading ? (
           <div className="py-12 flex flex-col items-center justify-center gap-2 text-xs text-[#7A5644]">
             <Loader2 className="w-6 h-6 text-[#B05A26] animate-spin" />
-            <span>Memuat data tracking resi kurir...</span>
+            <span>Loading courier tracking details...</span>
           </div>
         ) : isError ? (
           <div className="p-4 bg-[#FDF0ED] border border-[#F5C2B8] text-[#C0392B] text-xs rounded-[2px] flex items-start gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{(error as any)?.response?.data?.error || 'Gagal memuat status pelacakan resi.'}</span>
+            <span>{(error as any)?.response?.data?.error || 'Failed to load tracking status.'}</span>
           </div>
         ) : data ? (
           <div className="flex-1 overflow-y-auto pr-1 space-y-4 text-xs">
             {/* Courier summary banner */}
             <div className="p-4 bg-[#FFF8EF] border border-[#F2E4D6] rounded-[2px] flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span className="text-[#7A5644] block text-[11px]">Kurir &amp; Layanan</span>
+                <span className="text-[#7A5644] block text-[11px]">Courier &amp; Service</span>
                 <span className="font-semibold text-[#4A2A1C] uppercase">
                   {data.courier} ({data.courierService})
                 </span>
               </div>
               <div>
-                <span className="text-[#7A5644] block text-[11px]">Nomor Resi (Waybill)</span>
+                <span className="text-[#7A5644] block text-[11px]">Waybill Tracking Number</span>
                 <span className="font-mono font-semibold text-[#B05A26] text-sm">
-                  {data.waybillNumber || 'Belum Terbit (Menunggu Pickup)'}
+                  {data.waybillNumber || 'Pending Courier Pickup'}
                 </span>
               </div>
               <div>
@@ -78,10 +78,10 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
                   }`}
                 >
                   {data.isDelivered
-                    ? 'Paket Diterima'
+                    ? 'Delivered'
                     : data.waybillNumber
-                    ? 'Dalam Pengiriman'
-                    : 'Menunggu Kurir'}
+                    ? 'In Transit'
+                    : 'Awaiting Courier'}
                 </span>
               </div>
             </div>
@@ -89,7 +89,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
             {/* Timeline checkpoints */}
             <div className="pt-2">
               <h4 className="font-semibold text-xs text-[#4A2A1C] mb-3">
-                Riwayat Perjalanan Paket
+                Package Journey History
               </h4>
 
               {Array.isArray(data.history) && data.history.length > 0 ? (
@@ -117,7 +117,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
                             {step.status}
                           </span>
                           <span className="text-[#7A5644]">
-                            {new Date(step.timestamp).toLocaleString('id-ID', {
+                            {new Date(step.timestamp).toLocaleString('en-US', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric',
@@ -141,7 +141,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
                 </div>
               ) : (
                 <div className="p-4 bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] text-center text-xs text-[#7A5644]">
-                  Belum ada log pergerakan kurir terbaru untuk nomor resi ini.
+                  No tracking checkpoints recorded yet.
                 </div>
               )}
             </div>
@@ -154,7 +154,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
             onClick={onClose}
             className="px-5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] cursor-pointer transition-colors"
           >
-            Tutup
+            Close
           </button>
         </div>
       </div>

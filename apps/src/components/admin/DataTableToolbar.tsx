@@ -25,11 +25,11 @@ interface DataTableToolbarProps {
 export function DataTableToolbar({
   searchValue,
   onSearchChange,
-  searchPlaceholder = 'Cari data...',
+  searchPlaceholder = 'Search data...',
   filterValue,
   onFilterChange,
   filterOptions,
-  filterLabel = 'Semua',
+  filterLabel = 'All',
   sortValue,
   onSortChange,
   sortOptions,

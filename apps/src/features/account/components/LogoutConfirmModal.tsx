@@ -23,7 +23,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer transition-colors"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -34,7 +34,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           </div>
           <div>
             <h3 className="text-base font-semibold text-[#4A2A1C]">
-              Keluar dari Akun?
+              Sign Out of Account?
             </h3>
             <span className="text-[11px] text-[#7A5644]">
               BabyShalls Boutique
@@ -43,7 +43,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
         </div>
 
         <p className="text-xs text-[#7A5644] mb-5 leading-relaxed">
-          Apakah Anda yakin ingin keluar? Anda dapat masuk kembali kapan saja untuk mengakses riwayat pesanan dan alamat pengiriman Anda.
+          Are you sure you want to sign out? You can sign back in anytime to access your order history and saved delivery addresses.
         </p>
 
         <div className="flex items-center justify-end gap-2.5">
@@ -52,7 +52,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] text-xs font-medium rounded-[2px] cursor-pointer"
           >
-            Batal
+            Cancel
           </button>
 
           <button
@@ -61,7 +61,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
             className="inline-flex items-center gap-1.5 px-4.5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Keluar</span>
+            <span>Sign Out</span>
           </button>
         </div>
       </div>

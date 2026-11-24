@@ -40,22 +40,22 @@ export function HampersView() {
   const boxOptions = [
     {
       id: 'pinus',
-      title: 'Kotak Kayu Pinus Alami',
-      desc: 'Kotak kayu pinus estetik dengan penutup akrilik geser, diikat pita katun linen alami.',
+      title: 'Natural Pine Wood Box',
+      desc: 'Aesthetic pine wood box with sliding acrylic lid, tied with natural linen ribbon.',
       price: 120000,
       image: '/images/category/kategori-hampers.png',
     },
     {
       id: 'hardbox',
-      title: 'Hardbox Pastel Keepsake',
-      desc: 'Kotak kokoh warna pastel sage/peach dengan cetak logo emas, ideal sebagai wadah kenangan bayi.',
+      title: 'Pastel Keepsake Hardbox',
+      desc: 'Sturdy pastel box with gold foil branding, ideal as a baby keepsake chest.',
       price: 85000,
       image: '/images/hampers-gift.jpg',
     },
     {
       id: 'rotan',
-      title: 'Keranjang Anyaman Rotan',
-      desc: 'Keranjang rotan handmade pengrajin lokal dengan kain pelapis linen lembut, multifungsi di kamar bayi.',
+      title: 'Woven Rattan Basket',
+      desc: 'Handmade woven rattan basket with soft linen lining, multi-functional for the nursery.',
       price: 145000,
       image: '/images/products/shopee-pastel-pegdol-set.jpg',
     },
@@ -63,7 +63,7 @@ export function HampersView() {
 
   // Filter, Search & Sort states for Ready-Made Hampers
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAge, setSelectedAge] = useState('Semua');
+  const [selectedAge, setSelectedAge] = useState('All');
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [sortBy, setSortBy] = useState<'terbaru' | 'harga-rendah' | 'harga-tinggi' | 'nama'>('terbaru');
 
@@ -80,12 +80,12 @@ export function HampersView() {
       const isOutOfStock = p.stock !== undefined ? p.stock <= 0 : p.inStock === false;
       if (onlyInStock && isOutOfStock) return false;
 
-      if (selectedAge !== 'Semua') {
+      if (selectedAge !== 'All') {
         const pAge = p.ageGroup || '';
-        if (selectedAge === '0–1 th' && !pAge.includes('0–1') && !pAge.includes('0–2') && !pAge.toLowerCase().includes('newborn')) return false;
-        if (selectedAge === '1–3 th' && !pAge.includes('1–3') && !pAge.includes('1-3')) return false;
-        if (selectedAge === '3+ th' && !pAge.includes('3–5') && !pAge.includes('3+')) return false;
-        if (selectedAge === '6+ th' && !pAge.includes('6+')) return false;
+        if (selectedAge === '0–1 yrs' && !pAge.includes('0–1') && !pAge.includes('0–2') && !pAge.toLowerCase().includes('newborn')) return false;
+        if (selectedAge === '1–3 yrs' && !pAge.includes('1–3') && !pAge.includes('1-3')) return false;
+        if (selectedAge === '3+ yrs' && !pAge.includes('3–5') && !pAge.includes('3+')) return false;
+        if (selectedAge === '6+ yrs' && !pAge.includes('6+')) return false;
       }
 
       if (searchQuery.trim()) {
@@ -116,13 +116,13 @@ export function HampersView() {
     const hamperProduct: any = {
       id: `hamper-${Date.now()}`,
       title: `Custom Gift Hamper (${selectedBox.title})`,
-      author: 'Kurasi Khusus Butik BabyShalls',
+      author: 'BabyShalls Curation Team',
       price: estimatedTotal,
       coverImage: selectedBox.image,
       category: 'Hampers',
       ageGroup: theme === 'newborn' ? '0–1 Years' : '1–3 Years',
       inStock: true,
-      description: `Paket hampers kustom: ${selectedBox.title}, ${bookCount} buku pilihan, ${includeToy ? 'termasuk mainan montessori' : 'hanya buku'}. Untuk ${recipientName || 'Buah Hati'} dari ${senderName || 'Keluarga'}.`,
+      description: `Custom gift hamper: ${selectedBox.title}, ${bookCount} curated books, ${includeToy ? 'with educational wooden toy' : 'books only'}. For ${recipientName || 'Little One'} from ${senderName || 'Family'}.`,
     };
 
     addToCart(hamperProduct, 1);
@@ -142,19 +142,19 @@ export function HampersView() {
             HAMPERS &amp; GIFT SETS
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#4A2A1C] tracking-tight mb-4">
-            Kado Terbaik untuk Momen Tumbuh Kembang Si Kecil
+            The Perfect Gift for Every Childhood Milestone
           </h1>
           <p className="text-sm sm:text-base text-[#7A5644] max-w-2xl mx-auto leading-relaxed mb-6">
-            Pilihan paket hampers buku anak dan mainan edukasi yang siap dihadiahkan untuk kado kelahiran (newborn), ulang tahun, atau perayaan keluarga.
+            Curated children's book sets and educational toys, beautifully gift-wrapped for newborns, birthdays, and family celebrations.
           </p>
           <a
-            href="https://wa.me/6281234567890?text=Halo%20Admin%20BabyShalls,%20saya%20ingin%20konsultasi%20pembuatan%20hampers%20custom"
+            href="https://wa.me/6281234567890?text=Hello%20BabyShalls%20Admin,%20I%20would%20like%20to%20consult%20on%20custom%20gift%20hampers"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
-            <span>Konsultasi via WhatsApp</span>
+            <span>Consult via WhatsApp</span>
           </a>
         </div>
       </section>
@@ -165,10 +165,10 @@ export function HampersView() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
-                Paket Hampers Siap Kirim
+                Ready-to-Ship Hampers
               </h2>
               <p className="text-xs text-[#7A5644] mt-1">
-                Menampilkan {filteredHampers.length} paket hampers
+                Showing {filteredHampers.length} gift sets
               </p>
             </div>
 
@@ -180,7 +180,7 @@ export function HampersView() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari paket hampers..."
+                  placeholder="Search gift hampers..."
                   className="w-full text-xs pl-8 pr-3 py-2 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
               </div>
@@ -189,12 +189,12 @@ export function HampersView() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'terbaru' | 'harga-rendah' | 'harga-tinggi' | 'nama')}
                 className="text-xs px-3 py-2 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26] cursor-pointer"
-                aria-label="Urutkan hampers"
+                aria-label="Sort hampers"
               >
-                <option value="terbaru">Urutkan: Terbaru</option>
-                <option value="harga-rendah">Harga: Terendah</option>
-                <option value="harga-tinggi">Harga: Tertinggi</option>
-                <option value="nama">Nama: A - Z</option>
+                <option value="terbaru">Sort: Newest</option>
+                <option value="harga-rendah">Price: Low to High</option>
+                <option value="harga-tinggi">Price: High to Low</option>
+                <option value="nama">Name: A - Z</option>
               </select>
             </div>
           </div>
@@ -202,7 +202,7 @@ export function HampersView() {
           {/* Age Filter & In-Stock Toggle */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-8 pb-4 border-b border-[#F2E4D6]">
             <div className="flex flex-wrap items-center gap-1.5">
-              {['Semua', '0–1 th', '1–3 th', '3+ th', '6+ th'].map((age) => (
+              {['All', '0–1 yrs', '1–3 yrs', '3+ yrs', '6+ yrs'].map((age) => (
                 <button
                   key={age}
                   type="button"
@@ -224,13 +224,13 @@ export function HampersView() {
                 onChange={(e) => setOnlyInStock(e.target.checked)}
                 className="w-4 h-4 accent-[#B05A26] rounded-[2px]"
               />
-              <span>Hanya stok tersedia</span>
+              <span>In stock only</span>
             </label>
           </div>
 
           {filteredHampers.length === 0 ? (
             <div className="p-10 bg-white border border-[#F2E4D6] rounded-[2px] text-center text-sm text-[#7A5644]">
-              Tidak ada paket hampers yang sesuai dengan filter atau pencarian saat ini.
+              No gift hampers match your current filter or search criteria.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
@@ -252,7 +252,7 @@ export function HampersView() {
                         />
                         <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
                           <span className="bg-[#DDF1E5] text-[#2A6E37] text-xs font-medium px-2.5 py-0.5 rounded-[2px]">
-                            {hamp.ageGroup || 'Semua usia'}
+                            {hamp.ageGroup || 'All ages'}
                           </span>
                           {hasDiscount && (
                             <span className="bg-[#C0392B] text-white text-xs font-semibold px-2 py-0.5 rounded-[2px]">
@@ -263,7 +263,7 @@ export function HampersView() {
                         {isOutOfStock && (
                           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
                             <span className="w-20 h-20 rounded-full bg-black/65 text-white text-sm font-medium flex items-center justify-center shadow-sm">
-                              Habis
+                              Sold Out
                             </span>
                           </div>
                         )}
@@ -273,7 +273,7 @@ export function HampersView() {
                         <div className="flex items-center justify-between gap-2 text-[11px] text-[#7A5644] mb-1.5">
                           <span>{hamp.subCategory || hamp.category}</span>
                           {typeof hamp.stock === 'number' && (
-                            <span>Stok {hamp.stock}</span>
+                            <span>Stock: {hamp.stock}</span>
                           )}
                         </div>
                         <Link href={`/product/${hamp.id}`} className="block group-hover:text-[#B05A26] transition-colors">
@@ -307,7 +307,7 @@ export function HampersView() {
                         }}
                         className="w-full py-2.5 bg-[#FFF6EA] border border-[#B05A26] text-[#B05A26] hover:bg-[#B05A26] hover:text-white disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed text-xs font-semibold rounded-[2px] transition-colors cursor-pointer"
                       >
-                        {isOutOfStock ? 'Stok Habis' : '+ Masukkan ke Keranjang'}
+                        {isOutOfStock ? 'Sold Out' : '+ Add to Bag'}
                       </button>
                     </div>
                   </div>
@@ -324,13 +324,13 @@ export function HampersView() {
 
           <div className="max-w-2xl mx-auto text-center mb-12">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26] block mb-2">
-              KREASI SENDIRI
+              CREATE YOUR OWN
             </span>
             <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight mb-2">
-              Rancang Paket Hampers Kustom
+              Design a Custom Gift Hamper
             </h2>
             <p className="text-xs sm:text-sm text-[#7A5644]">
-              Tentukan jenis kotak, tema usia, jumlah buku, dan tulis pesan kartu ucapan untuk orang tersayang.
+              Select your box type, age theme, number of books, and write a personalized greeting card.
             </p>
           </div>
 
@@ -338,7 +338,7 @@ export function HampersView() {
             {/* Step 1: Pilihan Box */}
             <div className="mb-8">
               <label className="block text-xs font-semibold text-[#4A2A1C] uppercase tracking-wider mb-3">
-                1. Pilih Jenis Kemasan / Kotak Kado:
+                1. Select Box or Packaging:
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {boxOptions.map((opt) => (
@@ -369,7 +369,7 @@ export function HampersView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 text-xs">
               <div>
                 <label className="block font-semibold text-[#4A2A1C] uppercase tracking-wider mb-2">
-                  2. Tema Usia Anak:
+                  2. Age Theme:
                 </label>
                 <div className="flex gap-2">
                   {['newborn', 'toddler', 'kids'].map((t) => (
@@ -382,7 +382,7 @@ export function HampersView() {
                           : 'bg-white border-[#E6D2C0] text-[#4A2A1C] hover:border-[#B05A26]'
                         }`}
                     >
-                      {t === 'newborn' ? 'Newborn' : t === 'toddler' ? '1–3 th' : '3+ th'}
+                      {t === 'newborn' ? 'Newborn' : t === 'toddler' ? '1–3 yrs' : '3+ yrs'}
                     </button>
                   ))}
                 </div>
@@ -390,7 +390,7 @@ export function HampersView() {
 
               <div>
                 <label className="block font-semibold text-[#4A2A1C] uppercase tracking-wider mb-2">
-                  3. Jumlah Buku Cerita:
+                  3. Number of Books:
                 </label>
                 <div className="flex gap-2">
                   {[2, 3, 5].map((cnt) => (
@@ -403,7 +403,7 @@ export function HampersView() {
                           : 'bg-white border-[#E6D2C0] text-[#4A2A1C] hover:border-[#B05A26]'
                         }`}
                     >
-                      {cnt} Buku
+                      {cnt} Books
                     </button>
                   ))}
                 </div>
@@ -414,10 +414,10 @@ export function HampersView() {
             <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#F2E4D6]">
               <div>
                 <span className="font-semibold text-xs text-[#4A2A1C] block">
-                  Tambahkan Mainan Kayu Edukasi (+ Rp 125.000)
+                  Add Educational Wooden Toy (+ Rp 125,000)
                 </span>
                 <span className="text-[11px] text-[#7A5644]">
-                  Rainbow stacker atau teether kayu pinus halus non-toksik
+                  Non-toxic pastel rainbow stacker or smooth pine wood teether
                 </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -434,25 +434,25 @@ export function HampersView() {
             {/* Step 4: Kartu Ucapan */}
             <div className="space-y-4 text-xs mb-8">
               <label className="block font-semibold text-[#4A2A1C] uppercase tracking-wider">
-                4. Tulisan pada Kartu Ucapan (Gratis):
+                4. Personalized Greeting Card (Free):
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#7A5644] mb-1">Nama Penerima</label>
+                  <label className="block text-[#7A5644] mb-1">Recipient Name</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Baby Arka & Bunda"
+                    placeholder="e.g. Baby Liam & Family"
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
                     className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#7A5644] mb-1">Dari Pengirim</label>
+                  <label className="block text-[#7A5644] mb-1">Sender Name</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Om Danu & Tante Rina"
+                    placeholder="e.g. Uncle David & Aunt Sarah"
                     value={senderName}
                     onChange={(e) => setSenderName(e.target.value)}
                     className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
@@ -461,10 +461,10 @@ export function HampersView() {
               </div>
 
               <div>
-                <label className="block text-[#7A5644] mb-1">Pesan Kartu Ucapan</label>
+                <label className="block text-[#7A5644] mb-1">Card Message</label>
                 <textarea
                   rows={2}
-                  placeholder="Contoh: Selamat atas kelahiran buah hati tercinta. Semoga tumbuh menjadi anak yang sholeh dan penuh berkah."
+                  placeholder="e.g. Wishing you endless joy, laughter, and health as you welcome your new baby!"
                   value={customCardMessage}
                   onChange={(e) => setCustomCardMessage(e.target.value)}
                   className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
@@ -475,7 +475,7 @@ export function HampersView() {
             {/* Total & Action */}
             <div className="pt-6 border-t border-[#F2E4D6] flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-xs text-[#7A5644] block">Estimasi Total Paket:</span>
+                <span className="text-xs text-[#7A5644] block">Estimated Total:</span>
                 <span className="text-2xl font-bold text-[#B05A26]">
                   {formatIDR(estimatedTotal)}
                 </span>
@@ -486,7 +486,7 @@ export function HampersView() {
                 onClick={handleAddHamperToBag}
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-sm"
               >
-                {isOrdered ? 'Memasukkan ke Keranjang...' : 'Pesan Hampers Kustom Ini'}
+                {isOrdered ? 'Adding to Bag...' : 'Order This Custom Hamper'}
               </button>
             </div>
 

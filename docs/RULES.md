@@ -55,6 +55,10 @@
 ### RULE 08: Idempotensi Webhook Pembayaran
 - Endpoint webhook `/api/orders/midtrans-webhook` harus idempoten: memproses notifikasi dengan order ID dan status yang sama lebih dari sekali tidak boleh mengubah data secara duplikat atau memicu error.
 
+### RULE 09: Full English Localization (Strict Language Governance)
+- **Mandatory Language**: Sesuai kesepakatan MoU klien per 23-24 November 2026, seluruh antarmuka pengguna (*Storefront*, Navigasi, Katalog, Keranjang, *Checkout*, Halaman Akun, *Events & Workshops*, *Request a Book*, serta Dashboard Admin Semi-CMS), pesan sistem, notifikasi/toast, email transaksional, dan error response backend **WAJIB menggunakan Bahasa Inggris**.
+- **Tone & Copywriting**: Pertahankan identitas brand (*warm cozy living storybook*) dalam bahasa Inggris yang elegan, ramah, dan alami bagi keluarga (contoh: *"Curated Children's Books & Wooden Toys"*, *"Shopping Bag"*, *"Event & Workshop Booking"*, *"Book Curation Request"*, dll.).
+
 ---
 
 ## 4. Protokol Verifikasi Sebelum Commit & Deploy

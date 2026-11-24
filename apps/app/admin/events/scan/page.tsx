@@ -71,32 +71,32 @@ export default function MobileQrScanPage() {
     if (lastScannedRef.current.code === clean && now - lastScannedRef.current.at < 3000) return;
     lastScannedRef.current = { code: clean, at: now };
 
-    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
     try {
       const res: EventCheckInResponse = await checkInMutation.mutateAsync({ ticketCode: clean });
       if (res.alreadyCheckedIn) {
-        const msg = res.message || 'Tiket sudah dipakai check-in sebelumnya.';
+        const msg = res.message || 'Ticket has already been used for check-in.';
         setScanState({
           status: 'already',
           code: clean,
-          childName: res.data?.childName || 'Peserta',
+          childName: res.data?.childName || 'Participant',
           message: msg,
         });
         pushHistory({ code: clean, status: 'already', message: msg, time });
       } else {
-        const msg = res.message || 'Check-in berhasil!';
+        const msg = res.message || 'Check-in successful!';
         setScanState({
           status: 'success',
           code: clean,
-          childName: res.data?.childName || 'Peserta',
+          childName: res.data?.childName || 'Participant',
           eventTitle: res.data?.event?.title,
           message: msg,
         });
-        pushHistory({ code: clean, status: 'success', message: `${res.data?.childName || 'Peserta'} — ${msg}`, time });
+        pushHistory({ code: clean, status: 'success', message: `${res.data?.childName || 'Participant'} — ${msg}`, time });
       }
     } catch (err) {
-      const msg = extractApiError(err, 'Kode tiket tidak valid atau tidak ditemukan.');
+      const msg = extractApiError(err, 'Invalid ticket code or ticket not found.');
       setScanState({ status: 'error', code: clean, message: msg });
       pushHistory({ code: clean, status: 'error', message: msg, time });
     }
@@ -122,7 +122,7 @@ export default function MobileQrScanPage() {
     } catch {
       setCameraActive(false);
       scannerRef.current = null;
-      toast.error('Kamera tidak tersedia atau izin ditolak. Gunakan input kode manual.');
+      toast.error('Camera unavailable or permission denied. Please use manual code entry.');
     }
   };
 
@@ -144,10 +144,10 @@ export default function MobileQrScanPage() {
           href="/admin"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A5644] hover:text-[#B05A26]"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Admin
+          <ArrowLeft className="w-4 h-4" /> Back to Admin
         </Link>
         <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26]">
-          Scan Check-in Workshop
+          Workshop Check-in Scanner
         </span>
       </header>
 
@@ -161,7 +161,7 @@ export default function MobileQrScanPage() {
             {!cameraActive && (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-2 pointer-events-none">
                 <QrCode className="w-12 h-12 text-[#FBE6D8]/70" />
-                <p className="text-xs text-[#FBE6D8]/85">Arahkan kamera ke QR e-tiket peserta</p>
+                <p className="text-xs text-[#FBE6D8]/85">Point camera at participant&apos;s e-ticket QR</p>
               </div>
             )}
           </div>
@@ -172,25 +172,25 @@ export default function MobileQrScanPage() {
             className="w-full h-10 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-xs font-semibold inline-flex items-center justify-center gap-2 cursor-pointer"
           >
             {cameraActive ? <CameraOff className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
-            <span>{cameraActive ? 'Matikan Kamera' : 'Aktifkan Kamera QR'}</span>
+            <span>{cameraActive ? 'Turn Off Camera' : 'Activate QR Camera'}</span>
           </button>
         </div>
 
         {/* Right: Result + Manual Input + Scan History */}
         <div className="lg:col-span-6 space-y-4">
           <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-4">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Verifikasi Tiket Peserta</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Participant Ticket Verification</h2>
 
             {scanState.status === 'ready' && (
               <div className="p-3 rounded-[4px] bg-[#FFF6EA] border border-[#E6D2C0] text-xs text-[#7A5644]">
-                Siap memindai tiket workshop (format <code>BS-EVT-...</code>).
+                Ready to scan workshop tickets (format <code>BS-EVT-...</code>).
               </div>
             )}
             {scanState.status === 'success' && (
               <div className="p-3 rounded-[4px] bg-[#E9F3E4] text-[#1E543B] flex items-start gap-2.5 text-xs">
                 <CheckCircle2 className="w-5 h-5 shrink-0" />
                 <div>
-                  <p className="font-bold">Berhasil Check-in ({scanState.code})</p>
+                  <p className="font-bold">Check-in Successful ({scanState.code})</p>
                   <p>{scanState.childName} — {scanState.message}</p>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function MobileQrScanPage() {
               <div className="p-3 rounded-[4px] bg-amber-50 text-amber-800 flex items-start gap-2.5 text-xs">
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <div>
-                  <p className="font-bold">Tiket Sudah Dipakai ({scanState.code})</p>
+                  <p className="font-bold">Ticket Already Used ({scanState.code})</p>
                   <p>{scanState.message}</p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function MobileQrScanPage() {
               <div className="p-3 rounded-[4px] bg-red-50 text-red-700 flex items-start gap-2.5 text-xs">
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <div>
-                  <p className="font-bold">Tiket Tidak Valid ({scanState.code})</p>
+                  <p className="font-bold">Invalid Ticket ({scanState.code})</p>
                   <p>{scanState.message}</p>
                 </div>
               </div>
@@ -225,7 +225,7 @@ export default function MobileQrScanPage() {
                 type="text"
                 value={manualCode}
                 onChange={(e) => setManualCode(e.target.value.toUpperCase())}
-                placeholder="Input manual: BS-EVT-..."
+                placeholder="Manual entry: BS-EVT-..."
                 className="flex-1 h-10 px-3 rounded-[4px] border border-[#E6D2C0] text-xs font-mono uppercase"
               />
               <button
@@ -233,7 +233,7 @@ export default function MobileQrScanPage() {
                 disabled={checkInMutation.isPending}
                 className="h-10 px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold cursor-pointer"
               >
-                Cek
+                Verify
               </button>
             </form>
           </div>
@@ -241,10 +241,10 @@ export default function MobileQrScanPage() {
           <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-[#4A2A1C]">
               <Clock className="w-4 h-4 text-[#B05A26]" />
-              <span>Riwayat Scan Sesi Ini ({history.length})</span>
+              <span>Current Session Scan History ({history.length})</span>
             </div>
             {history.length === 0 ? (
-              <p className="text-xs text-[#7A5644]">Belum ada tiket yang dipindai.</p>
+              <p className="text-xs text-[#7A5644]">No tickets scanned yet.</p>
             ) : (
               <div className="divide-y divide-[#F2E4D6] text-xs max-h-60 overflow-y-auto">
                 {history.map((h, i) => (

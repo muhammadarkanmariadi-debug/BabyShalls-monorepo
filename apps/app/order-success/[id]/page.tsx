@@ -51,7 +51,7 @@ function OrderSuccessContent() {
           <div className="relative w-44 h-44 mb-4">
             <Image
               src="/images/mascot/maskot-lompat-konfeti.png"
-              alt={isPending ? 'Pesanan Menunggu Pembayaran' : 'Pesanan Berhasil'}
+              alt={isPending ? 'Order Awaiting Payment' : 'Order Successful'}
               fill
               priority
               className="object-contain"
@@ -61,36 +61,36 @@ function OrderSuccessContent() {
           {isPending ? (
             <div className="inline-flex items-center gap-1.5 bg-[#FFF3D6] text-[#9A6500] text-xs font-semibold px-3 py-1 rounded-[2px] mb-3">
               <Clock className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Menunggu Pembayaran (PENDING)</span>
+              <span>Awaiting Payment (PENDING)</span>
             </div>
           ) : (
             <div className="inline-flex items-center gap-1.5 bg-[#DDF1E5] text-[#2A6E37] text-xs font-semibold px-3 py-1 rounded-[2px] mb-3">
               <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Pembayaran berhasil</span>
+              <span>Payment Successful</span>
             </div>
           )}
 
           <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] mb-2 tracking-tight">
             {isPending
-              ? 'Pesananmu sudah tercatat!'
-              : 'Terima kasih, pesananmu diterima!'}
+              ? 'Your order has been recorded!'
+              : 'Thank you, your order is received!'}
           </h1>
 
           <p className="text-sm text-[#7A5644] max-w-md mb-6 leading-relaxed">
             {isPending
-              ? 'Pembayaran belum diselesaikan atau masih menunggu konfirmasi Midtrans. Kamu dapat melanjutkan pembayaran kapan saja melalui menu Riwayat Pesanan di halaman Akun.'
-              : 'Kami sedang menyiapkan bukumu dengan teliti. Nomor resi otomatis akan diperbarui di menu Riwayat Pesanan setelah paket diserahkan ke kurir.'}
+              ? 'Payment has not been completed or is awaiting Midtrans confirmation. You can complete payment anytime through Order History in your Account page.'
+              : 'We are carefully preparing your books. The automated tracking number will be updated in Order History once the package is handed over to the courier.'}
           </p>
 
           <div className="w-full bg-[#FFF6EA] border border-[#F2E4D6] rounded-[2px] p-5 text-left mb-6 flex flex-col gap-2.5 text-xs">
             <div className="flex items-center justify-between pb-2 border-b border-[#E6D2C0]">
-              <span className="text-[#7A5644]">Nomor Pesanan</span>
+              <span className="text-[#7A5644]">Order Number</span>
               <span className="font-semibold text-[#4A2A1C]">{orderId || '-'}</span>
             </div>
 
             {typeof order?.totalAmount === 'number' && (
               <div className="flex items-center justify-between">
-                <span className="text-[#7A5644]">Total Pembayaran</span>
+                <span className="text-[#7A5644]">Total Payment</span>
                 <span className="font-bold text-[#B05A26] text-sm">
                   {formatIDR(order.totalAmount)}
                 </span>
@@ -100,20 +100,20 @@ function OrderSuccessContent() {
             <div className="flex items-center justify-between">
               <span className="text-[#7A5644]">Status</span>
               <span className="font-medium text-[#4A2A1C]">
-                {isPending ? 'PENDING (Menunggu Pembayaran)' : order?.status || 'PAID'}
+                {isPending ? 'PENDING (Awaiting Payment)' : order?.status || 'PAID'}
               </span>
             </div>
 
             {order?.deliveryMethod && (
               <div className="flex items-center justify-between">
-                <span className="text-[#7A5644]">Pengiriman</span>
+                <span className="text-[#7A5644]">Shipping</span>
                 <span className="font-medium text-[#4A2A1C]">{order.deliveryMethod}</span>
               </div>
             )}
 
             {order?.deliveryAddress && (
               <div className="pt-2 border-t border-[#E6D2C0]">
-                <span className="text-[#7A5644] block mb-0.5">Alamat Tujuan</span>
+                <span className="text-[#7A5644] block mb-0.5">Destination Address</span>
                 <span className="font-medium text-[#4A2A1C] line-clamp-2">
                   {order.deliveryAddress}
                 </span>
@@ -126,14 +126,14 @@ function OrderSuccessContent() {
               href="/account"
               className="flex-1 py-3 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors flex items-center justify-center"
             >
-              Lihat Riwayat Pesanan
+              View Order History
             </Link>
 
             <Link
               href="/shop"
               className="flex-1 py-3 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium text-xs rounded-[2px] transition-colors flex items-center justify-center shadow-sm"
             >
-              Belanja Lagi
+              Continue Shopping
             </Link>
           </div>
         </div>

@@ -8,12 +8,12 @@ import { TombolKembali } from '@/components/common/TombolKembali';
 import { ALL_EVENTS, PAST_EVENTS, MockEvent } from '@/data/eventsData';
 
 export default function EventsPage() {
-  const [activeFilter, setActiveFilter] = useState<string>('Semua');
+  const [activeFilter, setActiveFilter] = useState<string>('All');
 
   const filterTabs = [
-    'Semua',
-    'Gratis',
-    'Berbayar',
+    'All',
+    'Free',
+    'Paid',
     'Workshop',
     'Story Time',
     'Market Day',
@@ -21,9 +21,9 @@ export default function EventsPage() {
   ];
 
   const filteredEvents = ALL_EVENTS.filter((ev) => {
-    if (activeFilter === 'Semua') return true;
-    if (activeFilter === 'Gratis') return ev.isFree;
-    if (activeFilter === 'Berbayar') return !ev.isFree;
+    if (activeFilter === 'All') return true;
+    if (activeFilter === 'Free') return ev.isFree;
+    if (activeFilter === 'Paid') return !ev.isFree;
     return ev.category === activeFilter;
   });
 
@@ -37,13 +37,13 @@ export default function EventsPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex-1 max-w-2xl">
               <span className="text-xs font-semibold uppercase tracking-wider text-[#7E4A84] block mb-2">
-                EVENT & WORKSHOP
+                EVENTS &amp; WORKSHOPS
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-medium text-[#4A2A1C] leading-tight tracking-tight mb-3">
-                Belajar sambil bermain di BabyShalls
+                Learn and play at BabyShalls
               </h1>
               <p className="text-base sm:text-lg text-[#7A5644] leading-relaxed">
-                Tersedia kegiatan <strong>Gratis</strong> (Story Time, Market Day, Live Sale) dan <strong>Workshop Spesial</strong> bersertifikat dengan bahan lengkap. Daftar online mudah dan tiket QR langsung terbit.
+                Join our <strong>Complimentary</strong> gatherings (Story Time, Market Day, Live Sale) and <strong>Special Workshops</strong> with certificates and full craft kits. Easy online registration with instant QR e-tickets.
               </p>
             </div>
 
@@ -51,7 +51,7 @@ export default function EventsPage() {
             <div className="relative w-52 h-44 sm:w-64 sm:h-52 shrink-0">
               <Image
                 src="/images/mascot/maskot-tiket.png"
-                alt="Maskot BabyShalls Tiket Event"
+                alt="BabyShalls Event Ticket Mascot"
                 fill
                 priority
                 className="object-contain"
@@ -86,7 +86,7 @@ export default function EventsPage() {
             </div>
 
             <div className="text-xs text-[#7A5644] font-medium bg-[#FFF6EA] px-3 py-1.5 rounded-[2px] border border-[#E6D2C0]">
-              Jadwal: November – Desember 2026
+              Schedule: November – December 2026
             </div>
           </div>
 
@@ -94,10 +94,10 @@ export default function EventsPage() {
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
-                Akan Datang ({filteredEvents.length} Event)
+                Upcoming Events ({filteredEvents.length} Events)
               </h2>
               <span className="text-xs text-[#7A5644]">
-                Klik kartu atau tombol untuk melihat detail &amp; agenda lengkap
+                Click any card to view detailed itinerary &amp; reservations
               </span>
             </div>
 
@@ -129,7 +129,7 @@ export default function EventsPage() {
                         {/* Clear FREE vs PAID Badge */}
                         {ev.isFree ? (
                           <span className="bg-[#2A6E37] text-white text-[11px] font-bold px-2 py-0.5 rounded-[2px] shadow-xs">
-                            GRATIS
+                            FREE
                           </span>
                         ) : (
                           <span className="bg-[#B05A26] text-white text-[11px] font-bold px-2 py-0.5 rounded-[2px] shadow-xs">
@@ -142,17 +142,17 @@ export default function EventsPage() {
                       <div className="absolute top-3 right-3 z-10">
                         {ev.status === 'Sisa Sedikit' && (
                           <span className="bg-[#C0392B] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
-                            Sisa {ev.seatsLeft} kursi
+                            {ev.seatsLeft} seats left
                           </span>
                         )}
                         {ev.status === 'Penuh' && (
                           <span className="bg-[#7A5644] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
-                            Kuota Penuh
+                            Fully Booked
                           </span>
                         )}
                         {ev.status === 'Tersedia' && (
                           <span className="bg-[#2A6E37] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
-                            Tersedia
+                            Available
                           </span>
                         )}
                       </div>
@@ -180,7 +180,7 @@ export default function EventsPage() {
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Users className="w-3.5 h-3.5 text-[#7A5644] shrink-0" />
-                            <span>Rekomendasi: {ev.age}</span>
+                            <span>Recommended: {ev.age}</span>
                           </div>
                         </div>
 
@@ -193,11 +193,11 @@ export default function EventsPage() {
                       <div className="pt-3 border-t border-[#F2E4D6]">
                         {isFull ? (
                           <span className="w-full py-2.5 bg-gray-200 text-gray-500 text-xs font-semibold rounded-[2px] text-center block">
-                            Kuota Penuh • Lihat Detail
+                            Fully Booked • View Details
                           </span>
                         ) : (
                           <span className="w-full py-2.5 bg-[#B05A26] group-hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors text-center shadow-xs block">
-                            {ev.isFree ? 'Daftar Gratis' : `Daftar Sekarang (${ev.priceLabel})`}
+                            {ev.isFree ? 'Register for Free' : `Register Now (${ev.priceLabel})`}
                           </span>
                         )}
                       </div>
@@ -212,7 +212,7 @@ export default function EventsPage() {
           {/* Section: Event Sebelumnya (Figma Node #169:4530) */}
           <div>
             <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight mb-8">
-              Event Sebelumnya (Dokumentasi)
+              Past Events (Documentation)
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
@@ -230,7 +230,7 @@ export default function EventsPage() {
                     />
                     <div className="absolute top-3 left-3">
                       <span className="bg-[#7A5644] text-white text-[11px] font-medium px-2 py-0.5 rounded-[2px]">
-                        Telah Terlaksana
+                        Completed
                       </span>
                     </div>
                   </div>
@@ -254,7 +254,7 @@ export default function EventsPage() {
                       rel="noopener noreferrer"
                       className="text-xs text-[#B05A26] hover:text-[#8E431A] font-semibold flex items-center gap-1 mt-2"
                     >
-                      Lihat Dokumentasi di Instagram
+                      View Highlights on Instagram
                       <ArrowRight className="w-3.5 h-3.5" />
                     </a>
                   </div>

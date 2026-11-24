@@ -20,17 +20,17 @@ type CmsPageId =
 type HomeSectionId = 'hero' | 'age_banner' | 'hampers_banner' | 'request_visit';
 
 const PAGE_LIST: Array<{ id: CmsPageId; label: string }> = [
-  { id: 'home', label: 'Beranda' },
-  { id: 'about', label: 'Tentang Kami' },
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About Us' },
   { id: 'faq', label: 'FAQ' },
   { id: 'preloved', label: 'Preloved' },
 ];
 
 const HOME_SECTIONS: Array<{ id: HomeSectionId; title: string; subtitle: string }> = [
-  { id: 'hero', title: 'Hero', subtitle: 'Tag, judul utama, deskripsi, foto & warna latar' },
-  { id: 'age_banner', title: 'Banner Kampanye / Usia', subtitle: 'Judul, deskripsi, gambar & warna latar' },
-  { id: 'hampers_banner', title: 'Banner Gift Hampers', subtitle: 'Judul, deskripsi, gambar banner & warna latar' },
-  { id: 'request_visit', title: 'Request Buku & Kunjungi Toko', subtitle: 'Kartu request pengadaan buku & info lokasi Malang' },
+  { id: 'hero', title: 'Hero Carousel', subtitle: 'Tag, main title, description, photos & background colors' },
+  { id: 'age_banner', title: 'Campaign / Age Banner', subtitle: 'Title, description, image & background color' },
+  { id: 'hampers_banner', title: 'Gift Hampers Banner', subtitle: 'Title, description, banner image & background color' },
+  { id: 'request_visit', title: 'Book Request & Store Visit', subtitle: 'Book procurement card & Malang boutique location info' },
 ];
 
 const BG_SWATCHES = ['#FFF6EA', '#FFFDF9', '#FFFBF5', '#FBE6D8', '#B05A26', '#DCE6C6'];
@@ -87,25 +87,25 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
         about_hours_weekday: draft.store.operatingHours,
         about_block_3_email: draft.store.email || 'halo@babyshalls.com',
       });
-      toast.success('Konten website berhasil disimpan & dipublikasikan!');
+      toast.success('Website content successfully saved & published!');
       setDrawerSection(null);
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menyimpan konten CMS.'));
+      toast.error(extractApiError(err, 'Failed to save CMS content.'));
     }
   };
 
   const handleReset = () => {
-    if (!window.confirm('Kembalikan seluruh konten CMS ke default terbaru?')) return;
+    if (!window.confirm('Reset all CMS content to latest defaults?')) return;
     setDraft(initialCmsData);
-    toast('Konten dikembalikan ke default (klik Simpan untuk mempublikasikan).');
+    toast('Content reset to default (click Save to publish).');
   };
 
   const addFaq = () => {
     const newItem: CmsFaqItem = {
       id: `faq-${Date.now()}`,
-      category: 'belanja',
-      question: 'Pertanyaan baru',
-      answer: 'Jawaban lengkap...',
+      category: 'shopping',
+      question: 'New question',
+      answer: 'Detailed answer...',
       isActive: true,
     };
     setDraft((prev) => ({ ...prev, faq: [...prev.faq, newItem] }));
@@ -116,9 +116,9 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
       {/* Top Action Bar */}
       <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-[#4A2A1C]">Konten Website (Direct Semi-CMS)</h2>
+          <h2 className="text-base font-semibold text-[#4A2A1C]">Website Content (Direct Semi-CMS)</h2>
           <p className="text-[#7A5644]">
-            Klik langsung bagian untuk mengubah teks, gambar banner/hero, dan warna latar secara live.
+            Click directly on any section to edit text, banner/hero images, and background colors live.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -128,7 +128,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
             rel="noreferrer"
             className="h-9 px-3.5 rounded-[4px] border border-[#E6D2C0] bg-white hover:bg-[#FFF6EA] font-semibold text-[#4A2A1C] inline-flex items-center gap-1.5"
           >
-            <Eye className="w-3.5 h-3.5" /> Pratinjau
+            <Eye className="w-3.5 h-3.5" /> Preview
           </a>
           <button
             type="button"
@@ -144,7 +144,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
             className="h-9 px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>{updateCmsMutation.isPending ? 'Menyimpan...' : 'Simpan'}</span>
+            <span>{updateCmsMutation.isPending ? 'Saving...' : 'Save'}</span>
           </button>
         </div>
       </div>
@@ -177,7 +177,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
               }`}
             >
               <Globe className="w-4 h-4 shrink-0" />
-              <span>Informasi Web</span>
+              <span>Web Info</span>
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                     onClick={() => setDrawerSection(sec.id)}
                     className="h-9 px-4 rounded-[4px] border border-[#E6D2C0] bg-white hover:bg-[#FFF6EA] font-semibold text-[#4A2A1C] cursor-pointer shrink-0"
                   >
-                    Ubah
+                    Edit
                   </button>
                 </div>
               ))}
@@ -230,9 +230,9 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
 
           {activePage === 'about' && (
             <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-5">
-              <h3 className="text-base font-semibold text-[#4A2A1C]">Direct Edit: Tentang Kami (`/about`)</h3>
+              <h3 className="text-base font-semibold text-[#4A2A1C]">Direct Edit: About Us (`/about`)</h3>
               <BgColorPicker
-                label="Warna Latar Hero About"
+                label="About Hero Background Color"
                 value={draft.about.heroBgColor || '#FFF6EA'}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, heroBgColor: v } }))}
               />
@@ -243,41 +243,41 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                 }
                 folder="babyshalls/cms"
                 maxImages={1}
-                label="Gambar Hero / Maskot About"
+                label="About Hero / Mascot Image"
               />
               <InputField
-                label="Badge Atas"
+                label="Top Badge"
                 value={draft.about.badge}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, badge: v } }))}
               />
               <InputField
-                label="Judul Utama"
+                label="Main Title"
                 value={draft.about.title}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, title: v } }))}
               />
               <TextareaField
-                label="Deskripsi Singkat"
+                label="Short Description"
                 value={draft.about.description || ''}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, description: v } }))}
               />
               <TextareaField
-                label="Cerita Paragraf 1"
+                label="Story Paragraph 1"
                 value={draft.about.storyParagraph1}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, storyParagraph1: v } }))}
               />
               <TextareaField
-                label="Cerita Paragraf 2"
+                label="Story Paragraph 2"
                 value={draft.about.storyParagraph2}
                 onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, storyParagraph2: v } }))}
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <TextareaField
-                  label="Visi"
+                  label="Vision"
                   value={draft.about.vision}
                   onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, vision: v } }))}
                 />
                 <TextareaField
-                  label="Misi"
+                  label="Mission"
                   value={draft.about.mission}
                   onChange={(v) => setDraft((p) => ({ ...p, about: { ...p.about, mission: v } }))}
                 />
@@ -288,13 +288,13 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
           {activePage === 'faq' && (
             <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-[#4A2A1C]">Daftar FAQ (`/faq`)</h3>
+                <h3 className="text-base font-semibold text-[#4A2A1C]">FAQ List (`/faq`)</h3>
                 <button
                   type="button"
                   onClick={addFaq}
                   className="h-9 px-3.5 rounded-[4px] bg-[#B05A26] text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Plus className="w-3.5 h-3.5" /> Tambah FAQ
+                  <Plus className="w-3.5 h-3.5" /> Add FAQ
                 </button>
               </div>
               <div className="space-y-4">
@@ -311,10 +311,10 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                         }
                         className="h-8 px-2.5 rounded-[4px] border border-[#E6D2C0]"
                       >
-                        <option value="belanja">Belanja</option>
-                        <option value="pengiriman">Pengiriman</option>
-                        <option value="pengembalian">Pengembalian</option>
-                        <option value="event">Event</option>
+                        <option value="belanja">Shopping</option>
+                        <option value="pengiriman">Shipping</option>
+                        <option value="pengembalian">Returns</option>
+                        <option value="event">Events</option>
                       </select>
                       <button
                         type="button"
@@ -356,19 +356,19 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
 
           {activePage === 'preloved' && (
             <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
-              <h3 className="text-base font-semibold text-[#4A2A1C]">Halaman Preloved (`/preloved`)</h3>
+              <h3 className="text-base font-semibold text-[#4A2A1C]">Preloved Page (`/preloved`)</h3>
               <InputField
-                label="Judul Halaman Preloved"
+                label="Preloved Page Title"
                 value={draft.preloved.title || ''}
                 onChange={(v) => setDraft((p) => ({ ...p, preloved: { ...p.preloved, title: v } }))}
               />
               <TextareaField
-                label="Deskripsi Kurasi Preloved"
+                label="Preloved Curation Description"
                 value={draft.preloved.description || ''}
                 onChange={(v) => setDraft((p) => ({ ...p, preloved: { ...p.preloved, description: v } }))}
               />
               <InputField
-                label="Notifikasi Sterilisasi UV-C"
+                label="UV-C Sterilization Notice"
                 value={draft.preloved.sterilizationNotice}
                 onChange={(v) =>
                   setDraft((p) => ({ ...p, preloved: { ...p.preloved, sterilizationNotice: v } }))
@@ -380,58 +380,58 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
           {activePage === 'web_info' && (
             <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
               <h3 className="text-base font-semibold text-[#4A2A1C]">
-                Informasi Web, Sosial Media &amp; Kontak
+                Web Info, Social Media &amp; Contacts
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <InputField
-                  label="Nomor WhatsApp (628...)"
+                  label="WhatsApp Number (628...)"
                   value={draft.store.whatsappNumber}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, whatsappNumber: v } }))
                   }
                 />
                 <InputField
-                  label="Link Grup Komunitas WA"
+                  label="WhatsApp Community Group Link"
                   value={draft.store.whatsappCommunityUrl}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, whatsappCommunityUrl: v } }))
                   }
                 />
                 <InputField
-                  label="Link Instagram"
+                  label="Instagram Link"
                   value={draft.store.instagramUrl}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, instagramUrl: v } }))
                   }
                 />
                 <InputField
-                  label="Handle Instagram (@...)"
+                  label="Instagram Handle (@...)"
                   value={draft.store.instagramHandle}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, instagramHandle: v } }))
                   }
                 />
                 <InputField
-                  label="Link YouTube"
+                  label="YouTube Link"
                   value={draft.store.youtubeUrl || ''}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, youtubeUrl: v } }))
                   }
                 />
                 <InputField
-                  label="Link TikTok"
+                  label="TikTok Link"
                   value={draft.store.tiktokUrl || ''}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, tiktokUrl: v } }))
                   }
                 />
                 <InputField
-                  label="Email Kontak"
+                  label="Contact Email"
                   value={draft.store.email || ''}
                   onChange={(v) => setDraft((p) => ({ ...p, store: { ...p.store, email: v } }))}
                 />
                 <InputField
-                  label="Link Google Maps"
+                  label="Google Maps Link"
                   value={draft.store.googleMapsUrl}
                   onChange={(v) =>
                     setDraft((p) => ({ ...p, store: { ...p.store, googleMapsUrl: v } }))
@@ -439,12 +439,12 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                 />
               </div>
               <InputField
-                label="Alamat Butik"
+                label="Boutique Address"
                 value={draft.store.address}
                 onChange={(v) => setDraft((p) => ({ ...p, store: { ...p.store, address: v } }))}
               />
               <InputField
-                label="Jam Operasional"
+                label="Operating Hours"
                 value={draft.store.operatingHours}
                 onChange={(v) =>
                   setDraft((p) => ({
@@ -462,7 +462,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
       <AdminDrawer
         isOpen={Boolean(drawerSection)}
         onClose={() => setDrawerSection(null)}
-        title={HOME_SECTIONS.find((s) => s.id === drawerSection)?.title || 'Ubah Bagian'}
+        title={HOME_SECTIONS.find((s) => s.id === drawerSection)?.title || 'Edit Section'}
         width="lg"
         footer={
           <>
@@ -471,7 +471,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
               onClick={() => setDrawerSection(null)}
               className="h-9 px-4 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#7A5644] cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="button"
@@ -479,7 +479,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
               onClick={handleSaveAll}
               className="h-9 px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold cursor-pointer"
             >
-              {updateCmsMutation.isPending ? 'Menyimpan...' : 'Simpan & Publikasikan'}
+              {updateCmsMutation.isPending ? 'Saving...' : 'Save & Publish'}
             </button>
           </>
         }
@@ -487,7 +487,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
         {drawerSection === 'hero' && (
           <div className="space-y-4">
             <BgColorPicker
-              label="Warna Latar Hero"
+              label="Hero Background Color"
               value={draft.home.heroBgColor || '#FFF6EA'}
               onChange={(v) => setDraft((p) => ({ ...p, home: { ...p.home, heroBgColor: v } }))}
             />
@@ -517,9 +517,9 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                     {
                       id: nextId,
                       label: `Slide ${prev.length + 1}`,
-                      title: 'Judul Slide Baru',
-                      subtitle: 'Deskripsi singkat untuk slide carousel ini.',
-                      ctaLabel: 'Belanja Sekarang',
+                      title: 'New Slide Title',
+                      subtitle: 'Short description for this carousel slide.',
+                      ctaLabel: 'Shop Now',
                       ctaHref: '/shop',
                       image: '/images/hero/slide-1.jpg',
                       imageAlt: 'BabyShalls Malang',
@@ -529,7 +529,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                 }}
                 className="px-2.5 py-1.5 rounded-[4px] border border-dashed border-[#B05A26] text-[#B05A26] font-semibold inline-flex items-center gap-1 cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5" /> Tambah Slide
+                <Plus className="w-3.5 h-3.5" /> Add Slide
               </button>
             </div>
 
@@ -545,7 +545,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                 <div className="space-y-3 p-4 rounded-[4px] bg-[#FFFDF9] border border-[#E6D2C0]">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-[#4A2A1C]">
-                      Konten Slide {activeSlideIdx + 1}
+                      Slide {activeSlideIdx + 1} Content
                     </span>
                     {heroSlides.length > 1 && (
                       <button
@@ -556,7 +556,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                         }}
                         className="text-red-600 hover:underline inline-flex items-center gap-1 cursor-pointer"
                       >
-                        <Trash2 className="w-3.5 h-3.5" /> Hapus Slide
+                        <Trash2 className="w-3.5 h-3.5" /> Delete Slide
                       </button>
                     )}
                   </div>
@@ -566,26 +566,26 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
                     onChange={(imgs) => updateSlide({ image: imgs[0] || '' })}
                     folder="babyshalls/cms"
                     maxImages={1}
-                    label={`Background Banner Slide ${activeSlideIdx + 1} (Kosong = tampilkan maskot anak)`}
+                    label={`Background Banner Slide ${activeSlideIdx + 1} (Empty = display mascot)`}
                   />
                   <TextareaField
-                    label="Judul Slide (H1)"
+                    label="Slide Title (H1)"
                     value={current.title}
                     onChange={(v) => updateSlide({ title: v })}
                   />
                   <TextareaField
-                    label="Subjudul Slide"
+                    label="Slide Subtitle"
                     value={current.subtitle}
                     onChange={(v) => updateSlide({ subtitle: v })}
                   />
                   <div className="grid grid-cols-2 gap-3">
                     <InputField
-                      label="Teks Tombol CTA"
+                      label="CTA Button Text"
                       value={current.ctaLabel}
                       onChange={(v) => updateSlide({ ctaLabel: v })}
                     />
                     <InputField
-                      label="Link Tombol CTA"
+                      label="CTA Button Link"
                       value={current.ctaHref}
                       onChange={(v) => updateSlide({ ctaHref: v })}
                     />
@@ -599,7 +599,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
         {drawerSection === 'age_banner' && (
           <div className="space-y-4">
             <BgColorPicker
-              label="Warna Latar Banner Kampanye"
+              label="Campaign Banner Background Color"
               value={draft.home.ageBannerBgColor || '#B05A26'}
               onChange={(v) => setDraft((p) => ({ ...p, home: { ...p.home, ageBannerBgColor: v } }))}
             />
@@ -610,22 +610,22 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
               }
               folder="babyshalls/cms"
               maxImages={1}
-              label="Gambar Latar Banner (Opsional)"
+              label="Banner Background Image (Optional)"
             />
             <InputField
-              label="Judul Banner Kampanye / Usia"
+              label="Campaign / Age Banner Title"
               value={draft.home.ageBannerTitle}
               onChange={(v) => setDraft((p) => ({ ...p, home: { ...p.home, ageBannerTitle: v } }))}
             />
             <TextareaField
-              label="Deskripsi"
+              label="Description"
               value={draft.home.ageBannerSubtitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, ageBannerSubtitle: v } }))
               }
             />
             <InputField
-              label="Teks Tombol"
+              label="Button Text"
               value={draft.home.ageBannerButtonText}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, ageBannerButtonText: v } }))
@@ -637,7 +637,7 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
         {drawerSection === 'hampers_banner' && (
           <div className="space-y-4">
             <BgColorPicker
-              label="Warna Latar Banner Hampers"
+              label="Hampers Banner Background Color"
               value={draft.home.hampersBannerBgColor || '#FFFBF5'}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, hampersBannerBgColor: v } }))
@@ -654,24 +654,24 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
               }
               folder="babyshalls/cms"
               maxImages={1}
-              label="Gambar Banner Hampers"
+              label="Hampers Banner Image"
             />
             <InputField
-              label="Judul Banner Hampers"
+              label="Hampers Banner Title"
               value={draft.home.hampersBannerTitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, hampersBannerTitle: v } }))
               }
             />
             <TextareaField
-              label="Deskripsi"
+              label="Description"
               value={draft.home.hampersBannerSubtitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, hampersBannerSubtitle: v } }))
               }
             />
             <InputField
-              label="Teks Tombol"
+              label="Button Text"
               value={draft.home.hampersBannerButtonText}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, hampersBannerButtonText: v } }))
@@ -683,28 +683,28 @@ export function AdminCmsSection({ enabled }: { enabled: boolean }) {
         {drawerSection === 'request_visit' && (
           <div className="space-y-4">
             <InputField
-              label="Judul Request Buku"
+              label="Book Request Title"
               value={draft.home.requestCardTitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, requestCardTitle: v } }))
               }
             />
             <TextareaField
-              label="Subjudul Request Buku"
+              label="Book Request Subtitle"
               value={draft.home.requestCardSubtitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, requestCardSubtitle: v } }))
               }
             />
             <InputField
-              label="Judul Kunjungi Toko"
+              label="Visit Boutique Title"
               value={draft.home.storeVisitTitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, storeVisitTitle: v } }))
               }
             />
             <TextareaField
-              label="Subjudul Kunjungi Toko"
+              label="Visit Boutique Subtitle"
               value={draft.home.storeVisitSubtitle}
               onChange={(v) =>
                 setDraft((p) => ({ ...p, home: { ...p.home, storeVisitSubtitle: v } }))

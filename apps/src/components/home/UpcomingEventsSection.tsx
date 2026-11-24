@@ -72,7 +72,7 @@ export const UpcomingEventsSection: React.FC = () => {
             href="/events"
             className="inline-flex items-center gap-2 text-[#B05A26] hover:text-[#8E431A] text-[16px] font-medium transition-colors group"
           >
-            <span>Lihat Semua Event</span>
+            <span>View All Events</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -87,7 +87,7 @@ export const UpcomingEventsSection: React.FC = () => {
               type="button"
               onClick={() => setSelectedEvent(null)}
               className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer"
-              aria-label="Tutup form pendaftaran"
+              aria-label="Close registration form"
             >
               <X size={20} />
             </button>
@@ -97,9 +97,9 @@ export const UpcomingEventsSection: React.FC = () => {
                 <div className="w-12 h-12 rounded-full bg-[#DDF1E5] text-[#2A6E37] flex items-center justify-center mx-auto">
                   <Check size={24} strokeWidth={2} />
                 </div>
-                <h4 className="text-[18px] font-semibold text-[#4A2A1C]">Pendaftaran Berhasil!</h4>
+                <h4 className="text-[18px] font-semibold text-[#4A2A1C]">Registration Successful!</h4>
                 <p className="text-[13px] text-[#7A5644] max-w-xs mx-auto">
-                  Konfirmasi kehadiran dan e-tiket telah kami kirimkan ke email Anda. Sampai jumpa di BabyShalls!
+                  Your confirmation and e-ticket have been sent to your email. See you at BabyShalls!
                 </p>
               </div>
             ) : (
@@ -119,12 +119,12 @@ export const UpcomingEventsSection: React.FC = () => {
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
-                      Nama Orang Tua
+                      Parent / Guardian Name
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Contoh: Bunda Sarah"
+                      placeholder="e.g. Sarah Jenkins"
                       value={parentName}
                       onChange={(e) => setParentName(e.target.value)}
                       className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
@@ -133,12 +133,12 @@ export const UpcomingEventsSection: React.FC = () => {
 
                   <div>
                     <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
-                      Usia Anak
+                      Child's Age
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Contoh: 4 tahun"
+                      placeholder="e.g. 4 years old"
                       value={childAge}
                       onChange={(e) => setChildAge(e.target.value)}
                       className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
@@ -147,12 +147,12 @@ export const UpcomingEventsSection: React.FC = () => {
 
                   <div>
                     <label className="block text-[12px] font-medium text-[#4A2A1C] mb-1">
-                      WhatsApp / Email
+                      WhatsApp / Email Address
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="0812... / email@anda.com"
+                      placeholder="e.g. 0812... / yourname@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-3 py-2 text-[14px] border border-[#E6D2C0] rounded-[2px] focus:outline-none focus:border-[#B05A26]"
@@ -165,7 +165,7 @@ export const UpcomingEventsSection: React.FC = () => {
                     type="submit"
                     className="w-full py-3 bg-[#B05A26] hover:bg-[#8E431A] text-white rounded-[2px] text-[14px] font-semibold tracking-wider transition-colors cursor-pointer"
                   >
-                    Konfirmasi Kehadiran
+                    Confirm Registration
                   </button>
                 </div>
               </form>

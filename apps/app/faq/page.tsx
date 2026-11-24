@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { FaqView } from '@/features/faq/components/FaqView';
 
 export const metadata: Metadata = {
-  title: 'Pusat Bantuan (FAQ) | BabyShalls Malang',
+  title: 'Help Center (FAQ) | BabyShalls Malang',
   description:
-    'Pertanyaan yang sering diajukan seputar pemesanan, pengiriman kurir dari Kota Malang, standar preloved steril UV, dan workshop anak.',
+    'Frequently asked questions about ordering, nationwide shipping from Malang, UV-sterilized preloved standards, and kids workshops.',
 };
 
 export default function FaqPage() {

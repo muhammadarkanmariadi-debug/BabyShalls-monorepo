@@ -155,10 +155,10 @@ export default function CheckoutPage() {
         id: 'pickup',
         courierCode: 'pickup',
         courierService: 'SELF_PICKUP',
-        name: 'Ambil Sendiri di Toko (Self Pick-up)',
-        etd: 'Siap diambil dalam 1 jam',
+        name: 'Self Pick-up at Boutique',
+        etd: 'Ready in 1 hour',
         price: 0,
-        description: 'Butik BabyShalls, Citraland Puncak Tidar Blok HH-26 Malang',
+        description: 'BabyShalls Boutique, Citraland Puncak Tidar Blok HH-26 Malang',
       },
     ];
   }, [shippingRatesData]);
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
     setCouponStatusMsg('');
     const code = couponInput.trim().toUpperCase();
     if (!code) {
-      setCouponErrorMsg('Masukkan kode kupon terlebih dahulu.');
+      setCouponErrorMsg('Please enter a coupon code.');
       return;
     }
     try {
@@ -190,12 +190,12 @@ export default function CheckoutPage() {
       });
       setAppliedCouponCode(res.coupon.code);
       setDiscountAmount(res.discountAmount);
-      setCouponStatusMsg(`Kupon ${res.coupon.code} diterapkan (-${formatIDR(res.discountAmount)}).`);
+      setCouponStatusMsg(`Coupon ${res.coupon.code} applied (-${formatIDR(res.discountAmount)}).`);
     } catch (err: unknown) {
       const anyErr = err as { response?: { data?: { error?: string } } };
       setAppliedCouponCode(null);
       setDiscountAmount(0);
-      setCouponErrorMsg(anyErr?.response?.data?.error || 'Kode kupon tidak valid.');
+      setCouponErrorMsg(anyErr?.response?.data?.error || 'Invalid coupon code.');
     }
   };
 
@@ -207,17 +207,17 @@ export default function CheckoutPage() {
     setErrorMsg('');
 
     if (items.length === 0) {
-      setErrorMsg('Keranjang belanjamu masih kosong.');
+      setErrorMsg('Your shopping bag is empty.');
       return;
     }
 
     if (!recipientName.trim() || !recipientPhone.trim()) {
-      setErrorMsg('Mohon lengkapi nama penerima dan nomor WhatsApp.');
+      setErrorMsg('Please complete recipient name and WhatsApp phone number.');
       return;
     }
 
     if (selectedCourier !== 'pickup' && addressLine.trim().length < 5) {
-      setErrorMsg('Mohon masukkan alamat lengkap pengiriman (minimal 5 karakter).');
+      setErrorMsg('Please provide a complete shipping address (at least 5 characters).');
       return;
     }
 
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
     try {
       const deliveryAddress =
         selectedCourier === 'pickup'
-          ? 'Butik BabyShalls Citraland Puncak Tidar Blok HH-26 Malang'
+          ? 'BabyShalls Boutique Citraland Puncak Tidar Blok HH-26 Malang'
           : `${addressLine.trim()}, ${city.trim()} ${postalCode.trim()}`.trim();
 
       const orderPayload = {
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
           router.push(`/order-success/${encodeURIComponent(created.orderNumber)}?status=pending`);
         },
         onError: () => {
-          setErrorMsg('Pembayaran Midtrans gagal diproses. Pesanan tersimpan dengan status PENDING di Riwayat Pesanan.');
+          setErrorMsg('Midtrans payment processing failed. The order has been saved with status PENDING in your Order History.');
         },
       });
 
@@ -321,7 +321,7 @@ export default function CheckoutPage() {
         anyErr?.response?.data?.error ||
           anyErr?.response?.data?.message ||
           anyErr?.message ||
-          'Gagal membuat pesanan. Silakan periksa kembali data Anda.'
+          'Failed to create order. Please check your data.'
       );
     } finally {
       setIsSubmitting(false);
@@ -333,7 +333,7 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-[#FFFDF9] flex items-center justify-center font-sans">
         <div className="flex items-center gap-2 text-xs text-[#7A5644]">
           <Loader2 className="w-4 h-4 animate-spin text-[#B05A26]" />
-          <span>Memeriksa sesi akun...</span>
+          <span>Verifying account session...</span>
         </div>
       </div>
     );
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
               <span className="w-5 h-5 rounded-full bg-[#DDF1E5] text-[#2A6E37] flex items-center justify-center text-[10px]">
                 ✓
               </span>
-              <span>Keranjang</span>
+              <span>Cart</span>
             </div>
             <div className="w-10 h-0.5 bg-[#B05A26]"></div>
             <div className="flex items-center gap-1.5 text-[#B05A26] font-semibold">
@@ -378,24 +378,24 @@ export default function CheckoutPage() {
               <span className="w-5 h-5 rounded-full bg-[#FFF6EA] border border-[#E6D2C0] text-[#7A5644] flex items-center justify-center text-[10px]">
                 3
               </span>
-              <span>Pembayaran</span>
+              <span>Payment</span>
             </div>
           </div>
 
           {/* Need help WA link */}
           <a
-            href="https://wa.me/6281234567890?text=Halo%20Admin%20BabyShalls,%20saya%20butuh%20bantuan%20proses%20checkout"
+            href="https://wa.me/6281234567890?text=Hello%20BabyShalls%20Admin,%20I%20need%20assistance%20with%20checkout"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-medium text-[#B05A26] hover:underline"
           >
             <MessageCircle className="w-4 h-4 text-[#2A6E37]" />
-            <span>Butuh bantuan?</span>
+            <span>Need help?</span>
           </a>
         </div>
       </header>
 
-      <TombolKembali fallbackUrl="/shop" label="Kembali Berbelanja" />
+      <TombolKembali fallbackUrl="/shop" label="Back to Shopping" />
 
       {/* Main Content (Figma Node #167:4674) */}
       <main className="py-8 sm:py-12 flex-1">
@@ -419,17 +419,17 @@ export default function CheckoutPage() {
                     <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
                       1
                     </span>
-                    <span>Alamat Pengiriman</span>
+                    <span>Shipping Address</span>
                   </h2>
                   <span className="text-xs text-[#2A6E37] bg-[#DDF1E5] px-2.5 py-0.5 rounded-[2px] font-medium">
-                    Alamat Utama
+                    Primary Address
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                      Nama Penerima *
+                      Recipient Name *
                     </label>
                     <input
                       type="text"
@@ -440,7 +440,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                      Nomor WhatsApp *
+                      WhatsApp Number *
                     </label>
                     <input
                       type="text"
@@ -453,7 +453,7 @@ export default function CheckoutPage() {
 
                 <div className="mb-4">
                   <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                    Alamat Lengkap (Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan) *
+                    Complete Street Address (Street, House No., Building, District) *
                   </label>
                   <textarea
                     rows={2}
@@ -465,20 +465,20 @@ export default function CheckoutPage() {
 
                 <div className="mb-4">
                   <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                    Email (Opsional, untuk notifikasi resi &amp; struk)
+                    Email (Optional, for tracking &amp; receipt notifications)
                   </label>
                   <input
                     type="email"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
-                    placeholder="email@anda.com"
+                    placeholder="email@example.com"
                     className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
 
                 <div className="mb-4 relative">
                   <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                    Cari Kecamatan / Kota Tujuan (Untuk Cek Ongkir dari Kota Malang) *
+                    Search Destination District / City (Shipping rates from Malang) *
                   </label>
                   <div className="relative">
                     <Search className="w-3.5 h-3.5 text-[#7A5644] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -490,7 +490,7 @@ export default function CheckoutPage() {
                         setRegionQuery(e.target.value);
                         setIsRegionDropdownOpen(true);
                       }}
-                      placeholder="Ketik kecamatan atau kota (misal: Sukun, Surabaya, Jakarta)..."
+                      placeholder="Type district or city (e.g. Sukun, Surabaya, Jakarta)..."
                       className="w-full text-xs pl-8 pr-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                     />
                   </div>
@@ -499,11 +499,11 @@ export default function CheckoutPage() {
                       {isRegionsLoading ? (
                         <div className="p-3 text-xs text-[#7A5644] flex items-center gap-2">
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>Mencari wilayah pengiriman...</span>
+                          <span>Searching shipping destinations...</span>
                         </div>
                       ) : regionOptions.length === 0 ? (
                         <div className="p-3 text-xs text-[#7A5644]">
-                          Wilayah tidak ditemukan. Coba kata kunci kecamatan/kota lain.
+                          Destination not found. Try another district/city keyword.
                         </div>
                       ) : (
                         regionOptions.map((reg) => (
@@ -531,7 +531,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                      Kota / Kabupaten *
+                      City / Regency *
                     </label>
                     <input
                       type="text"
@@ -542,7 +542,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                      Kode Pos
+                      Postal Code
                     </label>
                     <input
                       type="text"
@@ -561,17 +561,17 @@ export default function CheckoutPage() {
                     <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
                       2
                     </span>
-                    <span>Pilih Opsi Pengiriman</span>
+                    <span>Shipping Option</span>
                   </h2>
                   <span className="text-[11px] text-[#7A5644] bg-[#FFF6EA] border border-[#E6D2C0] px-2.5 py-1 rounded-[2px]">
-                    Asal: <strong>{shippingRatesData?.origin || 'Kota Malang'}</strong> · Berat: <strong>{totalWeightGrams}g</strong>
+                    Origin: <strong>{shippingRatesData?.origin || 'Malang City'}</strong> · Weight: <strong>{totalWeightGrams}g</strong>
                   </span>
                 </div>
 
                 {isRatesLoading && (
                   <div className="mb-3 p-3 bg-[#FFFBF7] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644] flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-[#B05A26]" />
-                    <span>Menghitung tarif ongkir dari Kota Malang...</span>
+                    <span>Calculating shipping rates from Malang...</span>
                   </div>
                 )}
 
@@ -579,14 +579,14 @@ export default function CheckoutPage() {
                   <div className="mb-3 p-3 bg-[#FEECE8] border border-[#F5C2B8] rounded-[2px] text-xs text-[#C0392B] flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>Gagal memuat tarif kurir otomatis. Anda tetap bisa memilih Self Pick-up atau coba hitung ulang.</span>
+                      <span>Could not load automated courier rates. You can still choose Self Pick-up or retry.</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => refetchRates()}
                       className="px-2.5 py-1 bg-white border border-[#C0392B] text-[#C0392B] font-semibold rounded-[2px] hover:bg-[#C0392B] hover:text-white transition-colors shrink-0 cursor-pointer"
                     >
-                      Coba Lagi
+                      Retry
                     </button>
                   </div>
                 )}
@@ -627,7 +627,7 @@ export default function CheckoutPage() {
                         </div>
 
                         <span className="font-semibold text-sm text-[#4A2A1C] shrink-0">
-                          {courier.price === 0 ? 'GRATIS' : formatIDR(courier.price)}
+                          {courier.price === 0 ? 'FREE' : formatIDR(courier.price)}
                         </span>
                       </label>
                     );
@@ -641,7 +641,7 @@ export default function CheckoutPage() {
                   <span className="w-6 h-6 rounded-full bg-[#FFF6EA] text-[#B05A26] text-xs font-bold flex items-center justify-center">
                     3
                   </span>
-                  <span>Bungkus Kado & Catatan Pesanan</span>
+                  <span>Gift Wrapping &amp; Order Notes</span>
                 </h2>
 
                 {/* Gift Wrap Toggle */}
@@ -650,10 +650,10 @@ export default function CheckoutPage() {
                     <Gift className="w-5 h-5 text-[#B05A26]" />
                     <div>
                       <p className="text-sm font-semibold text-[#4A2A1C]">
-                        Bungkus Kado & Kartu Ucapan Spesial
+                        Complimentary Gift Wrapping &amp; Greeting Card
                       </p>
                       <p className="text-xs text-[#7A5644]">
-                        Dibalut kertas kado estetik & pita kain BabyShalls (Gratis Promo)
+                        Wrapped in aesthetic kraft paper &amp; signature BabyShalls ribbon (Free Promo)
                       </p>
                     </div>
                   </div>
@@ -671,13 +671,13 @@ export default function CheckoutPage() {
                 {isGift && (
                   <div className="mb-4">
                     <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                      Tulis Pesan untuk Kartu Ucapan Kado
+                      Personalized Message for Gift Card
                     </label>
                     <textarea
                       rows={3}
                       value={giftNote}
                       onChange={(e) => setGiftNote(e.target.value)}
-                      placeholder="Contoh: Selamat ulang tahun ke-3 adik Kenzo! Semoga cerdas dan bahagia selalu."
+                      placeholder="e.g. Happy 3rd Birthday Kenzo! Wishing you joyful learning and big smiles."
                       className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                     />
                   </div>
@@ -685,13 +685,13 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-xs text-[#7A5644] font-medium mb-1">
-                    Catatan Tambahan untuk Penjual (Opsional)
+                    Special Instructions for Seller (Optional)
                   </label>
                   <input
                     type="text"
                     value={orderNotes}
                     onChange={(e) => setOrderNotes(e.target.value)}
-                    placeholder="Contoh: Tolong kirim sebelum jam 16.00 WIB"
+                    placeholder="e.g. Please deliver before 4:00 PM"
                     className="w-full text-xs px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>

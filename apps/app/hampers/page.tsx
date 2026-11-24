@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { HampersView } from '@/features/hampers/components/HampersView';
 
 export const metadata: Metadata = {
-  title: 'Hampers & Kado Anak | BabyShalls Malang',
+  title: 'Hampers & Baby Gifts | BabyShalls Malang',
   description:
-    'Pilihan paket hampers siap kirim dan custom gift hamper box untuk kado kelahiran, ulang tahun, dan momen spesial si kecil.',
+    'Curated ready-to-ship and custom gift hampers for baby showers, birthdays, and special milestones.',
 };
 
 export default function HampersPage() {

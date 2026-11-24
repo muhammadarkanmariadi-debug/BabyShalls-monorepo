@@ -44,12 +44,12 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
       return res.data;
     },
     onSuccess: (res) => {
-      toast.success(res.message || 'Peran pengguna diperbarui.');
+      toast.success(res.message || 'User role updated.');
       setEditingUser(null);
       qc.invalidateQueries({ queryKey: ['admin-users'] });
     },
     onError: (err) => {
-      toast.error(extractApiError(err, 'Gagal memperbarui peran pengguna.'));
+      toast.error(extractApiError(err, 'Failed to update user role.'));
     },
   });
 
@@ -72,24 +72,24 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
     <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
         <h2 className="text-base font-bold text-[#4A2A1C]">
-          Pengguna &amp; Hak Akses ({filtered.length}/{users.length})
+          Users &amp; Access Control ({filtered.length}/{users.length})
         </h2>
         <p className="text-xs text-[#7A5644]">
-          Kelola daftar akun bunda/pelanggan dan hak akses administrator toko BabyShalls.
+          Manage customer accounts and BabyShalls store administrator access rights.
         </p>
       </div>
 
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari nama, email, atau telepon..."
+        searchPlaceholder="Search name, email, or phone..."
         filterValue={roleFilter}
         onFilterChange={setRoleFilter}
         filterOptions={[
-          { label: 'Admin Toko', value: 'ADMIN' },
-          { label: 'Pelanggan (USER)', value: 'USER' },
+          { label: 'Store Admin', value: 'ADMIN' },
+          { label: 'Customer (USER)', value: 'USER' },
         ]}
-        filterLabel="Semua Peran"
+        filterLabel="All Roles"
         rightAction={
           <CsvExportButton
             endpoint="/admin/import-export/users/export"
@@ -99,20 +99,20 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat data pengguna...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Loading user records...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada pengguna yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">No users match the filter.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
-                <th className="py-3 px-3.5">Nama</th>
+                <th className="py-3 px-3.5">Name</th>
                 <th className="py-3 px-3.5">Email</th>
-                <th className="py-3 px-3.5">Telepon</th>
-                <th className="py-3 px-3.5">Total Pesanan</th>
-                <th className="py-3 px-3.5">Peran</th>
-                <th className="py-3 px-3.5 text-right">Aksi</th>
+                <th className="py-3 px-3.5">Phone</th>
+                <th className="py-3 px-3.5">Total Orders</th>
+                <th className="py-3 px-3.5">Role</th>
+                <th className="py-3 px-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2E4D6]">
@@ -121,7 +121,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                   <td className="py-3 px-3.5 font-bold text-[#4A2A1C]">{u.name}</td>
                   <td className="py-3 px-3.5 text-[#7A5644]">{u.email}</td>
                   <td className="py-3 px-3.5 text-[#7A5644]">{u.phone || '-'}</td>
-                  <td className="py-3 px-3.5 font-bold text-[#3F5FA0]">{u.ordersCount} pesanan</td>
+                  <td className="py-3 px-3.5 font-bold text-[#3F5FA0]">{u.ordersCount} orders</td>
                   <td className="py-3 px-3.5">
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -130,7 +130,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                           : 'bg-[#E4ECFB] text-[#3F5FA0] border border-[#92B2F3]/60'
                       }`}
                     >
-                      {u.role === 'ADMIN' ? 'Admin Toko' : 'Pelanggan'}
+                      {u.role === 'ADMIN' ? 'Store Admin' : 'Customer'}
                     </span>
                   </td>
                   <td className="py-3 px-3.5 text-right">
@@ -142,7 +142,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                       }}
                       className="px-3 py-1 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] font-semibold hover:bg-[#E4ECFB] inline-flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                      <Shield className="w-3 h-3" /> Ubah Peran
+                      <Shield className="w-3 h-3" /> Change Role
                     </button>
                   </td>
                 </tr>
@@ -155,7 +155,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
       <AdminModal
         isOpen={Boolean(editingUser)}
         onClose={() => setEditingUser(null)}
-        title={`Ubah peran ${editingUser?.name || ''}`}
+        title={`Change role for ${editingUser?.name || ''}`}
         subtitle={editingUser?.email || ''}
         size="md"
       >
@@ -179,12 +179,12 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                   />
                   <div>
                     <p className="font-semibold text-[#4A2A1C]">
-                      {roleOption === 'ADMIN' ? 'Admin (Akses Penuh Dashboard)' : 'Pelanggan (USER)'}
+                      {roleOption === 'ADMIN' ? 'Admin (Full Dashboard Access)' : 'Customer (USER)'}
                     </p>
                     <p className="text-[11px] text-[#7A5644] mt-0.5">
                       {roleOption === 'ADMIN'
-                        ? 'Dapat mengelola katalog, pesanan, workshop, voucher, dan konten CMS.'
-                        : 'Hanya dapat berbelanja, mendaftar event, dan melihat riwayat akun.'}
+                        ? 'Can manage catalog, orders, workshops, vouchers, and CMS content.'
+                        : 'Can shop, register for events, and view order history.'}
                     </p>
                   </div>
                 </label>
@@ -197,7 +197,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                 onClick={() => setEditingUser(null)}
                 className="h-9 px-4 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#7A5644] cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -206,7 +206,7 @@ export function AdminUsersSection({ enabled }: { enabled: boolean }) {
                 className="h-9 px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <UserCheck className="w-3.5 h-3.5" />
-                <span>{updateRoleMutation.isPending ? 'Menyimpan...' : 'Simpan Peran'}</span>
+                <span>{updateRoleMutation.isPending ? 'Saving...' : 'Save Role'}</span>
               </button>
             </div>
           </div>

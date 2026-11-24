@@ -111,7 +111,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prev, { product, quantity }];
     });
-    showToast(`${product.title} ditambahkan ke keranjang.`);
+    showToast(`${product.title} added to shopping bag.`);
   };
 
   const removeFromCart = (productId: string) => {
@@ -168,15 +168,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }): string => {
     const waNumber = '6281234567890'; // Babyshalls WhatsApp store number
 
-    let text = `Halo Babyshalls! 🌿✨\nSaya ingin melakukan pemesanan buku & mainan:\n\n`;
+    let text = `Hello BabyShalls! 🌿✨\nI would like to place an order for children's books & toys:\n\n`;
 
     if (items.length === 0) {
-      text += `(Belum ada produk yang dipilih)\n\n`;
+      text += `(No products selected yet)\n\n`;
     } else {
       items.forEach((item, idx) => {
         text += `${idx + 1}. *${item.product.title}* (${item.quantity}x) — ${formatIDR(item.product.price * item.quantity)}\n`;
       });
-      text += `\n*Subtotal Produk:* ${formatIDR(subtotal)}\n`;
+      text += `\n*Product Subtotal:* ${formatIDR(subtotal)}\n`;
     }
 
     const giftsChosen: string[] = [];
@@ -186,21 +186,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     if (giftsChosen.length > 0) {
       text += `\n🎁 *Gift Wrapping Add-ons:* ${giftsChosen.join(', ')}\n`;
-      text += `*Biaya Gift Wrapping:* ${formatIDR(giftWrappingCost)}\n`;
+      text += `*Gift Wrapping Fee:* ${formatIDR(giftWrappingCost)}\n`;
       if (giftWrapping.cardMessage) {
-        text += `*Pesan Kartu Ucapan:*\n"${giftWrapping.cardMessage}"\n`;
+        text += `*Card Greeting Note:*\n"${giftWrapping.cardMessage}"\n`;
       }
     }
 
-    text += `\n💰 *Total Estimasi:* ${formatIDR(grandTotal)}\n\n`;
-    text += `👤 *Nama Pemesan:* ${customerName || '-'}\n`;
-    if (customerPhone) text += `📞 *No. WhatsApp:* ${customerPhone}\n`;
-    text += `📍 *Metode Pengiriman:* ${deliveryMethod}\n`;
-    if (deliveryAddress && deliveryMethod !== 'Ambil di Toko (Citraland Puncak Tidar)') {
-      text += `🏠 *Alamat Pengiriman:* ${deliveryAddress}\n`;
+    text += `\n💰 *Estimated Total:* ${formatIDR(grandTotal)}\n\n`;
+    text += `👤 *Customer Name:* ${customerName || '-'}\n`;
+    if (customerPhone) text += `📞 *WhatsApp:* ${customerPhone}\n`;
+    text += `📍 *Delivery Method:* ${deliveryMethod}\n`;
+    if (deliveryAddress && deliveryMethod !== 'Self Pick-up (Citraland Puncak Tidar)') {
+      text += `🏠 *Delivery Address:* ${deliveryAddress}\n`;
     }
 
-    text += `\nMohon konfirmasi ketersediaan stok & info rekening pembayaran ya Kak. Terima kasih! 🤍`;
+    text += `\nPlease confirm stock availability & payment details. Thank you! 🤍`;
 
     return `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
   };

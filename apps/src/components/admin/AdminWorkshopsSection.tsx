@@ -51,30 +51,30 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
     <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
         <h2 className="text-base font-bold text-[#4A2A1C]">
-          Manajemen Workshops &amp; Events ({filtered.length}/{events.length})
+          Workshops &amp; Events Management ({filtered.length}/{events.length})
         </h2>
         <p className="text-xs text-[#7A5644]">
-          Kelola workshop gratis maupun berbayar, shortlink, QR share, &amp; daftar peserta di Malang.
+          Manage free and paid workshops, shortlinks, QR share, &amp; attendee lists in Malang.
         </p>
       </div>
 
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari judul workshop atau shortlink code..."
+        searchPlaceholder="Search workshop title or shortcode..."
         filterValue={priceFilter}
         onFilterChange={setPriceFilter}
         filterOptions={[
-          { label: 'Gratis', value: 'FREE' },
-          { label: 'Berbayar', value: 'PAID' },
+          { label: 'Free', value: 'FREE' },
+          { label: 'Paid', value: 'PAID' },
         ]}
-        filterLabel="Semua Tipe Tiket"
+        filterLabel="All Ticket Types"
         sortValue={sortBy}
         onSortChange={setSortBy}
         sortOptions={[
-          { label: 'Jadwal Terbaru', value: 'newest' },
-          { label: 'Jadwal Terdekat', value: 'date_asc' },
-          { label: 'Harga Tertinggi', value: 'price_desc' },
+          { label: 'Latest Schedule', value: 'newest' },
+          { label: 'Nearest Schedule', value: 'date_asc' },
+          { label: 'Highest Price', value: 'price_desc' },
         ]}
         rightAction={
           <div className="flex items-center gap-2">
@@ -88,16 +88,16 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
               href="/admin/events/new"
               className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
             >
-              <Plus className="w-4 h-4" /> Buat Workshop
+              <Plus className="w-4 h-4" /> Create Workshop
             </Link>
           </div>
         }
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat daftar workshop...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Loading workshops...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Belum ada workshop yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">No workshops match the filter.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((ev) => (
@@ -120,7 +120,7 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
                           : 'bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60'
                       }`}
                     >
-                      {ev.price > 0 ? formatIDR(ev.price) : 'GRATIS'}
+                      {ev.price > 0 ? formatIDR(ev.price) : 'FREE'}
                     </span>
                     {ev.shortCode && (
                       <span className="px-2 py-0.5 rounded-full bg-[#DDF6F9] border border-[#8DDBE6]/60 font-mono text-[10px] font-bold text-[#1F6B76]">
@@ -132,7 +132,7 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
                   <div className="text-[11px] text-[#7A5644] flex items-center gap-1.5 mt-1">
                     <Calendar className="w-3.5 h-3.5 text-[#B05A26]" />
                     <span>
-                      {new Date(ev.eventDate).toLocaleDateString('id-ID', {
+                      {new Date(ev.eventDate).toLocaleDateString('en-US', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
@@ -141,7 +141,7 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
                     </span>
                   </div>
                   <div className="text-[11px] text-[#7A5644] mt-1">
-                    Sisa kuota: <strong className="text-[#4A2A1C]">{ev.quota}</strong> • Terdaftar: <strong className="text-[#3F5FA0]">{ev.registrationsCount}</strong>
+                    Seats left: <strong className="text-[#4A2A1C]">{ev.quota}</strong> • Registered: <strong className="text-[#3F5FA0]">{ev.registrationsCount}</strong>
                   </div>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
                     href={`/admin/events/${ev.id}/attendees`}
                     className="px-2.5 py-1.5 rounded-[4px] bg-[#DDF6F9] border border-[#8DDBE6]/60 text-[#1F6B76] font-semibold inline-flex items-center gap-1.5 hover:bg-[#CFEFF3] transition-colors"
                   >
-                    <Users className="w-3.5 h-3.5" /> Peserta ({ev.registrationsCount})
+                    <Users className="w-3.5 h-3.5" /> Attendees ({ev.registrationsCount})
                   </Link>
                 </div>
 
@@ -175,7 +175,7 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
                     type="button"
                     onClick={() => setDeletingEvent(ev)}
                     className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 bg-white text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
-                    title="Hapus Workshop"
+                    title="Delete Workshop"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -191,18 +191,18 @@ export function AdminWorkshopsSection({ enabled }: { enabled: boolean }) {
       <AdminConfirmDialog
         isOpen={Boolean(deletingEvent)}
         onClose={() => setDeletingEvent(null)}
-        title="Hapus workshop ini?"
-        description={`Workshop "${deletingEvent?.title || ''}" beserta data pendaftarannya akan dihapus. Tindakan ini tidak dapat dibatalkan.`}
-        confirmLabel="Hapus"
+        title="Delete this workshop?"
+        description={`Workshop "${deletingEvent?.title || ''}" and its registration records will be deleted. This action cannot be undone.`}
+        confirmLabel="Delete"
         isLoading={deleteMutation.isPending}
         onConfirm={() => {
           if (!deletingEvent) return;
           deleteMutation.mutate(deletingEvent.id, {
             onSuccess: () => {
-              toast.success(`Workshop "${deletingEvent.title}" dihapus.`);
+              toast.success(`Workshop "${deletingEvent.title}" deleted.`);
               setDeletingEvent(null);
             },
-            onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus workshop.')),
+            onError: (err) => toast.error(extractApiError(err, 'Failed to delete workshop.')),
           });
         }}
       />

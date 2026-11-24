@@ -28,7 +28,7 @@ export const DeleteAddressModal: React.FC<DeleteAddressModalProps> = ({
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer transition-colors"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -39,7 +39,7 @@ export const DeleteAddressModal: React.FC<DeleteAddressModalProps> = ({
           </div>
           <div>
             <h3 className="text-base font-semibold text-[#4A2A1C]">
-              Hapus Alamat Pengiriman?
+              Delete Shipping Address?
             </h3>
             <span className="text-[11px] text-[#7A5644]">
               Label: <strong>{address.label}</strong>
@@ -48,7 +48,7 @@ export const DeleteAddressModal: React.FC<DeleteAddressModalProps> = ({
         </div>
 
         <p className="text-xs text-[#7A5644] mb-4 leading-relaxed">
-          Apakah Anda yakin ingin menghapus alamat untuk penerima <strong>{address.receiverName}</strong> di <em>{address.city}</em>? Tindakan ini tidak dapat dibatalkan.
+          Are you sure you want to delete the address for recipient <strong>{address.receiverName}</strong> in <em>{address.city}</em>? This action cannot be undone.
         </p>
 
         <div className="p-3 bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] text-[11px] text-[#4A2A1C] mb-5">
@@ -63,7 +63,7 @@ export const DeleteAddressModal: React.FC<DeleteAddressModalProps> = ({
             disabled={isDeleting}
             className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] text-xs font-medium rounded-[2px] cursor-pointer"
           >
-            Batal
+            Cancel
           </button>
 
           <button
@@ -75,12 +75,12 @@ export const DeleteAddressModal: React.FC<DeleteAddressModalProps> = ({
             {isDeleting ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Menghapus...</span>
+                <span>Deleting...</span>
               </>
             ) : (
               <>
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Ya, Hapus Alamat</span>
+                <span>Delete Address</span>
               </>
             )}
           </button>

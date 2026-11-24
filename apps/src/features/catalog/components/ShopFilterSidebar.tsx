@@ -75,7 +75,7 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
       >
         {/* Mobile Drawer Header */}
         <div className="flex lg:hidden items-center justify-between pb-4 border-b border-[#F2E4D6]">
-          <h3 className="font-semibold text-lg text-[#4A2A1C]">Filter Produk</h3>
+          <h3 className="font-semibold text-lg text-[#4A2A1C]">Filter Products</h3>
           <button
             type="button"
             onClick={onCloseDrawer}
@@ -85,24 +85,24 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </button>
         </div>
 
-        {/* Filter: Pencarian */}
+        {/* Filter: Search */}
         <div className="flex flex-col gap-2">
-          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Cari Produk</h4>
+          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Search Catalog</h4>
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-[#7A5644] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Judul, penulis, kategori..."
+              placeholder="Title, author, category..."
               className="w-full text-xs pl-8 pr-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
             />
           </div>
         </div>
 
-        {/* Filter: Usia */}
+        {/* Filter: Age */}
         <div className="flex flex-col gap-3">
-          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Usia</h4>
+          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Age</h4>
           <div className="flex flex-wrap gap-1.5">
             {ageOptions.map((age) => {
               const isActive = selectedAge === age;
@@ -123,9 +123,9 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Filter: Kategori */}
+        {/* Filter: Category */}
         <div className="flex flex-col gap-3">
-          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Kategori</h4>
+          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Category</h4>
           <div className="flex flex-col gap-2">
             {categoryOptions.map((cat) => (
               <label
@@ -145,11 +145,11 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Filter: Sub-Kategori (dinamis sesuai Kategori terpilih, maks 5 + Lihat lainnya) */}
-        {activeCategory !== 'Semua Kategori' && subCategories.length > 1 && (
+        {/* Filter: Sub-Kategori */}
+        {activeCategory !== 'All Categories' && subCategories.length > 1 && (
           <div className="flex flex-col gap-3">
             <h4 className="text-[15px] font-semibold text-[#4A2A1C]">
-              Sub-Kategori ({activeCategory})
+              Sub-Category ({activeCategory})
             </h4>
             <div className="flex flex-col gap-2">
               {(showAllSubcategories ? subCategories : subCategories.slice(0, 5)).map((sub) => (
@@ -175,16 +175,16 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
                 className="text-xs font-semibold text-[#B05A26] hover:underline text-left cursor-pointer"
               >
                 {showAllSubcategories
-                  ? 'Lebih sedikit'
-                  : `Lihat lainnya (+${subCategories.length - 5})`}
+                  ? 'Show less'
+                  : `View more (+${subCategories.length - 5})`}
               </button>
             )}
           </div>
         )}
 
-        {/* Filter: Kondisi */}
+        {/* Filter: Condition */}
         <div className="flex flex-col gap-3">
-          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Kondisi</h4>
+          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Condition</h4>
           <div className="flex flex-col gap-2">
             {conditionOptions.map((cond) => (
               <label
@@ -204,9 +204,9 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Filter: Harga */}
+        {/* Filter: Price Range */}
         <div className="flex flex-col gap-3">
-          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Rentang Harga</h4>
+          <h4 className="text-[15px] font-semibold text-[#4A2A1C]">Price Range</h4>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -218,7 +218,7 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
             <span className="text-gray-400 text-xs">-</span>
             <input
               type="number"
-              placeholder="Maks"
+              placeholder="Max"
               value={maxPrice}
               onChange={(e) => onMaxPriceChange(e.target.value)}
               className="w-full text-xs px-2.5 py-1.5 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
@@ -226,9 +226,9 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Filter: Ketersediaan */}
+        {/* Filter: Stock */}
         <div className="flex items-center justify-between border-t border-[#F2E4D6] pt-4">
-          <span className="text-sm text-[#4A2A1C] font-medium">Hanya stok tersedia</span>
+          <span className="text-sm text-[#4A2A1C] font-medium">In stock only</span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -240,9 +240,9 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           </label>
         </div>
 
-        {/* Filter: Diskon / Promo */}
+        {/* Filter: Sale / Discount */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-[#4A2A1C] font-medium">Hanya produk promo</span>
+          <span className="text-sm text-[#4A2A1C] font-medium">On sale only</span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -261,7 +261,7 @@ export const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
           className="w-full py-2.5 border border-[#C9B3A5] text-[#4A2A1C] text-sm font-medium rounded-[2px] hover:bg-[#FFF6EA] hover:border-[#B05A26] transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Atur Ulang Filter</span>
+          <span>Reset Filters</span>
         </button>
       </div>
     </aside>

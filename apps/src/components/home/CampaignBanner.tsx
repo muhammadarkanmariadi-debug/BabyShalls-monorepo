@@ -27,12 +27,12 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ onShopAllClick }
       <div className="relative z-10 max-w-[620px] mx-auto flex flex-col items-center space-y-4">
         {/* Headline */}
         <h2 className="text-[28px] sm:text-[32px] font-medium leading-[1.25] tracking-tight text-white">
-          {banner.ageBannerTitle || 'Cari buku sesuai usia si kecil'}
+          {banner.ageBannerTitle || 'Find books suited for your child’s age'}
         </h2>
 
         {/* Subtext */}
         <p className="text-[16px] sm:text-[18px] text-white/95 leading-[1.5] max-w-[480px]">
-          {banner.ageBannerSubtitle || 'Dari newborn sampai 6+ tahun, pilih buku dan mainan yang pas.'}
+          {banner.ageBannerSubtitle || 'From newborns to 6+ years, discover the right books and educational toys.'}
         </p>
 
         {/* CTA Button */}
@@ -42,7 +42,7 @@ export const CampaignBanner: React.FC<CampaignBannerProps> = ({ onShopAllClick }
             onClick={onShopAllClick}
             className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-[#B05A26] hover:bg-[#FFFBF5] text-[16px] font-medium tracking-wide uppercase rounded-[2px] transition-all shadow-xs"
           >
-            {banner.ageBannerButtonText || 'BELANJA PER USIA'}
+            {banner.ageBannerButtonText || 'SHOP BY AGE'}
           </Link>
         </div>
       </div>

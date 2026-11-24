@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { HomeView } from '@/features/home/components/HomeView';
 
 export const metadata: Metadata = {
-  title: 'BabyShalls — Butik Buku Anak Kurasi & Mainan Kayu | Malang',
+  title: 'BabyShalls — Curated Children’s Books & Wooden Toys | Malang',
   description:
-    'Butik toko buku anak kurasi & mainan kayu edukasi di Citraland Malang. Tersedia board books, picture books, hampers, preloved steril UV, dan workshop anak.',
+    'Curated children’s book boutique & educational wooden toys at Citraland Malang. Featuring board books, picture books, gift hampers, UV-sterilized preloved, and kids workshops.',
 };
 
 export default function HomePage() {

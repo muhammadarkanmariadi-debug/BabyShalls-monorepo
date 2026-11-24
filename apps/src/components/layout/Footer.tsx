@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { MapPin, Clock, MessageCircle, ExternalLink, Navigation } from 'lucide-react';
 import { useCms } from '@/context/CmsContext';
 
-export const OPENING_HOURS = 'Setiap hari 10.00 – 17.00 WIB';
+export const OPENING_HOURS = 'Daily 10:00 AM – 5:00 PM WIB';
 
 export const Footer: React.FC = () => {
   const { cms } = useCms();
@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
 
   const waNumber = store.whatsappNumber || process.env.NEXT_PUBLIC_WA_NUMBER || '6281234567890';
   const waGroupUrl = store.whatsappCommunityUrl || `https://wa.me/${waNumber}?text=${encodeURIComponent(
-    'Halo BabyShalls, saya ingin bergabung ke grup komunitas katalog dan event.'
+    'Hello BabyShalls, I would like to join the community group for new arrivals and events.'
   )}`;
   const mapsUrl = store.googleMapsUrl || 'https://maps.google.com/?q=Citraland+Puncak+Tidar+Malang';
 
@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
             </Link>
 
             <p className="text-xs sm:text-[13px] text-[#7A5644] leading-relaxed max-w-sm">
-              Toko buku anak impor &amp; lokal terkurasi serta mainan edukasi di Citraland Malang. Menumbuhkan cinta membaca dan imajinasi sejak hari pertama si kecil.
+              Curated import &amp; local children's books and educational toys in Citraland Malang. Nurturing a love for reading and imagination from your little one's earliest days.
             </p>
 
             <div className="bg-white/80 border border-[#E6D2C0] p-3.5 rounded-[4px] space-y-2 text-xs text-[#4A2A1C] max-w-sm shadow-2xs">
@@ -54,69 +54,69 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5 text-[#7A5644]">
                 <Clock size={15} className="text-[#B05A26] shrink-0" />
-                <span>Buka: {store.operatingHours || OPENING_HOURS}</span>
+                <span>Hours: {store.operatingHours || OPENING_HOURS}</span>
               </div>
             </div>
           </div>
 
-          {/* Kolom 2: Belanja (Span 2) */}
+          {/* Kolom 2: Shop (Span 2) */}
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-sm font-semibold text-[#4A2A1C] uppercase tracking-wider">
-              Belanja
+              Shop
             </h4>
             <ul className="space-y-2.5 text-xs text-[#7A5644]">
               <li>
                 <Link href="/shop" className="hover:text-[#B05A26] transition-colors">
-                  Katalog Buku Anak
+                  Children's Books
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=Educational+Toys" className="hover:text-[#B05A26] transition-colors">
-                  Mainan Edukasi
+                  Educational Toys
                 </Link>
               </li>
               <li>
                 <Link href="/hampers" className="hover:text-[#B05A26] transition-colors">
-                  Kado &amp; Parsel Bayi
+                  Gifts &amp; Baby Hampers
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=Preloved" className="hover:text-[#B05A26] transition-colors">
-                  Preloved Steril UV
+                  UV-Sterilized Preloved
                 </Link>
               </li>
               <li>
                 <Link href="/shop?tab=usia" className="hover:text-[#B05A26] transition-colors">
-                  Belanja Berdasar Usia
+                  Shop by Age
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Kolom 3: Bantuan (Span 2) */}
+          {/* Kolom 3: Help & Support (Span 2) */}
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-sm font-semibold text-[#4A2A1C] uppercase tracking-wider">
-              Bantuan
+              Help &amp; Support
             </h4>
             <ul className="space-y-2.5 text-xs text-[#7A5644]">
               <li>
                 <Link href="/faq" className="hover:text-[#B05A26] transition-colors">
-                  Panduan Belanja
+                  Shopping Guide
                 </Link>
               </li>
               <li>
                 <Link href="/faq#pengiriman" className="hover:text-[#B05A26] transition-colors">
-                  Pengiriman &amp; Ambil Toko
+                  Shipping &amp; Store Pickup
                 </Link>
               </li>
               <li>
                 <Link href="/faq#preloved" className="hover:text-[#B05A26] transition-colors">
-                  Standar Sterilisasi UV
+                  UV Sterilization Standard
                 </Link>
               </li>
               <li>
                 <Link href="/request-a-book" className="hover:text-[#B05A26] transition-colors">
-                  Layanan Request Buku
+                  Book Request Service
                 </Link>
               </li>
               <li>
@@ -126,7 +126,7 @@ export const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   className="hover:text-[#B05A26] transition-colors inline-flex items-center gap-1"
                 >
-                  <span>Chat WhatsApp Admin</span>
+                  <span>WhatsApp Customer Support</span>
                   <ExternalLink size={11} />
                 </a>
               </li>
@@ -141,17 +141,17 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2.5 text-xs text-[#7A5644]">
               <li>
                 <Link href="/about" className="hover:text-[#B05A26] transition-colors">
-                  Tentang Kami
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link href="/events" className="hover:text-[#B05A26] transition-colors">
-                  Event &amp; Sensory Play
+                  Events &amp; Sensory Play
                 </Link>
               </li>
               <li>
                 <Link href="/about#gallery" className="hover:text-[#B05A26] transition-colors">
-                  Area Bermain Toko Fisik
+                  Store Play Area
                 </Link>
               </li>
               <li>
@@ -161,7 +161,7 @@ export const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   className="hover:text-[#B05A26] transition-colors"
                 >
-                  Petunjuk Arah Maps
+                  Get Directions on Maps
                 </a>
               </li>
             </ul>
@@ -178,7 +178,7 @@ export const Footer: React.FC = () => {
           <div className="bg-[#FFFDF9] px-4 sm:px-6 py-3 border-b border-[#F2E4D6] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2 text-[#4A2A1C] font-semibold">
               <MapPin size={15} className="text-[#B05A26] shrink-0" />
-              <span>Peta Lokasi Butik BabyShalls &bull; {store.address}, {store.city}</span>
+              <span>BabyShalls Boutique Map &bull; {store.address}, {store.city}</span>
             </div>
 
             <a
@@ -188,7 +188,7 @@ export const Footer: React.FC = () => {
               className="inline-flex items-center gap-1.5 text-xs text-[#B05A26] hover:text-[#8E431A] font-medium hover:underline shrink-0"
             >
               <Navigation size={13} />
-              <span>Buka di Google Maps ↗</span>
+              <span>Open in Google Maps ↗</span>
             </a>
           </div>
 

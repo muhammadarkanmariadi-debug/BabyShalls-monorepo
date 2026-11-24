@@ -34,7 +34,7 @@ export default function CartPage() {
     if (deletingProductId) {
       removeFromCart(deletingProductId);
       setDeletingProductId(null);
-      showToast('Barang berhasil dihapus dari keranjang');
+      showToast('Item removed from shopping bag');
     }
   };
 
@@ -42,7 +42,7 @@ export default function CartPage() {
     if (deletingProductId) {
       removeFromCart(deletingProductId);
       setDeletingProductId(null);
-      showToast('Barang dipindahkan ke Wishlist');
+      showToast('Item moved to Wishlist');
     }
   };
 
@@ -69,10 +69,10 @@ export default function CartPage() {
           {/* Page Heading (Figma #137:1123) */}
           <div className="flex items-baseline gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#F2E4D6]">
             <h1 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
-              Keranjang Belanja
+              Shopping Bag
             </h1>
             <span className="text-sm text-[#7A5644]">
-              {totalCount} {totalCount === 1 ? 'barang' : 'barang'}
+              {totalCount} {totalCount === 1 ? 'item' : 'items'}
             </span>
           </div>
 
@@ -84,9 +84,9 @@ export default function CartPage() {
 
                 {/* Table Header (Figma #137:1128) */}
                 <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#F2E4D6] text-xs">
-                  <span className="font-semibold text-[#4A2A1C]">Barang ({totalCount})</span>
+                  <span className="font-semibold text-[#4A2A1C]">Items ({totalCount})</span>
                   <span className="text-[#7A5644] bg-[#FFF6EA] px-2.5 py-1 rounded-[2px] font-medium">
-                    📦 Dikirim dari Butik Citraland Malang
+                    📦 Dispatched from Citraland Boutique, Malang
                   </span>
                 </div>
 
@@ -117,7 +117,7 @@ export default function CartPage() {
                             </span>
                             {item.product.condition === 'preloved' && (
                               <span className="bg-[#FDE3E8] text-[#B83246] text-[10px] font-bold px-2 py-0.5 rounded-[2px]">
-                                Preloved Steril UV
+                                UV Sterilized Preloved
                               </span>
                             )}
                           </div>
@@ -130,7 +130,7 @@ export default function CartPage() {
                           </Link>
 
                           <span className="text-xs text-[#7A5644] block mt-0.5">
-                            {item.product.authorOrBrand ? `Oleh ${item.product.authorOrBrand}` : 'Format: Board Book'}
+                            {item.product.authorOrBrand ? `By ${item.product.authorOrBrand}` : 'Format: Board Book'}
                           </span>
 
                           <span className="text-xs font-semibold text-[#B05A26] block sm:hidden mt-1.5">
@@ -142,12 +142,12 @@ export default function CartPage() {
                             <button
                               type="button"
                               onClick={() => {
-                                showToast('Disimpan ke Wishlist');
+                                showToast('Saved to Wishlist');
                               }}
                               className="hover:text-[#B05A26] hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <Heart size={12} />
-                              <span>Simpan ke Wishlist</span>
+                              <span>Save to Wishlist</span>
                             </button>
                             <span>&bull;</span>
                             <button
@@ -156,7 +156,7 @@ export default function CartPage() {
                               className="hover:text-[#C0392B] hover:underline flex items-center gap-1 text-[#C0392B] cursor-pointer"
                             >
                               <Trash2 size={12} />
-                              <span>Hapus</span>
+                              <span>Remove</span>
                             </button>
                           </div>
                         </div>
@@ -176,7 +176,7 @@ export default function CartPage() {
                               }
                             }}
                             className="text-base text-[#7A5644] hover:text-[#B05A26] px-2.5 font-medium cursor-pointer"
-                            aria-label="Kurang satu"
+                            aria-label="Decrease quantity"
                           >
                             -
                           </button>
@@ -187,7 +187,7 @@ export default function CartPage() {
                             type="button"
                             onClick={() => updateQuantity(item.product.id, 1)}
                             className="text-base text-[#7A5644] hover:text-[#B05A26] px-2.5 font-medium cursor-pointer"
-                            aria-label="Tambah satu"
+                            aria-label="Increase quantity"
                           >
                             +
                           </button>
@@ -206,7 +206,7 @@ export default function CartPage() {
                 <div className="mt-6 pt-4 border-t border-[#F2E4D6] flex items-center gap-2.5 text-xs text-[#2A6E37] bg-[#FFFBF7] p-3 rounded-[2px]">
                   <Gift className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <span>
-                    <strong>Gratis Bungkus Kado:</strong> Setiap pembelian buku anak dan mainan bisa diberi ucapan kado spesial tanpa biaya tambahan saat checkout.
+                    <strong>Complimentary Gift Wrapping:</strong> Every purchase of children&apos;s books and educational toys includes free gift wrapping and personalized greeting card at checkout.
                   </span>
                 </div>
               </div>
@@ -215,28 +215,28 @@ export default function CartPage() {
               <aside className="w-full lg:w-[380px] shrink-0 sticky top-24 space-y-4">
                 <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 shadow-xs flex flex-col gap-5">
                   <h2 className="text-lg font-medium text-[#4A2A1C] pb-2 border-b border-[#F2E4D6]">
-                    Ringkasan Belanja
+                    Order Summary
                   </h2>
 
                   <div className="flex flex-col gap-3 text-xs">
                     <div className="flex items-center justify-between text-[#7A5644]">
-                      <span>Subtotal ({totalCount} barang)</span>
+                      <span>Subtotal ({totalCount} {totalCount === 1 ? 'item' : 'items'})</span>
                       <span className="font-semibold text-[#4A2A1C]">{formatIDR(subtotal)}</span>
                     </div>
 
                     <div className="flex items-center justify-between text-[#7A5644]">
-                      <span>Estimasi Pengiriman</span>
-                      <span className="font-medium text-[#4A2A1C]">Dihitung di checkout</span>
+                      <span>Estimated Shipping</span>
+                      <span className="font-medium text-[#4A2A1C]">Calculated at checkout</span>
                     </div>
 
                     <div className="flex items-center justify-between text-[#7A5644]">
-                      <span>Bungkus Kado &amp; Kartu Ucapan</span>
-                      <span className="font-semibold text-[#2A6E37]">GRATIS</span>
+                      <span>Gift Wrapping &amp; Card</span>
+                      <span className="font-semibold text-[#2A6E37]">FREE</span>
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-[#F2E4D6] flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#4A2A1C]">Total sementara</span>
+                    <span className="text-sm font-semibold text-[#4A2A1C]">Estimated total</span>
                     <span className="text-2xl font-bold text-[#B05A26]">
                       {formatIDR(subtotal)}
                     </span>
@@ -248,7 +248,7 @@ export default function CartPage() {
                     onClick={handleCheckout}
                     className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold text-xs rounded-[2px] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                   >
-                    <span>Lanjut ke Checkout</span>
+                    <span>Proceed to Checkout</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
 
@@ -256,11 +256,11 @@ export default function CartPage() {
                   <div className="space-y-1.5 pt-1 text-[11px] text-[#7A5644]">
                     <div className="flex items-center gap-2">
                       <Check className="w-3.5 h-3.5 text-[#2A6E37] shrink-0" />
-                      <span>Pembayaran aman via Midtrans</span>
+                      <span>Secure payment via Midtrans</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-3.5 h-3.5 text-[#2A6E37] shrink-0" />
-                      <span>QRIS, kartu kredit/debit, virtual account</span>
+                      <span>QRIS, credit/debit card, virtual accounts</span>
                     </div>
                   </div>
                 </div>
@@ -273,25 +273,25 @@ export default function CartPage() {
               <div className="relative w-44 h-44 mb-4">
                 <Image
                   src="/images/mascot/maskot-keranjang-kosong.png"
-                  alt="Keranjang Kosong"
+                  alt="Empty Cart"
                   fill
                   className="object-contain"
                 />
               </div>
 
               <h2 className="text-xl font-medium text-[#4A2A1C] mb-2 tracking-tight">
-                Keranjang belanjamu masih kosong
+                Your shopping bag is empty
               </h2>
 
               <p className="text-xs sm:text-sm text-[#7A5644] mb-6 leading-relaxed max-w-sm">
-                Yuk temukan buku bergambar, mainan montessori, dan paket hampers terbaik untuk menemani tumbuh kembang si kecil.
+                Discover curated picture books, montessori wooden toys, and hamper gifts to accompany your little one&apos;s growth.
               </p>
 
               <Link
                 href="/shop"
                 className="px-8 py-3 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-sm"
               >
-                Mulai Belanja Sekarang
+                Start Shopping
               </Link>
             </div>
           )}
@@ -305,7 +305,7 @@ export default function CartPage() {
           <div className="bg-white rounded-[4px] max-w-md w-full p-6 shadow-xl border border-[#E6D2C0] space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-[#F2E4D6] pb-3">
               <h3 className="font-semibold text-base text-[#4A2A1C]">
-                Hapus barang dari keranjang?
+                Remove item from bag?
               </h3>
               <button
                 type="button"
@@ -317,7 +317,7 @@ export default function CartPage() {
             </div>
 
             <p className="text-xs text-[#7A5644] leading-relaxed">
-              Apakah kamu yakin ingin menghapus <strong>{itemToDelete.product.title}</strong>? Kamu juga bisa memindahkannya ke Wishlist agar mudah ditemukan lagi nanti.
+              Are you sure you want to remove <strong>{itemToDelete.product.title}</strong>? You can also save it to your Wishlist to find it easily later.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5 pt-2">
@@ -326,21 +326,21 @@ export default function CartPage() {
                 onClick={() => setDeletingProductId(null)}
                 className="w-full sm:w-auto px-4 py-2 bg-[#F5F5F5] hover:bg-[#EAEAEA] text-[#7A5644] text-xs font-semibold rounded-[2px] transition-colors"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
                 onClick={handleMoveToWishlist}
                 className="w-full sm:w-auto px-4 py-2 bg-[#FFF6EA] hover:bg-[#FBE6D8] text-[#B05A26] border border-[#E6D2C0] text-xs font-semibold rounded-[2px] transition-colors"
               >
-                Pindahkan ke Wishlist
+                Move to Wishlist
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDelete}
                 className="w-full sm:w-auto px-4 py-2 bg-[#C0392B] hover:bg-[#a5281b] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-xs"
               >
-                Hapus
+                Remove
               </button>
             </div>
           </div>

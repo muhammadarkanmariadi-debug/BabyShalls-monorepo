@@ -211,10 +211,10 @@ export default function AccountPage() {
         phone: userProfile.phone || null,
       });
       setSavedSuccess(true);
-      setToast({ type: 'success', message: 'Data profil berhasil diperbarui!' });
+      setToast({ type: 'success', message: 'Profile details updated successfully!' });
       setTimeout(() => setSavedSuccess(false), 2500);
     } catch {
-      setToast({ type: 'error', message: 'Gagal memperbarui data profil' });
+      setToast({ type: 'error', message: 'Failed to update profile details' });
     }
   };
 
@@ -273,7 +273,7 @@ export default function AccountPage() {
             <span className="text-[#B05A26] transition-transform group-hover:-translate-x-1">
               &larr;
             </span>
-            <span>Kembali ke Butik</span>
+            <span>Back to Boutique</span>
           </Link>
 
           <Link href="/" className="inline-block relative">
@@ -296,7 +296,7 @@ export default function AccountPage() {
             <div className="relative w-48 h-48 sm:w-56 sm:h-56 my-2 shrink-0">
               <Image
                 src="/images/mascot/maskot-melambai.png"
-                alt="Maskot BabyShalls"
+                alt="BabyShalls Mascot"
                 fill
                 priority
                 className="object-contain"
@@ -304,12 +304,12 @@ export default function AccountPage() {
             </div>
 
             <h2 className="text-xl sm:text-2xl font-bold text-[#4A2A1C] mb-2 tracking-tight">
-              Halo, selamat datang!
+              Hello, welcome!
             </h2>
 
             <p className="text-xs text-[#7A5644] max-w-xs leading-relaxed">
-              Masuk untuk melacak pesanan buku anak, menyimpan wishlist kurasi,
-              dan mengakses tiket QR workshop si kecil.
+              Sign in to track children&apos;s book orders, save curated wishlists,
+              and access workshop QR tickets for your little one.
             </p>
           </div>
 
@@ -325,7 +325,7 @@ export default function AccountPage() {
                     : "text-[#7A5644] hover:text-[#4A2A1C]"
                   }`}
               >
-                Masuk
+                Sign In
               </button>
               <button
                 type="button"
@@ -335,7 +335,7 @@ export default function AccountPage() {
                     : "text-[#7A5644] hover:text-[#4A2A1C]"
                   }`}
               >
-                Daftar Akun Baru
+                Create Account
               </button>
             </div>
 
@@ -345,14 +345,14 @@ export default function AccountPage() {
               {authMode === "daftar" && (
                 <div>
                   <label className="block text-[#4A2A1C] font-semibold mb-1">
-                    Nama Lengkap *
+                    Full Name *
                   </label>
                   <input
                     type="text"
                     required
                     value={authName}
                     onChange={(e) => setAuthName(e.target.value)}
-                    placeholder="Contoh: Rina Wahyuni"
+                    placeholder="e.g. Rina Wahyuni"
                     className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
@@ -362,50 +362,49 @@ export default function AccountPage() {
               {authMode === "daftar" ? (
                 <div>
                   <label className="block text-[#4A2A1C] font-semibold mb-1">
-                    Alamat Email *
+                    Email Address *
                   </label>
                   <input
                     type="email"
                     required
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
-                    placeholder="email@anda.com"
+                    placeholder="email@example.com"
                     className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
               ) : (
                 <div>
                   <label className="block text-[#4A2A1C] font-semibold mb-1">
-                    Email atau Nomor WhatsApp *
+                    Email Address *
                   </label>
                   <input
                     type="text"
                     required
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
-                    placeholder="email@anda.com atau 0812xxxx"
+                    placeholder="email@example.com"
                     className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                 </div>
               )}
 
-              {/* Field: Nomor WhatsApp (Figma Node #169:6241 - WAJIB DI REGISTER) */}
+              {/* Field: Nomor WhatsApp */}
               {authMode === "daftar" && (
                 <div>
                   <label className="block text-[#4A2A1C] font-semibold mb-1">
-                    Nomor WhatsApp *
+                    WhatsApp Number *
                   </label>
                   <input
                     type="tel"
                     required
                     value={authPhone}
                     onChange={(e) => setAuthPhone(e.target.value)}
-                    placeholder="Contoh: 0812-3456-7890"
+                    placeholder="e.g. 0812-3456-7890"
                     className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                   />
                   <span className="text-[10px] text-[#7A5644] mt-0.5 block">
-                    Penting untuk informasi pengiriman resi &amp; tiket workshop
-                    anak.
+                    Important for courier delivery updates &amp; workshop tickets.
                   </span>
                 </div>
               )}
@@ -414,19 +413,19 @@ export default function AccountPage() {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-[#4A2A1C] font-semibold">
-                    Kata Sandi *
+                    Password *
                   </label>
                   {authMode === "masuk" && (
                     <button
                       type="button"
                       onClick={() =>
                         alert(
-                          "Fitur pemulihan kata sandi telah dikirim ke email/WhatsApp terdaftar.",
+                          "Password reset instructions have been sent to your registered email.",
                         )
                       }
                       className="text-[11px] text-[#B05A26] hover:underline"
                     >
-                      Lupa kata sandi?
+                      Forgot password?
                     </button>
                   )}
                 </div>
@@ -437,14 +436,14 @@ export default function AccountPage() {
                   onChange={(e) => setAuthPassword(e.target.value)}
                   placeholder={
                     authMode === "daftar"
-                      ? "Minimal 8 karakter"
-                      : "Masukkan kata sandi"
+                      ? "At least 8 characters"
+                      : "Enter password"
                   }
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
                 {authMode === "daftar" && (
                   <span className="text-[10px] text-[#7A5644] mt-0.5 block">
-                    Gunakan minimal 8 karakter dengan kombinasi angka dan huruf.
+                    Use at least 8 characters.
                   </span>
                 )}
               </div>
@@ -462,7 +461,7 @@ export default function AccountPage() {
                     htmlFor="rememberMe"
                     className="text-xs text-[#7A5644] cursor-pointer"
                   >
-                    Ingat saya di perangkat ini
+                    Remember me on this device
                   </label>
                 </div>
               )}
@@ -473,13 +472,12 @@ export default function AccountPage() {
                 className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-xs mt-2"
               >
                 {authMode === "masuk"
-                  ? "Masuk ke Akun"
-                  : "Buat Akun BabyShalls"}
+                  ? "Sign In to Account"
+                  : "Create BabyShalls Account"}
               </button>
 
               <p className="text-[11px] text-[#7A5644] text-center pt-2 leading-relaxed">
-                Belanja tanpa akun? Kamu tetap bisa checkout langsung sebagai
-                tamu di keranjang belanja.
+                Guest checkout? You can still place an order directly from your shopping bag.
               </p>
             </form>
           </div>
@@ -514,7 +512,7 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Navigation Menu (Horizontal pills on mobile/tablet, vertical sidebar on desktop) */}
+              {/* Navigation Menu */}
               <nav className="flex flex-row overflow-x-auto pb-2 lg:pb-0 gap-2 lg:gap-1 text-xs scrollbar-none lg:flex-col">
                 <button
                   type="button"
@@ -525,7 +523,7 @@ export default function AccountPage() {
                     }`}
                 >
                   <User className="w-4 h-4 text-[#B05A26] shrink-0" />
-                  <span>Profil & Keamanan</span>
+                  <span>Profile &amp; Security</span>
                 </button>
 
                 <button
@@ -537,7 +535,7 @@ export default function AccountPage() {
                     }`}
                 >
                   <MapPin className="w-4 h-4 text-[#B05A26] shrink-0" />
-                  <span>Daftar Alamat</span>
+                  <span>Saved Addresses</span>
                 </button>
 
                 <button
@@ -550,7 +548,7 @@ export default function AccountPage() {
                 >
                   <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
                   <div className="flex items-center gap-2 lg:flex-1 lg:justify-between">
-                    <span>Pesanan Saya</span>
+                    <span>My Orders</span>
                     {dbOrders.length > 0 && (
                       <span className="bg-[#B05A26] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                         {dbOrders.length}
@@ -568,7 +566,7 @@ export default function AccountPage() {
                     }`}
                 >
                   <Calendar className="w-4 h-4 text-[#B05A26] shrink-0" />
-                  <span>Tiket Workshop</span>
+                  <span>Workshop Tickets</span>
                 </button>
 
                 <button
@@ -580,7 +578,7 @@ export default function AccountPage() {
                     }`}
                 >
                   <BookOpen className="w-4 h-4 text-[#B05A26] shrink-0" />
-                  <span>Request Buku</span>
+                  <span>Book Requests</span>
                 </button>
 
                 <button
@@ -592,7 +590,7 @@ export default function AccountPage() {
                     }`}
                 >
                   <Heart className="w-4 h-4 text-[#B05A26] shrink-0" />
-                  <span>Wishlist Favorit</span>
+                  <span>Favorite Wishlist</span>
                 </button>
 
                 <div className="pt-0 lg:pt-3 lg:mt-3 border-t-0 lg:border-t border-[#F2E4D6] shrink-0 flex items-center">
@@ -602,7 +600,7 @@ export default function AccountPage() {
                     className="py-2 px-3 sm:py-2.5 rounded-[2px] flex items-center gap-2 sm:gap-3 text-left text-[#C0392B] hover:bg-[#FEECE8] transition-colors cursor-pointer font-medium whitespace-nowrap lg:w-full"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Keluar Akun</span>
+                    <span>Sign Out</span>
                   </button>
                 </div>
               </nav>
@@ -616,14 +614,14 @@ export default function AccountPage() {
                   {savedSuccess && (
                     <div className="p-4 bg-[#DDF1E5] text-[#2A6E37] text-xs font-semibold rounded-[2px] border border-[#A7DBB8] flex items-center gap-2">
                       <Check className="w-4 h-4" />
-                      <span>Data profil berhasil diperbarui!</span>
+                      <span>Profile details updated successfully!</span>
                     </div>
                   )}
 
                   {/* Data Diri Card */}
                   <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 sm:p-7 shadow-xs">
                     <h2 className="text-lg font-medium text-[#4A2A1C] mb-4 pb-2 border-b border-[#F2E4D6]">
-                      Data Diri Akun
+                      Personal Details
                     </h2>
 
                     <form
@@ -633,7 +631,7 @@ export default function AccountPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Nama Lengkap
+                            Full Name
                           </label>
                           <input
                             type="text"
@@ -649,7 +647,7 @@ export default function AccountPage() {
                         </div>
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Nomor WhatsApp
+                            WhatsApp Number
                           </label>
                           <input
                             type="text"
@@ -669,14 +667,14 @@ export default function AccountPage() {
                         <div>
                           <div className="flex items-center justify-between mb-1">
                             <label className="block text-[#7A5644] font-medium">
-                              Alamat Email
+                              Email Address
                             </label>
                             <button
                               type="button"
                               onClick={() => setIsEmailModalOpen(true)}
                               className="text-[11px] text-[#B05A26] font-semibold hover:underline cursor-pointer"
                             >
-                              Ganti Email (OTP)
+                              Change Email (OTP)
                             </button>
                           </div>
                           <input
@@ -688,7 +686,7 @@ export default function AccountPage() {
                         </div>
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Kota Domisili
+                            City of Residence
                           </label>
                           <input
                             type="text"
@@ -709,7 +707,7 @@ export default function AccountPage() {
                           type="submit"
                           className="px-6 py-2.5 bg-[#B05A26] hover:bg-[#964B1F] text-white font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
                         >
-                          Simpan Perubahan
+                          Save Changes
                         </button>
                       </div>
                     </form>
@@ -718,7 +716,7 @@ export default function AccountPage() {
                   {/* Keamanan & Password */}
                   <div className="bg-white border border-[#F2E4D6] rounded-[2px] p-6 sm:p-7 shadow-xs">
                     <h2 className="text-lg font-medium text-[#4A2A1C] mb-4 pb-2 border-b border-[#F2E4D6]">
-                      Ubah Kata Sandi
+                      Change Password
                     </h2>
 
                     {passwordMsg && (
@@ -732,11 +730,11 @@ export default function AccountPage() {
                       onSubmit={(e) => {
                         e.preventDefault();
                         setPasswordMsg(
-                          "Kata sandi berhasil diperbarui dengan aman!",
+                          "Password updated securely!",
                         );
                         setToast({
                           type: 'success',
-                          message: 'Kata sandi berhasil diperbarui dengan aman!',
+                          message: 'Password updated securely!',
                         });
                         setTimeout(() => setPasswordMsg(""), 3000);
                       }}
@@ -745,22 +743,22 @@ export default function AccountPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Kata Sandi Lama
+                            Current Password
                           </label>
                           <input
                             type="password"
-                            placeholder="Masukkan sandi saat ini"
+                            placeholder="Enter current password"
                             defaultValue="••••••••"
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                           />
                         </div>
                         <div>
                           <label className="block text-[#7A5644] font-medium mb-1">
-                            Kata Sandi Baru
+                            New Password
                           </label>
                           <input
                             type="password"
-                            placeholder="Minimal 6 karakter"
+                            placeholder="At least 6 characters"
                             className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                           />
                         </div>
@@ -770,7 +768,7 @@ export default function AccountPage() {
                         type="submit"
                         className="px-6 py-2.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
                       >
-                        Update Kata Sandi
+                        Update Password
                       </button>
                     </form>
                   </div>
@@ -783,10 +781,10 @@ export default function AccountPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-2 border-b border-[#F2E4D6]">
                     <div>
                       <h2 className="text-lg font-medium text-[#4A2A1C]">
-                        Daftar Alamat Pengiriman
+                        Saved Delivery Addresses
                       </h2>
                       <p className="text-xs text-[#7A5644] mt-0.5">
-                        Kelola alamat pengiriman pesanan buku dan hampers Anda
+                        Manage shipping addresses for your book and hamper orders
                       </p>
                     </div>
                     <button
@@ -798,7 +796,7 @@ export default function AccountPage() {
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#B05A26] hover:bg-[#964B1F] text-white text-xs font-semibold rounded-[2px] transition-colors cursor-pointer shadow-xs self-start sm:self-auto"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Tambah Alamat Baru</span>
+                      <span>Add New Address</span>
                     </button>
                   </div>
 
@@ -806,7 +804,7 @@ export default function AccountPage() {
                   {isAddressesLoading ? (
                     <div className="py-10 flex flex-col items-center justify-center gap-2 text-xs text-[#7A5644]">
                       <Loader2 className="w-6 h-6 text-[#B05A26] animate-spin" />
-                      <span>Memuat daftar alamat tersimpan...</span>
+                      <span>Loading saved addresses...</span>
                     </div>
                   ) : dbAddresses.length > 0 ? (
                     <div className="grid grid-cols-1 gap-4">
@@ -826,7 +824,7 @@ export default function AccountPage() {
                               </span>
                               {addr.isDefault && (
                                 <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
-                                  Utama
+                                  Primary
                                 </span>
                               )}
                             </div>
@@ -840,19 +838,19 @@ export default function AccountPage() {
                                       await updateAddressMutation.mutateAsync({ id: addr.id, isDefault: true });
                                       setToast({
                                         type: 'success',
-                                        message: `Alamat "${addr.label}" berhasil dijadikan alamat utama!`,
+                                        message: `Address "${addr.label}" set as primary!`,
                                       });
                                     } catch {
                                       setToast({
                                         type: 'error',
-                                        message: 'Gagal mengubah alamat utama',
+                                        message: 'Failed to set primary address',
                                       });
                                     }
                                   }}
                                   className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#7A5644] hover:text-[#2A6E37] bg-[#FFFBF7] hover:bg-[#F2FAF4] border border-[#E6D2C0] hover:border-[#A7DBB8] rounded-[2px] transition-colors cursor-pointer"
                                 >
                                   <Check className="w-3 h-3 text-[#2A6E37]" />
-                                  <span>Jadikan Utama</span>
+                                  <span>Set as Primary</span>
                                 </button>
                               )}
                               <button
@@ -864,7 +862,7 @@ export default function AccountPage() {
                                 className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#B05A26] hover:bg-[#FFF6EA] border border-[#E6D2C0] hover:border-[#B05A26] rounded-[2px] font-medium transition-colors cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
-                                <span>Ubah</span>
+                                <span>Edit</span>
                               </button>
                               {dbAddresses.length > 1 && !addr.isDefault && (
                                 <button
@@ -873,7 +871,7 @@ export default function AccountPage() {
                                   className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-[#C0392B] hover:bg-[#FDF0ED] border border-[#E6D2C0] hover:border-[#F5C2B8] rounded-[2px] font-medium transition-colors cursor-pointer"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
-                                  <span>Hapus</span>
+                                  <span>Delete</span>
                                 </button>
                               )}
                             </div>
@@ -890,7 +888,7 @@ export default function AccountPage() {
                     </div>
                   ) : (
                     <div className="p-8 border border-dashed border-[#E6D2C0] rounded-[2px] text-center text-xs text-[#7A5644]">
-                      Belum ada alamat pengiriman tersimpan. Silakan klik tombol &quot;Tambah Alamat Baru&quot;.
+                      No saved delivery addresses yet. Please click &quot;Add New Address&quot;.
                     </div>
                   )}
                 </div>
@@ -902,20 +900,20 @@ export default function AccountPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F2E4D6]">
                     <div>
                       <h2 className="text-lg font-medium text-[#4A2A1C]">
-                        Riwayat Pesanan ({filteredOrders.length})
+                        Order History ({filteredOrders.length})
                       </h2>
                       <p className="text-xs text-[#7A5644] mt-0.5">
-                        Pantau status pesanan dan pelacakan resi pengiriman buku Anda
+                        Track order status and courier delivery tracking for your books
                       </p>
                     </div>
 
                     {/* Filter pills */}
                     <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1 scrollbar-none">
                       {[
-                        { key: "semua", label: "Semua" },
-                        { key: "menunggu", label: "Menunggu" },
-                        { key: "dikirim", label: "Dikirim" },
-                        { key: "selesai", label: "Selesai" },
+                        { key: "semua", label: "All" },
+                        { key: "menunggu", label: "Pending" },
+                        { key: "dikirim", label: "In Transit" },
+                        { key: "selesai", label: "Completed" },
                       ].map((tab) => (
                         <button
                           key={tab.key}
@@ -936,7 +934,7 @@ export default function AccountPage() {
                   {isOrdersLoading ? (
                     <div className="py-12 flex flex-col items-center justify-center gap-2 text-xs text-[#7A5644]">
                       <Loader2 className="w-6 h-6 text-[#B05A26] animate-spin" />
-                      <span>Memuat riwayat pesanan...</span>
+                      <span>Loading order history...</span>
                     </div>
                   ) : filteredOrders.length > 0 ? (
                     <>
@@ -944,17 +942,17 @@ export default function AccountPage() {
                       const statusBadge = (() => {
                         switch (ord.status) {
                           case 'COMPLETED':
-                            return { label: 'Selesai', className: 'bg-[#DDF1E5] text-[#2A6E37]' };
+                            return { label: 'Completed', className: 'bg-[#DDF1E5] text-[#2A6E37]' };
                           case 'SHIPPED':
-                            return { label: 'Sedang Dikirim', className: 'bg-[#E3EDF9] text-[#2C5282]' };
+                            return { label: 'In Transit', className: 'bg-[#E3EDF9] text-[#2C5282]' };
                           case 'PROCESSING':
-                            return { label: 'Sedang Disiapkan', className: 'bg-[#FFF6EA] text-[#B05A26]' };
+                            return { label: 'Preparing Order', className: 'bg-[#FFF6EA] text-[#B05A26]' };
                           case 'PAID':
-                            return { label: 'Sudah Dibayar', className: 'bg-[#EBF8FF] text-[#2B6CB0]' };
+                            return { label: 'Paid', className: 'bg-[#EBF8FF] text-[#2B6CB0]' };
                           case 'PENDING_PAYMENT':
-                            return { label: 'Menunggu Pembayaran', className: 'bg-[#FFF6EA] text-[#B05A26]' };
+                            return { label: 'Awaiting Payment', className: 'bg-[#FFF6EA] text-[#B05A26]' };
                           case 'CANCELLED':
-                            return { label: 'Dibatalkan', className: 'bg-[#FDF0ED] text-[#C0392B]' };
+                            return { label: 'Cancelled', className: 'bg-[#FDF0ED] text-[#C0392B]' };
                           default:
                             return { label: ord.status, className: 'bg-[#FFF6EA] text-[#B05A26]' };
                         }
@@ -969,11 +967,11 @@ export default function AccountPage() {
                           <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#F2E4D6] text-xs">
                             <div className="flex items-center gap-3">
                               <span className="font-semibold text-[#4A2A1C]">
-                                No. Pesanan: {ord.orderNumber}
+                                Order No: {ord.orderNumber}
                               </span>
                               <span className="text-[#7A5644]">
                                 {new Date(ord.createdAt).toLocaleDateString(
-                                  "id-ID",
+                                  "en-US",
                                   {
                                     day: "numeric",
                                     month: "short",
@@ -1007,14 +1005,14 @@ export default function AccountPage() {
                                     <div className="relative w-14 h-14 bg-[#F0F0F0] rounded-[2px] overflow-hidden shrink-0 border border-[#E6D2C0]">
                                       <Image
                                         src={cover}
-                                        alt={item.product?.name || "Buku BabyShalls"}
+                                        alt={item.product?.name || "BabyShalls Book"}
                                         fill
                                         className="object-cover"
                                       />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <h4 className="text-xs font-semibold text-[#4A2A1C] truncate">
-                                        {item.product?.name || "Buku Edukasi"}
+                                        {item.product?.name || "Educational Book"}
                                       </h4>
                                       <span className="text-[11px] text-[#7A5644] block">
                                         {item.quantity} × {formatIDR(item.price)}
@@ -1028,10 +1026,10 @@ export default function AccountPage() {
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="self-start sm:self-center inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FFFBF7] border border-[#E6D2C0] hover:border-[#B05A26] text-[#B05A26] text-xs font-semibold rounded-[2px] transition-colors"
-                                      title="Beri ulasan dan rating untuk BabyShalls di Google Maps"
+                                      title="Review BabyShalls on Google Maps"
                                     >
                                       <Star className="w-3.5 h-3.5 fill-[#E5A83B] text-[#E5A83B]" />
-                                      <span>Ulas di Google Maps</span>
+                                      <span>Review on Google Maps</span>
                                       <ExternalLink className="w-3 h-3 text-[#A89080]" />
                                     </a>
                                   )}
@@ -1044,11 +1042,11 @@ export default function AccountPage() {
                           <div className="pt-3 border-t border-[#F2E4D6] flex flex-wrap items-center justify-between gap-3 text-xs">
                             <div className="flex items-center gap-2">
                               <span className="text-[#7A5644] text-[11px]">
-                                Kurir: <strong>{ord.courierCode || 'KiriminAja Malang'}</strong>
+                                Courier: <strong>{ord.courierCode || 'KiriminAja Malang'}</strong>
                               </span>
                               {ord.waybillNumber && (
                                 <span className="text-[11px] font-mono text-[#B05A26] bg-[#FFF6EA] px-2 py-0.5 rounded-[2px] border border-[#E6D2C0]">
-                                  Resi: {ord.waybillNumber}
+                                  Waybill: {ord.waybillNumber}
                                 </span>
                               )}
                             </div>
@@ -1067,14 +1065,14 @@ export default function AccountPage() {
                                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FFF6EA] border border-[#B05A26] text-[#B05A26] hover:bg-[#B05A26] hover:text-white font-medium text-xs rounded-[2px] transition-colors cursor-pointer"
                               >
                                 <Truck className="w-3.5 h-3.5" />
-                                <span>Lacak Resi</span>
+                                <span>Track Package</span>
                               </button>
 
                               <Link
                                 href="/shop"
                                 className="px-4 py-1.5 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] font-medium text-xs rounded-[2px] transition-colors"
                               >
-                                Beli Lagi
+                                Buy Again
                               </Link>
                             </div>
                           </div>
@@ -1086,12 +1084,12 @@ export default function AccountPage() {
                     {totalOrderPages > 1 && (
                       <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#7A5644]">
                         <span>
-                          Menampilkan{' '}
+                          Showing{' '}
                           <strong>
                             {(orderPage - 1) * ORDERS_PER_PAGE + 1} -{' '}
                             {Math.min(orderPage * ORDERS_PER_PAGE, filteredOrders.length)}
                           </strong>{' '}
-                          dari <strong>{filteredOrders.length}</strong> pesanan
+                          of <strong>{filteredOrders.length}</strong> orders
                         </span>
 
                         <div className="flex items-center gap-1 self-center sm:self-auto">
@@ -1102,7 +1100,7 @@ export default function AccountPage() {
                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-[#E6D2C0] rounded-[2px] hover:bg-[#FFF6EA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                           >
                             <ChevronLeft className="w-3.5 h-3.5" />
-                            <span>Sebelumnya</span>
+                            <span>Previous</span>
                           </button>
 
                           <div className="flex items-center gap-1 px-1">
@@ -1128,7 +1126,7 @@ export default function AccountPage() {
                             disabled={orderPage === totalOrderPages}
                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-[#E6D2C0] rounded-[2px] hover:bg-[#FFF6EA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
                           >
-                            <span>Selanjutnya</span>
+                            <span>Next</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -1140,22 +1138,22 @@ export default function AccountPage() {
                       <div className="relative w-32 h-32 mx-auto mb-3">
                         <Image
                           src="/images/mascot/maskot-keranjang-kosong.png"
-                          alt="Tidak ada pesanan"
+                          alt="No orders"
                           fill
                           className="object-contain"
                         />
                       </div>
                       <h3 className="text-base font-semibold text-[#4A2A1C] mb-1">
-                        Belum Ada Pesanan
+                        No Orders Yet
                       </h3>
                       <p className="text-xs text-[#7A5644] mb-4">
-                        Yuk telusuri katalog buku edukatif anak pilihan kami.
+                        Discover our curated catalog of educational books and toys.
                       </p>
                       <Link
                         href="/shop"
                         className="inline-block px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px]"
                       >
-                        Mulai Belanja
+                        Start Shopping
                       </Link>
                     </div>
                   )}
@@ -1167,13 +1165,13 @@ export default function AccountPage() {
                 <div className="space-y-5">
                   <div className="flex items-center justify-between pb-2 border-b border-[#F2E4D6]">
                     <h2 className="text-lg font-medium text-[#4A2A1C]">
-                      Tiket Workshop & Event ({eventTickets.length})
+                      Workshop &amp; Event Tickets ({eventTickets.length})
                     </h2>
                     <Link
                       href="/events"
                       className="text-xs text-[#B05A26] font-medium hover:underline"
                     >
-                      + Daftar Event Lain
+                      + Register Another Event
                     </Link>
                   </div>
 
@@ -1185,7 +1183,7 @@ export default function AccountPage() {
                       <div className="flex-1 min-w-0 text-left">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold px-2 py-0.5 rounded-[2px]">
-                            {tkt.status || "Tiket Aktif"}
+                            {tkt.status || "Active Ticket"}
                           </span>
                           <span className="text-xs text-[#7A5644]">
                             Ref: {tkt.ticketId}
@@ -1203,8 +1201,8 @@ export default function AccountPage() {
                           </p>
                           <p>📍 {tkt.location}</p>
                           <p>
-                            👤 Peserta: <strong>{tkt.childName}</strong>{" "}
-                            (Pendamping: {tkt.parentName})
+                            👤 Attendee: <strong>{tkt.childName}</strong>{" "}
+                            (Guardian: {tkt.parentName})
                           </p>
                         </div>
                       </div>
@@ -1216,7 +1214,7 @@ export default function AccountPage() {
                           {tkt.ticketId}
                         </span>
                         <span className="text-[10px] text-[#2A6E37] font-semibold mt-0.5">
-                          Tunjukkan ke Kasir
+                          Show to Cashier
                         </span>
                       </div>
                     </div>
@@ -1229,13 +1227,13 @@ export default function AccountPage() {
                 <div className="space-y-5">
                   <div className="flex items-center justify-between pb-2 border-b border-[#F2E4D6]">
                     <h2 className="text-lg font-medium text-[#4A2A1C]">
-                      Request Buku Saya ({bookRequests.length})
+                      My Book Requests ({bookRequests.length})
                     </h2>
                     <Link
                       href="/request-a-book"
                       className="text-xs text-[#B05A26] font-medium hover:underline"
                     >
-                      + Buat Request Baru
+                      + Submit New Request
                     </Link>
                   </div>
 
@@ -1246,7 +1244,7 @@ export default function AccountPage() {
                     >
                       <div className="flex items-center justify-between text-xs pb-2 border-b border-[#F2E4D6]">
                         <span className="font-semibold text-[#4A2A1C]">
-                          No. Request: {req.id}
+                          Request No: {req.id}
                         </span>
                         <span className="bg-[#FFF6EA] text-[#B05A26] border border-[#E6D2C0] text-[11px] font-semibold px-2.5 py-0.5 rounded-[2px]">
                           {req.status}
@@ -1271,7 +1269,7 @@ export default function AccountPage() {
                             {req.bookTitle}
                           </h3>
                           <p className="text-xs text-[#7A5644] mt-0.5">
-                            Penulis: {req.author || "-"} · Format: {req.format}
+                            Author: {req.author || "-"} · Format: {req.format}
                           </p>
                           {req.isbn && (
                             <p className="text-[11px] text-[#7A5644]">
@@ -1281,7 +1279,7 @@ export default function AccountPage() {
 
                           {req.curatorNote && (
                             <div className="mt-3 p-3 bg-[#FFFBF7] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644]">
-                              <strong>Catatan Kurator:</strong>{" "}
+                              <strong>Curator Note:</strong>{" "}
                               {req.curatorNote}
                             </div>
                           )}
@@ -1297,7 +1295,7 @@ export default function AccountPage() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-2 border-b border-[#F2E4D6]">
                     <h2 className="text-lg font-medium text-[#4A2A1C]">
-                      Wishlist Buku Favorit ({wishlistProducts.length})
+                      Favorite Book Wishlist ({wishlistProducts.length})
                     </h2>
                   </div>
 
@@ -1310,7 +1308,7 @@ export default function AccountPage() {
                           onClick={() => addToCart(p, 1)}
                           className="w-full mt-2 py-2 bg-[#FFF6EA] border border-[#B05A26] text-[#B05A26] hover:bg-[#B05A26] hover:text-white text-xs font-semibold rounded-[2px] transition-colors"
                         >
-                          + Pindahkan ke Keranjang
+                          + Move to Bag
                         </button>
                       </div>
                     ))}
@@ -1333,7 +1331,7 @@ export default function AccountPage() {
         onSuccess={(newEmail) => {
           setUserProfile((p) => ({ ...p, email: newEmail }));
           setSavedSuccess(true);
-          setToast({ type: 'success', message: `Email akun berhasil diperbarui ke ${newEmail}` });
+          setToast({ type: 'success', message: `Account email updated to ${newEmail}` });
           setTimeout(() => setSavedSuccess(false), 3000);
         }}
       />
@@ -1361,13 +1359,13 @@ export default function AccountPage() {
             await deleteAddressMutation.mutateAsync(addressToDelete.id);
             setToast({
               type: 'success',
-              message: `Alamat "${addressToDelete.label}" berhasil dihapus!`,
+              message: `Address "${addressToDelete.label}" deleted successfully!`,
             });
             setAddressToDelete(null);
           } catch {
             setToast({
               type: 'error',
-              message: 'Gagal menghapus alamat pengiriman',
+              message: 'Failed to delete shipping address',
             });
           }
         }}

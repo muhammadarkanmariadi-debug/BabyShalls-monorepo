@@ -64,19 +64,19 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
     setErrorMsg('');
 
     if (!receiverName.trim()) {
-      setErrorMsg('Nama penerima wajib diisi.');
+      setErrorMsg('Recipient name is required.');
       return;
     }
     if (!receiverPhone.trim() || receiverPhone.trim().length < 8) {
-      setErrorMsg('Nomor telepon penerima minimal 8 digit.');
+      setErrorMsg('Recipient phone number must be at least 8 digits.');
       return;
     }
     if (!streetAddress.trim() || streetAddress.trim().length < 5) {
-      setErrorMsg('Alamat lengkap jalan/nomor rumah minimal 5 karakter.');
+      setErrorMsg('Complete street address must be at least 5 characters.');
       return;
     }
     if (!city.trim() || !subdistrict.trim()) {
-      setErrorMsg('Kota dan kecamatan wajib diisi.');
+      setErrorMsg('City and district are required.');
       return;
     }
 
@@ -84,7 +84,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
       if (addressToEdit) {
         await updateMutation.mutateAsync({
           id: addressToEdit.id,
-          label: label.trim() || 'Rumah',
+          label: label.trim() || 'Home',
           receiverName: receiverName.trim(),
           receiverPhone: receiverPhone.trim(),
           streetAddress: streetAddress.trim(),
@@ -95,7 +95,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
         });
       } else {
         await createMutation.mutateAsync({
-          label: label.trim() || 'Rumah',
+          label: label.trim() || 'Home',
           receiverName: receiverName.trim(),
           receiverPhone: receiverPhone.trim(),
           streetAddress: streetAddress.trim(),
@@ -106,13 +106,13 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
         });
       }
       if (addressToEdit) {
-        onSuccess?.('Alamat pengiriman berhasil diperbarui!');
+        onSuccess?.('Shipping address updated successfully!');
       } else {
-        onSuccess?.('Alamat baru berhasil ditambahkan!');
+        onSuccess?.('New shipping address added successfully!');
       }
       onClose();
     } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.message || 'Gagal menyimpan alamat.';
+      const msg = err?.response?.data?.error || err?.message || 'Failed to save address.';
       setErrorMsg(msg);
     }
   };
@@ -126,7 +126,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
           type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer transition-colors"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -134,11 +134,11 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
         <div className="flex items-center gap-2 mb-2">
           <MapPin className="w-5 h-5 text-[#B05A26]" />
           <h3 className="text-base font-semibold text-[#4A2A1C]">
-            {addressToEdit ? 'Ubah Alamat Pengiriman' : 'Tambah Alamat Pengiriman Baru'}
+            {addressToEdit ? 'Edit Shipping Address' : 'Add New Shipping Address'}
           </h3>
         </div>
         <p className="text-xs text-[#7A5644] mb-4">
-          Pastikan rincian alamat lengkap dan nomor telepon aktif untuk memudahkan kurir mengantarkan buku.
+          Please provide complete address details and an active phone number to ensure smooth book delivery.
         </p>
 
         {errorMsg && (
@@ -152,30 +152,30 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Label Alamat
+                Address Label
               </label>
               <select
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] bg-white focus:outline-none focus:border-[#B05A26]"
               >
-                <option value="Rumah">Rumah</option>
-                <option value="Kantor">Kantor</option>
-                <option value="Apartemen">Apartemen</option>
-                <option value="Rumah Nenek">Rumah Nenek</option>
-                <option value="Lainnya">Lainnya</option>
+                <option value="Home">Home</option>
+                <option value="Office">Office</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Grandparents">Grandparents</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
             <div className="sm:col-span-2">
               <label className="block text-[#7A5644] font-medium mb-1">
-                Nama Penerima
+                Recipient Name
               </label>
               <input
                 type="text"
                 value={receiverName}
                 onChange={(e) => setReceiverName(e.target.value)}
-                placeholder="cth: Dina Permata"
+                placeholder="e.g. Dina Permata"
                 required
                 className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] placeholder:text-[#A89080] focus:outline-none focus:border-[#B05A26]"
               />
@@ -184,7 +184,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
 
           <div>
             <label className="block text-[#7A5644] font-medium mb-1">
-              Nomor WhatsApp / HP Penerima
+              Recipient WhatsApp / Phone
             </label>
             <input
               type="text"
@@ -198,13 +198,13 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
 
           <div>
             <label className="block text-[#7A5644] font-medium mb-1">
-              Alamat Lengkap (Jalan, RT/RW, No. Rumah, Patokan)
+              Complete Street Address (Street, House No., Building, Landmark)
             </label>
             <textarea
               rows={3}
               value={streetAddress}
               onChange={(e) => setStreetAddress(e.target.value)}
-              placeholder="Jl. Cempaka No. 12, RT 02 / RW 04, dekat pos satpam..."
+              placeholder="Jl. Cempaka No. 12, RT 02 / RW 04, near security post..."
               required
               className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] placeholder:text-[#A89080] focus:outline-none focus:border-[#B05A26]"
             />
@@ -213,7 +213,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Kota / Kabupaten
+                City / Regency
               </label>
               <input
                 type="text"
@@ -227,7 +227,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
 
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Kecamatan
+                District
               </label>
               <input
                 type="text"
@@ -241,7 +241,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
 
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Kode Pos
+                Postal Code
               </label>
               <input
                 type="text"
@@ -263,7 +263,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
               className="w-4 h-4 rounded-[2px] text-[#B05A26] accent-[#B05A26] focus:ring-0 cursor-pointer"
             />
             <label htmlFor="isDefaultCheckbox" className="text-xs text-[#4A2A1C] cursor-pointer">
-              Jadikan sebagai alamat utama pengiriman
+              Set as primary shipping address
             </label>
           </div>
 
@@ -273,7 +273,7 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] font-medium rounded-[2px] cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
@@ -283,10 +283,10 @@ export const AddressFormModal: React.FC<AddressFormModalProps> = ({
               {isSaving ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Menyimpan...</span>
+                  <span>Saving...</span>
                 </>
               ) : (
-                <span>{addressToEdit ? 'Simpan Perubahan' : 'Tambah Alamat'}</span>
+                <span>{addressToEdit ? 'Save Changes' : 'Add Address'}</span>
               )}
             </button>
           </div>

@@ -27,7 +27,7 @@ export function CsvExportButton({
       const res = await fetch(`${base}${endpoint}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error('Gagal mengunduh CSV');
+      if (!res.ok) throw new Error('Failed to download CSV');
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -35,9 +35,9 @@ export function CsvExportButton({
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success(`${filename} berhasil diunduh.`);
+      toast.success(`${filename} successfully downloaded.`);
     } catch {
-      toast.error('Gagal mengekspor data CSV.');
+      toast.error('Failed to export CSV data.');
     } finally {
       setDownloading(false);
     }
@@ -51,7 +51,7 @@ export function CsvExportButton({
       className="h-[38px] px-3.5 rounded-[4px] border border-[#E6D2C0] bg-white hover:bg-[#FFF6EA] text-[#4A2A1C] text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
     >
       <Download className="w-3.5 h-3.5" />
-      <span>{downloading ? 'Mengunduh...' : label}</span>
+      <span>{downloading ? 'Downloading...' : label}</span>
     </button>
   );
 }

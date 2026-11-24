@@ -18,10 +18,10 @@ import { CurrencyInput } from '../ui/CurrencyInput';
 
 function formatDiscountLabel(c: CouponDto): string {
   if (c.discountType === 'PERCENTAGE') {
-    return `${c.discountValue}%${c.maxDiscount ? ` (Maks ${formatIDR(c.maxDiscount)})` : ''}`;
+    return `${c.discountValue}%${c.maxDiscount ? ` (Max ${formatIDR(c.maxDiscount)})` : ''}`;
   }
   if (c.discountType === 'SHIPPING_SUBSIDY') {
-    return `Subsidi Ongkir ${formatIDR(c.discountValue)}`;
+    return `Shipping Subsidy ${formatIDR(c.discountValue)}`;
   }
   return formatIDR(c.discountValue);
 }
@@ -93,7 +93,7 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
     const cleanCode = code.trim().toUpperCase();
     const val = Number(discountValue);
     if (!cleanCode || !Number.isFinite(val) || val <= 0) {
-      toast.error('Kode kupon dan nilai diskon valid wajib diisi.');
+      toast.error('Coupon code and a valid discount value are required.');
       return;
     }
 
@@ -112,14 +112,14 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
     try {
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: payload });
-        toast.success(`Kupon ${cleanCode} diperbarui.`);
+        toast.success(`Coupon ${cleanCode} updated.`);
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(`Kupon ${cleanCode} dibuat.`);
+        toast.success(`Coupon ${cleanCode} created.`);
       }
       setModalOpen(false);
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menyimpan kupon.'));
+      toast.error(extractApiError(err, 'Failed to save coupon.'));
     }
   };
 
@@ -127,28 +127,28 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
     <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
       <div>
         <h2 className="text-base font-bold text-[#4A2A1C]">
-          Manajemen Kupon &amp; Voucher ({filtered.length}/{vouchers.length})
+          Coupons &amp; Vouchers Management ({filtered.length}/{vouchers.length})
         </h2>
-        <p className="text-xs text-[#7A5644]">Kelola promo diskon nominal, persentase, &amp; subsidi ongkir toko.</p>
+        <p className="text-xs text-[#7A5644]">Manage fixed discount promos, percentage discounts, &amp; store shipping subsidies.</p>
       </div>
 
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari kode atau deskripsi kupon..."
+        searchPlaceholder="Search coupon code or description..."
         filterValue={statusFilter}
         onFilterChange={setStatusFilter}
         filterOptions={[
-          { label: 'Aktif', value: 'ACTIVE' },
-          { label: 'Nonaktif', value: 'INACTIVE' },
+          { label: 'Active', value: 'ACTIVE' },
+          { label: 'Inactive', value: 'INACTIVE' },
         ]}
-        filterLabel="Semua Status"
+        filterLabel="All Statuses"
         sortValue={sortBy}
         onSortChange={setSortBy}
         sortOptions={[
-          { label: 'Terbaru', value: 'newest' },
-          { label: 'Kode (A-Z)', value: 'code_asc' },
-          { label: 'Terbanyak Dipakai', value: 'used_desc' },
+          { label: 'Newest', value: 'newest' },
+          { label: 'Code (A-Z)', value: 'code_asc' },
+          { label: 'Most Used', value: 'used_desc' },
         ]}
         rightAction={
           <button
@@ -156,15 +156,15 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
             onClick={() => openModal(null)}
             className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
           >
-            <Plus className="w-4 h-4" /> Tambah Kupon
+            <Plus className="w-4 h-4" /> Add Coupon
           </button>
         }
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat kupon...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Loading coupons...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Belum ada kupon yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">No coupons match the filter.</p>
       ) : (
         <div className="divide-y divide-[#F2E4D6] text-xs">
           {filtered.map((v) => (
@@ -177,7 +177,7 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                   <span className="font-semibold text-[#4A2A1C]">• {formatDiscountLabel(v)}</span>
                 </div>
                 <div className="text-[11px] text-[#7A5644] mt-1">
-                  {v.description || 'Tanpa deskripsi'} • Min Order: {formatIDR(v.minOrder)} • Terpakai: <strong className="text-[#3F5FA0]">{v.usedCount}</strong>
+                  {v.description || 'No description'} • Min Order: {formatIDR(v.minOrder)} • Used: <strong className="text-[#3F5FA0]">{v.usedCount}</strong>
                   {v.maxUsage ? `/${v.maxUsage}` : ''}
                 </div>
               </div>
@@ -189,8 +189,8 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                       { id: v.id, data: { isActive: !v.isActive } },
                       {
                         onSuccess: () =>
-                          toast.success(`Kupon ${v.code} ${!v.isActive ? 'diaktifkan' : 'dinonaktifkan'}.`),
-                        onError: (err) => toast.error(extractApiError(err, 'Gagal mengubah status kupon.')),
+                          toast.success(`Coupon ${v.code} ${!v.isActive ? 'activated' : 'deactivated'}.`),
+                        onError: (err) => toast.error(extractApiError(err, 'Failed to update coupon status.')),
                       }
                     )
                   }
@@ -200,27 +200,27 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                       : 'bg-[#FDE3E8] text-[#C0392B] border border-[#FBA6B2]/60'
                   }`}
                 >
-                  {v.isActive ? 'Aktif' : 'Nonaktif'}
+                  {v.isActive ? 'Active' : 'Inactive'}
                 </button>
                 <button
                   type="button"
                   onClick={() => openModal(v)}
                   className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors cursor-pointer"
-                  title="Edit Kupon"
+                  title="Edit Coupon"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    if (!window.confirm(`Hapus kupon ${v.code}?`)) return;
+                    if (!window.confirm(`Delete coupon ${v.code}?`)) return;
                     deleteMutation.mutate(v.id, {
-                      onSuccess: () => toast.success(`Kupon ${v.code} dihapus.`),
-                      onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus kupon.')),
+                      onSuccess: () => toast.success(`Coupon ${v.code} deleted.`),
+                      onError: (err) => toast.error(extractApiError(err, 'Failed to delete coupon.')),
                     });
                   }}
                   className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
-                  title="Hapus Kupon"
+                  title="Delete Coupon"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -233,37 +233,37 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
       <AdminModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editing ? `Edit Kupon ${editing.code}` : 'Buat Kupon Promo Baru'}
+        title={editing ? `Edit Coupon ${editing.code}` : 'Create New Promo Coupon'}
         size="md"
       >
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Kode Kupon *</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Coupon Code *</label>
               <input
                 type="text"
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="HEMAT25"
+                placeholder="SAVE25"
                 className="w-full h-[40px] px-3.5 uppercase font-mono bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Tipe Diskon *</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Discount Type *</label>
               <select
                 value={discountType}
                 onChange={(e) => setDiscountType(e.target.value as DiscountType)}
                 className="w-full h-[40px] px-3 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               >
-                <option value="FIXED_AMOUNT">Nominal (Rp)</option>
-                <option value="PERCENTAGE">Persentase (%)</option>
-                <option value="SHIPPING_SUBSIDY">Subsidi Ongkir (Rp)</option>
+                <option value="FIXED_AMOUNT">Fixed Amount (Rp)</option>
+                <option value="PERCENTAGE">Percentage (%)</option>
+                <option value="SHIPPING_SUBSIDY">Shipping Subsidy (Rp)</option>
               </select>
             </div>
             <div>
               <label className="block font-bold text-[#502E1E] mb-1">
-                {discountType === 'PERCENTAGE' ? 'Persentase Diskon (%) *' : 'Nilai Diskon (Rp) *'}
+                {discountType === 'PERCENTAGE' ? 'Discount Percentage (%) *' : 'Discount Amount (Rp) *'}
               </label>
               {discountType === 'PERCENTAGE' ? (
                 <input
@@ -286,15 +286,15 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
               )}
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Maksimal Diskon (Rp)</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Maximum Discount (Rp)</label>
               <CurrencyInput
                 value={maxDiscount}
                 onChange={setMaxDiscount}
-                placeholder="Opsional (untuk %)"
+                placeholder="Optional (for %)"
               />
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Minimal Belanja (Rp)</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Minimum Order (Rp)</label>
               <CurrencyInput
                 value={minOrder}
                 onChange={setMinOrder}
@@ -302,25 +302,25 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
               />
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Kuota Pemakaian</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Usage Limit</label>
               <input
                 type="number"
                 min={1}
                 value={maxUsage}
                 onChange={(e) => setMaxUsage(e.target.value)}
-                placeholder="Kosongkan = tak terbatas"
+                placeholder="Leave blank = unlimited"
                 className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-bold text-[#502E1E] mb-1">Deskripsi Promo</label>
+            <label className="block font-bold text-[#502E1E] mb-1">Promo Description</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Contoh: Potongan spesial akhir pekan untuk semua buku cerita"
+              placeholder="Example: Special weekend discount on all storybooks"
               className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
             />
           </div>
@@ -333,7 +333,7 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
                 onChange={(e) => setBroadcastEmail(e.target.checked)}
                 className="rounded accent-[#D9744A]"
               />
-              Auto-broadcast email promo kupon ke pelanggan opt-in
+              Auto-broadcast promo coupon email to opt-in subscribers
             </label>
           )}
 
@@ -343,14 +343,14 @@ export function AdminVouchersSection({ enabled }: { enabled: boolean }) {
               onClick={() => setModalOpen(false)}
               className="h-[40px] px-4 rounded-xl border border-[#EBDCCB] font-bold text-[#6B3F2A] cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending || updateMutation.isPending}
               className="h-[40px] px-5 rounded-xl bg-[#D9744A] text-white font-bold cursor-pointer"
             >
-              {editing ? 'Simpan Perubahan' : 'Buat Kupon'}
+              {editing ? 'Save Changes' : 'Create Coupon'}
             </button>
           </div>
         </form>

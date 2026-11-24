@@ -84,6 +84,11 @@ const BADGE_THEMES: Record<string, string> = {
 };
 
 const GROUP_DOTS: Record<string, string> = {
+  'MAIN': 'bg-[#B05A26]',
+  'STORE & CATALOG': 'bg-[#3F5FA0]',
+  'ACTIVITIES & BOOK REQUESTS': 'bg-[#7E4A84]',
+  'SETTINGS': 'bg-[#2A6E37]',
+  // Backwards compatibility if still in Indonesian:
   'UTAMA': 'bg-[#B05A26]',
   'TOKO & KATALOG': 'bg-[#3F5FA0]',
   'KEGIATAN & REQUEST BUKU': 'bg-[#7E4A84]',
@@ -103,7 +108,7 @@ export function AdminShell({
 }: AdminShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const todayLabel = new Date().toLocaleDateString('id-ID', {
+  const todayLabel = new Date().toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -137,7 +142,7 @@ export function AdminShell({
           type="button"
           onClick={() => setMobileOpen(false)}
           className="lg:hidden p-1.5 rounded-[4px] text-[#7A5644] hover:bg-[#FFF6EA]"
-          aria-label="Tutup Menu"
+          aria-label="Close Menu"
         >
           <X className="w-4 h-4" />
         </button>
@@ -196,7 +201,7 @@ export function AdminShell({
           className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] text-[13px] font-medium text-[#4A2A1C] hover:bg-[#FFF6EA] hover:text-[#B05A26] transition-colors"
         >
           <Store className="w-4 h-4 text-[#B05A26]" />
-          <span>Lihat Toko Publik</span>
+          <span>View Public Store</span>
         </Link>
         <button
           type="button"
@@ -204,7 +209,7 @@ export function AdminShell({
           className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] text-[13px] font-medium text-[#C0392B] hover:bg-[#FDF2F2] transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-          <span>Keluar</span>
+          <span>Sign Out</span>
         </button>
       </div>
     </div>
@@ -239,7 +244,7 @@ export function AdminShell({
               type="button"
               onClick={() => setMobileOpen(true)}
               className="lg:hidden p-2 rounded-[4px] border border-[#E6D2C0] text-[#4A2A1C] hover:bg-[#FFF6EA] cursor-pointer"
-              aria-label="Buka Menu Admin"
+              aria-label="Open Admin Menu"
             >
               <Menu className="w-4 h-4" />
             </button>
@@ -248,7 +253,7 @@ export function AdminShell({
                 {pageTitle}
               </h1>
               <p className="text-[11px] text-[#7A5644] hidden sm:block">
-                BabyShalls Butik Citraland Malang · Kurasi Buku &amp; Mainan Kayu Edukasi
+                BabyShalls Boutique Citraland Malang · Curated Children Books &amp; Wooden Toys
               </p>
             </div>
           </div>
@@ -261,7 +266,7 @@ export function AdminShell({
             </div>
             <div
               className="w-8 h-8 rounded-[4px] border border-[#E6D2C0] bg-[#FFF8EF] flex items-center justify-center text-[#7A5644] hover:text-[#B05A26] hover:bg-[#FFF6EA] transition-colors cursor-pointer"
-              title="Notifikasi Toko"
+              title="Store Notifications"
             >
               <Bell className="w-4 h-4" />
             </div>

@@ -53,15 +53,15 @@ interface AdminSessionUser {
 
 const TAB_TITLES: Record<AdminTab, string> = {
   dashboard: 'Dashboard',
-  orders: 'Pesanan Masuk',
-  products: 'Katalog Produk',
-  workshops: 'Event & Check-in',
-  vouchers: 'Voucher & Kupon',
+  orders: 'Incoming Orders',
+  products: 'Product Catalog',
+  workshops: 'Events & Check-in',
+  vouchers: 'Vouchers & Coupons',
   broadcast: 'Email Broadcast',
-  shortlinks: 'Shortlink & QR',
-  requests: 'Book Request Pengadaan Buku',
-  cms: 'Konten (CMS)',
-  users: 'Pengguna Staf',
+  shortlinks: 'Shortlinks & QR',
+  requests: 'Book Procurement Requests',
+  cms: 'Content (CMS)',
+  users: 'Staff Users',
 };
 
 export default function AdminDashboardPage() {
@@ -117,7 +117,7 @@ export default function AdminDashboardPage() {
   if (!isReady) {
     return (
       <div className="min-h-screen bg-[#FFFDF9] flex items-center justify-center text-sm font-medium text-[#7A5644]">
-        Memuat Panel Admin BabyShalls...
+        Loading BabyShalls Admin Portal...
       </div>
     );
   }
@@ -129,45 +129,45 @@ export default function AdminDashboardPage() {
       id: 'dashboard',
       label: 'Dashboard',
       icon: LayoutDashboard,
-      group: 'UTAMA',
+      group: 'MAIN',
       theme: 'terracotta',
     },
     {
       id: 'orders',
-      label: 'Pesanan Masuk',
+      label: 'Incoming Orders',
       icon: ShoppingBag,
       badge: pendingOrdersCount || undefined,
-      group: 'TOKO & KATALOG',
+      group: 'STORE & CATALOG',
       theme: 'blue',
       badgeTheme: 'yellow',
     },
     {
       id: 'products',
-      label: 'Katalog Produk',
+      label: 'Product Catalog',
       icon: Package,
-      group: 'TOKO & KATALOG',
+      group: 'STORE & CATALOG',
       theme: 'yellow',
     },
     {
       id: 'vouchers',
-      label: 'Voucher & Kupon',
+      label: 'Vouchers & Coupons',
       icon: TicketPercent,
-      group: 'TOKO & KATALOG',
+      group: 'STORE & CATALOG',
       theme: 'purple',
     },
     {
       id: 'workshops',
-      label: 'Event & Check-in',
+      label: 'Events & Check-in',
       icon: CalendarCheck,
-      group: 'KEGIATAN & REQUEST BUKU',
+      group: 'ACTIVITIES & BOOK REQUESTS',
       theme: 'purple',
     },
     {
       id: 'requests',
-      label: 'Book Request',
+      label: 'Book Requests',
       icon: BookOpen,
       badge: stats?.totalBookRequests,
-      group: 'KEGIATAN & REQUEST BUKU',
+      group: 'ACTIVITIES & BOOK REQUESTS',
       theme: 'teal',
       badgeTheme: 'teal',
     },
@@ -175,28 +175,28 @@ export default function AdminDashboardPage() {
       id: 'broadcast',
       label: 'Email Broadcast',
       icon: Mail,
-      group: 'KEGIATAN & REQUEST BUKU',
+      group: 'ACTIVITIES & BOOK REQUESTS',
       theme: 'blue',
     },
     {
       id: 'shortlinks',
-      label: 'Shortlink & QR',
+      label: 'Shortlinks & QR',
       icon: Link2,
-      group: 'KEGIATAN & REQUEST BUKU',
+      group: 'ACTIVITIES & BOOK REQUESTS',
       theme: 'green',
     },
     {
       id: 'cms',
-      label: 'Konten (CMS)',
+      label: 'Content (CMS)',
       icon: FileText,
-      group: 'PENGATURAN',
+      group: 'SETTINGS',
       theme: 'green',
     },
     {
       id: 'users',
-      label: 'Pengguna Staf',
+      label: 'Staff Users',
       icon: Users,
-      group: 'PENGATURAN',
+      group: 'SETTINGS',
       theme: 'pink',
     },
   ];
@@ -216,23 +216,23 @@ export default function AdminDashboardPage() {
         <div className="space-y-2.5 max-w-xl z-10">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-2.5 py-0.5 bg-[#B05A26] text-white text-[11px] font-semibold rounded-full tracking-wide">
-              Butik Citraland Malang
+              Boutique Citraland Malang
             </span>
             <span className="px-2.5 py-0.5 bg-[#E4ECFB] text-[#3F5FA0] text-[11px] font-semibold rounded-full border border-[#C5D7F8]">
-              Buka Hari Ini 10.00 – 17.00 WIB
+              Open Today 10:00 AM – 5:00 PM WIB
             </span>
             <span className="px-2.5 py-0.5 bg-[#DDF1E5] text-[#2A6E37] text-[11px] font-semibold rounded-full border border-[#BCE1C3]">
-              Katalog Aktif
+              Active Catalog
             </span>
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold text-[#4A2A1C] leading-tight">
-            Halo, {adminUser?.name || 'Admin BabyShalls'}! 👋
+            Hello, {adminUser?.name || 'BabyShalls Admin'}! 👋
           </h2>
           <p className="text-xs sm:text-sm text-[#7A5644] leading-relaxed">
-            Ada <strong className="text-[#3F5FA0] font-semibold">{pendingOrdersCount} pesanan</strong> perlu diproses,{' '}
-            <strong className="text-[#7E4A84] font-semibold">{stats?.totalEventRegistrations ?? 0} pendaftar workshop</strong>, dan{' '}
-            <strong className="text-[#1F6B76] font-semibold">{stats?.totalBookRequests ?? 0} request pengadaan buku</strong> pelanggan.
+            There are <strong className="text-[#3F5FA0] font-semibold">{pendingOrdersCount} orders</strong> to process,{' '}
+            <strong className="text-[#7E4A84] font-semibold">{stats?.totalEventRegistrations ?? 0} workshop attendees</strong>, and{' '}
+            <strong className="text-[#1F6B76] font-semibold">{stats?.totalBookRequests ?? 0} customer book requests</strong>.
           </p>
 
           {/* Quick Action Shortcuts with Colorful Tokens */}
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-[#FFFBF7] border border-[#E6D2C0] hover:border-[#B05A26] text-xs font-semibold text-[#4A2A1C] rounded-[4px] transition-colors shadow-2xs cursor-pointer"
             >
               <Plus size={13} className="text-[#B05A26]" />
-              <span>Kelola Produk</span>
+              <span>Manage Products</span>
             </button>
 
             <button
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#E4ECFB] hover:bg-[#D5E3FA] border border-[#92B2F3]/60 text-xs font-semibold text-[#3F5FA0] rounded-[4px] transition-colors shadow-2xs cursor-pointer"
             >
               <Truck size={13} />
-              <span>Kirim Pesanan ({pendingOrdersCount})</span>
+              <span>Dispatch Orders ({pendingOrdersCount})</span>
             </button>
 
             <button
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F3E6F2] hover:bg-[#EBD5EA] border border-[#BA7EB8]/60 text-xs font-semibold text-[#7E4A84] rounded-[4px] transition-colors shadow-2xs cursor-pointer"
             >
               <CalendarCheck size={13} />
-              <span>Workshop &amp; Tiket</span>
+              <span>Workshops &amp; Tickets</span>
             </button>
 
             <button
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#DDF1E5] hover:bg-[#CEEAD6] border border-[#82BC85]/60 text-xs font-semibold text-[#2A6E37] rounded-[4px] transition-colors shadow-2xs cursor-pointer"
             >
               <FileText size={13} />
-              <span>Edit Banner CMS</span>
+              <span>Edit CMS Banners</span>
             </button>
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function AdminDashboardPage() {
         <div className="hidden md:flex items-center justify-center shrink-0 relative w-[130px] h-[130px] z-10">
           <Image
             src="/images/mascot/maskot-lompat-konfeti.png"
-            alt="Maskot BabyShalls"
+            alt="BabyShalls Mascot"
             fill
             className="object-contain drop-shadow-md"
           />
@@ -293,44 +293,44 @@ export default function AdminDashboardPage() {
       {/* 5 KPI Cards styled with Figma Design System Pastel Tokens */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <KpiCard
-          label="Pendapatan total"
+          label="Total Revenue"
           value={formatIDR(stats?.totalRevenue ?? 0)}
-          hint="Transaksi terbayar"
+          hint="Paid transactions"
           icon={Tag}
           theme="terracotta"
-          trend="Omzet Toko"
+          trend="Store Sales"
         />
         <KpiCard
-          label="Total pesanan"
+          label="Total Orders"
           value={String(stats?.totalOrders ?? 0)}
-          hint="Semua status order"
+          hint="All order statuses"
           icon={ShoppingBag}
           theme="blue"
-          trend={`${pendingOrdersCount} Perlu Diproses`}
+          trend={`${pendingOrdersCount} To Process`}
         />
         <KpiCard
-          label="Total produk"
+          label="Total Products"
           value={String(stats?.totalProducts ?? 0)}
-          hint="SKU katalog kurasi"
+          hint="Curated catalog SKUs"
           icon={Package}
           theme="yellow"
-          trend="Koleksi Buku & Mainan"
+          trend="Books & Toys Collection"
         />
         <KpiCard
-          label="Pendaftar event"
+          label="Event Registrations"
           value={String(stats?.totalEventRegistrations ?? 0)}
-          hint="Workshop Malang"
+          hint="Malang workshops"
           icon={CalendarCheck}
           theme="purple"
-          trend="Peserta Terdaftar"
+          trend="Registered Participants"
         />
         <KpiCard
-          label="Request buku"
+          label="Book Requests"
           value={String(stats?.totalBookRequests ?? 0)}
-          hint="Pengadaan buku"
+          hint="Book procurement"
           icon={BookOpen}
           theme="teal"
-          trend="Concierge Kurasi"
+          trend="Curation Concierge"
         />
       </div>
 

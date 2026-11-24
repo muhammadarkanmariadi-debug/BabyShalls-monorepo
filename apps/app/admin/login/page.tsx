@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
 
   const handleSuccessAdminAuth = (authData: AuthResponse) => {
     if (authData.user?.role !== 'ADMIN') {
-      setErrorMessage('Akses ditolak (403): Akun ini bukan Admin BabyShalls.');
+      setErrorMessage('Access denied (403): This account does not have Admin privileges.');
       return;
     }
 
@@ -60,7 +60,7 @@ export default function AdminLoginPage() {
 
       const payload = response.data?.data;
       if (!payload) {
-        setErrorMessage('Respons autentikasi tidak valid.');
+        setErrorMessage('Invalid authentication response.');
         setIsLoading(false);
         return;
       }
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
         errObj?.response?.data?.error ||
           errObj?.response?.data?.message ||
           errObj?.message ||
-          'Email atau kata sandi admin tidak sesuai.'
+          'Invalid admin email or password.'
       );
     } finally {
       setIsLoading(false);
@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
           className="inline-flex items-center gap-2 text-xs font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors"
         >
           <ArrowLeft size={16} />
-          <span>Kembali ke Toko</span>
+          <span>Back to Store</span>
         </Link>
       </div>
 
@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
           </div>
 
           <h1 className="text-[28px] sm:text-[32px] font-medium text-[#4A2A1C] leading-[1.25] tracking-[-0.005em]">
-            {requiresOtp ? 'Verifikasi OTP Admin' : 'Masuk Admin'}
+            {requiresOtp ? 'Admin OTP Verification' : 'Admin Sign In'}
           </h1>
 
           {errorMessage && (
@@ -146,7 +146,7 @@ export default function AdminLoginPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-[#4A2A1C]">
-                    Kata sandi
+                    Password
                   </label>
                   <div className="relative flex items-center">
                     <input
@@ -172,7 +172,7 @@ export default function AdminLoginPage() {
               <div className="flex flex-col gap-2">
                 <label className="text-[13px] font-medium text-[#4A2A1C] flex items-center gap-1.5">
                   <KeyRound size={14} className="text-[#B05A26]" />
-                  <span>Kode OTP 6 Digit ({email})</span>
+                  <span>6-Digit OTP Code ({email})</span>
                 </label>
                 <input
                   type="text"
@@ -190,7 +190,7 @@ export default function AdminLoginPage() {
                     onClick={() => resendOtpMutation.mutate({ email: email.trim() })}
                     className="text-[#B05A26] hover:underline cursor-pointer"
                   >
-                    Kirim ulang OTP
+                    Resend OTP
                   </button>
                   <button
                     type="button"
@@ -200,7 +200,7 @@ export default function AdminLoginPage() {
                     }}
                     className="text-[#7A5644] hover:underline cursor-pointer"
                   >
-                    Ganti akun
+                    Switch account
                   </button>
                 </div>
               </div>
@@ -214,19 +214,19 @@ export default function AdminLoginPage() {
               {isLoading || verifyOtpMutation.isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span>{requiresOtp ? 'Verifikasi OTP' : 'Masuk'}</span>
+                <span>{requiresOtp ? 'Verify OTP' : 'Sign In'}</span>
               )}
             </button>
           </form>
 
           <p className="text-[13px] text-[#7A5644] text-center mt-1">
-            Hanya untuk akun dengan peran Admin.
+            Restricted to accounts with Admin role.
           </p>
         </div>
       </main>
 
       <footer className="p-6 text-center text-xs text-[#C9B3A5]">
-        &copy; {new Date().getFullYear()} BabyShalls Malang · Sistem Administrasi
+        &copy; {new Date().getFullYear()} BabyShalls Malang · Administration Portal
       </footer>
     </div>
   );

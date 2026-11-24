@@ -59,7 +59,7 @@ export function AdminModal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Tutup modal"
+            aria-label="Close modal"
             className="w-8 h-8 rounded-full bg-white border border-[#EBDCCB] flex items-center justify-center text-[#502E1E] hover:bg-[#FDECE6] transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />

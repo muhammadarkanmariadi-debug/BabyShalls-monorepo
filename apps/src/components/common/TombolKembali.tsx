@@ -10,7 +10,7 @@ interface TombolKembaliProps {
   className?: string;
 }
 
-export function TombolKembali({ fallbackUrl = '/', label = 'Kembali', className = '' }: TombolKembaliProps) {
+export function TombolKembali({ fallbackUrl = '/', label = 'Back', className = '' }: TombolKembaliProps) {
   const router = useRouter();
 
   const handleBack = () => {

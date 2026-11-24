@@ -70,18 +70,18 @@ export default function EventDetailPage() {
       <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-8 pt-5 pb-2">
         <div className="flex items-center gap-2 text-xs text-[#7A5644] mb-3">
           <Link href="/" className="hover:text-[#B05A26] transition-colors">
-            Beranda
+            Home
           </Link>
           <span>/</span>
           <Link href="/events" className="hover:text-[#B05A26] transition-colors">
-            Event &amp; Workshop
+            Events &amp; Workshops
           </Link>
           <span>/</span>
           <span className="text-[#4A2A1C] font-semibold truncate max-w-[240px] sm:max-w-none">
             {eventData.title}
           </span>
         </div>
-        <TombolKembali fallbackUrl="/events" label="Kembali ke Daftar Event" className="!px-0 !pt-0 !pb-1" />
+        <TombolKembali fallbackUrl="/events" label="Back to Events List" className="!px-0 !pt-0 !pb-1" />
       </div>
 
       <main className="flex-1">
@@ -120,11 +120,11 @@ export default function EventDetailPage() {
                   </span>
                   {isFree ? (
                     <span className="bg-[#2A6E37] text-white text-[13px] font-semibold px-2.5 py-1 rounded-[2px] shadow-xs">
-                      GRATIS (Tanpa Biaya)
+                      FREE (Complimentary)
                     </span>
                   ) : (
                     <span className="bg-[#B05A26] text-white text-[13px] font-semibold px-2.5 py-1 rounded-[2px] shadow-xs">
-                      Workshop Berbayar ({eventData.priceLabel})
+                      Paid Workshop ({eventData.priceLabel})
                     </span>
                   )}
                 </div>
@@ -157,7 +157,7 @@ export default function EventDetailPage() {
                 {/* Tentang Kegiatan (Figma Frame #169:5223) */}
                 <div className="space-y-3">
                   <h2 className="text-2xl font-medium text-[#4A2A1C]">
-                    Tentang kegiatan
+                    About This Event
                   </h2>
                   <p className="text-base text-[#7A5644] leading-relaxed">
                     {eventData.description}
@@ -167,7 +167,7 @@ export default function EventDetailPage() {
                 {/* Agenda Kegiatan (Figma Frame #169:5226) */}
                 <div className="space-y-4">
                   <h2 className="text-2xl font-medium text-[#4A2A1C]">
-                    Agenda
+                    Event Itinerary
                   </h2>
                   <div className="space-y-3">
                     {eventData.agenda.map((item, idx) => (
@@ -187,7 +187,7 @@ export default function EventDetailPage() {
                 {eventData.facilities && eventData.facilities.length > 0 && (
                   <div className="space-y-3">
                     <h2 className="text-2xl font-medium text-[#4A2A1C]">
-                      Fasilitas Peserta
+                      Participant Inclusions
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {eventData.facilities.map((fac, idx) => (
@@ -206,7 +206,7 @@ export default function EventDetailPage() {
                 {/* Yang perlu dibawa (Figma Frame #169:5240) */}
                 <div className="bg-[#FFF1C7] rounded-[2px] p-5 space-y-2 border border-[#FBE6A2]">
                   <h3 className="text-base font-medium text-[#4A2A1C]">
-                    Yang perlu dibawa
+                    What to bring
                   </h3>
                   <p className="text-sm text-[#7A5644]">
                     {eventData.itemsToBring.map((item) => `• ${item}`).join('   ')}
@@ -216,12 +216,12 @@ export default function EventDetailPage() {
                 {/* Lokasi Peta Embed (Figma Frame #169:5243) */}
                 <div className="space-y-3">
                   <h2 className="text-2xl font-medium text-[#4A2A1C]">
-                    Lokasi Butik
+                    Boutique Location
                   </h2>
                   <div className="w-full h-[220px] rounded-[2px] overflow-hidden border border-[#E6D2C0]">
                     <iframe
-                      title="Lokasi BabyShalls Malang"
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.272714207119!2d112.58335017476834!3d-7.970747492054238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788265005b76db%3A0x67980590807661ee!2sCitraland%20Puncak%20Tidar%20Malang!5e0!3m2!1sid!2sid!4v1714400000000!5m2!1sid!2sid"
+                      title="BabyShalls Boutique Malang Location"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.272714207119!2d112.58335017476834!3d-7.970747492054238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788265005b76db%3A0x67980590807661ee!2sCitraland%20Puncak%20Tidar%20Malang!5e0!3m2!1sen!2sid!4v1714400000000!5m2!1sen!2sid"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
@@ -243,10 +243,10 @@ export default function EventDetailPage() {
                     {isFree ? (
                       <>
                         <span className="text-[32px] font-bold text-[#2A6E37] leading-none">
-                          GRATIS
+                          FREE
                         </span>
                         <span className="text-sm text-[#7A5644]">
-                          (Tanpa Biaya / anak)
+                          (Complimentary / child)
                         </span>
                       </>
                     ) : (
@@ -255,7 +255,7 @@ export default function EventDetailPage() {
                           {eventData.priceLabel}
                         </span>
                         <span className="text-base text-[#7A5644]">
-                          / anak
+                          / child
                         </span>
                       </>
                     )}
@@ -264,9 +264,9 @@ export default function EventDetailPage() {
                   {/* Kuota (Figma Frame #169:5251) */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-[13px]">
-                      <span className="font-medium text-[#4A2A1C]">Kuota Peserta</span>
+                      <span className="font-medium text-[#4A2A1C]">Participant Quota</span>
                       <span className="text-[#7A5644]">
-                        {eventData.quotaFilled} / {eventData.quotaTotal} terisi
+                        {eventData.quotaFilled} / {eventData.quotaTotal} booked
                       </span>
                     </div>
                     {/* Progress Bar (Figma #169:5255 & #169:5256) */}
@@ -284,7 +284,7 @@ export default function EventDetailPage() {
                     </div>
                     {eventData.seatsLeft > 0 && eventData.seatsLeft <= 5 && (
                       <span className="text-[11px] font-medium text-red-600 block">
-                        Tersisa hanya {eventData.seatsLeft} kursi lagi!
+                        Only {eventData.seatsLeft} seats remaining!
                       </span>
                     )}
                   </div>
@@ -292,7 +292,7 @@ export default function EventDetailPage() {
                   {/* Input / Jumlah anak (Figma Frame #169:5257) */}
                   <div className="space-y-1.5 pt-1">
                     <label className="block text-[13px] font-medium text-[#4A2A1C]">
-                      Jumlah anak yang didaftarkan
+                      Number of children attending
                     </label>
                     <div className="relative">
                       <select
@@ -301,10 +301,10 @@ export default function EventDetailPage() {
                         disabled={eventData.status === 'Penuh'}
                         className="w-full appearance-none px-4 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-base text-[#4A2A1C] focus:outline-hidden focus:border-[#B05A26] cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
                       >
-                        <option value={1}>1 anak</option>
-                        <option value={2}>2 anak</option>
-                        <option value={3}>3 anak</option>
-                        <option value={4}>4 anak</option>
+                        <option value={1}>1 child</option>
+                        <option value={2}>2 children</option>
+                        <option value={3}>3 children</option>
+                        <option value={4}>4 children</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-[#7A5644] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
@@ -312,10 +312,10 @@ export default function EventDetailPage() {
 
                   {/* Total (Figma Frame #169:5262) */}
                   <div className="flex items-center justify-between pt-3 border-t border-[#F2E4D6]">
-                    <span className="text-base text-[#7A5644]">Total Biaya</span>
+                    <span className="text-base text-[#7A5644]">Total Fee</span>
                     <span className="text-lg font-bold text-[#4A2A1C]">
                       {isFree ? (
-                        <span className="text-[#2A6E37]">GRATIS (Rp0)</span>
+                        <span className="text-[#2A6E37]">FREE (Rp0)</span>
                       ) : (
                         `Rp${totalPrice.toLocaleString('id-ID')}`
                       )}
@@ -329,20 +329,20 @@ export default function EventDetailPage() {
                       disabled
                       className="w-full py-3.5 bg-gray-200 text-gray-500 font-medium text-base rounded-[2px] text-center cursor-not-allowed"
                     >
-                      Kuota Penuh
+                      Fully Booked
                     </button>
                   ) : (
                     <Link
                       href={`/events/${eventData.id}/register`}
                       className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-medium text-base rounded-[2px] text-center transition-colors flex items-center justify-center gap-2 shadow-xs"
                     >
-                      {isFree ? 'Daftar Workshop Gratis' : 'Daftar Sekarang'}
+                      {isFree ? 'Register for Free Workshop' : 'Register Now'}
                     </Link>
                   )}
 
                   {/* Caption (Figma #169:5267) */}
                   <p className="text-[13px] text-[#7A5644] leading-relaxed">
-                    Tiket QR dikirim ke email &amp; bisa dibuka di menu Akun → Tiket Event.
+                    QR tickets are delivered to your email and accessible in Account → Event Tickets.
                   </p>
 
                   {/* Tombol / Bagikan Event (Figma Frame #169:5268) */}
@@ -355,12 +355,12 @@ export default function EventDetailPage() {
                       {copiedShare ? (
                         <>
                           <Check className="w-4 h-4 text-green-600" />
-                          <span className="text-green-600">Link Berhasil Disalin!</span>
+                          <span className="text-green-600">Link Copied!</span>
                         </>
                       ) : (
                         <>
                           <Share2 className="w-4 h-4" />
-                          <span>Bagikan Event</span>
+                          <span>Share Event</span>
                         </>
                       )}
                     </button>

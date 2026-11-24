@@ -1,11 +1,11 @@
 import { Product } from '@/types';
 
-export const MAIN_CATEGORIES = ['Buku', 'Mainan', 'Hampers', 'Preloved'] as const;
+export const MAIN_CATEGORIES = ['Books', 'Toys', 'Hampers', 'Preloved'] as const;
 export type MainCategory = (typeof MAIN_CATEGORIES)[number];
 
 /**
  * Resolve a product's top-level category into one of the 4 canonical types:
- * Buku, Mainan, Hampers, or Preloved, along with its normalized sub-category.
+ * Books, Toys, Hampers, or Preloved, along with its normalized sub-category.
  */
 export function resolveProductTaxonomy(product: Product): {
   mainCategory: MainCategory;
@@ -41,7 +41,7 @@ export function resolveProductTaxonomy(product: Product): {
     return { mainCategory: 'Hampers', subCategory: inferredSub };
   }
 
-  // 3. Mainan
+  // 3. Toys
   if (
     catLower.includes('mainan') ||
     catLower.includes('toy') ||
@@ -52,12 +52,12 @@ export function resolveProductTaxonomy(product: Product): {
   ) {
     const inferredSub =
       rawSub || (rawCat && !['toys', 'mainan'].includes(catLower) ? rawCat : undefined);
-    return { mainCategory: 'Mainan', subCategory: inferredSub };
+    return { mainCategory: 'Toys', subCategory: inferredSub };
   }
 
-  // 4. Buku (default for books, board books, picture books, early readers, chapter books, etc.)
+  // 4. Books (default for books, board books, picture books, early readers, chapter books, etc.)
   const inferredSub =
     rawSub || (rawCat && !['books', 'buku'].includes(catLower) ? rawCat : undefined);
-  return { mainCategory: 'Buku', subCategory: inferredSub };
+  return { mainCategory: 'Books', subCategory: inferredSub };
 }
 

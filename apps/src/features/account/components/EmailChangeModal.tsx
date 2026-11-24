@@ -57,15 +57,15 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
     setInfoMsg('');
 
     if (!newEmail.trim() || !newEmail.includes('@')) {
-      setErrorMsg('Masukkan format email baru yang valid.');
+      setErrorMsg('Please enter a valid new email address.');
       return;
     }
     if (!currentPassword) {
-      setErrorMsg('Masukkan password saat ini untuk konfirmasi keamanan.');
+      setErrorMsg('Please enter your current password for security verification.');
       return;
     }
     if (newEmail.trim().toLowerCase() === currentEmail.trim().toLowerCase()) {
-      setErrorMsg('Email baru tidak boleh sama dengan email akun saat ini.');
+      setErrorMsg('New email cannot be the same as your current account email.');
       return;
     }
 
@@ -75,13 +75,13 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
         currentPassword,
       });
       setStep('verify');
-      const devHint = res.previewOtp ? ` (Kode Dev Testing: ${res.previewOtp})` : '';
-      setInfoMsg(`Kode OTP 6 digit telah diterbitkan untuk ${newEmail.trim()}.${devHint}`);
+      const devHint = res.previewOtp ? ` (Dev Testing Code: ${res.previewOtp})` : '';
+      setInfoMsg(`A 6-digit OTP code has been issued for ${newEmail.trim()}.${devHint}`);
       if (res.previewOtp) {
         setOtpCode(res.previewOtp);
       }
     } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.message || 'Gagal mengirimkan kode OTP.';
+      const msg = err?.response?.data?.error || err?.message || 'Failed to send OTP code.';
       setErrorMsg(msg);
     }
   };
@@ -92,7 +92,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
     setInfoMsg('');
 
     if (!otpCode.trim() || otpCode.trim().length < 4) {
-      setErrorMsg('Masukkan kode OTP dengan lengkap.');
+      setErrorMsg('Please enter the complete OTP code.');
       return;
     }
 
@@ -104,7 +104,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
       onSuccess(res.user.email);
       handleClose();
     } catch (err: any) {
-      const msg = err?.response?.data?.error || err?.message || 'Kode OTP tidak valid atau kedaluwarsa.';
+      const msg = err?.response?.data?.error || err?.message || 'Invalid or expired OTP code.';
       setErrorMsg(msg);
     }
   };
@@ -116,7 +116,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
           type="button"
           onClick={handleClose}
           className="absolute top-4 right-4 text-[#7A5644] hover:text-[#4A2A1C] p-1 cursor-pointer transition-colors"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -124,7 +124,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
         <div className="flex items-center gap-2 mb-2">
           <Mail className="w-5 h-5 text-[#B05A26]" />
           <h3 className="text-base font-semibold text-[#4A2A1C]">
-            {step === 'request' ? 'Ganti Alamat Email' : 'Verifikasi OTP Email Baru'}
+            {step === 'request' ? 'Change Email Address' : 'Verify New Email OTP'}
           </h3>
         </div>
 
@@ -133,8 +133,8 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
           <div className="flex items-center justify-between text-[11px] font-semibold text-[#7A5644] mb-1.5">
             <span>
               {step === 'request'
-                ? 'Langkah 1 dari 2: Masukkan Email Baru & Sandi'
-                : 'Langkah 2 dari 2: Verifikasi Kode OTP'}
+                ? 'Step 1 of 2: Enter New Email & Password'
+                : 'Step 2 of 2: Verify OTP Code'}
             </span>
             <span className="text-[#B05A26] font-mono font-bold">{progressPercent}%</span>
           </div>
@@ -148,8 +148,8 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
 
         <p className="text-xs text-[#7A5644] mb-4">
           {step === 'request'
-            ? 'Demi keamanan akun, masukkan password akun saat ini dan alamat email baru Anda.'
-            : `Masukkan kode 6 digit yang kami kirimkan ke ${newEmail}.`}
+            ? 'For your security, please enter your current password and your new email address.'
+            : `Enter the 6-digit code sent to ${newEmail}.`}
         </p>
 
         {errorMsg && (
@@ -170,13 +170,13 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
           <form onSubmit={handleRequestOtp} className="space-y-4 text-xs">
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Email Baru
+                New Email Address
               </label>
               <input
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="nama@emailbaru.com"
+                placeholder="name@newemail.com"
                 required
                 className="w-full px-3 py-2 border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] placeholder:text-[#A89080] focus:outline-none focus:border-[#B05A26]"
               />
@@ -184,7 +184,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
 
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Password Saat Ini (Konfirmasi Keamanan)
+                Current Password (Security Confirmation)
               </label>
               <input
                 type="password"
@@ -202,7 +202,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
                 onClick={handleClose}
                 className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] font-medium rounded-[2px] cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="submit"
@@ -212,10 +212,10 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
                 {requestMutation.isPending ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Mengirim OTP...</span>
+                    <span>Sending OTP...</span>
                   </>
                 ) : (
-                  <span>Kirim Kode OTP</span>
+                  <span>Send OTP Code</span>
                 )}
               </button>
             </div>
@@ -224,7 +224,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
           <form onSubmit={handleVerifyOtp} className="space-y-4 text-xs">
             <div>
               <label className="block text-[#7A5644] font-medium mb-1">
-                Kode Verifikasi (OTP) 6 Digit
+                6-Digit Verification Code (OTP)
               </label>
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-[#7A5644] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -247,7 +247,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
                 onClick={() => setStep('request')}
                 className="text-xs text-[#B05A26] hover:underline cursor-pointer"
               >
-                Kirim Ulang / Ubah Email
+                Resend / Change Email
               </button>
 
               <div className="flex items-center gap-2">
@@ -256,7 +256,7 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
                   onClick={handleClose}
                   className="px-4 py-2 border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] font-medium rounded-[2px] cursor-pointer"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -266,10 +266,10 @@ export const EmailChangeModal: React.FC<EmailChangeModalProps> = ({
                   {verifyMutation.isPending ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Memverifikasi...</span>
+                      <span>Verifying...</span>
                     </>
                   ) : (
-                    <span>Verifikasi &amp; Simpan</span>
+                    <span>Verify &amp; Save</span>
                   )}
                 </button>
               </div>

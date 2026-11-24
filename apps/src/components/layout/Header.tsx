@@ -187,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                 href="/request-a-book"
                 className="text-[14px] font-medium text-[#4A2A1C] hover:text-[#B05A26] transition-colors py-1 uppercase tracking-wide"
               >
-                REQUEST BUKU
+                BOOK REQUEST
               </Link>
 
               <Link
@@ -200,57 +200,57 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
 
             {/* Right: Actions (Desktop: Icon + Text, Mobile: Full Icon Only) */}
             <div className="flex items-center gap-2 sm:gap-5">
-              {/* Cari */}
+              {/* Cari / Search */}
               <button
                 type="button"
                 onClick={toggleSearch}
                 className="flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
-                aria-label="Pencarian"
+                aria-label="Search"
               >
                 <div className="w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-search.svg"
-                    alt="Cari"
+                    alt="Search"
                     width={22}
                     height={22}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
                 <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
-                  Cari
+                  Search
                 </span>
               </button>
 
-              {/* Masuk / Akun */}
+              {/* Masuk / Akun -> Sign In / Account */}
               <Link
                 href={mounted && isLoggedIn ? '/account' : '/login'}
                 className="flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors group"
-                aria-label={mounted && isLoggedIn ? 'Akun saya' : 'Masuk ke akun'}
+                aria-label={mounted && isLoggedIn ? 'My account' : 'Sign in'}
               >
                 <div className="w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-user.svg"
-                    alt={mounted && isLoggedIn ? 'Akun' : 'Masuk'}
+                    alt={mounted && isLoggedIn ? 'Account' : 'Sign In'}
                     width={22}
                     height={22}
                     className="object-contain transition-transform group-hover:scale-105"
                   />
                 </div>
                 <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
-                  {mounted && isLoggedIn ? 'Akun' : 'Masuk'}
+                  {mounted && isLoggedIn ? 'Account' : 'Sign In'}
                 </span>
               </Link>
 
-              {/* Keranjang */}
+              {/* Keranjang / Cart */}
               <Link
                 href="/cart"
                 className="relative flex flex-col items-center justify-center p-1.5 sm:p-0 text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer group"
-                aria-label="Keranjang belanja"
+                aria-label="Shopping bag"
               >
                 <div className="relative w-[24px] h-[24px] sm:w-[20px] sm:h-[20px] flex items-center justify-center">
                   <Image
                     src="/images/icons/icon-cart.svg"
-                    alt="Keranjang"
+                    alt="Cart"
                     width={22}
                     height={22}
                     className="object-contain transition-transform group-hover:scale-105"
@@ -265,7 +265,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                   )}
                 </div>
                 <span className="hidden sm:inline text-[11px] font-semibold tracking-wider text-[#4A2A1C] group-hover:text-[#B05A26] mt-0.5">
-                  Keranjang
+                  Cart
                 </span>
               </Link>
 
@@ -293,7 +293,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari judul buku, mainan, atau topik edukasi..."
+                  placeholder="Search book titles, toys, or learning topics..."
                   className="w-full bg-white border border-[#E6D2C0] rounded-[2px] py-3 pl-11 pr-24 text-[14px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26] shadow-xs"
                 />
                 <Image
@@ -307,7 +307,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
                   type="submit"
                   className="absolute right-2 px-4 py-1.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-[13px] font-medium rounded-[2px] transition-colors"
                 >
-                  Cari
+                  Search
                 </button>
               </form>
             </div>
@@ -350,7 +350,7 @@ export const Header: React.FC<HeaderProps> = ({ onCategorySelect }) => {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block text-[16px] font-medium text-[#4A2A1C] hover:text-[#B05A26] uppercase"
             >
-              REQUEST BUKU
+              BOOK REQUEST
             </Link>
             <Link
               href="/faq"

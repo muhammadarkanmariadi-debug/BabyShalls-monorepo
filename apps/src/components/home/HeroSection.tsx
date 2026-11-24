@@ -18,14 +18,14 @@ export const HeroSection: React.FC = () => {
           {
             id: 1,
             label: '01',
-            title: hero.heroTitle || 'Buku & mainan\npilihan untuk si kecil',
+            title: hero.heroTitle || 'Curated books & toys\nfor your little one',
             subtitle:
               hero.heroSubtitle ||
-              'Dari newborn sampai 6+ tahun, dipilih tim kami di Malang. Kirim ke seluruh Indonesia atau ambil langsung di toko.',
-            ctaLabel: hero.heroPrimaryCtaText || 'Belanja Sekarang',
+              'From newborns to 6+ years, handpicked by our team in Malang. Nationwide delivery across Indonesia or instant store pickup.',
+            ctaLabel: hero.heroPrimaryCtaText || 'Shop Now',
             ctaHref: '/shop',
             image: hero.heroImage || '/images/hero/slide-1.jpg',
-            imageAlt: 'Buku & mainan pilihan untuk si kecil',
+            imageAlt: 'Curated books and educational toys for children',
           },
         ];
 

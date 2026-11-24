@@ -29,14 +29,14 @@ const STOREFRONT_CATEGORIES = [
 ];
 
 const AGE_GROUPS: { label: string; value: PrismaAgeGroup }[] = [
-  { label: 'Newborn+ (0-12 bln)', value: 'NEWBORN_PLUS' },
+  { label: 'Newborn+ (0-12 mos)', value: 'NEWBORN_PLUS' },
   { label: 'Ages 1-3', value: 'AGES_1_3' },
   { label: 'Ages 3+', value: 'AGES_3_PLUS' },
   { label: 'Ages 6+', value: 'AGES_6_PLUS' },
-  { label: 'Semua Usia', value: 'ALL_AGES' },
+  { label: 'All Ages', value: 'ALL_AGES' },
 ];
 
-const PRELOVED_GRADES = ['Seperti Baru', 'Sangat Baik', 'Baik'];
+const PRELOVED_GRADES = ['Like New', 'Very Good', 'Good'];
 
 interface ProductEditorViewProps {
   editingProduct?: AdminProduct | null;
@@ -120,7 +120,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
     e.preventDefault();
     const numericPrice = Number(price);
     if (!name.trim() || !Number.isFinite(numericPrice) || numericPrice <= 0) {
-      toast.error('Nama produk dan harga jual wajib diisi.');
+      toast.error('Product name and selling price are required.');
       return;
     }
 
@@ -137,7 +137,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
       name: name.trim(),
       sku: sku.trim() || null,
       authorOrBrand: authorOrBrand.trim() || null,
-      description: description.trim() || `${name.trim()} — kurasi resmi BabyShalls Malang.`,
+      description: description.trim() || `${name.trim()} — curated by BabyShalls Malang.`,
       images: images.length > 0 ? images : ['/images/placeholder-book.jpg'],
       condition,
       prelovedGrade: condition === 'PRELOVED' ? prelovedGrade : null,
@@ -166,14 +166,14 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
     try {
       if (editingProduct) {
         await updateMutation.mutateAsync({ id: editingProduct.id, ...payload });
-        toast.success(`Produk "${payload.name}" diperbarui.`);
+        toast.success(`Product "${payload.name}" updated.`);
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(`Produk "${payload.name}" ditambahkan.`);
+        toast.success(`Product "${payload.name}" created.`);
       }
       router.push('/admin');
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menyimpan produk.'));
+      toast.error(extractApiError(err, 'Failed to save product.'));
     }
   };
 
@@ -187,11 +187,11 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
             href="/admin"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A5644] hover:text-[#B05A26]"
           >
-            <ArrowLeft className="w-4 h-4" /> Kembali ke Produk
+            <ArrowLeft className="w-4 h-4" /> Back to Products
           </Link>
           <span className="text-[#E6D2C0]">|</span>
           <h1 className="text-lg sm:text-xl font-semibold text-[#4A2A1C]">
-            {editingProduct ? 'Ubah Produk' : 'Tambah Produk'}
+            {editingProduct ? 'Edit Product' : 'Add Product'}
           </h1>
         </div>
         <button
@@ -201,7 +201,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
           className="h-9 px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
         >
           <Save className="w-3.5 h-3.5" />
-          <span>{isSaving ? 'Menyimpan...' : 'Simpan Produk'}</span>
+          <span>{isSaving ? 'Saving...' : 'Save Product'}</span>
         </button>
       </header>
 
@@ -214,21 +214,21 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
         <div className="lg:col-span-8 space-y-5">
           {/* Info Dasar */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Info Dasar</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Basic Information</h2>
             <div>
-              <label className="block font-semibold text-[#4A2A1C] mb-1">Nama Produk *</label>
+              <label className="block font-semibold text-[#4A2A1C] mb-1">Product Name *</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Contoh: The Very Hungry Caterpillar (Board Book)"
+                placeholder="Example: The Very Hungry Caterpillar (Board Book)"
                 className="w-full h-10 px-3.5 rounded-[4px] border border-[#E6D2C0] focus:outline-none focus:border-[#B05A26]"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block font-semibold text-[#4A2A1C] mb-1">Penulis / Brand</label>
+                <label className="block font-semibold text-[#4A2A1C] mb-1">Author / Brand</label>
                 <input
                   type="text"
                   value={authorOrBrand}
@@ -249,24 +249,24 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
               </div>
             </div>
             <div>
-              <label className="block font-semibold text-[#4A2A1C] mb-1">Deskripsi</label>
+              <label className="block font-semibold text-[#4A2A1C] mb-1">Description</label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Tulis deskripsi kurasi buku atau mainan..."
+                placeholder="Write description for curated book or educational toy..."
                 className="w-full p-3.5 rounded-[4px] border border-[#E6D2C0] focus:outline-none focus:border-[#B05A26]"
               />
             </div>
             <div>
               <label className="block font-semibold text-[#4A2A1C] mb-1">
-                Keunggulan Produk (1 baris per poin)
+                Product Highlights (1 line per point)
               </label>
               <textarea
                 rows={3}
                 value={featuresText}
                 onChange={(e) => setFeaturesText(e.target.value)}
-                placeholder="Halaman board book tebal anti sobek&#10;Cat non-toxic ramah anak"
+                placeholder="Thick tear-resistant board book pages&#10;Non-toxic child-safe paint"
                 className="w-full p-3.5 rounded-[4px] border border-[#E6D2C0] focus:outline-none focus:border-[#B05A26]"
               />
             </div>
@@ -279,13 +279,13 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
               onChange={setImages}
               folder="babyshalls/products"
               maxImages={8}
-              label="Foto Produk (Maks. 8 foto)"
+              label="Product Photos (Max. 8 photos)"
             />
           </section>
 
           {/* Kondisi Barang */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Kondisi Barang</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Item Condition</h2>
             <div className="inline-flex gap-2">
               {(['NEW', 'PRELOVED'] as ProductCondition[]).map((c) => (
                 <button
@@ -298,7 +298,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                       : 'bg-white border-[#E6D2C0] text-[#7A5644]'
                   }`}
                 >
-                  {c === 'NEW' ? 'Baru' : 'Preloved'}
+                  {c === 'NEW' ? 'New' : 'Preloved'}
                 </button>
               ))}
             </div>
@@ -306,7 +306,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
             {condition === 'PRELOVED' && (
               <div className="p-4 rounded-[4px] bg-[#FFF6EA] border border-[#E6D2C0] space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-semibold text-[#4A2A1C]">Tingkat:</span>
+                  <span className="font-semibold text-[#4A2A1C]">Grade:</span>
                   {PRELOVED_GRADES.map((g) => (
                     <button
                       key={g}
@@ -323,17 +323,17 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                   ))}
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#4A2A1C] mb-1">Catatan Kondisi</label>
+                  <label className="block font-semibold text-[#4A2A1C] mb-1">Condition Notes</label>
                   <textarea
                     rows={2}
                     value={conditionNote}
                     onChange={(e) => setConditionNote(e.target.value)}
-                    placeholder="Contoh: Ada nama pemilik di halaman depan, halaman dalam mulus 95%."
+                    placeholder="Example: Previous owner name on front page, internal pages 95% pristine."
                     className="w-full p-3 rounded-[4px] bg-white border border-[#E6D2C0]"
                   />
                 </div>
                 <p className="text-[11px] text-[#7A5644]">
-                  Stok produk preloved otomatis dikunci 1 unit.
+                  Preloved product inventory is automatically locked to 1 unit.
                 </p>
               </div>
             )}
@@ -342,14 +342,14 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
           {/* Varian */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-[#4A2A1C]">Varian Produk</h2>
+              <h2 className="text-base font-semibold text-[#4A2A1C]">Product Variants</h2>
               <label className="inline-flex items-center gap-2 font-semibold cursor-pointer">
                 <input
                   type="checkbox"
                   checked={hasVariants}
                   onChange={(e) => setHasVariants(e.target.checked)}
                 />
-                <span>Produk punya varian</span>
+                <span>Product has variants</span>
               </label>
             </div>
 
@@ -378,7 +378,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                           )
                         )
                       }
-                      placeholder="Harga"
+                      placeholder="Price"
                       className="col-span-3 h-9 px-3 rounded-[4px] border border-[#E6D2C0]"
                     />
                     <input
@@ -391,7 +391,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                           )
                         )
                       }
-                      placeholder="Stok"
+                      placeholder="Stock"
                       className="col-span-2 h-9 px-3 rounded-[4px] border border-[#E6D2C0]"
                     />
                     <input
@@ -404,7 +404,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                           )
                         )
                       }
-                      placeholder="Berat (g)"
+                      placeholder="Weight (g)"
                       className="col-span-2 h-9 px-3 rounded-[4px] border border-[#E6D2C0]"
                     />
                     <button
@@ -421,7 +421,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                   onClick={handleAddVariant}
                   className="h-9 px-3.5 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#4A2A1C] hover:bg-[#FFF6EA] inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Plus className="w-3.5 h-3.5" /> Tambah Varian
+                  <Plus className="w-3.5 h-3.5" /> Add Variant
                 </button>
               </div>
             )}
@@ -429,10 +429,10 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
 
           {/* Detail Buku */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Detail Buku (Opsional)</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Book Details (Optional)</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block font-semibold text-[#4A2A1C] mb-1">Penerbit</label>
+                <label className="block font-semibold text-[#4A2A1C] mb-1">Publisher</label>
                 <input
                   type="text"
                   value={publisher}
@@ -450,7 +450,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                 />
               </div>
               <div>
-                <label className="block font-semibold text-[#4A2A1C] mb-1">Jumlah Halaman</label>
+                <label className="block font-semibold text-[#4A2A1C] mb-1">Number of Pages</label>
                 <input
                   type="number"
                   min={1}
@@ -467,10 +467,10 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
         <div className="lg:col-span-4 space-y-5">
           {/* Visibilitas */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Status &amp; Visibilitas</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Status &amp; Visibility</h2>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
-              <span>Tampilkan di Beranda (Featured)</span>
+              <span>Show on Home (Featured)</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={isNewArrival} onChange={(e) => setIsNewArrival(e.target.checked)} />
@@ -484,9 +484,9 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
 
           {/* Kategori & Usia */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Kategori &amp; Usia</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Category &amp; Age Group</h2>
             <div>
-              <label className="block font-semibold mb-1">Kategori *</label>
+              <label className="block font-semibold mb-1">Category *</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -498,17 +498,17 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
               </select>
             </div>
             <div>
-              <label className="block font-semibold mb-1">Sub-Kategori</label>
+              <label className="block font-semibold mb-1">Sub-Category</label>
               <input
                 type="text"
                 value={subCategory}
                 onChange={(e) => setSubCategory(e.target.value)}
-                placeholder="Contoh: Lift-the-flap, Balok Kayu"
+                placeholder="Example: Lift-the-flap, Wooden Blocks"
                 className="w-full h-10 px-3 rounded-[4px] border border-[#E6D2C0]"
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Kelompok Usia</label>
+              <label className="block font-semibold mb-1">Age Group</label>
               <select
                 value={ageGroup}
                 onChange={(e) => setAgeGroup(e.target.value as PrismaAgeGroup)}
@@ -523,17 +523,17 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
 
           {/* Harga & Stok */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Harga &amp; Stok</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Pricing &amp; Stock</h2>
             <div>
-              <label className="block font-semibold mb-1">Harga Jual (IDR) *</label>
+              <label className="block font-semibold mb-1">Selling Price (IDR) *</label>
               <CurrencyInput value={price} onChange={setPrice} placeholder="165.000" />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Harga Coret / Asli (Opsional)</label>
+              <label className="block font-semibold mb-1">Original Price (Optional)</label>
               <CurrencyInput value={originalPrice} onChange={setOriginalPrice} placeholder="195.000" />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Stok</label>
+              <label className="block font-semibold mb-1">Stock</label>
               <input
                 type="number"
                 min={0}
@@ -547,9 +547,9 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
 
           {/* Pengiriman */}
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Pengiriman (Malang Origin)</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Shipping (Malang Origin)</h2>
             <div>
-              <label className="block font-semibold mb-1">Berat (gram) *</label>
+              <label className="block font-semibold mb-1">Weight (grams) *</label>
               <input
                 type="number"
                 min={1}
@@ -559,14 +559,14 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Dimensi P × L × T (cm)</label>
+              <label className="block font-semibold mb-1">Dimensions L × W × H (cm)</label>
               <div className="grid grid-cols-3 gap-2">
                 <input
                   type="number"
                   min={0}
                   value={lengthCm}
                   onChange={(e) => setLengthCm(e.target.value)}
-                  placeholder="P"
+                  placeholder="L"
                   className="h-10 px-2.5 rounded-[4px] border border-[#E6D2C0]"
                 />
                 <input
@@ -574,7 +574,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                   min={0}
                   value={widthCm}
                   onChange={(e) => setWidthCm(e.target.value)}
-                  placeholder="L"
+                  placeholder="W"
                   className="h-10 px-2.5 rounded-[4px] border border-[#E6D2C0]"
                 />
                 <input
@@ -582,7 +582,7 @@ export function ProductEditorView({ editingProduct }: ProductEditorViewProps) {
                   min={0}
                   value={heightCm}
                   onChange={(e) => setHeightCm(e.target.value)}
-                  placeholder="T"
+                  placeholder="H"
                   className="h-10 px-2.5 rounded-[4px] border border-[#E6D2C0]"
                 />
               </div>

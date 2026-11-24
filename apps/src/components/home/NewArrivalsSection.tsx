@@ -39,7 +39,7 @@ export const NewArrivalsSection: React.FC<NewArrivalsSectionProps> = () => {
             href="/shop"
             className="inline-flex items-center gap-2 text-[#B05A26] hover:text-[#8E431A] text-[16px] font-medium transition-colors group"
           >
-            <span>Lihat Semua</span>
+            <span>View All Products</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>

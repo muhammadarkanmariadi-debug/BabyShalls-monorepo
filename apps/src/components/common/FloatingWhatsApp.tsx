@@ -5,7 +5,7 @@ import React from 'react';
 export const FloatingWhatsApp: React.FC = () => {
   const waNumber = process.env.NEXT_PUBLIC_WA_NUMBER || '6281234567890';
   const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(
-    'Halo BabyShalls, saya ingin bertanya tentang koleksi buku dan mainan anak.'
+    'Hello BabyShalls, I would like to inquire about children books and educational toys.'
   )}`;
 
   return (

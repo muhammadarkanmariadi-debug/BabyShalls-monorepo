@@ -77,19 +77,19 @@ export default function AdminEventAttendeesPage() {
             href="/admin"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A5644] hover:text-[#B05A26] shrink-0"
           >
-            <ArrowLeft className="w-4 h-4" /> Kembali
+            <ArrowLeft className="w-4 h-4" /> Back
           </Link>
           <span className="text-[#E6D2C0]">|</span>
           <h1 className="text-lg font-semibold text-[#4A2A1C] truncate">
-            {event?.title || 'Peserta & Check-in'}
+            {event?.title || 'Attendees & Check-in'}
           </h1>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {eventId && (
             <CsvExportButton
               endpoint={`/admin/import-export/events/${eventId}/attendees/export`}
-              filename={`peserta-event-${eventId.slice(0, 8)}.csv`}
-              label="Export Peserta CSV"
+              filename={`event-attendees-${eventId.slice(0, 8)}.csv`}
+              label="Export Attendees CSV"
             />
           )}
           <Link
@@ -104,16 +104,16 @@ export default function AdminEventAttendeesPage() {
       <main className="max-w-[1200px] mx-auto p-4 sm:p-8 space-y-6">
         {/* 4 KPI Cards matching Figma 218:6487 */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiBox label="Total Pendaftar" value={`${stats.totalTickets} tiket`} />
-          <KpiBox label="Sudah Hadir (Check-in)" value={`${stats.checkedIn}`} />
-          <KpiBox label="Belum Hadir" value={`${stats.notCheckedIn}`} />
-          <KpiBox label="Total Pemasukan" value={formatIDR(stats.paidRevenue)} />
+          <KpiBox label="Total Registered" value={`${stats.totalTickets} tickets`} />
+          <KpiBox label="Checked In" value={`${stats.checkedIn}`} />
+          <KpiBox label="Not Checked In" value={`${stats.notCheckedIn}`} />
+          <KpiBox label="Total Revenue" value={formatIDR(stats.paidRevenue)} />
         </div>
 
         <div className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-[#4A2A1C]">
-              Daftar Peserta ({filtered.length})
+              Attendees List ({filtered.length})
             </h2>
             <div className="relative w-full sm:w-72">
               <Search className="w-4 h-4 text-[#7A5644] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -121,26 +121,26 @@ export default function AdminEventAttendeesPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari nama anak, orang tua, kode tiket..."
+                placeholder="Search child name, parent, ticket code..."
                 className="w-full h-9 pl-9 pr-3 text-xs rounded-[4px] border border-[#E6D2C0]"
               />
             </div>
           </div>
 
           {isLoading ? (
-            <p className="text-xs text-[#7A5644]">Memuat data peserta...</p>
+            <p className="text-xs text-[#7A5644]">Loading attendee data...</p>
           ) : filtered.length === 0 ? (
-            <p className="text-xs text-[#7A5644] py-8 text-center">Belum ada peserta terdaftar.</p>
+            <p className="text-xs text-[#7A5644] py-8 text-center">No attendees registered yet.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-[#FFF6EA] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
                   <tr>
-                    <th className="py-3 px-3">Kode Tiket</th>
-                    <th className="py-3 px-3">Anak &amp; Orang Tua</th>
-                    <th className="py-3 px-3">Tiket</th>
-                    <th className="py-3 px-3">Pembayaran</th>
-                    <th className="py-3 px-3 text-right">Status Kehadiran</th>
+                    <th className="py-3 px-3">Ticket Code</th>
+                    <th className="py-3 px-3">Child &amp; Parent</th>
+                    <th className="py-3 px-3">Tickets</th>
+                    <th className="py-3 px-3">Payment</th>
+                    <th className="py-3 px-3 text-right">Attendance Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F2E4D6]">
@@ -178,8 +178,8 @@ export default function AdminEventAttendeesPage() {
                                 status: e.target.value as EventRegistrationDto['status'],
                               },
                               {
-                                onSuccess: () => toast.success('Status peserta diperbarui.'),
-                                onError: (err) => toast.error(extractApiError(err, 'Gagal update status.')),
+                                onSuccess: () => toast.success('Attendee status updated.'),
+                                onError: (err) => toast.error(extractApiError(err, 'Failed to update status.')),
                               }
                             )
                           }

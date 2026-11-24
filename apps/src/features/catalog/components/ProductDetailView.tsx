@@ -74,7 +74,7 @@ export function ProductDetailView() {
     return (
       <div className="min-h-screen bg-white flex flex-col justify-between">
         <div className="max-w-4xl mx-auto px-4 py-24 text-center text-[#7A5644]">
-          Memuat detail produk...
+          Loading product details...
         </div>
       </div>
     );
@@ -84,9 +84,9 @@ export function ProductDetailView() {
     return (
       <div className="min-h-screen bg-white flex flex-col justify-between">
         <div className="max-w-4xl mx-auto px-4 py-24 text-center">
-          <p className="text-2xl font-medium text-[#4A2A1C]">Produk Tidak Ditemukan</p>
+          <p className="text-2xl font-medium text-[#4A2A1C]">Product Not Found</p>
           <Link href="/shop" className="mt-4 inline-block text-sm text-[#B05A26] underline">
-            Kembali ke Katalog
+            Back to Catalog
           </Link>
         </div>
       </div>
@@ -108,18 +108,18 @@ export function ProductDetailView() {
 
   // Age label mapping
   const getAgeBadge = (age?: string) => {
-    if (!age || age === 'All' || age === 'All Ages') return { label: 'Semua usia', bg: 'bg-[#FFF0E0]', text: 'text-[#B05A26]' };
+    if (!age || age === 'All' || age === 'All Ages') return { label: 'All ages', bg: 'bg-[#FFF0E0]', text: 'text-[#B05A26]' };
     if (age.includes('0–1') || age.includes('0–2') || age.toLowerCase().includes('newborn')) {
-      return { label: 'Newborn (0–1 th)', bg: 'bg-[#FEECE8]', text: 'text-[#C0392B]' };
+      return { label: 'Newborn (0–1 yr)', bg: 'bg-[#FEECE8]', text: 'text-[#C0392B]' };
     }
     if (age.includes('1–3') || age.includes('1-3')) {
-      return { label: '1–3 tahun', bg: 'bg-[#FFF3D6]', text: 'text-[#9A6500]' };
+      return { label: '1–3 yrs', bg: 'bg-[#FFF3D6]', text: 'text-[#9A6500]' };
     }
     if (age.includes('3–5') || age.includes('3+')) {
-      return { label: '3+ tahun', bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
+      return { label: '3+ yrs', bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
     }
     if (age.includes('6+')) {
-      return { label: '6+ tahun', bg: 'bg-[#E3EDF9]', text: 'text-[#2C5282]' };
+      return { label: '6+ yrs', bg: 'bg-[#E3EDF9]', text: 'text-[#2C5282]' };
     }
     return { label: age, bg: 'bg-[#DDF1E5]', text: 'text-[#2A6E37]' };
   };
@@ -148,14 +148,14 @@ export function ProductDetailView() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
-      <TombolKembali fallbackUrl="/shop" label="Kembali ke Katalog" />
+      <TombolKembali fallbackUrl="/shop" label="Back to Catalog" />
 
       {/* Breadcrumb Navigation (Figma #135:898) */}
       <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-8 py-5">
         <nav className="flex items-center gap-2 text-[13px] text-[#7A5644] overflow-x-auto whitespace-nowrap">
-          <Link href="/" className="hover:underline">Beranda</Link>
+          <Link href="/" className="hover:underline">Home</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:underline">Buku</Link>
+          <Link href="/shop" className="hover:underline">Shop</Link>
           <span>/</span>
           <Link href={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:underline">
             {product.category}
@@ -193,11 +193,11 @@ export function ProductDetailView() {
               </span>
               {isPreloved ? (
                 <span className="border border-[#2A6E37] text-[#2A6E37] text-xs font-medium px-2.5 py-1 rounded-[2px]">
-                  Preloved · Sangat Baik
+                  Preloved · Like New
                 </span>
               ) : (
                 <span className="bg-[#EBF7EE] text-[#2A6E37] text-xs font-medium px-2.5 py-1 rounded-[2px]">
-                  Buku Baru
+                  Brand New
                 </span>
               )}
             </div>
@@ -212,7 +212,7 @@ export function ProductDetailView() {
               <p className="text-sm text-[#7A5644] mb-3">
                 {product.author && (
                   <>
-                    karya <span className="font-medium text-[#4A2A1C]">{product.author}</span>
+                    by <span className="font-medium text-[#4A2A1C]">{product.author}</span>
                   </>
                 )}
                 {product.publisher && ` · ${product.publisher}`}
@@ -222,7 +222,7 @@ export function ProductDetailView() {
 
             {/* Stock Info */}
             <div className="flex items-center gap-2 text-xs text-[#7A5644] mb-5">
-              <span>Stok: {product.stock ?? (product.inStock ? 'Tersedia' : 'Habis')}</span>
+              <span>Stock: {product.stock ?? (product.inStock ? 'Available' : 'Sold Out')}</span>
             </div>
 
             {/* Price Row */}
@@ -237,7 +237,7 @@ export function ProductDetailView() {
               )}
               {hasDiscount && (
                 <span className="bg-[#C0392B] text-white text-xs font-semibold px-2 py-0.5 rounded-[2px]">
-                  Hemat {product.discountPercent}%
+                  Save {product.discountPercent}%
                 </span>
               )}
             </div>
@@ -246,7 +246,7 @@ export function ProductDetailView() {
             {product.format && (
               <div className="mb-6">
                 <label className="block text-xs font-semibold text-[#4A2A1C] mb-2 uppercase tracking-wider">
-                  Pilihan Format:
+                  Select Format:
                 </label>
                 <div className="flex items-center gap-2 flex-wrap">
                   {product.format
@@ -278,14 +278,14 @@ export function ProductDetailView() {
             {product.stock !== undefined && product.stock <= 0 ? (
               <div className="flex items-center gap-2 text-xs text-[#C0392B] font-medium mb-4">
                 <span className="w-2 h-2 rounded-full bg-[#C0392B]"></span>
-                <span>Stok sedang habis di Toko Citraland Malang</span>
+                <span>Currently out of stock at Citraland Malang Boutique</span>
               </div>
             ) : (
               <div className="flex items-center gap-2 text-xs text-[#2A6E37] font-medium mb-4">
                 <span className="w-2 h-2 rounded-full bg-[#2A6E37] animate-pulse"></span>
                 <span>
-                  Stok tersedia di Toko Citraland Malang
-                  {typeof product.stock === 'number' ? ` (sisa ${product.stock} item)` : ''}
+                  In stock at Citraland Malang Boutique
+                  {typeof product.stock === 'number' ? ` (${product.stock} items left)` : ''}
                 </span>
               </div>
             )}
@@ -299,7 +299,7 @@ export function ProductDetailView() {
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1.5 cursor-pointer"
-                    aria-label="Kurang satu"
+                    aria-label="Decrease quantity"
                   >
                     -
                   </button>
@@ -308,7 +308,7 @@ export function ProductDetailView() {
                     type="button"
                     onClick={() => setQuantity((q) => q + 1)}
                     className="text-lg text-[#7A5644] hover:text-[#B05A26] font-medium px-1.5 cursor-pointer"
-                    aria-label="Tambah satu"
+                    aria-label="Increase quantity"
                   >
                     +
                   </button>
@@ -322,14 +322,14 @@ export function ProductDetailView() {
                   className="flex-1 h-12 bg-[#B05A26] hover:bg-[#964B1F] disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed text-white font-medium text-xs sm:text-sm rounded-[2px] transition-colors flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-sm px-3 sm:px-4"
                 >
                   {isOutOfStock ? (
-                    <span>Stok Habis</span>
+                    <span>Sold Out</span>
                   ) : isAdded ? (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>Ditambahkan!</span>
+                      <span>Added!</span>
                     </>
                   ) : (
-                    <span>+ Tambah Keranjang</span>
+                    <span>+ Add to Bag</span>
                   )}
                 </button>
 
@@ -355,7 +355,7 @@ export function ProductDetailView() {
                 disabled={isOutOfStock}
                 className="w-full h-12 border border-[#4A2A1C] text-[#4A2A1C] hover:bg-[#FFF6EA] disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-white disabled:cursor-not-allowed font-medium text-sm rounded-[2px] transition-colors cursor-pointer flex items-center justify-center"
               >
-                {isOutOfStock ? 'Stok Habis' : 'Beli Sekarang'}
+                {isOutOfStock ? 'Sold Out' : 'Buy Now'}
               </button>
             </div>
 
@@ -363,32 +363,32 @@ export function ProductDetailView() {
             <div className="bg-[#FFFBF7] border border-[#F2E4D6] rounded-[2px] p-4 flex flex-col gap-3 mb-8 text-xs text-[#4A2A1C]">
               <div className="flex items-center gap-3">
                 <Truck className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span>Dikirim langsung dari <strong>Citraland Puncak Tidar, Kota Malang</strong></span>
+                <span>Shipped directly from <strong>Citraland Puncak Tidar, Malang</strong></span>
               </div>
               <div className="flex items-center gap-3">
                 <Package className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span>Berat produk: <strong>± {product.weightInGrams || 300} gram</strong> (packing aman dengan bubble wrap ganda)</span>
+                <span>Product weight: <strong>± {product.weightInGrams || 300} grams</strong> (secure dual-layer bubble wrap)</span>
               </div>
               <div className="flex items-center gap-3">
                 <Gift className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span>Bisa request <strong>bungkus kado & kartu ucapan gratis</strong> di checkout</span>
+                <span>Complimentary <strong>gift wrapping & custom greeting card</strong> available at checkout</span>
               </div>
               <div className="flex items-center gap-3">
                 <Store className="w-4 h-4 text-[#B05A26] shrink-0" />
-                <span>Tersedia opsi <strong>Ambil di Toko (Self Pick-up)</strong> tanpa biaya ongkir</span>
+                <span><strong>Store Pick-up (Self Pick-up)</strong> option with zero shipping fee</span>
               </div>
             </div>
 
-            {/* Accordions (Deskripsi, Spesifikasi, Pengiriman) */}
+            {/* Accordions (Description, Specs, Shipping) */}
             <div className="border-t border-[#F2E4D6]">
-              {/* Accordion 1: Deskripsi */}
+              {/* Accordion 1: Description */}
               <div className="border-b border-[#F2E4D6]">
                 <button
                   type="button"
                   onClick={() => setOpenSection(openSection === 'desc' ? ('' as any) : 'desc')}
                   className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
                 >
-                  <span>Deskripsi Produk & Manfaat</span>
+                  <span>Product Description &amp; Benefits</span>
                   {openSection === 'desc' ? (
                     <ChevronUp className="w-4 h-4 text-[#7A5644]" />
                   ) : (
@@ -409,14 +409,14 @@ export function ProductDetailView() {
                 )}
               </div>
 
-              {/* Accordion 2: Spesifikasi */}
+              {/* Accordion 2: Specs */}
               <div className="border-b border-[#F2E4D6]">
                 <button
                   type="button"
                   onClick={() => setOpenSection(openSection === 'specs' ? ('' as any) : 'specs')}
                   className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
                 >
-                  <span>Detail & Spesifikasi Lengkap</span>
+                  <span>Details &amp; Specifications</span>
                   {openSection === 'specs' ? (
                     <ChevronUp className="w-4 h-4 text-[#7A5644]" />
                   ) : (
@@ -428,42 +428,42 @@ export function ProductDetailView() {
                     <table className="w-full border-collapse">
                       <tbody>
                         <tr className="border-b border-[#F9EAE1]">
-                          <td className="py-2 text-[#7A5644] w-1/3">Nama Produk</td>
+                          <td className="py-2 text-[#7A5644] w-1/3">Product Name</td>
                           <td className="py-2 font-medium">{product.title}</td>
                         </tr>
                         {product.author && (
                           <tr className="border-b border-[#F9EAE1]">
-                            <td className="py-2 text-[#7A5644]">Penulis / Brand</td>
+                            <td className="py-2 text-[#7A5644]">Author / Brand</td>
                             <td className="py-2 font-medium">{product.author}</td>
                           </tr>
                         )}
                         <tr className="border-b border-[#F9EAE1]">
-                          <td className="py-2 text-[#7A5644]">Kategori</td>
+                          <td className="py-2 text-[#7A5644]">Category</td>
                           <td className="py-2 font-medium">{product.category}</td>
                         </tr>
                         <tr className="border-b border-[#F9EAE1]">
-                          <td className="py-2 text-[#7A5644]">Kategori Usia</td>
+                          <td className="py-2 text-[#7A5644]">Age Group</td>
                           <td className="py-2 font-medium">{ageBadge.label}</td>
                         </tr>
                         <tr className="border-b border-[#F9EAE1]">
-                          <td className="py-2 text-[#7A5644]">Berat</td>
-                          <td className="py-2 font-medium">{product.weightInGrams || 300} gram</td>
+                          <td className="py-2 text-[#7A5644]">Weight</td>
+                          <td className="py-2 font-medium">{product.weightInGrams || 300} grams</td>
                         </tr>
                         {product.publisher && (
                           <tr className="border-b border-[#F9EAE1]">
-                            <td className="py-2 text-[#7A5644]">Penerbit</td>
+                            <td className="py-2 text-[#7A5644]">Publisher</td>
                             <td className="py-2 font-medium">{product.publisher}</td>
                           </tr>
                         )}
                         {product.publicationYear && (
                           <tr className="border-b border-[#F9EAE1]">
-                            <td className="py-2 text-[#7A5644]">Tahun Terbit</td>
+                            <td className="py-2 text-[#7A5644]">Publication Year</td>
                             <td className="py-2 font-medium">{product.publicationYear}</td>
                           </tr>
                         )}
                         {(product.format || product.pages) && (
                           <tr className="border-b border-[#F9EAE1]">
-                            <td className="py-2 text-[#7A5644]">Format / Halaman</td>
+                            <td className="py-2 text-[#7A5644]">Format / Pages</td>
                             <td className="py-2 font-medium">
                               {[product.format, product.pages].filter(Boolean).join(' · ')}
                             </td>
@@ -471,7 +471,7 @@ export function ProductDetailView() {
                         )}
                         {product.language && (
                           <tr className="border-b border-[#F9EAE1]">
-                            <td className="py-2 text-[#7A5644]">Bahasa</td>
+                            <td className="py-2 text-[#7A5644]">Language</td>
                             <td className="py-2 font-medium">{product.language}</td>
                           </tr>
                         )}
@@ -483,7 +483,7 @@ export function ProductDetailView() {
                         )}
                         {product.dimensions && (
                           <tr>
-                            <td className="py-2 text-[#7A5644]">Dimensi</td>
+                            <td className="py-2 text-[#7A5644]">Dimensions</td>
                             <td className="py-2 font-medium">{product.dimensions}</td>
                           </tr>
                         )}
@@ -493,14 +493,14 @@ export function ProductDetailView() {
                 )}
               </div>
 
-              {/* Accordion 3: Pengiriman */}
+              {/* Accordion 3: Shipping */}
               <div className="border-b border-[#F2E4D6]">
                 <button
                   type="button"
                   onClick={() => setOpenSection(openSection === 'shipping' ? ('' as any) : 'shipping')}
                   className="w-full py-4 flex items-center justify-between text-left text-sm font-semibold text-[#4A2A1C] hover:text-[#B05A26] transition-colors cursor-pointer"
                 >
-                  <span>Pengiriman & Kebijakan Toko</span>
+                  <span>Shipping &amp; Store Policies</span>
                   {openSection === 'shipping' ? (
                     <ChevronUp className="w-4 h-4 text-[#7A5644]" />
                   ) : (
@@ -510,10 +510,10 @@ export function ProductDetailView() {
                 {openSection === 'shipping' && (
                   <div className="pb-5 text-sm text-[#7A5644] leading-relaxed space-y-2">
                     <p>
-                      Pesanan yang masuk sebelum pukul 15.00 WIB akan dikirim pada hari yang sama. Kami melayani pengiriman ke seluruh Indonesia via JNE, J&T, SiCepat, serta instant kurir (GoSend) untuk area Malang Raya.
+                      Orders placed before 3:00 PM WIB are dispatched on the same day. We provide nationwide delivery across Indonesia via JNE, J&amp;T, SiCepat, and instant couriers (GoSend/Grab) for the Greater Malang area.
                     </p>
                     <p>
-                      <strong>Garansi BabyShalls:</strong> Jika buku yang diterima mengalami cacat cetak atau rusak dalam perjalanan, kami siap mengganti dengan buku baru atau refund 100% dengan melampirkan video unboxing dalam waktu 2x24 jam.
+                      <strong>BabyShalls Guarantee:</strong> If the item received has printing defects or arrives damaged, we provide a replacement or 100% refund with an unboxing video submitted within 48 hours.
                     </p>
                   </div>
                 )}
@@ -529,13 +529,13 @@ export function ProductDetailView() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-medium text-[#4A2A1C] tracking-tight">
-              Mungkin Kamu Juga Suka
+              You May Also Like
             </h2>
             <Link
               href="/shop"
               className="text-sm font-medium text-[#B05A26] hover:underline"
             >
-              Lihat Semua Buku →
+              View All Products →
             </Link>
           </div>
 

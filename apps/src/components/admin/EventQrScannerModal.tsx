@@ -71,10 +71,10 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
       const entry: ScanHistoryEntry = {
         code: clean,
         status: res.alreadyCheckedIn ? 'already' : 'success',
-        message: res.message || 'Check-in berhasil.',
+        message: res.message || 'Check-in successful.',
         childName: res.data?.childName,
         eventTitle: res.data?.event?.title,
-        time: new Date().toLocaleTimeString('id-ID'),
+        time: new Date().toLocaleTimeString('en-US'),
       };
       setLastResult(entry);
       setHistory((prev) => [entry, ...prev].slice(0, 10));
@@ -84,12 +84,12 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
         toast.success(entry.message);
       }
     } catch (err) {
-      const msg = extractApiError(err, 'Kode tiket tidak valid.');
+      const msg = extractApiError(err, 'Invalid ticket code.');
       const entry: ScanHistoryEntry = {
         code: clean,
         status: 'error',
         message: msg,
-        time: new Date().toLocaleTimeString('id-ID'),
+        time: new Date().toLocaleTimeString('en-US'),
       };
       setLastResult(entry);
       setHistory((prev) => [entry, ...prev].slice(0, 10));
@@ -115,7 +115,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
       );
     } catch {
       setCameraActive(false);
-      toast.error('Kamera tidak dapat diakses. Gunakan input manual atau izinkan akses kamera.');
+      toast.error('Camera cannot be accessed. Use manual input or permit camera access.');
     }
   };
 
@@ -126,8 +126,8 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
         void stopCamera();
         onClose();
       }}
-      title="Scan QR Check-In Pengunjung Workshop"
-      subtitle="Arahkan kamera ke E-Ticket QR pengunjung atau ketik kode tiket (BS-EVT-...)."
+      title="Scan Workshop Attendee QR Check-In"
+      subtitle="Point camera at attendee E-Ticket QR or enter ticket code (BS-EVT-...)."
       size="lg"
     >
       <div className="space-y-4 text-xs">
@@ -139,7 +139,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
               {!cameraActive && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white/80 p-4 text-center space-y-2">
                   <QrCode className="w-10 h-10 text-[#FDF0B8]" />
-                  <p className="text-xs">Kamera belum aktif</p>
+                  <p className="text-xs">Camera is inactive</p>
                 </div>
               )}
             </div>
@@ -151,7 +151,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
                   onClick={startCamera}
                   className="flex-1 h-[40px] rounded-xl bg-[#D9744A] hover:bg-[#c5633b] text-white font-bold inline-flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Camera className="w-4 h-4" /> Aktifkan Kamera Scanner
+                  <Camera className="w-4 h-4" /> Activate Scanner Camera
                 </button>
               ) : (
                 <button
@@ -159,7 +159,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
                   onClick={() => void stopCamera()}
                   className="flex-1 h-[40px] rounded-xl bg-[#1A1A1A] text-white font-bold inline-flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <CameraOff className="w-4 h-4" /> Matikan Kamera
+                  <CameraOff className="w-4 h-4" /> Turn Off Camera
                 </button>
               )}
             </div>
@@ -176,7 +176,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
               className="space-y-2"
             >
               <label className="block font-bold text-[#502E1E]">
-                Input Manual / USB Barcode Scanner
+                Manual Input / USB Barcode Scanner
               </label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -225,7 +225,7 @@ export function EventQrScannerModal({ isOpen, onClose }: EventQrScannerModalProp
 
             {history.length > 0 && (
               <div className="border border-[#EBDCCB] rounded-2xl p-3 space-y-2 max-h-40 overflow-y-auto">
-                <div className="font-bold text-[#502E1E]">Riwayat Scan Sesi Ini</div>
+                <div className="font-bold text-[#502E1E]">Scan History This Session</div>
                 {history.map((item, idx) => (
                   <div key={`${item.code}-${idx}`} className="flex items-center justify-between text-[11px] border-t border-[#F3ECE2] pt-1.5">
                     <div>

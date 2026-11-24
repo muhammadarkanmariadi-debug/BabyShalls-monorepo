@@ -36,16 +36,16 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Storytelling & Art');
   const [speaker, setSpeaker] = useState('');
-  const [ageRecommendation, setAgeRecommendation] = useState('3–6 tahun');
+  const [ageRecommendation, setAgeRecommendation] = useState('3–6 years');
   const [description, setDescription] = useState('');
   const [agenda, setAgenda] = useState<EventAgendaItem[]>([
-    { time: '10.00', activity: 'Registrasi & check-in' },
-    { time: '10.15', activity: 'Story time & aktivitas utama' },
+    { time: '10:00', activity: 'Registration & check-in' },
+    { time: '10:15', activity: 'Story time & main activity' },
   ]);
   const [bannerImages, setBannerImages] = useState<string[]>(['/images/event-craft.jpg']);
   const [eventDate, setEventDate] = useState('');
   const [timeString, setTimeString] = useState('10:00 - 12:00 WIB');
-  const [location, setLocation] = useState('Butik BabyShalls, Citraland Puncak Tidar Blok HH-26, Malang');
+  const [location, setLocation] = useState('BabyShalls Boutique, Citraland Puncak Tidar Blok HH-26, Malang');
   const [price, setPrice] = useState('0');
   const [quota, setQuota] = useState('20');
   const [shortCode, setShortCode] = useState('');
@@ -64,7 +64,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
     setBannerImages(editingEvent.bannerImage ? [editingEvent.bannerImage] : ['/images/event-craft.jpg']);
     setEventDate(editingEvent.eventDate ? new Date(editingEvent.eventDate).toISOString().slice(0, 10) : '');
     setTimeString(editingEvent.timeString || '10:00 - 12:00 WIB');
-    setLocation(editingEvent.location || 'Butik BabyShalls Malang');
+    setLocation(editingEvent.location || 'BabyShalls Boutique Malang');
     setPrice(String(editingEvent.price ?? 0));
     setQuota(String(editingEvent.quota ?? 20));
     setShortCode(editingEvent.shortCode || '');
@@ -72,7 +72,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
 
   const submitEvent = async (asDraft: boolean) => {
     if (!title.trim() || !eventDate) {
-      toast.error('Nama event dan tanggal wajib diisi.');
+      toast.error('Event title and date are required.');
       return;
     }
 
@@ -81,11 +81,11 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
       category,
       speaker: speaker.trim() || null,
       ageRecommendation: ageRecommendation.trim() || null,
-      description: description.trim() || `${title.trim()} di Butik BabyShalls Malang.`,
+      description: description.trim() || `${title.trim()} at BabyShalls Boutique Malang.`,
       bannerImage: bannerImages[0] || '/images/event-craft.jpg',
       eventDate: new Date(`${eventDate}T09:00:00`).toISOString(),
       timeString: timeString.trim() || '10:00 - 12:00 WIB',
-      location: location.trim() || 'Butik BabyShalls Malang',
+      location: location.trim() || 'BabyShalls Boutique Malang',
       price: Math.max(0, Number(price) || 0),
       quota: Math.max(1, Number(quota) || 20),
       agenda: agenda.filter((a) => a.time.trim() && a.activity.trim()),
@@ -98,14 +98,14 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
     try {
       if (editingEvent) {
         await updateMutation.mutateAsync({ id: editingEvent.id, data: payload });
-        toast.success(`Event "${payload.title}" diperbarui.`);
+        toast.success(`Event "${payload.title}" updated.`);
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(asDraft ? 'Event disimpan sebagai draft.' : 'Event berhasil dipublikasikan!');
+        toast.success(asDraft ? 'Event saved as draft.' : 'Event published successfully!');
       }
       router.push('/admin');
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menyimpan event.'));
+      toast.error(extractApiError(err, 'Failed to save event.'));
     }
   };
 
@@ -119,11 +119,11 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
             href="/admin"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7A5644] hover:text-[#B05A26]"
           >
-            <ArrowLeft className="w-4 h-4" /> Kembali ke Event
+            <ArrowLeft className="w-4 h-4" /> Back to Events
           </Link>
           <span className="text-[#E6D2C0]">|</span>
           <h1 className="text-lg sm:text-xl font-semibold text-[#4A2A1C]">
-            {editingEvent ? 'Ubah Event' : 'Buat Event'}
+            {editingEvent ? 'Edit Event' : 'Create Event'}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
             onClick={() => submitEvent(true)}
             className="h-9 px-4 rounded-[4px] border border-[#E6D2C0] bg-white hover:bg-[#FFF6EA] text-xs font-semibold text-[#4A2A1C] cursor-pointer"
           >
-            Simpan Draft
+            Save Draft
           </button>
           <button
             type="button"
@@ -142,7 +142,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
             className="h-9 px-5 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>{isSaving ? 'Menyimpan...' : 'Publikasikan'}</span>
+            <span>{isSaving ? 'Saving...' : 'Publish'}</span>
           </button>
         </div>
       </header>
@@ -151,21 +151,21 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
         {/* Left Column */}
         <div className="lg:col-span-8 space-y-5">
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-6 space-y-4">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Info Event</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Event Information</h2>
             <div>
-              <label className="block font-semibold mb-1">Nama Event *</label>
+              <label className="block font-semibold mb-1">Event Title *</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Contoh: Nature Craft & Sensory Play"
+                placeholder="e.g. Nature Craft & Sensory Play"
                 className="w-full h-10 px-3.5 rounded-[4px] border border-[#E6D2C0]"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block font-semibold mb-1">Jenis</label>
+                <label className="block font-semibold mb-1">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -177,33 +177,33 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
                 </select>
               </div>
               <div>
-                <label className="block font-semibold mb-1">Usia Peserta</label>
+                <label className="block font-semibold mb-1">Participant Age</label>
                 <input
                   type="text"
                   value={ageRecommendation}
                   onChange={(e) => setAgeRecommendation(e.target.value)}
-                  placeholder="3–6 tahun"
+                  placeholder="3–6 years"
                   className="w-full h-10 px-3 rounded-[4px] border border-[#E6D2C0]"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-1">Pemateri / Fasilitator</label>
+                <label className="block font-semibold mb-1">Speaker / Facilitator</label>
                 <input
                   type="text"
                   value={speaker}
                   onChange={(e) => setSpeaker(e.target.value)}
-                  placeholder="Kak Rina"
+                  placeholder="e.g. Kak Rina"
                   className="w-full h-10 px-3 rounded-[4px] border border-[#E6D2C0]"
                 />
               </div>
             </div>
             <div>
-              <label className="block font-semibold mb-1">Deskripsi</label>
+              <label className="block font-semibold mb-1">Description</label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Jelaskan aktivitas workshop, perlengkapan yang didapat, dan manfaat untuk anak..."
+                placeholder="Describe workshop activities, materials provided, and benefits for children..."
                 className="w-full p-3.5 rounded-[4px] border border-[#E6D2C0]"
               />
             </div>
@@ -223,7 +223,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
                         prev.map((a, i) => (i === idx ? { ...a, time: e.target.value } : a))
                       )
                     }
-                    placeholder="10.00"
+                    placeholder="10:00"
                     className="col-span-3 h-10 px-3 rounded-[4px] border border-[#E6D2C0]"
                   />
                   <input
@@ -234,7 +234,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
                         prev.map((a, i) => (i === idx ? { ...a, activity: e.target.value } : a))
                       )
                     }
-                    placeholder="Registrasi & check-in"
+                    placeholder="Registration & check-in"
                     className="col-span-8 h-10 px-3 rounded-[4px] border border-[#E6D2C0]"
                   />
                   <button
@@ -252,7 +252,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
               onClick={() => setAgenda((prev) => [...prev, { time: '', activity: '' }])}
               className="h-9 px-3.5 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#4A2A1C] hover:bg-[#FFF6EA] inline-flex items-center gap-1.5 cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" /> Tambah Agenda
+              <Plus className="w-3.5 h-3.5" /> Add Agenda
             </button>
           </section>
 
@@ -263,7 +263,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
               onChange={setBannerImages}
               folder="babyshalls/events"
               maxImages={1}
-              label="Foto / Banner Event (16:9)"
+              label="Event Photo / Banner (16:9)"
             />
           </section>
         </div>
@@ -271,9 +271,9 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
         {/* Right Column */}
         <div className="lg:col-span-4 space-y-5">
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Jadwal &amp; Lokasi</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Schedule &amp; Location</h2>
             <div>
-              <label className="block font-semibold mb-1">Tanggal *</label>
+              <label className="block font-semibold mb-1">Date *</label>
               <input
                 type="date"
                 required
@@ -283,7 +283,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Waktu</label>
+              <label className="block font-semibold mb-1">Time</label>
               <input
                 type="text"
                 value={timeString}
@@ -293,7 +293,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Lokasi</label>
+              <label className="block font-semibold mb-1">Location</label>
               <input
                 type="text"
                 value={location}
@@ -304,13 +304,13 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
           </section>
 
           <section className="bg-white border border-[#E6D2C0] rounded-[6px] p-5 space-y-3">
-            <h2 className="text-base font-semibold text-[#4A2A1C]">Tiket &amp; Kuota</h2>
+            <h2 className="text-base font-semibold text-[#4A2A1C]">Tickets &amp; Quota</h2>
             <div>
-              <label className="block font-semibold mb-1">Harga Tiket (0 = Gratis)</label>
+              <label className="block font-semibold mb-1">Ticket Price (0 = Free)</label>
               <CurrencyInput value={price} onChange={setPrice} placeholder="0" />
             </div>
             <div>
-              <label className="block font-semibold mb-1">Kuota Maksimal</label>
+              <label className="block font-semibold mb-1">Maximum Quota</label>
               <input
                 type="number"
                 min={1}
@@ -336,7 +336,7 @@ export function EventEditorView({ editingEvent }: EventEditorViewProps) {
                   checked={broadcastEmail}
                   onChange={(e) => setBroadcastEmail(e.target.checked)}
                 />
-                <span>Kirim email broadcast ke pelanggan opt-in</span>
+                <span>Send email broadcast to opt-in subscribers</span>
               </label>
             )}
           </section>

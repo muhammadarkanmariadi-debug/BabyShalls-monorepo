@@ -51,7 +51,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
     e.preventDefault();
     const cleanUrl = targetUrl.trim();
     if (!cleanUrl) {
-      toast.error('URL tujuan wajib diisi.');
+      toast.error('Destination URL is required.');
       return;
     }
 
@@ -61,40 +61,40 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
         code: customCode.trim() || undefined,
         title: title.trim() || undefined,
       });
-      toast.success(`Shortlink /s/${created.code} berhasil dibuat!`);
+      toast.success(`Shortlink /s/${created.code} successfully created!`);
       setTargetUrl('');
       setCustomCode('');
       setTitle('');
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal membuat shortlink.'));
+      toast.error(extractApiError(err, 'Failed to create shortlink.'));
     }
   };
 
   const handleCopy = async (code: string) => {
     try {
       await navigator.clipboard.writeText(`${origin}/babyshalls/${code}`);
-      toast.success('Shortlink disalin ke clipboard!');
+      toast.success('Shortlink copied to clipboard!');
     } catch {
-      toast.error('Gagal menyalin shortlink.');
+      toast.error('Failed to copy shortlink.');
     }
   };
 
   const handleToggleActive = async (item: AdminShortlink) => {
     try {
       await updateMutation.mutateAsync({ id: item.id, isActive: !item.isActive });
-      toast.success(`Shortlink /babyshalls/${item.code} ${!item.isActive ? 'diaktifkan' : 'dinonaktifkan'}.`);
+      toast.success(`Shortlink /babyshalls/${item.code} ${!item.isActive ? 'activated' : 'deactivated'}.`);
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal memperbarui status shortlink.'));
+      toast.error(extractApiError(err, 'Failed to update shortlink status.'));
     }
   };
 
   const handleDelete = async (item: AdminShortlink) => {
-    if (!window.confirm(`Hapus shortlink /babyshalls/${item.code}?`)) return;
+    if (!window.confirm(`Delete shortlink /babyshalls/${item.code}?`)) return;
     try {
       await deleteMutation.mutateAsync(item.id);
-      toast.success('Shortlink dihapus.');
+      toast.success('Shortlink deleted.');
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menghapus shortlink.'));
+      toast.error(extractApiError(err, 'Failed to delete shortlink.'));
     }
   };
 
@@ -106,7 +106,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
     link.href = canvas.toDataURL('image/png');
     link.download = `qr-shortlink-${qrLink.code}.png`;
     link.click();
-    toast.success('QR Code diunduh (PNG).');
+    toast.success('QR Code downloaded (PNG).');
   };
 
   return (
@@ -119,10 +119,10 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-bold text-[#4A2A1C]">
-              Generator Shortlink &amp; QR Universal
+              Universal Shortlink &amp; QR Generator
             </h2>
             <p className="text-xs text-[#7A5644]">
-              Ubah link katalog, promo, WhatsApp, atau Google Form menjadi shortlink <code>/babyshalls/nama-singkatan</code> &amp; QR Code cetak.
+              Transform catalog links, promos, WhatsApp, or Google Forms into shortlinks <code>/babyshalls/slug-name</code> &amp; printable QR codes.
             </p>
           </div>
           {/* Quick Preset Buttons */}
@@ -130,18 +130,18 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
             <button
               type="button"
               onClick={() => {
-                setTitle('QR Meja Kasir BabyShalls Citraland');
+                setTitle('Cashier Desk QR BabyShalls Citraland');
                 setTargetUrl(`${origin}/shop?source=store_qr`);
-                setCustomCode('kasir');
+                setCustomCode('cashier');
               }}
               className="px-2.5 py-1 text-[11px] font-bold bg-[#FFF1C7] border border-[#F7C94B]/60 text-[#8A5A00] rounded-[4px] hover:bg-[#FFE7A3] cursor-pointer"
             >
-              Preset Kasir
+              Preset Cashier
             </button>
             <button
               type="button"
               onClick={() => {
-                setTitle('Rak Preloved Kurasi Steril UV');
+                setTitle('Preloved Curated UV Sterilized Shelf');
                 setTargetUrl(`${origin}/preloved`);
                 setCustomCode('preloved');
               }}
@@ -152,7 +152,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
             <button
               type="button"
               onClick={() => {
-                setTitle('Area Workshop Sensory Play');
+                setTitle('Sensory Play Workshop Area');
                 setTargetUrl(`${origin}/events`);
                 setCustomCode('workshop');
               }}
@@ -165,18 +165,18 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 text-xs">
           <div className="md:col-span-5">
-            <label className="block font-bold text-[#4A2A1C] mb-1">URL Tujuan *</label>
+            <label className="block font-bold text-[#4A2A1C] mb-1">Destination URL *</label>
             <input
               type="text"
               required
               value={targetUrl}
               onChange={(e) => setTargetUrl(e.target.value)}
-              placeholder="https://... atau /shop?category=Board%20Books"
+              placeholder="https://... or /shop?category=Board%20Books"
               className="w-full h-[38px] px-3 rounded-[4px] border border-[#E6D2C0] bg-[#FFFDF9] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
             />
           </div>
           <div className="md:col-span-3">
-            <label className="block font-bold text-[#4A2A1C] mb-1">Custom Slug (Opsional)</label>
+            <label className="block font-bold text-[#4A2A1C] mb-1">Custom Slug (Optional)</label>
             <div className="flex items-center h-[38px] rounded-[4px] border border-[#E6D2C0] bg-[#FFFDF9] overflow-hidden">
               <span className="px-2.5 text-[11px] font-mono text-[#7A5644] bg-[#FFF8EF] border-r border-[#E6D2C0] h-full flex items-center">
                 /babyshalls/
@@ -185,18 +185,18 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                 type="text"
                 value={customCode}
                 onChange={(e) => setCustomCode(e.target.value.replace(/[^A-Za-z0-9_-]/g, ''))}
-                placeholder="promo-mei"
+                placeholder="promo-may"
                 className="w-full h-full px-2.5 bg-transparent focus:outline-none font-mono text-[#4A2A1C]"
               />
             </div>
           </div>
           <div className="md:col-span-2">
-            <label className="block font-bold text-[#4A2A1C] mb-1">Label / Judul</label>
+            <label className="block font-bold text-[#4A2A1C] mb-1">Label / Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="QR Kasir Toko"
+              placeholder="Store Cashier QR"
               className="w-full h-[38px] px-3 rounded-[4px] border border-[#E6D2C0] bg-[#FFFDF9] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
             />
           </div>
@@ -207,7 +207,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
               className="w-full h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60 transition-colors shadow-2xs"
             >
               <Plus className="w-4 h-4" />
-              <span>{createMutation.isPending ? 'Membuat...' : 'Buat Shortlink'}</span>
+              <span>{createMutation.isPending ? 'Creating...' : 'Create Shortlink'}</span>
             </button>
           </div>
         </div>
@@ -217,37 +217,37 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
       <div className="bg-white border border-[#E6D2C0] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-[#4A2A1C]">
-            Daftar Shortlink Aktif ({filtered.length}/{links.length})
+            Active Shortlinks List ({filtered.length}/{links.length})
           </h3>
         </div>
 
         <DataTableToolbar
           searchValue={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Cari kode, judul, atau URL tujuan..."
+          searchPlaceholder="Search code, title, or destination URL..."
           filterValue={statusFilter}
           onFilterChange={setStatusFilter}
           filterOptions={[
-            { label: 'Aktif', value: 'ACTIVE' },
-            { label: 'Nonaktif', value: 'INACTIVE' },
+            { label: 'Active', value: 'ACTIVE' },
+            { label: 'Inactive', value: 'INACTIVE' },
           ]}
-          filterLabel="Semua Status"
+          filterLabel="All Statuses"
         />
 
         {isLoading ? (
-          <p className="text-xs text-[#7A5644] py-6 text-center">Memuat daftar shortlink...</p>
+          <p className="text-xs text-[#7A5644] py-6 text-center">Loading shortlinks...</p>
         ) : filtered.length === 0 ? (
-          <p className="text-xs text-[#7A5644] py-6 text-center">Belum ada shortlink.</p>
+          <p className="text-xs text-[#7A5644] py-6 text-center">No shortlinks found.</p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
             <table className="w-full text-left text-xs">
               <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
                 <tr>
                   <th className="py-3 px-3.5">Shortlink</th>
-                  <th className="py-3 px-3.5">Judul &amp; URL Tujuan</th>
-                  <th className="py-3 px-3.5">Klik</th>
+                  <th className="py-3 px-3.5">Title &amp; Destination URL</th>
+                  <th className="py-3 px-3.5">Clicks</th>
                   <th className="py-3 px-3.5">Status</th>
-                  <th className="py-3 px-3.5 text-right">Aksi</th>
+                  <th className="py-3 px-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F2E4D6]">
@@ -274,7 +274,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                             : 'bg-[#FDE3E8] text-[#C0392B] border border-[#FBA6B2]/60'
                         }`}
                       >
-                        {item.isActive ? 'Aktif' : 'Nonaktif'}
+                        {item.isActive ? 'Active' : 'Inactive'}
                       </button>
                     </td>
                     <td className="py-3 px-3.5 text-right">
@@ -283,7 +283,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                           type="button"
                           onClick={() => handleCopy(item.code)}
                           className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors cursor-pointer"
-                          title="Salin Shortlink"
+                          title="Copy Shortlink"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -291,7 +291,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                           type="button"
                           onClick={() => setQrLink(item)}
                           className="p-1.5 rounded-[4px] border border-[#8DDBE6]/60 text-[#1F6B76] hover:bg-[#DDF6F9] transition-colors cursor-pointer"
-                          title="Lihat QR Code"
+                          title="View QR Code"
                         >
                           <QrCode className="w-3.5 h-3.5" />
                         </button>
@@ -300,7 +300,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                           target="_blank"
                           rel="noreferrer"
                           className="p-1.5 rounded-[4px] border border-[#E6D2C0] text-[#7A5644] hover:bg-[#FFF6EA] transition-colors"
-                          title="Tes Buka Shortlink"
+                          title="Open Shortlink"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
@@ -308,7 +308,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
                           type="button"
                           onClick={() => handleDelete(item)}
                           className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
-                          title="Hapus"
+                          title="Delete"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -326,7 +326,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
       <AdminModal
         isOpen={Boolean(qrLink)}
         onClose={() => setQrLink(null)}
-        title="QR Code Shortlink"
+        title="Shortlink QR Code"
         subtitle={qrLink ? qrLink.title || `/babyshalls/${qrLink.code}` : ''}
         size="md"
       >
@@ -352,7 +352,7 @@ export function AdminShortlinksSection({ enabled }: { enabled: boolean }) {
               onClick={handleDownloadQr}
               className="w-full h-[40px] rounded-[4px] bg-[#2A6E37] hover:bg-[#1E543B] text-white font-bold inline-flex items-center justify-center gap-2 cursor-pointer transition-colors"
             >
-              <Download className="w-4 h-4" /> Unduh QR Code (PNG)
+              <Download className="w-4 h-4" /> Download QR Code (PNG)
             </button>
           </div>
         )}

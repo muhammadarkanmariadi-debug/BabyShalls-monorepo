@@ -13,7 +13,7 @@ export function FaqView() {
   const store = cms.store;
 
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const categories = useMemo(() => {
@@ -21,7 +21,7 @@ export function FaqView() {
     faqItems.forEach((item: CmsFaqItem) => {
       if (item.category) set.add(item.category);
     });
-    return ['Semua', ...Array.from(set)];
+    return ['All', ...Array.from(set)];
   }, [faqItems]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function FaqView() {
 
   const filteredFaqs = useMemo(() => {
     return faqItems.filter((item: CmsFaqItem) => {
-      if (selectedCategory !== 'Semua' && item.category !== selectedCategory) {
+      if (selectedCategory !== 'All' && item.category !== selectedCategory) {
         return false;
       }
       if (searchQuery.trim()) {
@@ -51,7 +51,7 @@ export function FaqView() {
   }, [faqItems, selectedCategory, searchQuery]);
 
   const waSupportUrl = `https://wa.me/${store.whatsappNumber || '6281234567890'}?text=${encodeURIComponent(
-    'Halo Admin BabyShalls, saya ingin bertanya seputar layanan toko.'
+    'Hello BabyShalls Team, I have a question regarding your store services.'
   )}`;
 
   return (
@@ -62,13 +62,13 @@ export function FaqView() {
       <section className="bg-[#FFF6EA] py-12 sm:py-16 border-b border-[#F2E4D6]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8 text-center">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#B05A26] block mb-2">
-            PUSAT BANTUAN
+            HELP CENTER
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#4A2A1C] tracking-tight mb-4">
-            Pertanyaan yang Sering Diajukan (FAQ)
+            Frequently Asked Questions (FAQ)
           </h1>
           <p className="text-sm sm:text-base text-[#7A5644] max-w-xl mx-auto leading-relaxed">
-            Temukan jawaban cepat seputar pemesanan buku, pengiriman kurir, workshop gratis anak di Malang, dan layanan kurasi BabyShalls.
+            Find quick answers about ordering books, courier shipping from Malang, children workshops, and curation services.
           </p>
 
           {/* Search bar inside Hero */}
@@ -77,7 +77,7 @@ export function FaqView() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari pertanyaan atau kata kunci..."
+              placeholder="Search questions or keywords..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-xs sm:text-sm text-[#4A2A1C] placeholder:text-[#A0887A] focus:outline-none focus:border-[#B05A26] shadow-xs"
             />
             <Search className="absolute left-3 top-3 w-4 h-4 text-[#A0887A]" />
@@ -117,12 +117,12 @@ export function FaqView() {
           {filteredFaqs.length === 0 ? (
             <div className="p-8 text-center bg-white border border-[#F2E4D6] rounded-[2px]">
               <p className="text-sm text-[#7A5644]">
-                Tidak ada pertanyaan yang sesuai dengan kata kunci atau kategori ini.
+                No questions match your search keywords or current filter.
               </p>
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedCategory('Semua');
+                  setSelectedCategory('All');
                   setSearchQuery('');
                 }}
                 className="mt-3 text-xs font-semibold text-[#B05A26] underline"
@@ -177,10 +177,10 @@ export function FaqView() {
           <div className="mt-12 p-6 sm:p-8 bg-[#FFF6EA] border border-[#F2E4D6] rounded-[2px] text-center flex flex-col items-center">
             <HelpCircle className="w-8 h-8 text-[#B05A26] mb-2" />
             <h3 className="text-lg font-medium text-[#4A2A1C] mb-1">
-              Masih Ada Pertanyaan Lain?
+              Still Have Questions?
             </h3>
             <p className="text-xs sm:text-sm text-[#7A5644] max-w-md mb-6 leading-relaxed">
-              Tim kurator dan customer support BabyShalls siap membantumu via WhatsApp setiap hari ({store.operatingHours}).
+              Our curation and customer support team is ready to assist you via WhatsApp daily ({store.operatingHours || '10:00 AM – 5:00 PM WIB'}).
             </p>
             <a
               href={waSupportUrl}
@@ -189,7 +189,7 @@ export function FaqView() {
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#B05A26] text-white text-xs font-semibold rounded-[2px] hover:bg-[#964B1F] transition-colors shadow-xs"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Chat Tim Kami di WhatsApp</span>
+              <span>Chat Our Team on WhatsApp</span>
             </a>
           </div>
 

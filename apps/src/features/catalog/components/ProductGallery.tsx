@@ -42,7 +42,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
       <button
         type="button"
         onClick={() => setIsImageZoomOpen(true)}
-        aria-label="Perbesar gambar produk"
+        aria-label="Enlarge product image"
         className="relative aspect-square w-full rounded-[2px] overflow-hidden bg-[#F0F0F0] mb-4 block cursor-zoom-in group"
       >
         <Image
@@ -63,13 +63,13 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
         {isOutOfStock && (
           <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             <span className="w-24 h-24 rounded-full bg-black/65 text-white text-base font-medium flex items-center justify-center shadow-sm">
-              Habis
+              Sold Out
             </span>
           </div>
         )}
         <span className="absolute bottom-3 right-3 z-10 bg-black/55 text-white text-[11px] px-2.5 py-1.5 rounded-[2px] flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
           <ZoomIn className="w-3.5 h-3.5" />
-          <span>Perbesar</span>
+          <span>Zoom</span>
         </span>
       </button>
 
@@ -101,7 +101,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
         <div className="mt-4 p-3 bg-[#FFFBF7] border border-[#E6D2C0] rounded-[2px] text-xs text-[#7A5644] flex items-center gap-2">
           <Store className="w-4 h-4 text-[#B05A26] shrink-0" />
           <span>
-            <strong>Foto Asli Buku Preloved:</strong> Buku ini adalah koleksi preloved yang telah lolos kurasi kebersihan dan kelayakan baca tim BabyShalls.
+            <strong>Authentic Preloved Photos:</strong> This preloved book has been inspected and UV-sterilized to meet BabyShalls cleanliness and reading-quality standards.
           </span>
         </div>
       )}
@@ -113,7 +113,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({
           onClick={() => setIsImageZoomOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Pratinjau gambar produk"
+          aria-label="Product image preview"
         >
           <button
             type="button"

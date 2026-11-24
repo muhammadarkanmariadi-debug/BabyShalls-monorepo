@@ -25,9 +25,9 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shortUrl);
-      toast.success('Shortlink workshop disalin!');
+      toast.success('Workshop shortlink copied!');
     } catch {
-      toast.error('Gagal menyalin link.');
+      toast.error('Failed to copy link.');
     }
   };
 
@@ -39,14 +39,14 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
     link.href = pngUrl;
     link.download = `qr-workshop-${event.shortCode || event.slug}.png`;
     link.click();
-    toast.success('QR Code diunduh (PNG).');
+    toast.success('QR Code downloaded (PNG).');
   };
 
   return (
     <AdminModal
       isOpen={Boolean(event)}
       onClose={onClose}
-      title="Shortlink & QR Share Workshop"
+      title="Workshop Shortlink & QR Share"
       subtitle={event.title}
       size="md"
     >
@@ -64,7 +64,7 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
             includeMargin
           />
           <span className="mt-2 font-mono font-bold text-[#502E1E]">
-            {event.shortCode ? `Kode: ${event.shortCode}` : event.slug}
+            {event.shortCode ? `Code: ${event.shortCode}` : event.slug}
           </span>
         </div>
 
@@ -80,7 +80,7 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
             onClick={handleCopy}
             className="h-8 px-3 rounded-lg bg-[#D9744A] text-white font-bold inline-flex items-center gap-1 cursor-pointer"
           >
-            <Copy className="w-3.5 h-3.5" /> Salin
+            <Copy className="w-3.5 h-3.5" /> Copy
           </button>
         </div>
 
@@ -90,7 +90,7 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
             onClick={handleDownloadQr}
             className="h-[40px] px-5 rounded-xl bg-[#1E543B] text-white font-bold inline-flex items-center gap-2 cursor-pointer"
           >
-            <Download className="w-4 h-4" /> Unduh QR Code (PNG)
+            <Download className="w-4 h-4" /> Download QR Code (PNG)
           </button>
           <a
             href={shortUrl}
@@ -98,7 +98,7 @@ export function WorkshopShareModal({ event, onClose }: WorkshopShareModalProps) 
             rel="noreferrer"
             className="h-[40px] px-5 rounded-xl border border-[#EBDCCB] bg-white text-[#502E1E] font-bold inline-flex items-center gap-2"
           >
-            <ExternalLink className="w-4 h-4" /> Buka Halaman Daftar
+            <ExternalLink className="w-4 h-4" /> Open Registration Page
           </a>
         </div>
       </div>

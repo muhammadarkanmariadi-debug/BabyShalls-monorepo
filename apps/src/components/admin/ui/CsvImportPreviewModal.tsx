@@ -56,10 +56,10 @@ function splitCsvLine(line: string): string[] {
 }
 
 function getRowError(row: CsvImportProductRow): string | null {
-  if (!row.name.trim() || row.name.trim().length < 2) return 'Nama minimal 2 karakter';
-  if (!Number.isFinite(row.price) || row.price <= 0) return 'Harga harus > 0';
-  if (!Number.isFinite(row.stock) || row.stock < 0) return 'Stok tidak valid';
-  if (!Number.isFinite(row.weight) || row.weight <= 0) return 'Berat harus > 0';
+  if (!row.name.trim() || row.name.trim().length < 2) return 'Name min. 2 characters';
+  if (!Number.isFinite(row.price) || row.price <= 0) return 'Price must be > 0';
+  if (!Number.isFinite(row.stock) || row.stock < 0) return 'Stock is invalid';
+  if (!Number.isFinite(row.weight) || row.weight <= 0) return 'Weight must be > 0';
   return null;
 }
 
@@ -183,7 +183,7 @@ export function CsvImportPreviewModal() {
       qc.invalidateQueries({ queryKey: ['admin-stats'] });
       qc.invalidateQueries({ queryKey: ['products'] });
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal mengimpor produk.'));
+      toast.error(extractApiError(err, 'Failed to import products.'));
     } finally {
       setImporting(false);
     }
@@ -213,10 +213,10 @@ export function CsvImportPreviewModal() {
               <div>
                 <h2 className="text-base font-semibold text-[#4A2A1C] flex items-center gap-2">
                   <FileSpreadsheet className="w-4 h-4 text-[#B05A26]" />
-                  <span>Pratinjau &amp; Direct Edit Import CSV ({rows.length} baris)</span>
+                  <span>Preview &amp; Direct Edit CSV Import ({rows.length} rows)</span>
                 </h2>
                 <p className="text-[11px] text-[#7A5644] mt-0.5">
-                  Edit langsung sel tabel di bawah bila ada data yang perlu diperbaiki sebelum disimpan.
+                  Directly edit table cells below to correct any records before saving.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export function CsvImportPreviewModal() {
                   onClick={handleDownloadTemplate}
                   className="text-xs font-semibold text-[#B05A26] hover:underline cursor-pointer"
                 >
-                  Unduh Template
+                  Download Template
                 </button>
                 <button
                   type="button"
@@ -242,7 +242,7 @@ export function CsvImportPreviewModal() {
                 Valid: {validRows.length}
               </span>
               <span className="px-2.5 py-0.5 rounded-[2px] bg-red-100 text-red-700 font-bold">
-                Perlu Perbaikan: {errorCount}
+                Needs Attention: {errorCount}
               </span>
             </div>
 
@@ -251,13 +251,13 @@ export function CsvImportPreviewModal() {
                 <thead className="bg-[#FFFDF9] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
                   <tr>
                     <th className="py-2 px-2">#</th>
-                    <th className="py-2 px-2 min-w-[200px]">Nama Produk *</th>
+                    <th className="py-2 px-2 min-w-[200px]">Product Name *</th>
                     <th className="py-2 px-2 min-w-[110px]">SKU</th>
-                    <th className="py-2 px-2 min-w-[130px]">Kategori</th>
-                    <th className="py-2 px-2 min-w-[100px]">Kondisi</th>
-                    <th className="py-2 px-2 min-w-[100px]">Harga *</th>
-                    <th className="py-2 px-2 min-w-[75px]">Stok</th>
-                    <th className="py-2 px-2 min-w-[80px]">Berat (g)</th>
+                    <th className="py-2 px-2 min-w-[130px]">Category</th>
+                    <th className="py-2 px-2 min-w-[100px]">Condition</th>
+                    <th className="py-2 px-2 min-w-[100px]">Price *</th>
+                    <th className="py-2 px-2 min-w-[75px]">Stock</th>
+                    <th className="py-2 px-2 min-w-[80px]">Weight (g)</th>
                     <th className="py-2 px-2 min-w-[150px]">Status</th>
                     <th className="py-2 px-2" />
                   </tr>
@@ -338,7 +338,7 @@ export function CsvImportPreviewModal() {
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-[#1E543B] font-semibold">
-                              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> Siap import
+                              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> Ready to import
                             </span>
                           )}
                         </td>
@@ -347,7 +347,7 @@ export function CsvImportPreviewModal() {
                             type="button"
                             onClick={() => setRows((prev) => prev.filter((_, i) => i !== idx))}
                             className="p-1 text-red-600 hover:bg-red-50 rounded-[4px] cursor-pointer"
-                            title="Hapus baris"
+                            title="Delete row"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -365,7 +365,7 @@ export function CsvImportPreviewModal() {
                 onClick={() => setIsOpen(false)}
                 className="h-9 px-4 rounded-[4px] border border-[#E6D2C0] font-semibold text-[#7A5644] cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -373,7 +373,7 @@ export function CsvImportPreviewModal() {
                 onClick={handleSubmit}
                 className="h-9 px-5 rounded-[4px] bg-[#1E543B] hover:bg-[#163F2C] text-white font-semibold cursor-pointer disabled:opacity-50"
               >
-                {importing ? 'Mengimpor...' : `Import ${validRows.length} Baris Valid`}
+                {importing ? 'Importing...' : `Import ${validRows.length} Valid Rows`}
               </button>
             </div>
           </div>

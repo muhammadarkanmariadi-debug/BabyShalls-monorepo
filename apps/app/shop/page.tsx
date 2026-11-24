@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { ShopView } from '@/features/catalog/components/ShopView';
 
 export const metadata: Metadata = {
-  title: 'Katalog Buku & Mainan Edukasi | BabyShalls Malang',
+  title: 'Books & Educational Toys Catalog | BabyShalls Malang',
   description:
-    'Jelajahi koleksi lengkap buku anak, mainan kayu edukasi, hampers, dan preloved kurasi berdasarkan usia dan sub-kategori.',
+    'Explore our curated collection of children’s books, wooden educational toys, gift hampers, and preloved items by age and category.',
 };
 
 export default function ShopPage() {

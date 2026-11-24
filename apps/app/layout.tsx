@@ -25,11 +25,11 @@ const quicksand = Quicksand({
 export const metadata: Metadata = {
   title: 'BabyShalls — Curated Children’s Books & Educational Toys | Malang',
   description:
-    'Boutique toko buku anak dan mainan edukasi kayu di Citraland Malang. Board books, picture books klasik impor, hampers, dan kelas sensori anak.',
+    'Children’s book boutique and educational wooden toys in Citraland Malang. Curated board books, classic picture books, gift hampers, and sensory play workshops.',
   keywords: [
     'BabyShalls',
-    'Toko Buku Anak Malang',
-    'Mainan Kayu Montessori',
+    'Children Bookstore Malang',
+    'Montessori Wooden Toys',
     'Curated Picture Books',
     'Citraland Malang',
   ],
@@ -41,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${poppins.variable} ${quicksand.variable} scroll-smooth`}>
+    <html lang="en" className={`${poppins.variable} ${quicksand.variable} scroll-smooth`}>
       <body className="min-h-screen bg-[#FFF6EA] text-[#4A2A1C] font-sans antialiased selection:bg-[#FBE6D8] selection:text-[#B05A26]">
         <QueryProvider>
           <CmsProvider>

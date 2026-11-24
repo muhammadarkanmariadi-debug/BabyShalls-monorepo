@@ -28,12 +28,12 @@ import { useAdminAnalytics } from '../../hooks/useAdminDashboard';
 import { formatIDR } from '../../lib/utils';
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  PENDING_PAYMENT: { label: 'Menunggu Bayar', color: 'bg-amber-100 text-amber-800' },
-  PAID: { label: 'Dibayar', color: 'bg-emerald-100 text-emerald-800' },
-  PROCESSING: { label: 'Diproses', color: 'bg-blue-100 text-blue-800' },
-  SHIPPED: { label: 'Dikirim', color: 'bg-indigo-100 text-indigo-800' },
-  COMPLETED: { label: 'Selesai', color: 'bg-[#E9F3E4] text-[#1E543B]' },
-  CANCELLED: { label: 'Dibatalkan', color: 'bg-red-100 text-red-700' },
+  PENDING_PAYMENT: { label: 'Awaiting Payment', color: 'bg-amber-100 text-amber-800' },
+  PAID: { label: 'Paid', color: 'bg-emerald-100 text-emerald-800' },
+  PROCESSING: { label: 'Processing', color: 'bg-blue-100 text-blue-800' },
+  SHIPPED: { label: 'Shipped', color: 'bg-indigo-100 text-indigo-800' },
+  COMPLETED: { label: 'Completed', color: 'bg-[#E9F3E4] text-[#1E543B]' },
+  CANCELLED: { label: 'Cancelled', color: 'bg-red-100 text-red-700' },
 };
 
 const PIE_COLORS = ['#D9744A', '#2E8B57', '#502E1E', '#E59A3C', '#5B7DB1', '#C86D8A', '#8C6239'];
@@ -76,10 +76,10 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
             <div>
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[#D9744A]" />
-                <h2 className="text-base font-extrabold text-[#502E1E]">Grafik Penjualan &amp; Omzet</h2>
+                <h2 className="text-base font-extrabold text-[#502E1E]">Sales &amp; Revenue Analytics</h2>
               </div>
               <p className="text-xs text-[#6B3F2A] mt-0.5">
-                Akumulasi transaksi berstatus PAID hingga COMPLETED
+                Accumulated transactions from PAID to COMPLETED status
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -94,7 +94,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                 </div>
               )}
               <div className="inline-flex flex-wrap items-center gap-1.5 rounded-xl bg-[#FCF6EC] border border-[#EBDCCB] px-2.5 py-1.5 text-xs">
-                <label className="text-[11px] font-bold text-[#6B3F2A]">Dari</label>
+                <label className="text-[11px] font-bold text-[#6B3F2A]">From</label>
                 <input
                   type="date"
                   value={startDate}
@@ -102,7 +102,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                   onChange={(e) => setStartDate(e.target.value)}
                   className="bg-white border border-[#EBDCCB] rounded-lg px-2 py-1 text-[11px] font-bold text-[#502E1E] focus:outline-none focus:border-[#D9744A]"
                 />
-                <span className="text-[11px] font-bold text-[#6B3F2A]">s/d</span>
+                <span className="text-[11px] font-bold text-[#6B3F2A]">to</span>
                 <input
                   type="date"
                   value={endDate}
@@ -131,11 +131,11 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                   <YAxis
                     tick={{ fontSize: 11, fill: '#6B3F2A' }}
                     tickFormatter={(val: number) =>
-                      val >= 1000000 ? `${(val / 1000000).toFixed(1)}jt` : `${Math.round(val / 1000)}rb`
+                      val >= 1000000 ? `${(val / 1000000).toFixed(1)}M` : `${Math.round(val / 1000)}k`
                     }
                   />
                   <Tooltip
-                    formatter={(value) => [formatIDR(Number(value ?? 0)), 'Omzet']}
+                    formatter={(value) => [formatIDR(Number(value ?? 0)), 'Revenue']}
                     contentStyle={{
                       borderRadius: '12px',
                       border: '1px solid #EBDCCB',
@@ -158,10 +158,10 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
 
         <div className="xl:col-span-4 space-y-5">
           <div className="bg-white border border-[#EBDCCB] rounded-2xl p-5 space-y-3">
-            <h3 className="text-sm font-extrabold text-[#502E1E]">Status Pesanan</h3>
+            <h3 className="text-sm font-extrabold text-[#502E1E]">Order Status</h3>
             <div className="space-y-2">
               {(analytics?.statusBreakdown || []).length === 0 ? (
-                <p className="text-xs text-[#6B7280]">Belum ada data pesanan.</p>
+                <p className="text-xs text-[#6B7280]">No order data available.</p>
               ) : (
                 analytics?.statusBreakdown.map((item) => {
                   const meta = STATUS_LABELS[item.status] || {
@@ -173,7 +173,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                       <span className={`px-2.5 py-0.5 rounded-full font-bold ${meta.color}`}>
                         {meta.label}
                       </span>
-                      <span className="font-extrabold text-[#502E1E]">{item.count} order</span>
+                      <span className="font-extrabold text-[#502E1E]">{item.count} orders</span>
                     </div>
                   );
                 })
@@ -184,11 +184,11 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
           <div className="bg-white border border-[#EBDCCB] rounded-2xl p-5 space-y-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600" />
-              <h3 className="text-sm font-extrabold text-[#502E1E]">Stok Menipis (≤ 5)</h3>
+              <h3 className="text-sm font-extrabold text-[#502E1E]">Low Stock (≤ 5)</h3>
             </div>
             <div className="space-y-2">
               {(analytics?.lowStockProducts || []).length === 0 ? (
-                <p className="text-xs text-[#1E543B] font-semibold">Semua stok produk aman.</p>
+                <p className="text-xs text-[#1E543B] font-semibold">All product inventory levels are healthy.</p>
               ) : (
                 analytics?.lowStockProducts.map((p) => (
                   <div key={p.id} className="flex items-center justify-between gap-2 text-xs">
@@ -214,16 +214,16 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Award className="w-4 h-4 text-[#D9744A]" />
-              <h3 className="text-sm font-extrabold text-[#502E1E]">Produk Teratas Berdasarkan Penjualan</h3>
+              <h3 className="text-sm font-extrabold text-[#502E1E]">Top Selling Products</h3>
             </div>
-            <span className="text-[11px] text-[#6B7280]">Top {topProducts.length} SKU</span>
+            <span className="text-[11px] text-[#6B7280]">Top {topProducts.length} SKUs</span>
           </div>
 
           {isLoading ? (
             <div className="h-[220px] rounded-xl bg-[#FCF6EC]/60 animate-pulse" />
           ) : topProducts.length === 0 ? (
             <p className="text-xs text-[#6B7280] py-10 text-center">
-              Belum ada produk terjual (transaksi berstatus PAID ke atas).
+              No products sold yet (transacted orders with PAID status and above).
             </p>
           ) : (
             <div className="space-y-2.5">
@@ -252,12 +252,12 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-[#502E1E] truncate">{item.name}</p>
                       <p className="text-[11px] text-[#6B7280]">
-                        {item.category} • Sisa stok: {item.stock} pcs
+                        {item.category} • Remaining stock: {item.stock} pcs
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs font-extrabold text-[#D9744A]">{item.soldQty} terjual</p>
+                    <p className="text-xs font-extrabold text-[#D9744A]">{item.soldQty} sold</p>
                     <p className="text-[11px] font-semibold text-[#6B3F2A]">{formatIDR(item.revenue)}</p>
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <PieChartIcon className="w-4 h-4 text-[#D9744A]" />
-              <h3 className="text-sm font-extrabold text-[#502E1E]">Perbandingan Penjualan Antar Kategori</h3>
+              <h3 className="text-sm font-extrabold text-[#502E1E]">Sales Breakdown by Category</h3>
             </div>
             <div className="inline-flex rounded-lg bg-[#FCF6EC] border border-[#EBDCCB] p-0.5 gap-0.5 text-[11px]">
               <button
@@ -280,7 +280,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                   categoryMetric === 'revenue' ? 'bg-[#D9744A] text-white' : 'text-[#6B3F2A]'
                 }`}
               >
-                Omzet
+                Revenue
               </button>
               <button
                 type="button"
@@ -298,7 +298,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
             <div className="h-[220px] rounded-xl bg-[#FCF6EC]/60 animate-pulse" />
           ) : categorySales.length === 0 ? (
             <p className="text-xs text-[#6B7280] py-10 text-center">
-              Belum ada data penjualan kategori.
+              No category sales data available.
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
@@ -322,7 +322,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                     <Tooltip
                       formatter={(value) => [
                         categoryMetric === 'revenue' ? formatIDR(Number(value ?? 0)) : `${value ?? 0} pcs`,
-                        categoryMetric === 'revenue' ? 'Omzet' : 'Terjual',
+                        categoryMetric === 'revenue' ? 'Revenue' : 'Sold',
                       ]}
                       contentStyle={{
                         borderRadius: '12px',
@@ -366,13 +366,13 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
         <div className="lg:col-span-5 bg-white border border-[#EBDCCB] rounded-2xl p-5 space-y-4">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-[#D9744A]" />
-            <h3 className="text-sm font-extrabold text-[#502E1E]">Penjualan per Kelompok Usia</h3>
+            <h3 className="text-sm font-extrabold text-[#502E1E]">Sales by Age Group</h3>
           </div>
 
           {isLoading ? (
             <div className="h-[200px] rounded-xl bg-[#FCF6EC]/60 animate-pulse" />
           ) : ageGroupSales.length === 0 ? (
-            <p className="text-xs text-[#6B7280] py-10 text-center">Belum ada data penjualan usia.</p>
+            <p className="text-xs text-[#6B7280] py-10 text-center">No age group sales data available.</p>
           ) : (
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -381,7 +381,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                   <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#6B3F2A' }} />
                   <YAxis tick={{ fontSize: 10, fill: '#6B3F2A' }} allowDecimals={false} />
                   <Tooltip
-                    formatter={(value) => [`${value ?? 0} pcs`, 'Terjual']}
+                    formatter={(value) => [`${value ?? 0} pcs`, 'Sold']}
                     contentStyle={{
                       borderRadius: '12px',
                       border: '1px solid #EBDCCB',
@@ -398,13 +398,13 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
         <div className="lg:col-span-4 bg-white border border-[#EBDCCB] rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <CalendarCheck className="w-4 h-4 text-[#2E8B57]" />
-            <h3 className="text-sm font-extrabold text-[#502E1E]">Okupansi &amp; Check-In Workshop</h3>
+            <h3 className="text-sm font-extrabold text-[#502E1E]">Workshop Occupancy &amp; Check-In</h3>
           </div>
 
           {isLoading ? (
             <div className="h-[180px] rounded-xl bg-[#FCF6EC]/60 animate-pulse" />
           ) : workshopOccupancy.length === 0 ? (
-            <p className="text-xs text-[#6B7280] py-8 text-center">Belum ada data workshop.</p>
+            <p className="text-xs text-[#6B7280] py-8 text-center">No workshop data available.</p>
           ) : (
             <div className="space-y-3">
               {workshopOccupancy.map((evt) => {
@@ -424,7 +424,7 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
                       />
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-[#6B7280]">
-                      <span>Hadir QR: {evt.checkedInCount}</span>
+                      <span>QR Check-ins: {evt.checkedInCount}</span>
                       {evt.paidRevenue > 0 && (
                         <span className="font-bold text-[#1E543B]">{formatIDR(evt.paidRevenue)}</span>
                       )}
@@ -439,20 +439,20 @@ export function SalesAnalyticsChart({ enabled }: { enabled: boolean }) {
         <div className="lg:col-span-3 bg-white border border-[#EBDCCB] rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <Heart className="w-4 h-4 text-[#D9744A]" />
-            <h3 className="text-sm font-extrabold text-[#502E1E]">Paling Di-Wishlist</h3>
+            <h3 className="text-sm font-extrabold text-[#502E1E]">Most Wishlisted</h3>
           </div>
 
           {isLoading ? (
             <div className="h-[180px] rounded-xl bg-[#FCF6EC]/60 animate-pulse" />
           ) : topWishlisted.length === 0 ? (
-            <p className="text-xs text-[#6B7280] py-8 text-center">Belum ada produk di wishlist.</p>
+            <p className="text-xs text-[#6B7280] py-8 text-center">No products in wishlists yet.</p>
           ) : (
             <div className="space-y-2.5">
               {topWishlisted.map((w) => (
                 <div key={w.id} className="flex items-center justify-between gap-2 text-xs">
                   <div className="min-w-0">
                     <p className="font-bold text-[#502E1E] truncate">{w.name}</p>
-                    <p className="text-[11px] text-[#6B7280]">Stok: {w.stock} pcs</p>
+                    <p className="text-[11px] text-[#6B7280]">Stock: {w.stock} pcs</p>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-[#FDECE6] text-[#D9744A] font-extrabold shrink-0">
                     ♥ {w.wishlistCount}

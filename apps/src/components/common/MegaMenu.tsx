@@ -30,15 +30,15 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
   const waCommunityUrl =
     cms.store.whatsappCommunityUrl ||
     `https://wa.me/${waNumber}?text=${encodeURIComponent(
-      'Halo BabyShalls, saya ingin bergabung ke grup komunitas katalog dan event.'
+      'Hello BabyShalls, I would like to join the community group for new arrivals and events.'
     )}`;
 
   const ageGroups = [
-    { label: 'Newborn (0–12 bln)', href: '/shop?age=0%E2%80%931+th' },
-    { label: '1–3 tahun', href: '/shop?age=1%E2%80%933+th' },
-    { label: '3+ tahun', href: '/shop?age=3%2B+th' },
-    { label: '6+ tahun', href: '/shop?age=6%2B+th' },
-    { label: 'Semua usia', href: '/shop' },
+    { label: 'Newborn (0–12 mo)', href: '/shop?age=0%E2%80%931+th' },
+    { label: '1–3 years', href: '/shop?age=1%E2%80%933+th' },
+    { label: '3+ years', href: '/shop?age=3%2B+th' },
+    { label: '6+ years', href: '/shop?age=6%2B+th' },
+    { label: 'All ages', href: '/shop' },
   ];
 
   const mainCategories = [
@@ -46,7 +46,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
       label: cat,
       href: `/shop?category=${encodeURIComponent(cat)}`,
     })),
-    { label: 'Semua Produk', href: '/shop' },
+    { label: 'All Products', href: '/shop' },
   ];
 
   const allSubCategories = useMemo(() => {
@@ -87,10 +87,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
       <div className="max-w-[1440px] mx-auto px-8 lg:px-20 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10 text-left">
 
-          {/* Column 1: Berdasarkan Usia */}
+          {/* Column 1: Shop By Age */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
-              BERDASARKAN USIA
+              SHOP BY AGE
             </h4>
             <ul className="space-y-2.5">
               {ageGroups.map((item) => (
@@ -107,10 +107,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             </ul>
           </div>
 
-          {/* Column 2: Kategori (4 Jenis Barang) */}
+          {/* Column 2: Categories */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
-              KATEGORI
+              CATEGORIES
             </h4>
             <ul className="space-y-2.5">
               {mainCategories.map((item) => (
@@ -127,10 +127,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
             </ul>
           </div>
 
-          {/* Column 3: Sub-Kategori (terbatas + Lihat lainnya) */}
+          {/* Column 3: Sub-Categories */}
           <div className="space-y-4">
             <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#B05A26]">
-              SUB-KATEGORI
+              SUB-CATEGORIES
             </h4>
             <ul className="space-y-2.5">
               {visibleSubCategories.map((item) => (
@@ -151,24 +151,24 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
                     onClick={() => setShowAllSubcategories((prev) => !prev)}
                     className="text-[13px] font-semibold text-[#B05A26] hover:underline cursor-pointer"
                   >
-                    {showAllSubcategories ? 'Lebih sedikit' : `Lihat lainnya (+${hiddenSubCount})`}
+                    {showAllSubcategories ? 'Show less' : `View more (+${hiddenSubCount})`}
                   </button>
                 </li>
               )}
             </ul>
           </div>
 
-          {/* Column 4: Join Grup Komunitas */}
+          {/* Column 4: Join Community Group */}
           <div className="space-y-3.5 bg-[#FFF6EA] border border-[#E6D2C0] p-5 rounded-2xl flex flex-col justify-between">
             <div className="space-y-2.5">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#E9F3E4] text-[#1E543B] text-[10px] font-bold uppercase tracking-wider">
-                <MessageCircle className="w-3 h-3" /> Komunitas BabyShalls
+                <MessageCircle className="w-3 h-3" /> BabyShalls Community
               </span>
               <h4 className="text-sm font-bold text-[#4A2A1C] leading-snug">
-                Join Grup Komunitas
+                Join Community Group
               </h4>
               <p className="text-xs text-[#7A5644] leading-relaxed">
-                Dapatkan update buku kurasi terbaru, preloved steril UV, dan jadwal workshop anak di Malang lebih awal.
+                Get early updates on curated children's books, UV-sterilized preloved items, and educational workshop schedules in Malang.
               </p>
             </div>
 
@@ -180,7 +180,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#1E543B] hover:bg-[#163F2C] text-white text-xs font-semibold transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              <span>Gabung Grup WhatsApp</span>
+              <span>Join WhatsApp Group</span>
             </a>
           </div>
 

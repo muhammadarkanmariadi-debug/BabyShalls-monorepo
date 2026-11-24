@@ -8,7 +8,7 @@ interface StripInfoProps {
 }
 
 export const StripInfo: React.FC<StripInfoProps> = ({
-  text = 'Gratis bungkus kado untuk semua hampers  ·  Gabung grup WA untuk katalog terbaru',
+  text = 'Complimentary gift wrapping for all hampers  ·  Join our WhatsApp group for new arrivals',
   className = '',
 }) => {
   return (

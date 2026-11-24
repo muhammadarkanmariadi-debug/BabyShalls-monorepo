@@ -28,7 +28,7 @@ export default function AboutPage() {
 
   const waNumber = store.whatsappNumber || process.env.NEXT_PUBLIC_WA_NUMBER || '6281234567890';
   const waGroupUrl = store.whatsappCommunityUrl || `https://wa.me/${waNumber}?text=${encodeURIComponent(
-    'Halo BabyShalls, saya ingin bertanya tentang kunjungan butik dan katalog buku.'
+    'Hello BabyShalls, I would like to inquire about visiting the boutique and browsing your book catalog.'
   )}`;
 
   return (
@@ -47,12 +47,12 @@ export default function AboutPage() {
 
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#4A2A1C] tracking-tight mb-4 leading-tight">
-                {about.title || 'Membuka Jendela Dunia untuk Si Kecil di Malang'}
+                {about.title || 'Opening a World of Wonder for Little Ones in Malang'}
               </h1>
 
               <p className="text-sm sm:text-base text-[#7A5644] leading-relaxed mb-6">
                 {about.description ||
-                  'BabyShalls bermula di tahun 2020 dari cinta seorang ibu di Malang yang ingin memberikan buku bergambar dan mainan edukasi terbaik. Berawal dari kurasi koleksi pribadi, kini berkembang menjadi butik ramah anak dengan karpet baca dan area bermain sensori di Citraland Puncak Tidar.'}
+                  'BabyShalls began in 2020 out of a mother’s devotion in Malang to bring the finest picture books and educational wooden toys to families. Starting from a personally curated collection, it has grown into a child-friendly boutique with a cozy reading rug and sensory play area in Citraland Puncak Tidar.'}
               </p>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
@@ -60,13 +60,13 @@ export default function AboutPage() {
                   href="/shop"
                   className="px-6 py-3 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-xs"
                 >
-                  Jelajahi Katalog Buku
+                  Explore Book Catalog
                 </Link>
                 <a
                   href="#store-visit"
                   className="px-6 py-3 bg-white border border-[#E6D2C0] hover:border-[#B05A26] text-[#4A2A1C] text-xs font-semibold rounded-[2px] transition-colors"
                 >
-                  Kunjungi Butik Fisik &rarr;
+                  Visit Our Boutique &rarr;
                 </a>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 shrink-0">
               <Image
                 src={about.heroImage || '/images/mascot/maskot-peluk-hati.png'}
-                alt="Maskot BabyShalls Penuh Kasih"
+                alt="BabyShalls Loving Mascot"
                 fill
                 priority
                 className="object-contain"
@@ -93,7 +93,7 @@ export default function AboutPage() {
           <div className="text-center max-w-xl mx-auto mb-12">
 
             <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight">
-              Tiga Nilai yang Selalu Kami Rawat
+              Three Values We Cherish
             </h2>
           </div>
 
@@ -106,15 +106,15 @@ export default function AboutPage() {
                   <BookOpen size={22} />
                 </div>
                 <h3 className="font-semibold text-lg text-[#4A2A1C] mb-2">
-                  {about.pillars?.[0]?.title || 'Kurasi Berdasarkan Usia & Tahapan'}
+                  {about.pillars?.[0]?.title || 'Curation by Age & Milestone'}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#7A5644] leading-relaxed">
                   {about.pillars?.[0]?.desc ||
-                    'Setiap board book, picture book, dan mainan disortir cermat agar pas dengan stimulus sensorik serta minat perkembangan motorik anak dari 0 bulan hingga 6+ tahun.'}
+                    'Every board book, picture book, and toy is carefully evaluated to match sensory stimulus and motor development from newborns to 6+ years.'}
                 </p>
               </div>
               <div className="pt-4 mt-4 border-t border-[#F2E4D6] text-[11px] font-semibold text-[#8A5A00]">
-                Board book tebal &bull; Tidak mudah sobek &bull; Ujung tumpul aman
+                Sturdy board books &bull; Tear-resistant &bull; Child-safe rounded corners
               </div>
             </div>
 
@@ -125,15 +125,15 @@ export default function AboutPage() {
                   <ShieldCheck size={22} />
                 </div>
                 <h3 className="font-semibold text-lg text-[#4A2A1C] mb-2">
-                  {about.pillars?.[1]?.title || 'Buku Bersih & Preloved Steril UV'}
+                  {about.pillars?.[1]?.title || 'Clean Books & UV-Sterilized Preloved'}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#7A5644] leading-relaxed">
                   {about.pillars?.[1]?.desc ||
-                    'Koleksi buku preloved melewati pembersihan mendalam dan sinar UV-C di butik kami, memastikan anak dapat membaca dan bermain dengan higienis tanpa rasa cemas.'}
+                    'Our preloved collection undergoes thorough deep cleaning and UV-C sterilization in our boutique, ensuring children read and play in complete safety.'}
                 </p>
               </div>
               <div className="pt-4 mt-4 border-t border-[#F2E4D6] text-[11px] font-semibold text-[#2A6E37]">
-                Sterilisasi sinar UV-C &bull; Bebas kuman &amp; debu
+                UV-C sanitization &bull; Germ &amp; dust free
               </div>
             </div>
 
@@ -144,15 +144,15 @@ export default function AboutPage() {
                   <Sparkles size={22} />
                 </div>
                 <h3 className="font-semibold text-lg text-[#4A2A1C] mb-2">
-                  {about.pillars?.[2]?.title || 'Ruang Bermain & Komunitas Hangat'}
+                  {about.pillars?.[2]?.title || 'Play Space & Warm Community'}
                 </h3>
                 <p className="text-xs sm:text-sm text-[#7A5644] leading-relaxed">
                   {about.pillars?.[2]?.desc ||
-                    'Bukan sekadar toko, butik kami adalah tempat anak dan orang tua singgah: bermain sensory play gratis, membaca bersama di karpet dongeng, dan mengikuti workshop kreatif akhir pekan.'}
+                    'More than a bookstore, our boutique is a gathering haven: enjoy free sensory play, read together on our story rug, and join weekend creative workshops.'}
                 </p>
               </div>
               <div className="pt-4 mt-4 border-t border-[#F2E4D6] text-[11px] font-semibold text-[#7E4A84]">
-                Area baca gratis &bull; Workshop anak di akhir pekan
+                Free reading rug &bull; Weekend kids workshops
               </div>
             </div>
 
@@ -167,10 +167,10 @@ export default function AboutPage() {
           <div className="text-center mb-10 max-w-xl mx-auto">
 
             <h2 className="text-2xl sm:text-3xl font-medium text-[#4A2A1C] tracking-tight mb-2">
-              {about.galleryTitle || 'Suasana Butik & Sudut Karpet Baca'}
+              {about.galleryTitle || 'Boutique Atmosphere & Reading Nook'}
             </h2>
             <p className="text-xs sm:text-sm text-[#7A5644]">
-              {about.gallerySubtitle || 'Datang dan rasakan langsung kehangatan memilih buku bersama si kecil di Citraland Puncak Tidar.'}
+              {about.gallerySubtitle || 'Come experience the warmth of selecting books with your little one at Citraland Puncak Tidar.'}
             </p>
           </div>
 
@@ -180,17 +180,17 @@ export default function AboutPage() {
               <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
                 <Image
                   src="/images/store/toko-tampak-depan.png"
-                  alt="Tampak Depan Butik BabyShalls Citraland Malang"
+                  alt="Citraland Malang Boutique Front View"
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
-                  Butik Citraland Puncak Tidar
+                  Citraland Puncak Tidar Boutique
                 </h3>
                 <p className="text-xs text-[#7A5644] leading-relaxed">
-                  Fasad butik hangat di kawasan asri Citraland Blok HH-26, Kota Malang. Parkir luas dan nyaman untuk keluarga.
+                  Warm boutique facade in the serene Citraland Block HH-26, Malang. Spacious and convenient parking for families.
                 </p>
               </div>
             </div>
@@ -200,17 +200,17 @@ export default function AboutPage() {
               <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
                 <Image
                   src="/images/store/toko-area-bermain.png"
-                  alt="Area Bermain & Story Time"
+                  alt="Play Area & Story Time"
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
-                  Karpet Baca &amp; Sensory Corner
+                  Reading Rug &amp; Sensory Corner
                 </h3>
                 <p className="text-xs text-[#7A5644] leading-relaxed">
-                  Sudut bermain anak yang dilengkapi mainan kayu montessori, karpet higienis, dan sofa membaca ramah balita.
+                  Children’s play corner featuring Montessori wooden toys, hygienic rugs, and toddler-friendly reading sofas.
                 </p>
               </div>
             </div>
@@ -220,17 +220,17 @@ export default function AboutPage() {
               <div className="relative aspect-[4/3] w-full bg-[#F0F0F0]">
                 <Image
                   src="/images/store/toko-interior-rak.png"
-                  alt="Rak Buku Impor & Lokal"
+                  alt="Curated Imported & Local Bookshelf"
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-sm text-[#4A2A1C] mb-1">
-                  Rak Buku Berdasarkan Usia
+                  Bookshelves Arranged by Age
                 </h3>
                 <p className="text-xs text-[#7A5644] leading-relaxed">
-                  Ribuan judul buku dikelompokkan dengan rapi dari usia newborn, 1–3 tahun, hingga buku ensiklopedia anak sekolah.
+                  Thousands of curated titles organized from newborn board books, 1–3 years, up to school-age encyclopedias.
                 </p>
               </div>
             </div>
@@ -240,20 +240,20 @@ export default function AboutPage() {
           <div className="bg-gradient-to-r from-[#FFF6EA] via-[#FBE6D8]/50 to-[#E4ECFB]/40 border border-[#E6D2C0] rounded-[6px] p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-8">
             <div className="space-y-3 max-w-lg">
               <span className="text-[11px] font-bold text-[#B05A26] uppercase tracking-wider">
-                PESAN DARI PENDIRI
+                FOUNDER'S NOTE
               </span>
               <h3 className="text-xl sm:text-2xl font-bold text-[#4A2A1C] leading-snug">
-                &ldquo;Membacakan buku 15 menit setiap hari adalah hadiah terbaik yang tak pernah usang untuk masa depan anak.&rdquo;
+                &ldquo;Reading with your child for 15 minutes every day is the most timeless gift for their future.&rdquo;
               </h3>
               <p className="text-xs text-[#7A5644] leading-relaxed">
-                Kami siap membantu orang tua menemukan buku yang tepat untuk setiap momen tumbuh kembang: saat anak mulai berbicara, belajar empati, atau sedang antusias menjelajah alam semesta.
+                We are devoted to helping parents find the right books for every growing milestone: first words, empathy, or discovering the wonders of the universe.
               </p>
               <div className="pt-2">
                 <Link
                   href="/request-a-book"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#B05A26] hover:underline"
                 >
-                  <span>Punya judul buku impian? Request buku kepada kurator kami &rarr;</span>
+                  <span>Have a dream book title in mind? Request a book curation from our team &rarr;</span>
                 </Link>
               </div>
             </div>
@@ -261,7 +261,7 @@ export default function AboutPage() {
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 shrink-0">
               <Image
                 src="/images/mascot/maskot-balik-halaman.png"
-                alt="Maskot Membaca Buku"
+                alt="Mascot Reading Book"
                 fill
                 className="object-contain"
               />
@@ -280,12 +280,12 @@ export default function AboutPage() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#2A6E37]"></span>
                 <span className="text-xs font-bold text-[#2A6E37] uppercase tracking-wider">
-                  TOKO FISIK BUKA SETIAP HARI
+                  PHYSICAL BOUTIQUE OPEN DAILY
                 </span>
               </div>
 
               <h3 className="text-2xl font-medium text-[#4A2A1C]">
-                {store.storeName || "Butik BabyShalls Citraland Malang"}
+                {store.storeName || "BabyShalls Citraland Malang Boutique"}
               </h3>
 
               <div className="space-y-1.5 text-xs text-[#7A5644] leading-relaxed">
@@ -295,12 +295,12 @@ export default function AboutPage() {
                 </p>
                 <p className="flex items-center gap-2">
                   <Clock size={16} className="text-[#B05A26] shrink-0" />
-                  <span>Jam Buka: {store.operatingHours || "Setiap hari 10.00 – 17.00 WIB"}</span>
+                  <span>Hours: {store.operatingHours || "Daily 10:00 AM – 5:00 PM WIB"}</span>
                 </p>
               </div>
 
               <p className="text-xs text-[#7A5644] pt-1">
-                Tersedia opsi <strong>Ambil di Toko (Free Pickup)</strong> untuk pesanan online yang ingin langsung diambil di kasir.
+                <strong>Store Pick-up (Free Pickup)</strong> option available for online orders picked up directly at the cashier.
               </p>
             </div>
 
@@ -312,7 +312,7 @@ export default function AboutPage() {
                 className="px-6 py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold rounded-[2px] transition-colors shadow-xs text-center flex items-center justify-center gap-2"
               >
                 <MapPin size={15} />
-                <span>Petunjuk Arah Google Maps</span>
+                <span>Google Maps Directions</span>
               </a>
 
               <a
@@ -322,7 +322,7 @@ export default function AboutPage() {
                 className="px-5 py-3.5 bg-white border border-[#E6D2C0] hover:border-[#B05A26] text-[#4A2A1C] text-xs font-semibold rounded-[2px] transition-colors text-center flex items-center justify-center gap-2"
               >
                 <Phone size={14} className="text-[#2A6E37]" />
-                <span>Tanya Admin Butik</span>
+                <span>Chat Boutique Admin</span>
               </a>
             </div>
 

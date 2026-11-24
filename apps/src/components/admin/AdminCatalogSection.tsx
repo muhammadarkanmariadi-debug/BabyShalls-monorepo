@@ -90,9 +90,9 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
   const handleAdjustStock = async (id: string, nextStock: number) => {
     try {
       await updateMutation.mutateAsync({ id, stock: Math.max(0, nextStock) });
-      toast.success('Stok diperbarui.');
+      toast.success('Stock updated.');
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal memperbarui stok.'));
+      toast.error(extractApiError(err, 'Failed to update stock.'));
     }
   };
 
@@ -101,10 +101,10 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-bold text-[#4A2A1C]">
-            Manajemen Katalog SKU ({filteredProducts.length}/{products.length})
+            SKU Catalog Management ({filteredProducts.length}/{products.length})
           </h2>
           <p className="text-xs text-[#7A5644]">
-            Kelola buku kurasi, mainan kayu montessori, hampers &amp; stok toko Malang.
+            Manage curated books, Montessori wooden toys, hampers &amp; store inventory in Malang.
           </p>
         </div>
       </div>
@@ -112,19 +112,19 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari nama produk, penulis/brand..."
+        searchPlaceholder="Search product name, author/brand..."
         filterValue={categoryFilter}
         onFilterChange={setCategoryFilter}
         filterOptions={CATEGORY_OPTIONS}
-        filterLabel="Semua Kategori"
+        filterLabel="All Categories"
         sortValue={sortBy}
         onSortChange={setSortBy}
         sortOptions={[
-          { label: 'Terbaru', value: 'newest' },
-          { label: 'Nama (A-Z)', value: 'name_asc' },
-          { label: 'Harga Termurah', value: 'price_asc' },
-          { label: 'Harga Termahal', value: 'price_desc' },
-          { label: 'Stok Terkecil', value: 'stock_asc' },
+          { label: 'Newest', value: 'newest' },
+          { label: 'Name (A-Z)', value: 'name_asc' },
+          { label: 'Lowest Price', value: 'price_asc' },
+          { label: 'Highest Price', value: 'price_desc' },
+          { label: 'Lowest Stock', value: 'stock_asc' },
         ]}
         rightAction={
           <div className="flex flex-wrap items-center gap-2">
@@ -137,27 +137,27 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
               href="/admin/products/new"
               className="h-[38px] px-4 rounded-[4px] bg-[#B05A26] hover:bg-[#8E431A] text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
             >
-              <Plus className="w-4 h-4" /> Tambah Produk
+              <Plus className="w-4 h-4" /> Add Product
             </Link>
           </div>
         }
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat produk dari database...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Loading products from database...</p>
       ) : filteredProducts.length === 0 ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada produk yang cocok dengan filter.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">No products match the filter.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
-                <th className="py-3 px-3.5">Produk</th>
-                <th className="py-3 px-3.5">Kategori &amp; Usia</th>
-                <th className="py-3 px-3.5">Harga</th>
-                <th className="py-3 px-3.5">Berat</th>
-                <th className="py-3 px-3.5">Stok &amp; Status</th>
-                <th className="py-3 px-3.5 text-right">Aksi</th>
+                <th className="py-3 px-3.5">Product</th>
+                <th className="py-3 px-3.5">Category &amp; Age</th>
+                <th className="py-3 px-3.5">Price</th>
+                <th className="py-3 px-3.5">Weight</th>
+                <th className="py-3 px-3.5">Stock &amp; Status</th>
+                <th className="py-3 px-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2E4D6]">
@@ -215,7 +215,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
                           </button>
                         </div>
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${getStockBadge(p.stock)}`}>
-                          {p.stock > 5 ? 'Ready' : p.stock > 0 ? 'Menipis' : 'Habis'}
+                          {p.stock > 5 ? 'In Stock' : p.stock > 0 ? 'Low Stock' : 'Out of Stock'}
                         </span>
                       </div>
                     </td>
@@ -224,7 +224,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
                         <Link
                           href={`/admin/products/${p.id}/edit`}
                           className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] transition-colors"
-                          title="Edit Produk"
+                          title="Edit Product"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </Link>
@@ -232,7 +232,7 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
                           type="button"
                           onClick={() => setDeletingProduct(p)}
                           className="p-1.5 rounded-[4px] border border-[#FBA6B2]/60 text-[#C0392B] hover:bg-[#FDE3E8] transition-colors cursor-pointer"
-                          title="Hapus Produk"
+                          title="Delete Product"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -249,18 +249,18 @@ export function AdminCatalogSection({ enabled }: { enabled: boolean }) {
       <AdminConfirmDialog
         isOpen={Boolean(deletingProduct)}
         onClose={() => setDeletingProduct(null)}
-        title="Hapus produk ini?"
-        description={`Produk "${deletingProduct?.name || ''}" akan dihapus permanen dari katalog BabyShalls. Tindakan ini tidak dapat dibatalkan.`}
-        confirmLabel="Hapus"
+        title="Delete this product?"
+        description={`Product "${deletingProduct?.name || ''}" will be permanently removed from the BabyShalls catalog. This action cannot be undone.`}
+        confirmLabel="Delete"
         isLoading={deleteMutation.isPending}
         onConfirm={() => {
           if (!deletingProduct) return;
           deleteMutation.mutate(deletingProduct.id, {
             onSuccess: () => {
-              toast.success(`Produk "${deletingProduct.name}" dihapus.`);
+              toast.success(`Product "${deletingProduct.name}" deleted.`);
               setDeletingProduct(null);
             },
-            onError: (err) => toast.error(extractApiError(err, 'Gagal menghapus produk.')),
+            onError: (err) => toast.error(extractApiError(err, 'Failed to delete product.')),
           });
         }}
       />

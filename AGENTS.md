@@ -39,6 +39,7 @@ Setiap kali Anda menerima tugas atau instruksi baru, **baca dokumen acuan terkai
 3. **LOGISTICS ORIGIN TERKUNCI DI KOTA MALANG**: Perhitungan ongkir KiriminAja harus selalu menggunakan titik asal Kota Malang (Jl. Cempaka No. 12, Malang).
 4. **REDIS GRACEFUL FALLBACK**: Integrasi Redis di monolith API (`apps/server/lib/redis.ts`) wajib memiliki mode fallback jika Redis belum berjalan secara lokal.
 5. **CLEAN MODULAR CODE**: Komponen UI tidak boleh monolitik (pecah ke `components/`), tipe TypeScript harus lengkap tanpa `any` yang tidak perlu.
+6. **FULL ENGLISH LOCALIZATION (MoU Requirement)**: Seluruh antarmuka publik (UI, navigasi, form, toast, modal, email, error responses) dan dokumentasi wajib menggunakan Bahasa Inggris sesuai kesepakatan MoU klien.
 
 ---
 

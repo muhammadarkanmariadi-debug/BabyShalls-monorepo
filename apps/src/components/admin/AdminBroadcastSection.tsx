@@ -54,17 +54,17 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
     mutationFn: async () => {
       const strippedText = bcMessageHtml.replace(/<[^>]+>/g, '').trim();
       if (strippedText.length < 5) {
-        throw new Error('Isi pesan broadcast minimal 5 karakter.');
+        throw new Error('Broadcast message body must be at least 5 characters.');
       }
       const res = await apiClient.post('/admin/broadcast', {
         type: bcType,
         subject: bcSubject,
         badgeText:
           bcType === 'PROMO'
-            ? 'PROMO TERBARU'
+            ? 'LATEST PROMO'
             : bcType === 'EVENT'
-              ? 'EVENT & WORKSHOP'
-              : 'KABAR BABYSHALLS',
+              ? 'EVENTS & WORKSHOPS'
+              : 'BABYSHALLS NEWS',
         headline: bcHeadline,
         messageBody: bcMessageHtml,
         highlightCode: bcCode.trim() || null,
@@ -72,7 +72,7 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
       return res.data;
     },
     onSuccess: (res: { message?: string }) => {
-      toast.success(res.message || 'Broadcast email berhasil dikirim.');
+      toast.success(res.message || 'Email broadcast sent successfully.');
       setBcSubject('');
       setBcHeadline('');
       setBcMessageHtml('');
@@ -81,7 +81,7 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
       qc.invalidateQueries({ queryKey: ['admin-broadcasts'] });
     },
     onError: (err) => {
-      toast.error(extractApiError(err, 'Gagal mengirim broadcast email.'));
+      toast.error(extractApiError(err, 'Failed to send email broadcast.'));
     },
   });
 
@@ -90,10 +90,10 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-extrabold text-[#502E1E]">
-            Email Broadcast &amp; Riwayat ({filteredLogs.length})
+            Email Broadcast &amp; Logs ({filteredLogs.length})
           </h2>
           <p className="text-xs text-[#6B3F2A]">
-            Kirim buletin promo/kabar toko ke pelanggan opt-in menggunakan Rich-Text Editor.
+            Send promo bulletins/store news to opt-in subscribers using the Rich-Text Editor.
           </p>
         </div>
       </div>
@@ -101,7 +101,7 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari subjek email broadcast..."
+        searchPlaceholder="Search broadcast email subject..."
         filterValue={typeFilter}
         onFilterChange={setTypeFilter}
         filterOptions={[
@@ -109,22 +109,22 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
           { label: 'Event', value: 'EVENT' },
           { label: 'Custom', value: 'CUSTOM' },
         ]}
-        filterLabel="Semua Tipe"
+        filterLabel="All Types"
         rightAction={
           <button
             type="button"
             onClick={() => setModalOpen(true)}
             className="h-[38px] px-4 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Tulis Broadcast Email
+            <Plus className="w-4 h-4" /> Compose Broadcast Email
           </button>
         }
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#6B7280]">Memuat riwayat broadcast...</p>
+        <p className="text-xs text-[#6B7280]">Loading broadcast logs...</p>
       ) : filteredLogs.length === 0 ? (
-        <p className="text-xs text-[#6B7280] py-6 text-center">Belum ada riwayat email broadcast.</p>
+        <p className="text-xs text-[#6B7280] py-6 text-center">No broadcast email logs yet.</p>
       ) : (
         <div className="divide-y divide-[#F3ECE2] text-xs">
           {filteredLogs.map((log) => (
@@ -138,8 +138,8 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
                 </div>
                 <div className="text-[11px] text-[#6B7280] flex items-center gap-1.5 mt-1">
                   <Clock className="w-3 h-3" />
-                  <span>{new Date(log.createdAt).toLocaleString('id-ID')}</span>
-                  <span>• {log.sentCount}/{log.recipientCount} terkirim</span>
+                  <span>{new Date(log.createdAt).toLocaleString('en-US')}</span>
+                  <span>• {log.sentCount}/{log.recipientCount} sent</span>
                 </div>
               </div>
               <span
@@ -159,8 +159,8 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
       <AdminModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title="Tulis Broadcast Email Manual"
-        subtitle="Gunakan Rich-Text Editor untuk memformat teks, daftar poin, dan tautan promo."
+        title="Compose Broadcast Email"
+        subtitle="Use the Rich-Text Editor to format text, bullet lists, and promo links."
         size="xl"
       >
         <form
@@ -172,55 +172,55 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Kategori Broadcast</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Broadcast Category</label>
               <select
                 value={bcType}
                 onChange={(e) => setBcType(e.target.value as 'PROMO' | 'EVENT' | 'CUSTOM')}
                 className="w-full h-[40px] px-3 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               >
-                <option value="PROMO">Promo / Diskon</option>
-                <option value="EVENT">Undangan Event / Workshop</option>
-                <option value="CUSTOM">Pengumuman Umum</option>
+                <option value="PROMO">Promo / Discount</option>
+                <option value="EVENT">Event / Workshop Invitation</option>
+                <option value="CUSTOM">General Announcement</option>
               </select>
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Kode Kupon Highlight (Opsional)</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Highlight Coupon Code (Optional)</label>
               <input
                 type="text"
                 value={bcCode}
                 onChange={(e) => setBcCode(e.target.value.toUpperCase())}
-                placeholder="Contoh: BABYNEW"
+                placeholder="Example: BABYNEW"
                 className="w-full h-[40px] px-3.5 uppercase font-mono bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
             </div>
           </div>
 
           <div>
-            <label className="block font-bold text-[#502E1E] mb-1">Subjek Email *</label>
+            <label className="block font-bold text-[#502E1E] mb-1">Email Subject *</label>
             <input
               type="text"
               required
               value={bcSubject}
               onChange={(e) => setBcSubject(e.target.value)}
-              placeholder="Contoh: Akhir Pekan Seru! Diskon 15% Board Book Pilihan"
+              placeholder="Example: Exciting Weekend! 15% Off Selected Board Books"
               className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
             />
           </div>
 
           <div>
-            <label className="block font-bold text-[#502E1E] mb-1">Headline Utama di Email *</label>
+            <label className="block font-bold text-[#502E1E] mb-1">Main Email Headline *</label>
             <input
               type="text"
               required
               value={bcHeadline}
               onChange={(e) => setBcHeadline(e.target.value)}
-              placeholder="Contoh: Koleksi Board Book Baru Telah Tiba di Malang!"
+              placeholder="Example: New Board Book Collection Has Arrived in Malang!"
               className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
             />
           </div>
 
           <div>
-            <label className="block font-bold text-[#502E1E] mb-1.5">Isi Pesan (Rich-Text Editor) *</label>
+            <label className="block font-bold text-[#502E1E] mb-1.5">Message Body (Rich-Text Editor) *</label>
             <RichTextEditor value={bcMessageHtml} onChange={setBcMessageHtml} />
           </div>
 
@@ -230,7 +230,7 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
               onClick={() => setModalOpen(false)}
               className="h-[40px] px-4 rounded-xl border border-[#EBDCCB] font-bold text-[#6B3F2A] cursor-pointer"
             >
-              Batal
+              Cancel
             </button>
             <button
               type="submit"
@@ -238,7 +238,7 @@ export function AdminBroadcastSection({ enabled }: { enabled: boolean }) {
               className="h-[40px] px-5 rounded-xl bg-[#D9744A] hover:bg-[#c5633b] disabled:opacity-60 text-white font-bold inline-flex items-center gap-2 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>{sendBroadcastMutation.isPending ? 'Mengirim...' : 'Kirim Broadcast'}</span>
+              <span>{sendBroadcastMutation.isPending ? 'Sending...' : 'Send Broadcast'}</span>
             </button>
           </div>
         </form>

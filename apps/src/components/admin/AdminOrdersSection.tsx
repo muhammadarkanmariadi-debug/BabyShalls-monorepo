@@ -20,12 +20,12 @@ import { AdminDrawer } from './ui/AdminDrawer';
 import { CsvExportButton } from './ui/CsvExportButton';
 
 const ORDER_STATUS_OPTIONS: { label: string; value: AdminOrder['status'] }[] = [
-  { label: 'Menunggu Pembayaran', value: 'PENDING_PAYMENT' },
-  { label: 'Sudah Dibayar', value: 'PAID' },
-  { label: 'Diproses', value: 'PROCESSING' },
-  { label: 'Dikirim', value: 'SHIPPED' },
-  { label: 'Selesai', value: 'COMPLETED' },
-  { label: 'Dibatalkan', value: 'CANCELLED' },
+  { label: 'Awaiting Payment', value: 'PENDING_PAYMENT' },
+  { label: 'Paid', value: 'PAID' },
+  { label: 'Processing', value: 'PROCESSING' },
+  { label: 'Shipped', value: 'SHIPPED' },
+  { label: 'Completed', value: 'COMPLETED' },
+  { label: 'Cancelled', value: 'CANCELLED' },
 ];
 
 const COURIER_OPTIONS = [
@@ -114,10 +114,10 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
         courierService: waybillService,
         waybillNumber: waybillInput.trim(),
       });
-      toast.success(`Resi ${waybillInput.trim().toUpperCase()} disimpan & status menjadi SHIPPED.`);
+      toast.success(`Waybill ${waybillInput.trim().toUpperCase()} saved & order marked as SHIPPED.`);
       setWaybillModalOrder(null);
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal menyimpan nomor resi.'));
+      toast.error(extractApiError(err, 'Failed to save waybill number.'));
     }
   };
 
@@ -136,10 +136,10 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
         status: draftStatus,
         waybillNumber: draftWaybill.trim() || null,
       });
-      toast.success(`Pesanan ${selectedOrder.orderNumber} diperbarui.`);
+      toast.success(`Order ${selectedOrder.orderNumber} updated.`);
       setSelectedOrder(null);
     } catch (err) {
-      toast.error(extractApiError(err, 'Gagal memperbarui status pesanan.'));
+      toast.error(extractApiError(err, 'Failed to update order status.'));
     }
   };
 
@@ -148,17 +148,17 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-bold text-[#4A2A1C]">
-            Pesanan Masuk ({filteredOrders.length}/{orders.length})
+            Incoming Orders ({filteredOrders.length}/{orders.length})
           </h2>
           <p className="text-xs text-[#7A5644]">
-            Pantau pembayaran Midtrans, input resi pengiriman, &amp; lacak pengiriman dari Malang.
+            Monitor Midtrans payments, enter shipping waybills, &amp; track shipments from Malang.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {quotaStats && (
             <span className="text-[11px] font-bold text-[#8A5A00] px-3 py-1 rounded-full bg-[#FFF1C7] border border-[#F7C94B]/60">
-              Sisa Kuota Resi BinderByte: {quotaStats.binderByte.remaining.toLocaleString('id-ID')} /{' '}
-              {quotaStats.binderByte.totalQuota.toLocaleString('id-ID')}
+              BinderByte Waybill Quota: {quotaStats.binderByte.remaining.toLocaleString('en-US')} /{' '}
+              {quotaStats.binderByte.totalQuota.toLocaleString('en-US')}
             </span>
           )}
           <span className="text-xs font-bold text-[#2A6E37] inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF1E5] border border-[#82BC85]/60">
@@ -170,13 +170,13 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       {/* Quick Status Tabs (Figma Admin – Pesanan) with Pastel Tokens */}
       <div className="flex flex-wrap gap-1.5 border-b border-[#E6D2C0] pb-3">
         {[
-          { label: 'Semua', value: 'ALL', activeCls: 'bg-[#FBE6D8] text-[#8E431A] font-semibold border-b-2 border-[#B05A26]' },
-          { label: 'Menunggu Bayar', value: 'PENDING_PAYMENT', activeCls: 'bg-[#FFF1C7] text-[#8A5A00] font-semibold border-b-2 border-[#F7C94B]' },
-          { label: 'Sudah Dibayar', value: 'PAID', activeCls: 'bg-[#DDF1E5] text-[#2A6E37] font-semibold border-b-2 border-[#82BC85]' },
-          { label: 'Diproses', value: 'PROCESSING', activeCls: 'bg-[#E4ECFB] text-[#3F5FA0] font-semibold border-b-2 border-[#92B2F3]' },
-          { label: 'Dikirim', value: 'SHIPPED', activeCls: 'bg-[#DDF6F9] text-[#1F6B76] font-semibold border-b-2 border-[#8DDBE6]' },
-          { label: 'Selesai', value: 'COMPLETED', activeCls: 'bg-[#E9F3E4] text-[#1E543B] font-semibold border-b-2 border-[#A7D7A9]' },
-          { label: 'Dibatalkan', value: 'CANCELLED', activeCls: 'bg-[#FDE3E8] text-[#C0392B] font-semibold border-b-2 border-[#FBA6B2]' },
+          { label: 'All', value: 'ALL', activeCls: 'bg-[#FBE6D8] text-[#8E431A] font-semibold border-b-2 border-[#B05A26]' },
+          { label: 'Awaiting Payment', value: 'PENDING_PAYMENT', activeCls: 'bg-[#FFF1C7] text-[#8A5A00] font-semibold border-b-2 border-[#F7C94B]' },
+          { label: 'Paid', value: 'PAID', activeCls: 'bg-[#DDF1E5] text-[#2A6E37] font-semibold border-b-2 border-[#82BC85]' },
+          { label: 'Processing', value: 'PROCESSING', activeCls: 'bg-[#E4ECFB] text-[#3F5FA0] font-semibold border-b-2 border-[#92B2F3]' },
+          { label: 'Shipped', value: 'SHIPPED', activeCls: 'bg-[#DDF6F9] text-[#1F6B76] font-semibold border-b-2 border-[#8DDBE6]' },
+          { label: 'Completed', value: 'COMPLETED', activeCls: 'bg-[#E9F3E4] text-[#1E543B] font-semibold border-b-2 border-[#A7D7A9]' },
+          { label: 'Cancelled', value: 'CANCELLED', activeCls: 'bg-[#FDE3E8] text-[#C0392B] font-semibold border-b-2 border-[#FBA6B2]' },
         ].map((tab) => {
           const active = statusFilter === tab.value;
           return (
@@ -197,18 +197,18 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       <DataTableToolbar
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Cari Order ID, pelanggan, atau resi..."
+        searchPlaceholder="Search Order ID, customer, or waybill..."
         filterValue={statusFilter}
         onFilterChange={setStatusFilter}
         filterOptions={ORDER_STATUS_OPTIONS}
-        filterLabel="Semua Status"
+        filterLabel="All Statuses"
         sortValue={sortBy}
         onSortChange={setSortBy}
         sortOptions={[
-          { label: 'Terbaru', value: 'newest' },
-          { label: 'Terlama', value: 'oldest' },
-          { label: 'Total Terbesar', value: 'total_desc' },
-          { label: 'Total Terkecil', value: 'total_asc' },
+          { label: 'Newest', value: 'newest' },
+          { label: 'Oldest', value: 'oldest' },
+          { label: 'Highest Amount', value: 'total_desc' },
+          { label: 'Lowest Amount', value: 'total_asc' },
         ]}
         rightAction={
           <CsvExportButton
@@ -219,20 +219,20 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       />
 
       {isLoading ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Memuat pesanan...</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">Loading orders...</p>
       ) : filteredOrders.length === 0 ? (
-        <p className="text-xs text-[#7A5644] py-6 text-center">Tidak ada pesanan yang cocok.</p>
+        <p className="text-xs text-[#7A5644] py-6 text-center">No orders match the filter.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#E6D2C0]">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#FFF8EF] text-[#4A2A1C] font-semibold border-b border-[#E6D2C0]">
               <tr>
                 <th className="py-3 px-3.5">Order ID</th>
-                <th className="py-3 px-3.5">Pelanggan</th>
+                <th className="py-3 px-3.5">Customer</th>
                 <th className="py-3 px-3.5">Status</th>
-                <th className="py-3 px-3.5">Kurir &amp; Resi</th>
+                <th className="py-3 px-3.5">Courier &amp; Waybill</th>
                 <th className="py-3 px-3.5">Total</th>
-                <th className="py-3 px-3.5 text-right">Aksi</th>
+                <th className="py-3 px-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2E4D6]">
@@ -271,7 +271,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                             onClick={() => openWaybillModal(ord)}
                             className="px-2.5 py-1 rounded-[4px] bg-[#FFF1C7] text-[#8A5A00] border border-[#F7C94B]/60 font-semibold hover:bg-[#FFE7A3] cursor-pointer transition-colors"
                           >
-                            {ord.waybillNumber ? 'Edit Resi' : 'Input Resi'}
+                            {ord.waybillNumber ? 'Edit Waybill' : 'Enter Waybill'}
                           </button>
                         )}
                         {ord.waybillNumber && (
@@ -284,16 +284,16 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                               })
                             }
                             className="px-2.5 py-1 rounded-[4px] bg-[#DDF1E5] text-[#2A6E37] border border-[#82BC85]/60 font-semibold hover:bg-[#CEEAD6] inline-flex items-center gap-1 cursor-pointer transition-colors"
-                            title="Lacak Resi"
+                            title="Track Waybill"
                           >
-                            <Search className="w-3 h-3" /> Lacak
+                            <Search className="w-3 h-3" /> Track
                           </button>
                         )}
                         <button
                           type="button"
                           onClick={() => openDetailModal(ord)}
                           className="p-1.5 rounded-[4px] border border-[#92B2F3]/60 text-[#3F5FA0] hover:bg-[#E4ECFB] cursor-pointer transition-colors"
-                          title="Detail & Update Pesanan"
+                          title="Order Details & Status"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
@@ -311,14 +311,14 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       <AdminDrawer
         isOpen={Boolean(waybillModalOrder)}
         onClose={() => setWaybillModalOrder(null)}
-        title={`Input Resi Pengiriman ${waybillModalOrder?.orderNumber || ''}`}
-        subtitle="Simpan nomor resi dari gerai kurir (Wahana Express wajib min. 8 karakter alfanumerik)."
+        title={`Enter Shipping Waybill ${waybillModalOrder?.orderNumber || ''}`}
+        subtitle="Save the waybill tracking number from the courier (Wahana Express requires min. 8 alphanumeric characters)."
         width="md"
       >
         {waybillModalOrder && (
           <form onSubmit={handleSaveWaybill} className="space-y-4 text-xs">
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Kurir Pengiriman *</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Shipping Courier *</label>
               <select
                 value={waybillCourier}
                 onChange={(e) => setWaybillCourier(e.target.value)}
@@ -332,28 +332,28 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
               </select>
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Layanan Kurir</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Courier Service</label>
               <input
                 type="text"
                 value={waybillService}
                 onChange={(e) => setWaybillService(e.target.value)}
-                placeholder="Contoh: Normal / REG / EZ"
+                placeholder="Example: Normal / REG / EZ"
                 className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
             </div>
             <div>
-              <label className="block font-bold text-[#502E1E] mb-1">Nomor Resi *</label>
+              <label className="block font-bold text-[#502E1E] mb-1">Waybill Number *</label>
               <input
                 type="text"
                 required
                 value={waybillInput}
                 onChange={(e) => setWaybillInput(e.target.value.toUpperCase())}
-                placeholder={waybillCourier === 'wahana' ? 'Contoh: 12345678 (min. 8 digit)' : 'Masukkan nomor resi'}
+                placeholder={waybillCourier === 'wahana' ? 'Example: 12345678 (min. 8 digits)' : 'Enter waybill number'}
                 className="w-full h-[40px] px-3.5 font-mono uppercase bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
               />
               {waybillCourier === 'wahana' && (
                 <p className="text-[11px] text-[#6B3F2A] mt-1">
-                  Validasi Wahana Express: minimal 8 karakter huruf/angka tanpa spasi.
+                  Wahana Express validation: minimum 8 alphanumeric characters without spaces.
                 </p>
               )}
             </div>
@@ -363,14 +363,14 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                 onClick={() => setWaybillModalOrder(null)}
                 className="h-[40px] px-4 rounded-xl border border-[#EBDCCB] font-bold text-[#6B3F2A] cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="submit"
                 disabled={setWaybillMutation.isPending}
                 className="h-[40px] px-5 rounded-xl bg-[#D9744A] text-white font-bold cursor-pointer"
               >
-                {setWaybillMutation.isPending ? 'Menyimpan...' : 'Simpan Resi & Tandai Dikirim'}
+                {setWaybillMutation.isPending ? 'Saving...' : 'Save Waybill & Mark as Shipped'}
               </button>
             </div>
           </form>
@@ -381,14 +381,14 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       <AdminDrawer
         isOpen={Boolean(trackingTarget)}
         onClose={() => setTrackingTarget(null)}
-        title={`Lacak Resi ${trackingTarget?.waybill || ''}`}
-        subtitle={`Kurir: ${(trackingTarget?.courier || '').toUpperCase()}`}
+        title={`Track Waybill ${trackingTarget?.waybill || ''}`}
+        subtitle={`Courier: ${(trackingTarget?.courier || '').toUpperCase()}`}
         width="md"
       >
         {trackingLoading ? (
-          <p className="text-xs text-[#6B7280] py-6 text-center">Mengambil status pengiriman...</p>
+          <p className="text-xs text-[#6B7280] py-6 text-center">Fetching shipping status...</p>
         ) : trackingError ? (
-          <p className="text-xs text-red-600 py-4">{extractApiError(trackingError, 'Gagal melacak resi.')}</p>
+          <p className="text-xs text-red-600 py-4">{extractApiError(trackingError, 'Failed to track waybill.')}</p>
         ) : trackingData ? (
           <div className="space-y-4 text-xs">
             <div className="p-3.5 rounded-2xl bg-[#FCF6EC] border border-[#EBDCCB] flex flex-wrap items-center justify-between gap-2">
@@ -401,7 +401,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                 <div>
                   <p className="font-extrabold text-[#502E1E]">Status: {trackingData.status}</p>
                   <p className="text-[11px] text-[#6B3F2A]">
-                    {trackingData.summary?.currentLocation || 'Dalam perjalanan'}
+                    {trackingData.summary?.currentLocation || 'In transit'}
                   </p>
                 </div>
               </div>
@@ -410,7 +410,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                   trackingData.isDelivered ? 'bg-[#E9F3E4] text-[#1E543B]' : 'bg-white text-[#6B3F2A] border border-[#EBDCCB]'
                 }`}
               >
-                {trackingData.isDelivered ? 'Terkirim (Cache Permanen)' : trackingData.fromCache ? 'Dari Cache (Cooldown)' : 'Live API'}
+                {trackingData.isDelivered ? 'Delivered (Permanent Cache)' : trackingData.fromCache ? 'Cached (Cooldown)' : 'Live API'}
               </span>
             </div>
 
@@ -418,7 +418,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
               <div className="flex items-center gap-1.5 text-[11px] text-[#6B7280]">
                 <Clock className="w-3.5 h-3.5" />
                 <span>
-                  Cek ulang tersedia setelah: {new Date(trackingData.nextCheckAfter).toLocaleString('id-ID')}
+                  Next check available after: {new Date(trackingData.nextCheckAfter).toLocaleString('en-US')}
                 </span>
               </div>
             )}
@@ -448,15 +448,15 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
       <AdminDrawer
         isOpen={Boolean(selectedOrder)}
         onClose={() => setSelectedOrder(null)}
-        title={`Detail Pesanan ${selectedOrder?.orderNumber || ''}`}
-        subtitle={selectedOrder ? new Date(selectedOrder.createdAt).toLocaleString('id-ID') : ''}
+        title={`Order Details ${selectedOrder?.orderNumber || ''}`}
+        subtitle={selectedOrder ? new Date(selectedOrder.createdAt).toLocaleString('en-US') : ''}
         width="lg"
       >
         {selectedOrder && (
           <div className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#FCF6EC] border border-[#EBDCCB] rounded-2xl p-4">
               <div>
-                <div className="font-bold text-[#502E1E] mb-1">Penerima &amp; Alamat</div>
+                <div className="font-bold text-[#502E1E] mb-1">Recipient &amp; Address</div>
                 <div className="font-semibold">
                   {selectedOrder.shippingAddress?.recipientName ||
                     selectedOrder.shippingAddress?.receiverName ||
@@ -478,10 +478,10 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                 </div>
               </div>
               <div>
-                <div className="font-bold text-[#502E1E] mb-1">Ringkasan Pembayaran</div>
+                <div className="font-bold text-[#502E1E] mb-1">Payment Summary</div>
                 <div>Subtotal: {formatIDR(selectedOrder.totalAmount)}</div>
-                <div>Diskon: -{formatIDR(selectedOrder.discountAmount)}</div>
-                <div>Ongkir: {formatIDR(selectedOrder.shippingCost)}</div>
+                <div>Discount: -{formatIDR(selectedOrder.discountAmount)}</div>
+                <div>Shipping: {formatIDR(selectedOrder.shippingCost)}</div>
                 <div className="font-extrabold text-[#1E543B] mt-1">
                   Grand Total: {formatIDR(selectedOrder.grandTotal)}
                 </div>
@@ -490,12 +490,12 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
 
             {selectedOrder.items && selectedOrder.items.length > 0 && (
               <div className="border border-[#EBDCCB] rounded-2xl overflow-hidden">
-                <div className="px-4 py-2 bg-[#FCF6EC] font-bold text-[#502E1E]">Item Pesanan</div>
+                <div className="px-4 py-2 bg-[#FCF6EC] font-bold text-[#502E1E]">Order Items</div>
                 <div className="divide-y divide-[#F3ECE2]">
                   {selectedOrder.items.map((it) => (
                     <div key={it.id} className="px-4 py-2.5 flex justify-between">
                       <span>
-                        {it.product?.name || 'Produk'} × {it.quantity}
+                        {it.product?.name || 'Product'} × {it.quantity}
                       </span>
                       <span className="font-bold">{formatIDR(it.price * it.quantity)}</span>
                     </div>
@@ -507,7 +507,7 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
             <form onSubmit={handleSaveOrderStatus} className="space-y-3 pt-2 border-t border-[#EBDCCB]">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#502E1E] mb-1">Status Pesanan</label>
+                  <label className="block font-bold text-[#502E1E] mb-1">Order Status</label>
                   <select
                     value={draftStatus}
                     onChange={(e) => setDraftStatus(e.target.value as AdminOrder['status'])}
@@ -521,12 +521,12 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-[#502E1E] mb-1">Nomor Resi</label>
+                  <label className="block font-bold text-[#502E1E] mb-1">Waybill Number</label>
                   <input
                     type="text"
                     value={draftWaybill}
                     onChange={(e) => setDraftWaybill(e.target.value)}
-                    placeholder="Contoh: 12345678"
+                    placeholder="Example: 12345678"
                     className="w-full h-[40px] px-3.5 bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl"
                   />
                 </div>
@@ -537,14 +537,14 @@ export function AdminOrdersSection({ enabled }: { enabled: boolean }) {
                   onClick={() => setSelectedOrder(null)}
                   className="h-[40px] px-4 rounded-xl border border-[#EBDCCB] font-bold text-[#6B3F2A] cursor-pointer"
                 >
-                  Tutup
+                  Close
                 </button>
                 <button
                   type="submit"
                   disabled={updateOrderMutation.isPending}
                   className="h-[40px] px-5 rounded-xl bg-[#D9744A] text-white font-bold cursor-pointer"
                 >
-                  {updateOrderMutation.isPending ? 'Menyimpan...' : 'Simpan Status'}
+                  {updateOrderMutation.isPending ? 'Saving...' : 'Save Status'}
                 </button>
               </div>
             </form>

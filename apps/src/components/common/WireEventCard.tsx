@@ -37,11 +37,11 @@ export const WireEventCard: React.FC<WireEventCardProps> = ({
             </span>
           </div>
 
-          {/* Top-Right Badge: Sisa 3 kursi (if applicable) */}
+          {/* Top-Right Badge: 3 seats left (if applicable) */}
           {event.id === 'event-2' && (
             <div className="absolute top-3 right-3 z-10">
               <span className="inline-block bg-[#FFF1C7] text-[#8A5A00] text-[13px] font-medium px-3 py-1 rounded-[2px] shadow-xs">
-                Sisa 3 kursi
+                3 seats left
               </span>
             </div>
           )}
@@ -56,7 +56,7 @@ export const WireEventCard: React.FC<WireEventCardProps> = ({
 
           {/* Info Rows with Figma Icons */}
           <div className="space-y-1.5 pt-0.5 text-[14px] text-[#7A5644]">
-            {/* Tanggal & Waktu */}
+            {/* Date & Time */}
             <div className="flex items-center gap-2">
               <img
                 src="/images/icons/icon-calendar.svg"
@@ -66,7 +66,7 @@ export const WireEventCard: React.FC<WireEventCardProps> = ({
               <span className="truncate">{event.date} · {event.time}</span>
             </div>
 
-            {/* Lokasi */}
+            {/* Location */}
             <div className="flex items-center gap-2">
               <img
                 src="/images/icons/icon-map-pin.svg"
@@ -77,25 +77,25 @@ export const WireEventCard: React.FC<WireEventCardProps> = ({
             </div>
           </div>
 
-          {/* Harga & Usia (#B05A26 font-medium 16px) */}
+          {/* Price & Age (#B05A26 font-medium 16px) */}
           <div className="pt-1 text-[16px] font-medium text-[#B05A26]">
             {event.price === 0 ? (
-              <span>Gratis · 3–6 tahun</span>
+              <span>Free · 3–6 yrs</span>
             ) : (
-              <span>Rp{event.price.toLocaleString('id-ID')} / anak · 3–6 tahun</span>
+              <span>Rp{event.price.toLocaleString('id-ID')} / child · 3–6 yrs</span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Button: Daftar Sekarang */}
+      {/* Button: Register Now */}
       <div className="p-5 sm:p-6 pt-0">
         <button
           type="button"
           onClick={() => onRegisterClick && onRegisterClick(event)}
           className="w-full py-3 bg-[#B05A26] hover:bg-[#8E431A] text-white rounded-[2px] text-[16px] font-medium tracking-wide transition-colors cursor-pointer text-center shadow-xs"
         >
-          Daftar Sekarang
+          Register Now
         </button>
       </div>
     </div>

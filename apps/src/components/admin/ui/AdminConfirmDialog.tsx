@@ -21,8 +21,8 @@ export function AdminConfirmDialog({
   onConfirm,
   title,
   description,
-  confirmLabel = 'Hapus',
-  cancelLabel = 'Batal',
+  confirmLabel = 'Delete',
+  cancelLabel = 'Cancel',
   isLoading = false,
   danger = true,
 }: AdminConfirmDialogProps) {
@@ -49,7 +49,7 @@ export function AdminConfirmDialog({
             type="button"
             onClick={onClose}
             className="p-1 rounded-[4px] text-[#7A5644] hover:bg-[#FFF6EA] cursor-pointer"
-            aria-label="Tutup Dialog"
+            aria-label="Close Dialog"
           >
             <X className="w-4 h-4" />
           </button>
@@ -73,7 +73,7 @@ export function AdminConfirmDialog({
             className={`px-4 py-2 rounded-[4px] text-xs font-semibold text-white cursor-pointer disabled:opacity-60 ${danger ? 'bg-[#C0392B] hover:bg-[#A93226]' : 'bg-[#B05A26] hover:bg-[#8E431A]'
               }`}
           >
-            {isLoading ? 'Memproses...' : confirmLabel}
+            {isLoading ? 'Processing...' : confirmLabel}
           </button>
         </div>
       </div>

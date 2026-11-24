@@ -46,7 +46,7 @@ export default function LoginPage() {
     if (rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')) {
       setRedirectTo(rawRedirect);
       if (rawRedirect === '/checkout') {
-        setInfoMsg('Silakan masuk atau daftar akun terlebih dahulu untuk melanjutkan checkout.');
+        setInfoMsg('Please sign in or create an account to proceed with checkout.');
       }
     }
   }, []);
@@ -91,7 +91,7 @@ export default function LoginPage() {
           phone: authPhone.trim() || undefined,
         });
         setInfoMsg(
-          `Akun dibuat! Kode OTP 6 digit telah dikirim ke ${res.email}. Masukkan kode di bawah untuk mengaktifkan sesi.`
+          `Account created! A 6-digit OTP code has been sent to ${res.email}. Enter the code below to activate your session.`
         );
         setAuthMode('otp');
         return;
@@ -110,7 +110,7 @@ export default function LoginPage() {
         const res = await forgotPasswordMutation.mutateAsync({
           email: authEmail.trim(),
         });
-        setInfoMsg(`Kode OTP pemulihan kata sandi telah dikirim ke ${res.email}.`);
+        setInfoMsg(`A password recovery OTP code has been sent to ${res.email}.`);
         setAuthMode('reset');
         return;
       }
@@ -121,14 +121,14 @@ export default function LoginPage() {
           otp: otpCode.trim(),
           newPassword,
         });
-        setInfoMsg('Kata sandi berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.');
+        setInfoMsg('Password updated successfully. Please sign in with your new password.');
         setAuthPassword('');
         setOtpCode('');
         setNewPassword('');
         setAuthMode('masuk');
       }
     } catch (err: unknown) {
-      setErrorMsg(extractApiError(err, 'Terjadi kesalahan autentikasi. Silakan coba lagi.'));
+      setErrorMsg(extractApiError(err, 'Authentication error occurred. Please try again.'));
     }
   };
 
@@ -137,9 +137,9 @@ export default function LoginPage() {
     setInfoMsg('');
     try {
       const res = await resendOtpMutation.mutateAsync({ email: authEmail.trim() });
-      setInfoMsg(`Kode OTP baru telah dikirim ke ${res.email}.`);
+      setInfoMsg(`A new OTP code has been sent to ${res.email}.`);
     } catch (err: unknown) {
-      setErrorMsg(extractApiError(err, 'Gagal mengirim ulang OTP.'));
+      setErrorMsg(extractApiError(err, 'Failed to resend OTP code.'));
     }
   };
 
@@ -154,7 +154,7 @@ export default function LoginPage() {
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#7A5644] hover:text-[#B05A26] transition-colors group"
           >
             <span className="text-[#B05A26] transition-transform group-hover:-translate-x-1">&larr;</span>
-            <span>Kembali ke Butik</span>
+            <span>Back to Boutique</span>
           </Link>
 
           <Link href="/" className="inline-block relative md:hidden">
@@ -175,7 +175,7 @@ export default function LoginPage() {
           <div className="relative w-48 h-48 sm:w-60 sm:h-60 lg:w-64 lg:h-64 mb-4 shrink-0">
             <Image
               src="/images/mascot/maskot-melambai.png"
-              alt="Maskot BabyShalls"
+              alt="BabyShalls Mascot"
               fill
               priority
               className="object-contain"
@@ -183,17 +183,17 @@ export default function LoginPage() {
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-bold text-[#4A2A1C] mb-3 tracking-tight">
-            Halo, selamat datang!
+            Hello, welcome!
           </h2>
 
           <p className="text-xs sm:text-sm text-[#7A5644] max-w-sm leading-relaxed">
-            Masuk untuk melacak pesanan buku anak, menyimpan wishlist kurasi, dan mengakses tiket QR workshop si kecil.
+            Sign in to track children&apos;s book orders, save curated wishlists, and access workshop QR tickets for your little one.
           </p>
         </div>
 
         {/* Subtle Bottom Spacer / Brand Note */}
         <div className="hidden md:block text-center text-[11px] text-[#7A5644]/80">
-          BabyShalls &bull; Butik Buku Anak &amp; Mainan Edukasi Malang
+          BabyShalls &bull; Children&apos;s Book Boutique &amp; Educational Toys Malang
         </div>
       </div>
 
@@ -230,7 +230,7 @@ export default function LoginPage() {
                   : 'text-[#7A5644] hover:text-[#4A2A1C]'
                   }`}
               >
-                Masuk
+                Sign In
               </button>
               <button
                 type="button"
@@ -244,7 +244,7 @@ export default function LoginPage() {
                   : 'text-[#7A5644] hover:text-[#4A2A1C]'
                   }`}
               >
-                Daftar Akun Baru
+                Create Account
               </button>
             </div>
           )}
@@ -268,14 +268,14 @@ export default function LoginPage() {
             {authMode === 'daftar' && (
               <div>
                 <label className="block text-[#4A2A1C] font-semibold mb-1">
-                  Nama Lengkap *
+                  Full Name *
                 </label>
                 <input
                   type="text"
                   required
                   value={authName}
                   onChange={(e) => setAuthName(e.target.value)}
-                  placeholder="Contoh: Rina Wahyuni"
+                  placeholder="e.g. Rina Wahyuni"
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
               </div>
@@ -284,14 +284,14 @@ export default function LoginPage() {
             {(authMode === 'masuk' || authMode === 'daftar' || authMode === 'forgot') && (
               <div>
                 <label className="block text-[#4A2A1C] font-semibold mb-1">
-                  Alamat Email *
+                  Email Address *
                 </label>
                 <input
                   type="email"
                   required
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
-                  placeholder="email@anda.com"
+                  placeholder="email@example.com"
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
               </div>
@@ -300,18 +300,18 @@ export default function LoginPage() {
             {authMode === 'daftar' && (
               <div>
                 <label className="block text-[#4A2A1C] font-semibold mb-1">
-                  Nomor WhatsApp *
+                  WhatsApp Number *
                 </label>
                 <input
                   type="tel"
                   required
                   value={authPhone}
                   onChange={(e) => setAuthPhone(e.target.value)}
-                  placeholder="Contoh: 081234567890"
+                  placeholder="e.g. 081234567890"
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
                 <span className="text-[10px] text-[#7A5644] mt-0.5 block">
-                  Penting untuk informasi pengiriman resi &amp; tiket workshop anak.
+                  Important for delivery updates &amp; children&apos;s workshop tickets.
                 </span>
               </div>
             )}
@@ -319,7 +319,7 @@ export default function LoginPage() {
             {(authMode === 'masuk' || authMode === 'daftar') && (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[#4A2A1C] font-semibold">Kata Sandi *</label>
+                  <label className="text-[#4A2A1C] font-semibold">Password *</label>
                   {authMode === 'masuk' && (
                     <button
                       type="button"
@@ -330,7 +330,7 @@ export default function LoginPage() {
                       }}
                       className="text-[11px] text-[#B05A26] hover:underline cursor-pointer"
                     >
-                      Lupa kata sandi?
+                      Forgot password?
                     </button>
                   )}
                 </div>
@@ -339,12 +339,12 @@ export default function LoginPage() {
                   required
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  placeholder={authMode === 'daftar' ? 'Minimal 8 karakter' : 'Masukkan kata sandi'}
+                  placeholder={authMode === 'daftar' ? 'At least 8 characters' : 'Enter your password'}
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
                 {authMode === 'daftar' && (
                   <span className="text-[10px] text-[#7A5644] mt-0.5 block">
-                    Gunakan minimal 8 karakter.
+                    Use at least 8 characters.
                   </span>
                 )}
               </div>
@@ -354,7 +354,7 @@ export default function LoginPage() {
               <div>
                 <label className="block text-[#4A2A1C] font-semibold mb-1 flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-[#B05A26]" />
-                  <span>Kode OTP 6 Digit *</span>
+                  <span>6-Digit OTP Code *</span>
                 </label>
                 <input
                   type="text"
@@ -372,7 +372,7 @@ export default function LoginPage() {
             {authMode === 'reset' && (
               <div>
                 <label className="block text-[#4A2A1C] font-semibold mb-1">
-                  Kata Sandi Baru *
+                  New Password *
                 </label>
                 <input
                   type="password"
@@ -380,7 +380,7 @@ export default function LoginPage() {
                   minLength={8}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Minimal 8 karakter"
+                  placeholder="At least 8 characters"
                   className="w-full px-3.5 py-2.5 bg-white border border-[#E6D2C0] rounded-[2px] text-[#4A2A1C] focus:outline-none focus:border-[#B05A26]"
                 />
               </div>
@@ -392,16 +392,16 @@ export default function LoginPage() {
               className="w-full py-3.5 bg-[#B05A26] hover:bg-[#8E431A] text-white font-semibold text-xs rounded-[2px] transition-colors cursor-pointer shadow-xs mt-2 disabled:opacity-50"
             >
               {isSubmitting
-                ? 'Memproses...'
+                ? 'Processing...'
                 : authMode === 'masuk'
-                  ? 'Masuk ke Akun'
+                  ? 'Sign In to Account'
                   : authMode === 'daftar'
-                    ? 'Buat Akun BabyShalls'
+                    ? 'Create BabyShalls Account'
                     : authMode === 'otp'
-                      ? 'Verifikasi OTP'
+                      ? 'Verify OTP'
                       : authMode === 'forgot'
-                        ? 'Kirim Kode Pemulihan'
-                        : 'Simpan Kata Sandi Baru'}
+                        ? 'Send Recovery Code'
+                        : 'Save New Password'}
             </button>
 
             {authMode === 'otp' && (
@@ -412,14 +412,14 @@ export default function LoginPage() {
                   disabled={isSubmitting}
                   className="text-[11px] font-medium text-[#B05A26] hover:underline cursor-pointer"
                 >
-                  Kirim ulang kode OTP
+                  Resend OTP code
                 </button>
                 <button
                   type="button"
                   onClick={() => setAuthMode('masuk')}
                   className="text-[11px] text-[#7A5644] hover:underline cursor-pointer"
                 >
-                  Kembali ke Masuk
+                  Back to Sign In
                 </button>
               </div>
             )}
@@ -435,20 +435,20 @@ export default function LoginPage() {
                   }}
                   className="text-[11px] text-[#7A5644] hover:underline cursor-pointer"
                 >
-                  &larr; Kembali ke halaman Masuk
+                  &larr; Back to Sign In
                 </button>
               </div>
             )}
 
             {(authMode === 'masuk' || authMode === 'daftar') && GOOGLE_CLIENT_ID && (
               <div className="pt-3 border-t border-[#F2E4D6] flex flex-col items-center gap-2.5">
-                <span className="text-[11px] text-[#7A5644]">Atau masuk dengan Google</span>
+                <span className="text-[11px] text-[#7A5644]">Or sign in with Google</span>
                 <GoogleLogin
                   width='650px'
                   onSuccess={async (credentialResponse) => {
                     setErrorMsg('');
                     if (!credentialResponse.credential) {
-                      setErrorMsg('Token Google tidak tersedia.');
+                      setErrorMsg('Google token not available.');
                       return;
                     }
                     try {
@@ -457,18 +457,18 @@ export default function LoginPage() {
                       });
                       router.push(res.user?.role === 'ADMIN' ? '/admin' : redirectTo);
                     } catch (err: unknown) {
-                      setErrorMsg(extractApiError(err, 'Gagal login dengan Google.'));
+                      setErrorMsg(extractApiError(err, 'Failed to sign in with Google.'));
                     }
                   }}
                   onError={() => {
-                    setErrorMsg('Login Google dibatalkan atau gagal.');
+                    setErrorMsg('Google sign in cancelled or failed.');
                   }}
                 />
               </div>
             )}
 
             <p className="text-[11px] text-[#7A5644] text-center pt-2 leading-relaxed">
-              Belum punya akun? Pilih tab <strong>Daftar</strong> di atas untuk membuat akun dan melanjutkan checkout.
+              Don&apos;t have an account? Select <strong>Create Account</strong> above to register and continue.
             </p>
           </form>
         </div>
